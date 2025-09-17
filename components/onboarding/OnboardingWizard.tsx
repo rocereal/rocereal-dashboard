@@ -2,6 +2,7 @@
 
 import { onboardingSteps } from "@/data/onboarding";
 import { Info, Check } from "lucide-react";
+import { Logo } from "@/components/shared/Logo";
 
 interface OnboardingWizardProps {
   currentStep: number;
@@ -10,6 +11,11 @@ interface OnboardingWizardProps {
 export function OnboardingWizard({ currentStep }: OnboardingWizardProps) {
   return (
     <div className="bg-neutral-100 dark:bg-slate-900 p-8 space-y-8 rounded-md w-full lg:w-1/3">
+      <div className="text-center">
+        <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
+          <Logo />
+        </div>
+      </div>
       <div className="flex flex-row space-x-2 items-center max-w-md">
         <Info className="w-4 h-4" />
         <p className="text-sm text-muted-foreground">

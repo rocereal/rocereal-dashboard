@@ -21,6 +21,7 @@ interface StepOneProps {
   onSubmit: (data: StepOneData) => void;
   isLoading?: boolean;
   onboardingHref: string;
+  skipHref: string;
   termsHref?: string;
   privacyHref?: string;
   className?: string;
@@ -35,6 +36,7 @@ export function StepOne({
   className = "",
   inputClassName = "",
   onboardingHref,
+  skipHref,
 }: StepOneProps) {
   const [formData, setFormData] = useState<StepOneData>({
     firstName: "",
@@ -154,9 +156,7 @@ export function StepOne({
                 <item.icon className="w-4 h-4 text-primary" />
                 <span className="font-semibold text-sm">{item.title}</span>
               </div>
-              <span className="text-xs opacity-90 bg-black">
-                {item.subtitle}
-              </span>
+              <span className="text-xs opacity-90">{item.subtitle}</span>
             </div>
           ))}
         </div>
@@ -169,7 +169,7 @@ export function StepOne({
             disabled={isLoading}
             variant={"secondary"}
           >
-            <Link href={onboardingHref} className="flex flex-row items-center ">
+            <Link href={skipHref} className="flex flex-row items-center ">
               {isLoading ? "Skip" : "Skip"}
             </Link>
           </Button>

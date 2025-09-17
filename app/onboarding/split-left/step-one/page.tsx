@@ -3,7 +3,6 @@
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 import { StepOne } from "@/components/onboarding/StepOne";
 import { onboardingSteps } from "@/data/onboarding";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function StepOnePage() {
@@ -28,16 +27,17 @@ export default function StepOnePage() {
             Step 1 of {onboardingSteps.length}
           </p>
           <p className="text-base lg:text-3xl font-semibold">
-            {onboardingSteps[0].title}
+            {onboardingSteps[0]?.title}
           </p>
           <p className="text-sm text-muted-foreground">
-            {onboardingSteps[0].subtitle}
+            {onboardingSteps[0]?.subtitle}
           </p>
 
           <StepOne
             onSubmit={handleForm}
             isLoading={isLoading}
             onboardingHref="/onboarding/split-left/step-two"
+            skipHref="/onboarding/split-left/step-two"
           />
         </div>
       </div>

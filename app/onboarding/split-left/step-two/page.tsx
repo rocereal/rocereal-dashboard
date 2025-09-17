@@ -1,15 +1,13 @@
 "use client";
 
-import { StepOne } from "@/components/onboarding/StepOne";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
+import { StepTwo } from "@/components/onboarding/StepTwo";
 import { Separator } from "@/components/ui/separator";
 import { onboardingSteps } from "@/data/onboarding";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
 import { useOnboardingStep } from "@/utils/useOnboardingStep";
-import { StepTwo } from "@/components/onboarding/StepTwo";
+import { useState } from "react";
 
-export default function StepOnePage() {
+export default function StepTwoPage() {
   const { currentStep, stepData } = useOnboardingStep();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,16 +33,17 @@ export default function StepOnePage() {
             Step 2 of {onboardingSteps.length}
           </p>
           <p className="text-base lg:text-3xl font-semibold">
-            {onboardingSteps[1].title}
+            {onboardingSteps[1]?.title}
           </p>
           <p className="text-sm text-muted-foreground">
-            {onboardingSteps[1].subtitle}
+            {onboardingSteps[1]?.subtitle}
           </p>
 
           <StepTwo
             onSubmit={handleForm}
             isLoading={isLoading}
             onboardingHref="/onboarding/split-left/step-three"
+            skipHref="/onboarding/split-left/step-three"
           />
         </div>
       </div>

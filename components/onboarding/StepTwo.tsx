@@ -26,6 +26,7 @@ interface StepTwoProps {
   onSubmit: (data: StepTwoData) => void;
   isLoading?: boolean;
   onboardingHref: string;
+  skipHref: string;
   className?: string;
   inputClassName?: string;
 }
@@ -36,6 +37,7 @@ export function StepTwo({
   className = "",
   inputClassName = "",
   onboardingHref,
+  skipHref,
 }: StepTwoProps) {
   const [formData, setFormData] = useState<StepTwoData>({
     language: "",
@@ -139,7 +141,7 @@ export function StepTwo({
           {onboardingSteps[1]?.guidance?.map((item, index: number) => (
             <div
               key={index}
-              className="flex-col flex justify-between items-start space-y-2 border border-neutral-200 dark:border-neutral-800 rounded-md p-4"
+              className="flex-col flex items-start space-y-2 border border-neutral-200 dark:border-neutral-800 rounded-md p-4"
             >
               <div className="flex flex-row space-x-2">
                 <item.icon className="w-4 h-4 text-primary" />
@@ -158,10 +160,7 @@ export function StepTwo({
             disabled={isLoading}
             variant={"secondary"}
           >
-            <Link
-              href={"/onboarding/split-left/step-one"}
-              className="flex flex-row items-center "
-            >
+            <Link href={skipHref} className="flex flex-row items-center ">
               {isLoading ? "Skip" : "Skip"}
             </Link>
           </Button>
