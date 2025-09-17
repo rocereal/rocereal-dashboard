@@ -1,5 +1,6 @@
 "use client";
 
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Combobox } from "@/components/ui/combobox";
@@ -11,8 +12,6 @@ import { countryCodes, onboardingSteps } from "@/data/onboarding";
 import { Phone, Upload } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
-import Image from "next/image";
 
 interface StepThreeData {
   countryCode: string;
@@ -214,7 +213,7 @@ export function StepThree({
             variant={"secondary"}
           >
             <Link
-              href={"/onboarding/split-left/step-two"}
+              href={"/onboarding/split-left/step-three"}
               className="flex flex-row items-center "
             >
               {isLoading ? "Skip" : "Skip"}

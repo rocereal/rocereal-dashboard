@@ -8,10 +8,6 @@ import { useState } from "react";
 
 export default function StepOnePage() {
   const [isLoading, setIsLoading] = useState(false);
-  const pathname = usePathname();
-  const stepMatch = pathname.match(/step-(\d+)/);
-  const currentStep = stepMatch ? parseInt(stepMatch[1]) : 1;
-  const stepData = onboardingSteps[currentStep - 1];
 
   const handleForm = async (data: any) => {
     setIsLoading(true);
@@ -24,17 +20,19 @@ export default function StepOnePage() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row w-full">
-      <OnboardingWizard currentStep={currentStep} />
+      <OnboardingWizard currentStep={1} />
 
       <div className="p-8 space-y-8 w-full lg:w-2/3 justify-center items-center">
         <div className="flex flex-col space-y-4 max-w-2xl mx-auto">
           <p className="text-sm text-primary font-semibold">
-            Step {currentStep} of {onboardingSteps.length}
+            Step 1 of {onboardingSteps.length}
           </p>
           <p className="text-base lg:text-3xl font-semibold">
-            {stepData.title}
+            {onboardingSteps[0].title}
           </p>
-          <p className="text-sm text-muted-foreground">{stepData.subtitle}</p>
+          <p className="text-sm text-muted-foreground">
+            {onboardingSteps[0].subtitle}
+          </p>
 
           <StepOne
             onSubmit={handleForm}

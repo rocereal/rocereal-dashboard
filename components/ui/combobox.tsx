@@ -57,9 +57,9 @@ export function Combobox({
           <CommandList>
             <CommandEmpty>No option found.</CommandEmpty>
             <CommandGroup>
-              {options.map((option) => (
+              {options.map((option, index) => (
                 <CommandItem
-                  key={option.value}
+                  key={index}
                   value={option.value}
                   onSelect={(currentValue) => {
                     onValueChange(currentValue === value ? "" : currentValue);

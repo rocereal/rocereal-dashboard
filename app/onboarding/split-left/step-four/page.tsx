@@ -1,14 +1,10 @@
 "use client";
 
-import { StepOne } from "@/components/onboarding/StepOne";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
+import { StepThree } from "@/components/onboarding/StepThree";
 import { Separator } from "@/components/ui/separator";
 import { onboardingSteps } from "@/data/onboarding";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
-import { useOnboardingStep } from "@/utils/useOnboardingStep";
-import { StepTwo } from "@/components/onboarding/StepTwo";
-import { StepThree } from "@/components/onboarding/StepThree";
 
 export default function StepOnePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +40,7 @@ export default function StepOnePage() {
           <StepThree
             onSubmit={handleForm}
             isLoading={isLoading}
-            onboardingHref="/onboarding/split-left/step-four"
+            onboardingHref="/onboarding/split-left/step-three"
           />
         </div>
       </div>

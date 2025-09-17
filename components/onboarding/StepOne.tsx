@@ -148,13 +148,15 @@ export function StepOne({
           {onboardingSteps[1]?.guidance?.map((item, index: number) => (
             <div
               key={index}
-              className="flex-col flex justify-between items-start space-y-2 border border-neutral-200 dark:border-neutral-800 rounded-md p-4"
+              className="flex-col flex  space-y-2 border border-neutral-200 dark:border-neutral-800 rounded-md p-4"
             >
               <div className="flex flex-row space-x-2">
                 <item.icon className="w-4 h-4 text-primary" />
                 <span className="font-semibold text-sm">{item.title}</span>
               </div>
-              <span className="text-xs opacity-90">{item.subtitle}</span>
+              <span className="text-xs opacity-90 bg-black">
+                {item.subtitle}
+              </span>
             </div>
           ))}
         </div>
