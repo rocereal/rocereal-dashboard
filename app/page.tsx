@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfigurableLayout } from "@/components/configurable-layout";
+import { ConfigurableLayout } from "@/components/shared/configurable-layout";
 import { Button } from "@/components/ui/button";
 import {
   Card,

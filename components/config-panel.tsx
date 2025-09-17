@@ -21,7 +21,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "@/lib/theme-provider";
 import { useLayoutConfig } from "@/lib/layout-config";
-import { FloatingConfigButton } from "./floating-config-button";
+import { FloatingConfigButton } from "./shared/floating-config-button";
 import { Moon, Sun, Monitor, RotateCcw, X } from "lucide-react";
 
 export function ConfigPanel() {
