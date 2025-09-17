@@ -15,6 +15,59 @@ import {
   Clock,
 } from "lucide-react";
 
+export const languages = [
+  { value: "en", label: "English" },
+  { value: "es", label: "Spanish" },
+  { value: "fr", label: "French" },
+  { value: "de", label: "German" },
+  { value: "it", label: "Italian" },
+  { value: "pt", label: "Portuguese" },
+  { value: "ru", label: "Russian" },
+  { value: "ja", label: "Japanese" },
+  { value: "ko", label: "Korean" },
+  { value: "zh", label: "Chinese" },
+];
+
+export const timezones = [
+  { value: "UTC", label: "UTC" },
+  { value: "America/New_York", label: "Eastern Time (ET)" },
+  { value: "America/Chicago", label: "Central Time (CT)" },
+  { value: "America/Denver", label: "Mountain Time (MT)" },
+  { value: "America/Los_Angeles", label: "Pacific Time (PT)" },
+  { value: "Europe/London", label: "Greenwich Mean Time (GMT)" },
+  { value: "Europe/Paris", label: "Central European Time (CET)" },
+  { value: "Asia/Tokyo", label: "Japan Standard Time (JST)" },
+  { value: "Asia/Shanghai", label: "China Standard Time (CST)" },
+  { value: "Australia/Sydney", label: "Australian Eastern Time (AET)" },
+];
+
+export const notificationOptions = [
+  {
+    category: "Account",
+    options: [
+      { id: "account_updates", label: "Account updates" },
+      { id: "security_alerts", label: "Security alerts" },
+      { id: "login_notifications", label: "Login notifications" },
+    ],
+  },
+  {
+    category: "Marketing",
+    options: [
+      { id: "promotional_emails", label: "Promotional emails" },
+      { id: "newsletter", label: "Newsletter" },
+      { id: "product_updates", label: "Product updates" },
+    ],
+  },
+  {
+    category: "System",
+    options: [
+      { id: "maintenance_alerts", label: "Maintenance alerts" },
+      { id: "feature_announcements", label: "Feature announcements" },
+      { id: "surveys", label: "Surveys and feedback requests" },
+    ],
+  },
+];
+
 export const onboardingSteps = [
   {
     id: 1,

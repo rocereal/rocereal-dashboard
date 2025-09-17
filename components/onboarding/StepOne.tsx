@@ -20,7 +20,7 @@ interface StepOneData {
 interface StepOneProps {
   onSubmit: (data: StepOneData) => void;
   isLoading?: boolean;
-  signInHref?: string;
+  onboardingHref: string;
   termsHref?: string;
   privacyHref?: string;
   className?: string;
@@ -34,6 +34,7 @@ export function StepOne({
   privacyHref = "/privacy",
   className = "",
   inputClassName = "",
+  onboardingHref,
 }: StepOneProps) {
   const [formData, setFormData] = useState<StepOneData>({
     firstName: "",
@@ -144,13 +145,15 @@ export function StepOne({
         <Separator />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {onboardingSteps[0]?.guidance?.map((item, index: number) => (
+          {onboardingSteps[1]?.guidance?.map((item, index: number) => (
             <div
               key={index}
               className="flex-col flex justify-between items-start space-y-2 border border-neutral-200 dark:border-neutral-800 rounded-md p-4"
             >
-              <item.icon className="w-4 h-4 text-primary" />
-              <span className="font-semibold text-sm">{item.title}</span>
+              <div className="flex flex-row space-x-2">
+                <item.icon className="w-4 h-4 text-primary" />
+                <span className="font-semibold text-sm">{item.title}</span>
+              </div>
               <span className="text-xs opacity-90">{item.subtitle}</span>
             </div>
           ))}
@@ -164,12 +167,16 @@ export function StepOne({
             disabled={isLoading}
             variant={"secondary"}
           >
-            {isLoading ? "Skip" : "Skip"}
+            <Link href={onboardingHref} className="flex flex-row items-center ">
+              {isLoading ? "Skip" : "Skip"}
+            </Link>
           </Button>
 
           {/* Submit Button */}
           <Button type="submit" className="w-fit" disabled={isLoading}>
-            {isLoading ? "Saving" : "Save and Continue"}
+            <Link href={onboardingHref} className="flex flex-row items-center ">
+              {isLoading ? "Saving" : "Save and Continue"}
+            </Link>
           </Button>
         </div>
       </form>
