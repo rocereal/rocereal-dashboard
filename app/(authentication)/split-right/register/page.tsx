@@ -8,53 +8,44 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { RegisterForm } from "@/components/auth/RegisterForm";
 import { Logo } from "@/components/shared/Logo";
-import { LoginForm } from "@/components/auth/LoginForm";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ) => {
+  const handleRegister = async (data: any) => {
     setIsLoading(true);
 
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     setIsLoading(false);
-    console.log("Login attempt:", { email, password, rememberMe });
+    console.log("Registration attempt:", data);
   };
 
   return (
-    <div className="space-y-8 max-w-md w-full">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="text-center">
+      <div className="hidden lg:flex text-center">
         <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
           <Logo />
         </div>
       </div>
 
-      {/* Login Form */}
+      {/* Registration Form */}
       <Card className="border-none shadow-none !bg-transparent">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Sign in</CardTitle>
+          <CardTitle className="text-2xl text-center">Sign up</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            Create your account to get started
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm
-            onSubmit={handleLogin}
+          <RegisterForm
+            onSubmit={handleRegister}
             isLoading={isLoading}
-            forgotPasswordHref="/minimal/forgot-password"
-            signUpHref="/minimal/register"
-            inputClassName="bg-white/50 dark:bg-slate-700/50"
-            socialLoginProps={{
-              separatorText: "Or continue with",
-            }}
+            signInHref="/split-right/login"
           />
         </CardContent>
       </Card>

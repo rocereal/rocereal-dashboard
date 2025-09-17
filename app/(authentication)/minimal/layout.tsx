@@ -22,11 +22,11 @@ export default function MinimalLayout({
       </div>
 
       {/* Minimal Footer */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+      {/* <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
         <p className="text-xs text-muted-foreground">
           © 2025 Your Company. All rights reserved.
         </p>
-      </div>
+      </div> */}
     </div>
   );
 }

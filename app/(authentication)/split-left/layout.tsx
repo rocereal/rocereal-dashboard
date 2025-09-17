@@ -15,7 +15,7 @@ export default function SplitLeftLayout({
 
       {/* Right Side - Illustration */}
       <div className="flex flex-1 items-center justify-center order-1 lg:order-2">
-        <AuthCarousel slides={sliders} />
+        <AuthCarousel slides={sliders.slice(0, 4)} type="left" />
       </div>
     </div>
   );

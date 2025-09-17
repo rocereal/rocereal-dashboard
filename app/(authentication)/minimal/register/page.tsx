@@ -9,23 +9,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Logo } from "@/components/shared/Logo";
-import { LoginForm } from "@/components/auth/LoginForm";
+import { RegisterForm } from "@/components/auth/RegisterForm";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ) => {
+  const handleRegister = async (data: any) => {
     setIsLoading(true);
 
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     setIsLoading(false);
-    console.log("Login attempt:", { email, password, rememberMe });
+    console.log("Register attempt:", data);
   };
 
   return (
@@ -37,20 +33,19 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Login Form */}
+      {/* Register Form */}
       <Card className="border-none shadow-none !bg-transparent">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Sign in</CardTitle>
+          <CardTitle className="text-2xl text-center">Sign up</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            Create your account to get started
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm
-            onSubmit={handleLogin}
+          <RegisterForm
+            onSubmit={handleRegister}
             isLoading={isLoading}
-            forgotPasswordHref="/minimal/forgot-password"
-            signUpHref="/minimal/register"
+            signInHref="/minimal/login"
             inputClassName="bg-white/50 dark:bg-slate-700/50"
             socialLoginProps={{
               separatorText: "Or continue with",

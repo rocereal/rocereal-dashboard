@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,18 +12,15 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
-import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
+import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 import { Logo } from "@/components/shared/Logo";
 
-export default function ResetPasswordPage() {
+export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
 
-  const handleResetPassword = async (
-    password: string,
-    confirmPassword: string
-  ) => {
+  const handleForgotPassword = async (email: string) => {
     setIsLoading(true);
     setError("");
 
@@ -37,34 +33,34 @@ export default function ResetPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="space-y-8 max-w-md w-full">
+      <div className="w-full max-w-md space-y-8 z-40">
         {/* Success Header */}
         <div className="text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
             <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
           </div>
           <h1 className="mt-4 text-3xl font-bold tracking-tight">
-            Password updated
+            Check your email
           </h1>
           <p className="text-muted-foreground mt-2">
-            Your password has been successfully reset
+            We've sent you a password reset link
           </p>
         </div>
 
         {/* Success Message */}
-        <Card>
+        <Card className="border-none shadow-none !bg-transparent">
           <CardContent className="pt-6">
             <Alert>
               <CheckCircle className="h-4 w-4" />
               <AlertDescription>
-                Your password has been successfully updated. You can now sign in
-                with your new password.
+                If an account with that email exists, we've sent you a password
+                reset link. Please check your email and follow the instructions.
               </AlertDescription>
             </Alert>
 
             <div className="mt-6">
               <Button className="w-full">
-                <Link href="/centered/login">Sign in with new password</Link>
+                <Link href="/split-right/login">Back to sign in</Link>
               </Button>
             </div>
           </CardContent>
@@ -74,25 +70,25 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-md w-full z-40">
+    <div className="w-full max-w-md space-y-8 z-40">
       {/* Header */}
-      <div className="text-center">
+      <div className="hidden lg:flex text-center">
         <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
           <Logo />
         </div>
       </div>
 
-      {/* Reset Password Form */}
-      <Card>
+      {/* Forgot Password Form */}
+      <Card className="border-none shadow-none !bg-transparent">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Reset password</CardTitle>
           <CardDescription className="text-center">
-            Choose a strong password for your account
+            We'll send you a link to reset your password
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ResetPasswordForm
-            onSubmit={handleResetPassword}
+          <ForgotPasswordForm
+            onSubmit={handleForgotPassword}
             isLoading={isLoading}
             inputClassName="bg-white/50 dark:bg-slate-700/50"
           />
@@ -100,9 +96,14 @@ export default function ResetPasswordPage() {
       </Card>
 
       {/* Back to Login */}
-      <div className="text-start">
-        <Button variant="ghost">
-          <Link href="/centered/login" className="flex flex-row items-center ">
+      <div className="text-center">
+        {/* Submit Button */}
+
+        <Button variant="ghost" className="flex flex-row items-center">
+          <Link
+            href="/split-right/login"
+            className="flex items-center flex-row"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to sign in
           </Link>

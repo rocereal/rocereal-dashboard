@@ -23,11 +23,13 @@ export interface TestimonialSlide {
 export interface TestimonialCarouselProps {
   className?: string;
   slides?: any[];
+  type?: "left" | "right";
 }
 
 const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
   className = "",
   slides,
+  type = "left",
 }) => {
   // Carousel API state for controlling navigation
   const [api, setApi] = useState<CarouselApi>();
@@ -119,9 +121,19 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent size-full">
                   <div className="pb-12 lg:pb-24 px-6 text-white relative z-10 size-full justify-end flex-row">
                     <div className="flex flex-col size-full align-items-end place-items-end justify-end text-start">
-                      <div className="flex items-center justify-between w-full mb-4">
+                      <div
+                        className={`flex  items-center justify-between w-full mb-4`}
+                      >
                         <div className="flex flex-col">
-                          <span className="font-semibold">{slide.title}</span>
+                          <span
+                            className={`${
+                              type !== "left"
+                                ? "font-semibold text-base lg:text-3xl"
+                                : "font-semibold text-base"
+                            }`}
+                          >
+                            {slide.title}
+                          </span>
                           <span className="text-sm opacity-90">
                             {slide.subtitle}
                           </span>

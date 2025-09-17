@@ -163,7 +163,7 @@
 }
 
 /* Remove autocomplete background colors */
-input:-webkit-autofill,
+/* input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
@@ -172,12 +172,12 @@ input:-webkit-autofill:active {
   background-color: transparent !important;
   background-image: none !important;
   transition: background-color 5000s ease-in-out 0s;
-}
+} */
 
 /* For Firefox */
-input:-moz-autofill,
+/* input:-moz-autofill,
 input:-moz-autofill:hover,
 input:-moz-autofill:focus {
   background-color: transparent !important;
   background-image: none !important;
-}
+} */

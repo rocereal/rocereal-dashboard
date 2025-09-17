@@ -64,7 +64,7 @@ export default function ResetPasswordPage() {
 
             <div className="mt-6">
               <Button className="w-full">
-                <Link href="/centered/login">Sign in with new password</Link>
+                <Link href="/minimal/login">Sign in with new password</Link>
               </Button>
             </div>
           </CardContent>
@@ -83,7 +83,7 @@ export default function ResetPasswordPage() {
       </div>
 
       {/* Reset Password Form */}
-      <Card>
+      <Card className="border-none shadow-none !bg-transparent">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Reset password</CardTitle>
           <CardDescription className="text-center">
@@ -102,7 +102,7 @@ export default function ResetPasswordPage() {
       {/* Back to Login */}
       <div className="text-start">
         <Button variant="ghost">
-          <Link href="/centered/login" className="flex flex-row items-center ">
+          <Link href="/minimal/login" className="flex flex-row items-center ">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to sign in
           </Link>
