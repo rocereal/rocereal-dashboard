@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { Logo } from "@/components/shared/Logo";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,15 +31,14 @@ export default function LoginPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-        <p className="text-muted-foreground mt-2">
-          Sign in to your account to continue
-        </p>
+      <div className="hidden lg:flex text-center">
+        <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
+          <Logo />
+        </div>
       </div>
 
       {/* Login Form */}
-      <Card>
+      <Card className="border-none shadow-none !bg-transparent">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Sign in</CardTitle>
           <CardDescription className="text-center">
@@ -49,8 +49,8 @@ export default function LoginPage() {
           <LoginForm
             onSubmit={handleLogin}
             isLoading={isLoading}
-            forgotPasswordHref="/auth-layouts/split-left/forgot-password"
-            signUpHref="/auth-layouts/split-left/register"
+            forgotPasswordHref="/split-left/forgot-password"
+            signUpHref="/split-left/register"
           />
         </CardContent>
       </Card>

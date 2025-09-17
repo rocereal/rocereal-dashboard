@@ -111,7 +111,7 @@ export function LoginForm({
         {/* Remember Me & Forgot Password */}
         {showRememberMe && (
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4 items-center justify-between">
-            <label className="flex items-center space-x-2 text-sm">
+            <label className="flex items-center space-x-2 text-xs md:text-sm ">
               <Checkbox
                 checked={rememberMe}
                 onCheckedChange={(checked) => setRememberMe(checked === true)}
@@ -120,7 +120,7 @@ export function LoginForm({
             </label>
             <Link
               href={forgotPasswordHref}
-              className="text-sm text-primary dark:text-white hover:underline text-end"
+              className="text-xs md:text-sm text-primary dark:text-white hover:underline text-end"
             >
               Forgot password?
             </Link>

@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { RegisterForm } from "@/components/auth/RegisterForm";
+import { Logo } from "@/components/shared/Logo";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,15 +27,14 @@ export default function RegisterPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Create account</h1>
-        <p className="text-muted-foreground mt-2">
-          Join us today and get started
-        </p>
+      <div className="hidden lg:flex text-center">
+        <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
+          <Logo />
+        </div>
       </div>
 
       {/* Registration Form */}
-      <Card>
+      <Card className="border-none shadow-none !bg-transparent">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Sign up</CardTitle>
           <CardDescription className="text-center">
@@ -45,7 +45,7 @@ export default function RegisterPage() {
           <RegisterForm
             onSubmit={handleRegister}
             isLoading={isLoading}
-            signInHref="/auth-layouts/split-left/login"
+            signInHref="/split-left/login"
           />
         </CardContent>
       </Card>

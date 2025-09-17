@@ -27,7 +27,7 @@ export function SocialLoginButtons({
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background dark:bg-none px-2 text-muted-foreground">
+          <span className="bg-background dark:!bg-transparent px-2 text-muted-foreground">
             {separatorText}
           </span>
         </div>
