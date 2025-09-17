@@ -17,7 +17,7 @@ import {
 import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-projects";
 import { NavUser } from "./nav-user";
-import { TeamSwitcher } from "./team-switcher";
+import { LogoTop } from "./LogoTop";
 import {
   Sidebar,
   SidebarContent,
@@ -32,29 +32,59 @@ const data = {
     email: "info@obare27.com",
     avatar: "/android-chrome-192x192.png",
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
+
   navMain: [
+    {
+      title: "Dashboards",
+      url: "#",
+      icon: PieChart,
+      items: [
+        {
+          title: "Analytics",
+          url: "/analytics",
+        },
+        {
+          title: "E-commerce",
+          url: "/ecommerce",
+        },
+        {
+          title: "Finance",
+          url: "/finance",
+        },
+        {
+          title: "Project",
+          url: "/project",
+        },
+        {
+          title: "CRM",
+          url: "/crm",
+        },
+        {
+          title: "Education",
+          url: "/education",
+        },
+        {
+          title: "Content",
+          url: "/content",
+        },
+        {
+          title: "AI",
+          url: "/ai",
+        },
+        {
+          title: "Crypto",
+          url: "/crypto",
+        },
+        {
+          title: "NFT & DeFi",
+          url: "/nft-defi",
+        },
+      ],
+    },
     {
       title: "Playground",
       url: "#",
       icon: SquareTerminal,
-      isActive: true,
       items: [
         {
           title: "History",
@@ -159,11 +189,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <LogoTop />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
