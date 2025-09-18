@@ -18,12 +18,17 @@ import {
 } from "@/components/ui/charts";
 import { chartData } from "@/data/charts";
 
-export const description = "An interactive bar chart";
+export interface BarChartProps {
+  data?: any[];
+  title?: string;
+  description?: string;
+  config?: ChartConfig;
+  dataKeys?: string[];
+  dateKey?: string;
+  className?: string;
+}
 
-const chartConfig = {
-  views: {
-    label: "Page Views",
-  },
+const defaultConfig: ChartConfig = {
   desktop: {
     label: "Desktop",
     color: "var(--chart-2)",
@@ -32,44 +37,50 @@ const chartConfig = {
     label: "Mobile",
     color: "var(--chart-1)",
   },
-} satisfies ChartConfig;
+};
 
-export function SampleBarChart() {
-  const [activeChart, setActiveChart] =
-    React.useState<keyof typeof chartConfig>("desktop");
+export function SampleBarChart({
+  data = chartData,
+  title = "Bar Chart - Interactive",
+  description = "Showing total visitors for the last 3 months",
+  config = defaultConfig,
+  dataKeys = ["desktop", "mobile"],
+  dateKey = "date",
+  className,
+}: BarChartProps) {
+  const [activeChart, setActiveChart] = React.useState<string>(dataKeys[0]);
 
-  const total = React.useMemo(
-    () => ({
-      desktop: chartData.reduce((acc, curr) => acc + curr.desktop, 0),
-      mobile: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
-    }),
-    []
-  );
+  const total = React.useMemo(() => {
+    const totals: Record<string, number> = {};
+    if (data && Array.isArray(data)) {
+      dataKeys.forEach((key) => {
+        totals[key] = data.reduce((acc, curr) => acc + (curr[key] || 0), 0);
+      });
+    }
+    return totals;
+  }, [data, dataKeys]);
 
   return (
-    <Card className="py-0 shadow-xs">
+    <Card className={`py-0 shadow-xs ${className || ""}`}>
       <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-0">
-          <CardTitle>User visits</CardTitle>
-          <CardDescription>
-            Showing total visitors for the last 3 months
-          </CardDescription>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
         </div>
         <div className="flex">
-          {["desktop", "mobile"].map((key) => {
-            const chart = key as keyof typeof chartConfig;
+          {dataKeys.map((key) => {
             return (
               <button
-                key={chart}
-                data-active={activeChart === chart}
+                key={key}
+                data-active={activeChart === key}
                 className="data-[active=true]:bg-muted/50 relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
-                onClick={() => setActiveChart(chart)}
+                onClick={() => setActiveChart(key)}
               >
                 <span className="text-muted-foreground text-xs">
-                  {chartConfig[chart].label}
+                  {config[key]?.label || key}
                 </span>
                 <span className="text-lg leading-none font-bold sm:text-3xl">
-                  {total[key as keyof typeof total].toLocaleString()}
+                  {total[key]?.toLocaleString() || 0}
                 </span>
               </button>
             );
@@ -78,12 +89,12 @@ export function SampleBarChart() {
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
         <ChartContainer
-          config={chartConfig}
+          config={config}
           className="aspect-auto h-[250px] w-full"
         >
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             margin={{
               left: 12,
               right: 12,
@@ -91,7 +102,7 @@ export function SampleBarChart() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="date"
+              dataKey={dateKey}
               tickLine={false}
               axisLine={false}
               tickMargin={8}

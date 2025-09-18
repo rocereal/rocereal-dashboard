@@ -9,6 +9,8 @@ import { modelMetricsData } from "@/data/ai-model-metrics";
 import { engagementMetricsData } from "@/data/ai-engagement-metrics";
 import { businessMetricsData } from "@/data/ai-business-metrics";
 import { UserMetrics } from "./UserMetrics";
+import { ModelMetrics } from "./ModelMetrics";
+import { EngagementMetrics } from "./EngagementMetrics";
 
 export function AITabs() {
   return (
@@ -18,11 +20,11 @@ export function AITabs() {
       </TabsContent>
 
       <TabsContent value="model" className="space-y-4 pt-4">
-        <SectionCards metrics={modelMetricsData} />
+        <ModelMetrics />
       </TabsContent>
 
       <TabsContent value="engage" className="space-y-4 pt-4">
-        <SectionCards metrics={engagementMetricsData} />
+        <EngagementMetrics />
       </TabsContent>
 
       <TabsContent value="business" className="space-y-4 pt-4">
