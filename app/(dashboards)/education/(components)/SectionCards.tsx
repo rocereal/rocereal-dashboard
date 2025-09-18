@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 interface SectionCardsProps {
   metrics?: EducationMetric[];
@@ -39,10 +40,12 @@ export function SectionCards({
               key={course.id}
               className="relative overflow-hidden border bg-card/50 shadow-xs backdrop-blur-sm"
             >
-              <div className="relative h-32 w-full">
-                <Image
+              <div className="relative overflow-hidden aspect-video w-full flex flex-col">
+                <ImageComponentOptimized
+                  unoptimized={true}
                   src={course.image}
                   alt={course.title}
+                  placeholder="blur"
                   fill
                   className="object-cover"
                 />

@@ -1,4 +1,12 @@
 import { GraduationCap, Users, CheckCircle, Star } from "lucide-react";
+import backgroundOne from "@/app/assets/images/background_one.jpg";
+import backgroundTwo from "@/app/assets/images/background_two.jpg";
+import backgroundThree from "@/app/assets/images/background_three.jpg";
+import backgroundFour from "@/app/assets/images/background_four.jpg";
+import backgroundFive from "@/app/assets/images/background_five.jpg";
+import backgroundSix from "@/app/assets/images/background_six.jpg";
+import backgroundSeven from "@/app/assets/images/background_seven.jpg";
+import backgroundEight from "@/app/assets/images/background_eight.jpg";
 
 export interface CourseData {
   id: string;
@@ -6,7 +14,7 @@ export interface CourseData {
   enrolled: number;
   completionRate: number;
   avgRating: number;
-  image: string;
+  image: any;
   icon: any;
   description?: string;
 }
@@ -18,7 +26,7 @@ export const coursesData: CourseData[] = [
     enrolled: 320,
     completionRate: 78,
     avgRating: 4.5,
-    image: "/images/background_one.jpg",
+    image: backgroundOne,
     icon: GraduationCap,
     description: "Learn the fundamentals of data science and analytics",
   },
@@ -28,7 +36,7 @@ export const coursesData: CourseData[] = [
     enrolled: 510,
     completionRate: 65,
     avgRating: 4.2,
-    image: "/images/background_two.jpg",
+    image: backgroundTwo,
     icon: GraduationCap,
     description: "Master the basics of HTML, CSS, and JavaScript",
   },
@@ -38,7 +46,7 @@ export const coursesData: CourseData[] = [
     enrolled: 210,
     completionRate: 82,
     avgRating: 4.7,
-    image: "/images/background_three.jpg",
+    image: backgroundThree,
     icon: GraduationCap,
     description: "Apply data analytics to business decision making",
   },
@@ -48,7 +56,7 @@ export const coursesData: CourseData[] = [
     enrolled: 450,
     completionRate: 70,
     avgRating: 4.6,
-    image: "/images/background_four.jpg",
+    image: backgroundFour,
     icon: GraduationCap,
     description: "Introduction to artificial intelligence concepts",
   },
@@ -70,7 +78,7 @@ export interface RecommendedCourse {
   authors: string[];
   rating: number;
   price: number;
-  image: string;
+  image: any;
 }
 
 export const recommendedCourses: RecommendedCourse[] = [
@@ -80,7 +88,7 @@ export const recommendedCourses: RecommendedCourse[] = [
     authors: ["Dr. Sarah Chen", "Prof. Michael Rodriguez"],
     rating: 4.8,
     price: 89.99,
-    image: "/images/background_five.jpg",
+    image: backgroundFive,
   },
   {
     id: "machine-learning-fundamentals",
@@ -88,7 +96,7 @@ export const recommendedCourses: RecommendedCourse[] = [
     authors: ["Dr. James Wilson"],
     rating: 4.9,
     price: 129.99,
-    image: "/images/background_six.jpg",
+    image: backgroundSix,
   },
   {
     id: "data-visualization-excel",
@@ -96,7 +104,7 @@ export const recommendedCourses: RecommendedCourse[] = [
     authors: ["Lisa Thompson", "Mark Davis"],
     rating: 4.6,
     price: 49.99,
-    image: "/images/background_seven.jpg",
+    image: backgroundSeven,
   },
   {
     id: "cloud-computing-aws",
@@ -104,7 +112,71 @@ export const recommendedCourses: RecommendedCourse[] = [
     authors: ["Dr. Robert Kim", "Jennifer Liu"],
     rating: 4.7,
     price: 99.99,
-    image: "/images/background_eight.jpg",
+    image: backgroundEight,
+  },
+  {
+    id: "react-masterclass",
+    title: "React.js Masterclass",
+    authors: ["Alex Johnson", "Maria Garcia"],
+    rating: 4.8,
+    price: 79.99,
+    image: backgroundOne,
+  },
+  {
+    id: "digital-marketing-strategy",
+    title: "Digital Marketing Strategy",
+    authors: ["Prof. David Brown"],
+    rating: 4.5,
+    price: 69.99,
+    image: backgroundTwo,
+  },
+  {
+    id: "cybersecurity-essentials",
+    title: "Cybersecurity Essentials",
+    authors: ["Dr. Emily White", "Mark Stevens"],
+    rating: 4.7,
+    price: 94.99,
+    image: backgroundThree,
+  },
+  {
+    id: "blockchain-technology",
+    title: "Blockchain Technology Fundamentals",
+    authors: ["Dr. Kevin Park"],
+    rating: 4.6,
+    price: 109.99,
+    image: backgroundFour,
+  },
+  {
+    id: "ui-ux-design-principles",
+    title: "UI/UX Design Principles",
+    authors: ["Sarah Mitchell", "Tom Anderson"],
+    rating: 4.9,
+    price: 84.99,
+    image: backgroundFive,
+  },
+  {
+    id: "financial-modeling",
+    title: "Financial Modeling for Beginners",
+    authors: ["Prof. Rachel Green"],
+    rating: 4.4,
+    price: 74.99,
+    image: backgroundSix,
+  },
+  {
+    id: "mobile-app-development",
+    title: "Mobile App Development with Flutter",
+    authors: ["Carlos Rodriguez", "Anna Kim"],
+    rating: 4.8,
+    price: 119.99,
+    image: backgroundSeven,
+  },
+  {
+    id: "project-management-professional",
+    title: "Project Management Professional",
+    authors: ["Dr. Michael Chen", "Lisa Wong"],
+    rating: 4.6,
+    price: 89.99,
+    image: backgroundEight,
   },
 ];
 

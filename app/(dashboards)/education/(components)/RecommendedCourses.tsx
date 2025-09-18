@@ -1,12 +1,15 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { RecommendedCourse } from "@/data/education";
-import { Star, User, ShoppingCart } from "lucide-react";
+import { Star, User, ShoppingCart, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 interface RecommendedCoursesProps {
   courses: RecommendedCourse[];
@@ -17,6 +20,20 @@ export function RecommendedCourses({
   courses,
   className,
 }: RecommendedCoursesProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredCourses = useMemo(() => {
+    if (!searchTerm) return courses;
+
+    return courses.filter(
+      (course) =>
+        course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.authors.some((author) =>
+          author.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+    );
+  }, [courses, searchTerm]);
+
   return (
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between">
@@ -28,18 +45,30 @@ export function RecommendedCourses({
         </Button>
       </div>
 
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search courses..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {courses.map((course) => (
+        {filteredCourses.map((course) => (
           <Card
             key={course.id}
             className="group relative overflow-hidden border bg-card/50 shadow-xs backdrop-blur-sm transition-all hover:shadow-md"
           >
-            <div className="relative h-40 w-full">
-              <Image
+            <div className="relative overflow-hidden aspect-video w-full flex flex-col">
+              <ImageComponentOptimized
+                unoptimized={true}
                 src={course.image}
                 alt={course.title}
+                placeholder="blur"
                 fill
-                className="object-cover transition-transform group-hover:scale-105"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-2 left-2 right-2">
