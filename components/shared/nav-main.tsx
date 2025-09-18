@@ -40,17 +40,19 @@ export function NavMain({
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          // Check if current item or any of its sub-items is active
-          const isItemActive =
-            pathname === item.url ||
-            item.items?.some((subItem) => pathname === subItem.url) ||
-            item.isActive;
+          // Check if any sub-items are active (for opening collapsible)
+          const hasActiveSubItem = item.items?.some(
+            (subItem) => pathname === subItem.url
+          );
+
+          // Parent item is only active if its own URL matches
+          const isItemActive = pathname === item.url || item.isActive;
 
           return (
             <Collapsible
               key={item.title}
               asChild
-              defaultOpen={isItemActive}
+              defaultOpen={isItemActive || hasActiveSubItem}
               className="group/collapsible"
             >
               <SidebarMenuItem>
