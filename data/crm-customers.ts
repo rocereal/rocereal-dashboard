@@ -1,0 +1,133 @@
+export interface CRMCustomer {
+  id: string;
+  customerName: string;
+  accountManager: string;
+  planTier: string;
+  lastContact: string;
+  nextFollowUp: string;
+  lifetimeValue: number;
+  status: "Active" | "Inactive" | "Prospect" | "Churned";
+}
+
+export const crmCustomers: CRMCustomer[] = [
+  {
+    id: "1",
+    customerName: "Acme Corporation",
+    accountManager: "Sarah Johnson",
+    planTier: "Enterprise",
+    lastContact: "2025-09-15",
+    nextFollowUp: "2025-09-25",
+    lifetimeValue: 125000,
+    status: "Active",
+  },
+  {
+    id: "2",
+    customerName: "TechStart Inc",
+    accountManager: "Mike Chen",
+    planTier: "Professional",
+    lastContact: "2025-09-12",
+    nextFollowUp: "2025-09-22",
+    lifetimeValue: 45000,
+    status: "Active",
+  },
+  {
+    id: "3",
+    customerName: "Global Solutions Ltd",
+    accountManager: "Emma Davis",
+    planTier: "Enterprise",
+    lastContact: "2025-09-10",
+    nextFollowUp: "2025-09-20",
+    lifetimeValue: 89000,
+    status: "Active",
+  },
+  {
+    id: "4",
+    customerName: "StartupXYZ",
+    accountManager: "Alex Rodriguez",
+    planTier: "Basic",
+    lastContact: "2025-09-08",
+    nextFollowUp: "2025-09-18",
+    lifetimeValue: 12000,
+    status: "Prospect",
+  },
+  {
+    id: "5",
+    customerName: "InnovateNow",
+    accountManager: "Lisa Wang",
+    planTier: "Professional",
+    lastContact: "2025-09-05",
+    nextFollowUp: "2025-09-15",
+    lifetimeValue: 67000,
+    status: "Active",
+  },
+  {
+    id: "6",
+    customerName: "Legacy Systems Corp",
+    accountManager: "David Kim",
+    planTier: "Enterprise",
+    lastContact: "2025-09-03",
+    nextFollowUp: "2025-09-13",
+    lifetimeValue: 156000,
+    status: "Active",
+  },
+  {
+    id: "7",
+    customerName: "FutureTech Solutions",
+    accountManager: "Rachel Green",
+    planTier: "Professional",
+    lastContact: "2025-09-01",
+    nextFollowUp: "2025-09-11",
+    lifetimeValue: 34000,
+    status: "Inactive",
+  },
+  {
+    id: "8",
+    customerName: "DataDriven Co",
+    accountManager: "Tom Wilson",
+    planTier: "Enterprise",
+    lastContact: "2025-08-28",
+    nextFollowUp: "2025-09-07",
+    lifetimeValue: 78000,
+    status: "Active",
+  },
+  {
+    id: "9",
+    customerName: "CloudNine Services",
+    accountManager: "Nina Patel",
+    planTier: "Basic",
+    lastContact: "2025-08-25",
+    nextFollowUp: "2025-09-04",
+    lifetimeValue: 8500,
+    status: "Prospect",
+  },
+  {
+    id: "10",
+    customerName: "AgileWorks",
+    accountManager: "James Brown",
+    planTier: "Professional",
+    lastContact: "2025-08-22",
+    nextFollowUp: "2025-09-01",
+    lifetimeValue: 52000,
+    status: "Active",
+  },
+  {
+    id: "11",
+    customerName: "QuantumLeap Inc",
+    accountManager: "Sophie Taylor",
+    planTier: "Enterprise",
+    lastContact: "2025-08-20",
+    nextFollowUp: "2025-08-30",
+    lifetimeValue: 134000,
+    status: "Active",
+  },
+  {
+    id: "12",
+    customerName: "NextGen Technologies",
+    accountManager: "Kevin Lee",
+    planTier: "Professional",
+    lastContact: "2025-08-18",
+    nextFollowUp: "2025-08-28",
+    lifetimeValue: 41000,
+    status: "Churned",
+  },
+];

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
   Card,
@@ -35,6 +35,15 @@ export interface LineChartProps {
   dataKeys?: string[];
   dateKey?: string;
   showTimeRange?: boolean;
+  showCoinSelector?: boolean;
+  selectedCoin?: string;
+  onCoinChange?: (coin: string) => void;
+  cryptoCoins?: Array<{
+    id: string;
+    name: string;
+    symbol: string;
+    icon: string;
+  }>;
   className?: string;
 }
 
@@ -61,6 +70,10 @@ export function SampleLineChart({
   dataKeys = ["dau", "wau", "mau"],
   dateKey = "date",
   showTimeRange = true,
+  showCoinSelector = false,
+  selectedCoin,
+  onCoinChange,
+  cryptoCoins = [],
   className,
 }: LineChartProps) {
   const [timeRange, setTimeRange] = React.useState("90d");
@@ -90,33 +103,46 @@ export function SampleLineChart({
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
-        {showTimeRange && (
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger
-              className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
-              aria-label="Select a value"
-            >
-              <SelectValue placeholder="Last 3 months" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="90d" className="rounded-lg">
-                Last 3 months
-              </SelectItem>
-              <SelectItem value="30d" className="rounded-lg">
-                Last 30 days
-              </SelectItem>
-              <SelectItem value="7d" className="rounded-lg">
-                Last 7 days
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        )}
+        <div className="flex items-center gap-2">
+          {showCoinSelector && cryptoCoins.length > 0 && (
+            <Select value={selectedCoin} onValueChange={onCoinChange}>
+              <SelectTrigger className="w-[140px] rounded-lg">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {cryptoCoins.map((coin) => (
+                  <SelectItem key={coin.id} value={coin.id}>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg">{coin.icon}</span>
+                      <span>{coin.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {showTimeRange && (
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger className="w-[140px] rounded-lg">
+                <SelectValue placeholder="Last 3 months" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="90d" className="rounded-lg">
+                  Last 3 months
+                </SelectItem>
+                <SelectItem value="30d" className="rounded-lg">
+                  Last 30 days
+                </SelectItem>
+                <SelectItem value="7d" className="rounded-lg">
+                  Last 7 days
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer
-          config={config}
-          className="aspect-auto h-[250px] w-full"
-        >
+        <ChartContainer config={config} className="h-full w-full">
           <AreaChart data={filteredData}>
             <defs>
               {dataKeys.map((key, index) => (
@@ -154,6 +180,19 @@ export function SampleLineChart({
                   month: "short",
                   day: "numeric",
                 });
+              }}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickFormatter={(value) => {
+                return new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                }).format(value);
               }}
             />
             <ChartTooltip

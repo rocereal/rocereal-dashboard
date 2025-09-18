@@ -109,7 +109,7 @@ export function DateTimeRangePicker({
             id="datetime"
             variant="outline"
             className={cn(
-              "w-[400px] justify-start text-left font-normal",
+              "w-auto justify-start text-left font-normal",
               !date?.from && "text-muted-foreground"
             )}
           >
