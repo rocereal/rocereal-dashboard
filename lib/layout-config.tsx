@@ -67,11 +67,13 @@ export function LayoutConfigProvider({
     });
   };
 
-  // Apply color theme class to document body
+  // Apply color theme class to document root element
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const root = window.document.documentElement;
+
       // Remove all existing theme classes
-      document.body.classList.remove(
+      root.classList.remove(
         "theme-teal",
         "theme-blue",
         "theme-orange",
@@ -80,7 +82,7 @@ export function LayoutConfigProvider({
       );
 
       // Add the current theme class
-      document.body.classList.add(`theme-${config.colorTheme}`);
+      root.classList.add(`theme-${config.colorTheme}`);
     }
   }, [config.colorTheme]);
 

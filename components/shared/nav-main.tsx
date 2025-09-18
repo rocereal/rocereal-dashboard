@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronRight, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import {
@@ -61,9 +62,7 @@ export function NavMain({
                     tooltip={item.title}
                     isActive={isItemActive}
                   >
-                    {item.icon && (
-                      <item.icon className=" text-neutral-800 dark:text-neutral-200" />
-                    )}
+                    {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
@@ -78,9 +77,9 @@ export function NavMain({
                             asChild
                             isActive={isSubItemActive}
                           >
-                            <a href={subItem.url}>
+                            <Link href={subItem.url}>
                               <span>{subItem.title}</span>
-                            </a>
+                            </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       );
