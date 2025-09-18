@@ -1,64 +1,47 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { DynamicCard } from "@/components/ui/dynamic-card";
+import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { ecommerceMetrics } from "@/data/ecommerce";
+import { ShoppingCart, BarChart3 } from "lucide-react";
 
 export default function EcommercePage() {
   return (
     <>
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">E-commerce</h2>
-      </div>
+      <DashboardHeader
+        title="E-commerce"
+        subtitle="Monitor your online store performance and sales metrics"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "E-commerce" },
+        ]}
+        primaryAction={{
+          label: "View Orders",
+          icon: <ShoppingCart className="h-4 w-4" />,
+        }}
+        secondaryAction={{
+          label: "Analytics",
+          icon: <BarChart3 className="h-4 w-4" />,
+        }}
+      />
+
+      {/* Dynamic Metric Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-muted-foreground">
-              +15.3% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$89,432</div>
-            <p className="text-xs text-muted-foreground">
-              +22.5% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Customers</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">5,678</div>
-            <p className="text-xs text-muted-foreground">
-              +8.2% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Conversion Rate
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3.24%</div>
-            <p className="text-xs text-muted-foreground">
-              +0.5% from last month
-            </p>
-          </CardContent>
-        </Card>
+        {ecommerceMetrics.slice(0, 4).map((metric) => (
+          <DynamicCard key={metric.id} metric={metric} />
+        ))}
+      </div>
+
+      {/* Additional Metrics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-8">
+        {ecommerceMetrics.slice(4).map((metric) => (
+          <DynamicCard key={metric.id} metric={metric} size="lg" />
+        ))}
+      </div>
+
+      {/* Performance Metrics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-8">
+        {ecommerceMetrics.slice(2, 5).map((metric) => (
+          <DynamicCard key={metric.id} metric={metric} size="sm" />
+        ))}
       </div>
     </>
   );

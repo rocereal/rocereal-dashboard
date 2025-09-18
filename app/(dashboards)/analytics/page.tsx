@@ -1,56 +1,47 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DynamicCard } from "@/components/ui/dynamic-card";
+import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { analyticsMetrics } from "@/data/analytics";
+import { Download, Settings } from "lucide-react";
 
 export default function AnalyticsPage() {
   return (
     <>
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Analytics</h2>
-      </div>
+      <DashboardHeader
+        title="Analytics"
+        subtitle="Monitor your business performance and key metrics"
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "Analytics" },
+        ]}
+        primaryAction={{
+          label: "Export Data",
+          icon: <Download className="h-4 w-4" />,
+        }}
+        secondaryAction={{
+          label: "Settings",
+          icon: <Settings className="h-4 w-4" />,
+        }}
+      />
+
+      {/* Dynamic Metric Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$45,231.89</div>
-            <p className="text-xs text-muted-foreground">
-              +20.1% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+2350</div>
-            <p className="text-xs text-muted-foreground">
-              +180.1% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sales</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+12,234</div>
-            <p className="text-xs text-muted-foreground">
-              +19% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">
-              +201 since last hour
-            </p>
-          </CardContent>
-        </Card>
+        {analyticsMetrics.slice(0, 4).map((metric) => (
+          <DynamicCard key={metric.id} metric={metric} />
+        ))}
+      </div>
+
+      {/* Additional Metrics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-8">
+        {analyticsMetrics.slice(4).map((metric) => (
+          <DynamicCard key={metric.id} metric={metric} size="sm" />
+        ))}
+      </div>
+
+      {/* Full Grid of All Metrics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-8">
+        {analyticsMetrics.map((metric) => (
+          <DynamicCard key={metric.id} metric={metric} size="lg" />
+        ))}
       </div>
     </>
   );
