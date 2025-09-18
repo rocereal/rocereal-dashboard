@@ -1,16 +1,12 @@
 "use client";
 
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
-import { SectionCards } from "./SectionCards";
 import { TabsContent } from "@/components/ui/tabs";
 import { aiTabs } from "@/data/ai";
-import { userMetrics as aiUserMetrics } from "@/data/ai-user-metrics";
-import { modelMetricsData } from "@/data/ai-model-metrics";
-import { engagementMetricsData } from "@/data/ai-engagement-metrics";
-import { businessMetricsData } from "@/data/ai-business-metrics";
-import { UserMetrics } from "./UserMetrics";
-import { ModelMetrics } from "./ModelMetrics";
+import { BusinessMetrics } from "./BusinessMetrics";
 import { EngagementMetrics } from "./EngagementMetrics";
+import { ModelMetrics } from "./ModelMetrics";
+import { UserMetrics } from "./UserMetrics";
 
 export function AITabs() {
   return (
@@ -28,7 +24,7 @@ export function AITabs() {
       </TabsContent>
 
       <TabsContent value="business" className="space-y-4 pt-4">
-        <SectionCards metrics={businessMetricsData} />
+        <BusinessMetrics />
       </TabsContent>
     </TabsWithIcons>
   );
