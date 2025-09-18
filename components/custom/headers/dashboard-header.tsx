@@ -9,7 +9,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { ReactNode } from "react";
+import {
+  DateTimeRangePicker,
+  DateTimeRange,
+} from "@/components/ui/date-time-range-picker";
+import { Calendar } from "@/components/ui/calendar";
+
+import { ReactNode, useState } from "react";
 
 interface BreadcrumbItem {
   label: string;
@@ -28,6 +34,8 @@ interface DashboardHeaderProps {
     label: string;
     icon?: ReactNode;
   };
+  dateRange?: DateTimeRange;
+  onDateRangeChange?: (dateRange: DateTimeRange | undefined) => void;
 }
 
 export function DashboardHeader({
@@ -36,7 +44,11 @@ export function DashboardHeader({
   breadcrumbs = [],
   primaryAction,
   secondaryAction,
+  dateRange,
+  onDateRangeChange,
 }: DashboardHeaderProps) {
+  const [date, setDate] = useState<Date | undefined>(new Date(2025, 5, 12));
+
   return (
     <div className="flex flex-col space-y-4 pb-6">
       {/* Breadcrumb */}
@@ -72,7 +84,7 @@ export function DashboardHeader({
         </div>
 
         {/* Action Buttons */}
-        {(primaryAction || secondaryAction) && (
+        {(primaryAction || secondaryAction || dateRange) && (
           <div className="flex items-center space-x-2">
             {primaryAction && (
               <Button
@@ -82,6 +94,14 @@ export function DashboardHeader({
                 {primaryAction.icon}
                 <span>{primaryAction.label}</span>
               </Button>
+            )}
+            {(dateRange !== undefined || onDateRangeChange) && (
+              <DateTimeRangePicker
+                date={dateRange}
+                onDateChange={onDateRangeChange}
+                placeholder="Select date & time range"
+                className="w-auto"
+              />
             )}
             {secondaryAction && (
               <Button

@@ -38,15 +38,11 @@ export const menudata = {
       icon: LayoutDashboard,
       items: [
         { title: "AI", url: "/ai" },
-        { title: "Analytics", url: "/analytics" },
-        { title: "Content", url: "/content" },
         { title: "CRM", url: "/crm" },
         { title: "Crypto", url: "/crypto" },
         { title: "E-commerce", url: "/ecommerce" },
         { title: "Education", url: "/education" },
         { title: "Finance", url: "/finance" },
-        { title: "NFT & DeFi", url: "/nft-defi" },
-        { title: "Project", url: "/project" },
       ],
     },
 

@@ -1,69 +1,33 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+"use client";
+
+import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { SectionCards } from "./(components)/SectionCards";
+import { crmMetrics } from "@/data/crm-metrics";
+import { UserPlus } from "lucide-react";
+import { useState } from "react";
+import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 
 export default function CrmPage() {
+  const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
+
   return (
-    <>
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">CRM</h2>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Customers
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12,345</div>
-            <p className="text-xs text-muted-foreground">
-              +8.2% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">New Leads</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-muted-foreground">
-              +15.3% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Conversion Rate
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">24.5%</div>
-            <p className="text-xs text-muted-foreground">
-              +3.2% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Customer Satisfaction
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">4.8/5</div>
-            <p className="text-xs text-muted-foreground">
-              +0.2 from last month
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    </>
+    <div className="flex flex-col space-y-4">
+      <DashboardHeader
+        title="Customer Relationship Dashboard"
+        subtitle="Track pipeline health, customer engagement, and revenue performance in real time."
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "Customer Relationship Dashboard" },
+        ]}
+        primaryAction={{
+          label: "Add User",
+          icon: <UserPlus className="h-4 w-4" />,
+        }}
+        dateRange={dateRange}
+        onDateRangeChange={setDateRange}
+      />
+
+      <SectionCards metrics={crmMetrics} />
+    </div>
   );
 }
