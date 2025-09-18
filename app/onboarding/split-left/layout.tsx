@@ -1,3 +1,8 @@
+import { metadataTemplates } from "@/lib/metadata";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = metadataTemplates.onboarding();
+
 export default function SplitLeftLayout({
   children,
 }: {

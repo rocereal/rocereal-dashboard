@@ -5,6 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { metadataTemplates } from "@/lib/metadata";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = metadataTemplates.dashboard(
+  "AI & Machine Learning Dashboard",
+  "Monitor AI models, training jobs, API usage, and machine learning performance metrics."
+);
 
 export default function AiPage() {
   return (

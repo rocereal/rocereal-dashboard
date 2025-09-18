@@ -1,4 +1,12 @@
 import { BackgroundBeamsWithCollision } from "@/components/custom/backgrounds/background-with-beams";
+import { metadataTemplates } from "@/lib/metadata";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = metadataTemplates.page(
+  "Authentication",
+  "Secure authentication pages for Fisio dashboard template. Login, register, and manage your account securely.",
+  ["authentication", "login", "register", "security"]
+);
 
 export default function CenteredLayout({
   children,

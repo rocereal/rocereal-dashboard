@@ -1,14 +1,13 @@
-import { AppSidebar } from "@/components/shared/app-sidebar";
 import { AppHeader } from "@/components/shared/app-header";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { AppSidebar } from "@/components/shared/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { metadataTemplates } from "@/lib/metadata";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = metadataTemplates.dashboard(
+  "Main Dashboard",
+  "Welcome to your Fisio dashboard. Monitor key metrics, manage projects, and access all your tools in one place."
+);
 
 export default function Page() {
   return (

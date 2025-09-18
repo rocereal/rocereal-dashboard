@@ -1,10 +1,11 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { metadataTemplates } from "@/lib/metadata";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = metadataTemplates.dashboard(
+  "Education Dashboard",
+  "Monitor and manage educational metrics, student progress, course performance, and learning analytics."
+);
 
 export default function EducationPage() {
   return (

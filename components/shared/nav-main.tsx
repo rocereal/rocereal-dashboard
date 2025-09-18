@@ -40,11 +40,11 @@ export function NavMain({
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {items.map((item) => {
+        {items.map((item, index) => {
           // Handle section headers
           if (item.isSection) {
             return (
-              <SidebarGroup key={item.title}>
+              <SidebarGroup key={index}>
                 <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
               </SidebarGroup>
             );
@@ -63,7 +63,7 @@ export function NavMain({
 
             return (
               <Collapsible
-                key={item.title}
+                key={index}
                 asChild
                 defaultOpen={isItemActive || hasActiveSubItem}
                 className="group/collapsible"
@@ -104,7 +104,7 @@ export function NavMain({
           } else if (item.url) {
             // Render as direct link
             return (
-              <SidebarMenuItem key={item.title}>
+              <SidebarMenuItem key={index}>
                 <SidebarMenuButton
                   tooltip={item.title}
                   isActive={isItemActive}
