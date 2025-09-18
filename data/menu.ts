@@ -20,6 +20,11 @@ export const menudata = {
 
   navMain: [
     {
+      title: "Design Engineering",
+      url: "/design",
+      icon: Frame,
+    },
+    {
       title: "Dashboards",
       url: "#",
       icon: PieChart,
