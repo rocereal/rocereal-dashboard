@@ -20,6 +20,10 @@ export const menudata = {
 
   navMain: [
     {
+      title: "Platform",
+      isSection: true,
+    },
+    {
       title: "Design Engineering",
       url: "/design",
       icon: Frame,
@@ -154,6 +158,15 @@ export const menudata = {
           url: "#",
         },
       ],
+    },
+    {
+      title: "Tools",
+      isSection: true,
+    },
+    {
+      title: "Calculator",
+      url: "/calculator",
+      icon: Command,
     },
   ],
   projects: [

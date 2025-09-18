@@ -25,9 +25,10 @@ export function NavMain({
 }: {
   items: {
     title: string;
-    url: string;
+    url?: string;
     icon?: LucideIcon;
     isActive?: boolean;
+    isSection?: boolean;
     items?: {
       title: string;
       url: string;
@@ -38,11 +39,21 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Apps</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
+          // Handle section headers
+          if (item.isSection) {
+            return (
+              <SidebarGroup key={item.title}>
+                <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+              </SidebarGroup>
+            );
+          }
+
           const hasItems = item.items && item.items.length > 0;
-          const isItemActive = pathname === item.url || item.isActive;
+          const isItemActive = item.url
+            ? pathname === item.url || item.isActive
+            : false;
 
           if (hasItems) {
             // Check if any sub-items are active (for opening collapsible)
@@ -90,7 +101,7 @@ export function NavMain({
                 </SidebarMenuItem>
               </Collapsible>
             );
-          } else {
+          } else if (item.url) {
             // Render as direct link
             return (
               <SidebarMenuItem key={item.title}>
@@ -108,6 +119,8 @@ export function NavMain({
               </SidebarMenuItem>
             );
           }
+
+          return null; // Fallback for invalid items
         })}
       </SidebarMenu>
     </SidebarGroup>
