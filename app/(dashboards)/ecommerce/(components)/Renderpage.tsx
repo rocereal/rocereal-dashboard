@@ -3,17 +3,19 @@
 import { FunnelChart } from "@/components/charts/FunnelChart";
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
-import { OrdersTable } from "@/components/ecommerce/orders-table";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import {
   conversionFunnelData,
   ecommerceMetrics,
+  Product,
+  productsData,
   revenueData,
 } from "@/data/ecommerce";
 import { TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
+import { OrdersTable } from "@/app/apps/ecommerce/orders/(components)/OrdersTable";
 
 const revenueConfig: ChartConfig = {
   revenue: {
@@ -24,6 +26,25 @@ const revenueConfig: ChartConfig = {
 
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
+  const [products, setProducts] = useState(productsData);
+
+  const handleEdit = (product: Product) => {
+    console.log("Edit product:", product);
+    // Implement edit functionality
+  };
+
+  const handleDelete = (product: Product) => {
+    console.log("Delete product:", product);
+    // Implement delete functionality with confirmation
+    if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
+      setProducts(products.filter((p) => p.id !== product.id));
+    }
+  };
+
+  const handleView = (product: Product) => {
+    console.log("View product:", product);
+    // Implement view details functionality
+  };
 
   return (
     <div className="flex flex-col space-y-6">
@@ -71,7 +92,18 @@ export default function RenderPage() {
         </div>
       </div>
 
-      <OrdersTable />
+      {/* Products Table */}
+      <div className="bg-card rounded-lg border">
+        <div className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Product Catalog</h3>
+          <OrdersTable
+            products={products}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onView={handleView}
+          />
+        </div>
+      </div>
     </div>
   );
 }

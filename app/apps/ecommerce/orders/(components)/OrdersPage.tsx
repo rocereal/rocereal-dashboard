@@ -2,28 +2,9 @@
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -39,21 +20,23 @@ import {
   productsData,
 } from "@/data/ecommerce";
 import {
-  AlertTriangle,
   Calendar,
-  ChevronDown,
   DollarSign,
   Download,
   Eye,
-  Filter,
   Package,
-  Search,
   Trash2,
   User,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
+import {
+  OrdersFilters,
+  OrdersBulkActions,
+  OrderStatusBadge,
+  OrderDeleteDialog,
+} from "./index";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState(ordersData);
@@ -88,47 +71,6 @@ export default function OrdersPage() {
         return 0;
     }
   });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "delivered":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "shipped":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "processing":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "pending":
-        return "bg-orange-100 text-orange-800 border-orange-200";
-      case "cancelled":
-        return "bg-red-100 text-red-800 border-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const getProductImage = (productName: string) => {
-    const product = productsData.find((p) =>
-      productName.toLowerCase().includes(p.name.toLowerCase().split(" ")[0])
-    );
-    return product?.image || "/placeholder-product.png";
-  };
-
-  const getOrderProductImage = (order: OrderData, index: number) => {
-    return (
-      order.products[index]?.image ||
-      getProductImage(order.products[index]?.name || "")
-    );
-  };
-
-  const handleViewOrder = (orderId: string) => {
-    console.log("Viewing order:", orderId);
-    // Navigate to order details
-  };
-
-  const handleEditOrder = (orderId: string) => {
-    console.log("Editing order:", orderId);
-    // Open edit modal or navigate to edit page
-  };
 
   const handleDeleteOrder = (orderId: string) => {
     setOrderToDelete(orderId);
@@ -265,81 +207,23 @@ export default function OrdersPage() {
       <SectionCards metrics={orderMetrics} />
 
       {/* Filters and Search */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex flex-col sm:flex-row gap-4 flex-1">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search orders..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="shipped">Shipped</SelectItem>
-              <SelectItem value="delivered">Delivered</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-40">
-              <ChevronDown className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="date">Date</SelectItem>
-              <SelectItem value="value">Order Value</SelectItem>
-              <SelectItem value="customer">Customer</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <OrdersFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+      />
 
       {/* Bulk Actions */}
-      {selectedOrders.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={isAllSelected}
-                  onCheckedChange={handleSelectAll}
-                  className="h-4 w-4"
-                />
-                <span className="text-sm font-medium">
-                  {selectedOrders.length} order
-                  {selectedOrders.length !== 1 ? "s" : ""} selected
-                </span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Export Selected
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleBulkDelete}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Selected
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <OrdersBulkActions
+        selectedOrders={selectedOrders}
+        totalOrders={sortedOrders.length}
+        onSelectAll={handleSelectAll}
+        onBulkDelete={handleBulkDelete}
+        onBulkExport={handleExportOrders}
+      />
 
       {/* Orders Table */}
       <div className="bg-card rounded-lg border">
@@ -439,12 +323,7 @@ export default function OrdersPage() {
                       ${order.orderValue.toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={getStatusColor(order.status)}
-                      >
-                        {order.status}
-                      </Badge>
+                      <OrderStatusBadge status={order.status} />
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(order.date).toLocaleDateString()}
@@ -499,40 +378,12 @@ export default function OrdersPage() {
       </div>
 
       {/* Delete Order Confirmation Modal */}
-      <AlertDialog open={!!orderToDelete} onOpenChange={cancelDeleteOrder}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-500" />
-              Delete Order
-            </AlertDialogTitle>
-            <AlertDialogDescription className="space-y-2">
-              <p>
-                Are you sure you want to delete order{" "}
-                <span className="font-medium text-foreground">
-                  {orderToDelete}
-                </span>
-                ?
-              </p>
-              <p className="text-sm text-muted-foreground">
-                This action cannot be undone. This will permanently delete the
-                order and remove all associated data from our servers.
-              </p>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={cancelDeleteOrder}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDeleteOrder}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
-            >
-              Delete Order
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <OrderDeleteDialog
+        isOpen={!!orderToDelete}
+        orderToDelete={orderToDelete || ""}
+        onCancel={cancelDeleteOrder}
+        onConfirm={confirmDeleteOrder}
+      />
     </div>
   );
 }

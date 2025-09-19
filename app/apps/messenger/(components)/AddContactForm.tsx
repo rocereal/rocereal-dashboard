@@ -160,16 +160,16 @@ export function AddContactForm({
             <div className="grid grid-cols-1 gap-3">
               <Button
                 variant="outline"
-                className="justify-start h-auto p-4"
+                className="justify-start h-auto p-4 flex-col flex align-start items-start"
                 onClick={() => {
                   console.log("Send invitation to:", formData.email);
                 }}
                 disabled={!formData.email.trim()}
               >
-                <Mail className="h-4 w-4 mr-3 shrink-0" />
+                <Mail className="h-4 w-4 shrink-0" />
                 <div className="flex flex-col text-left min-w-0">
                   <div className="font-medium">Send Invitation</div>
-                  <div className="text-sm text-muted-foreground break-words">
+                  <div className="text-sm text-muted-foreground whitespace-normal break-words">
                     Send an email invitation to join messenger
                   </div>
                 </div>
@@ -177,18 +177,17 @@ export function AddContactForm({
 
               <Button
                 variant="outline"
-                className="justify-start h-auto p-4"
+                className="justify-start h-auto p-4 flex-col flex align-start items-start"
                 onClick={() => {
-                  // This would typically send an SMS invitation
-                  console.log("Send SMS invitation to:", formData.phone);
+                  console.log("Send invitation to:", formData.email);
                 }}
-                disabled={!formData.phone.trim()}
+                disabled={!formData.email.trim()}
               >
-                <Phone className="h-4 w-4 mr-3" />
-                <div className="text-left">
-                  <div className="font-medium">Send SMS Invitation</div>
-                  <div className="text-sm text-muted-foreground">
-                    Send an SMS invitation to join messenger
+                <Phone className="h-4 w-4" />
+                <div className="flex flex-col text-left min-w-0">
+                  <div className="font-medium">Send Invitation</div>
+                  <div className="text-sm text-muted-foreground whitespace-normal break-words">
+                    Send an sms invitation to join messenger
                   </div>
                 </div>
               </Button>

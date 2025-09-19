@@ -36,7 +36,7 @@ export function FunnelChart({
           <CardDescription>{description}</CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
+      <CardContent className="px-2 sm:py-2">
         <div className="space-y-4">
           {data.map((item, index) => {
             const width = (item.users / maxUsers) * 100;
@@ -50,7 +50,7 @@ export function FunnelChart({
 
             return (
               <div key={item.stage} className="flex items-center gap-4">
-                <div className="w-32 text-sm font-medium text-right">
+                <div className="w-fit text-sm font-medium text-right">
                   {item.stage}
                 </div>
                 <div className="flex-1 relative">

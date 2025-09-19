@@ -61,7 +61,7 @@ export const menudata = {
       icon: CalendarDays,
     },
     {
-      title: "E-commerce",
+      title: "E-Commerce",
       url: "#",
       icon: ShoppingCart,
       items: [
