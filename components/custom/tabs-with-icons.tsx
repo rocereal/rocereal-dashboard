@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 interface TabsWithIconsProps {
   tabs: AITab[];
   defaultValue?: string;
+  className?: string;
+  grid?: string;
   variant?: "default" | "underline";
   children?: ReactNode;
   onValueChange?: (value: string) => void;
@@ -20,6 +22,8 @@ export function TabsWithIcons({
   defaultValue,
   variant = "default",
   children,
+  className,
+  grid,
   onValueChange,
 }: TabsWithIconsProps) {
   if (variant === "underline") {
@@ -57,9 +61,9 @@ export function TabsWithIcons({
     <Tabs
       defaultValue={defaultValue || tabs[0]?.id}
       onValueChange={onValueChange}
-      className="w-full"
+      className={cn(className, "w-full")}
     >
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className={cn(grid, "grid w-full grid-cols-4")}>
         {tabs.map((tab) => {
           const IconComponent = (Icons as any)[tab.iconName];
           return (

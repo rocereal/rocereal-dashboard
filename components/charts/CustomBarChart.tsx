@@ -53,7 +53,7 @@ export function CustomBarChart({
   ];
 
   return (
-    <Card className={`py-0 shadow-sm ${className || ""}`}>
+    <Card className={`py-0 shadow-xs ${className || ""}`}>
       <CardHeader className="flex flex-col items-stretch border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3">
           <CardTitle className="text-base font-semibold">{title}</CardTitle>

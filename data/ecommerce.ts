@@ -212,7 +212,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ORD-001",
     customer: "John Smith",
-    products: ["Wireless Headphones", "Phone Case"],
+    products: ["Wireless Bluetooth Headphones", "Phone Case"],
     orderValue: 89.98,
     status: "delivered",
     date: "2025-08-18",
@@ -228,7 +228,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ORD-003",
     customer: "Mike Davis",
-    products: ["Smart Watch", "Screen Protector"],
+    products: ["Smart Fitness Watch", "Screen Protector"],
     orderValue: 199.99,
     status: "processing",
     date: "2025-08-16",
@@ -275,6 +275,135 @@ export const ordersData: OrderData[] = [
   },
 ];
 
+export interface ProductPurchase {
+  id: string;
+  orderId: string;
+  customer: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+  purchaseDate: string;
+  customerEmail?: string;
+}
+
+// Sample purchases for each product
+export const getProductPurchases = (productId: string): ProductPurchase[] => {
+  const purchases: Record<string, ProductPurchase[]> = {
+    "prod-001": [
+      {
+        id: "PUR-001",
+        orderId: "ORD-001",
+        customer: "John Smith",
+        quantity: 1,
+        unitPrice: 89.99,
+        totalPrice: 89.99,
+        status: "delivered",
+        purchaseDate: "2025-08-18",
+        customerEmail: "john.smith@email.com",
+      },
+      {
+        id: "PUR-002",
+        orderId: "ORD-009",
+        customer: "Alice Johnson",
+        quantity: 2,
+        unitPrice: 89.99,
+        totalPrice: 179.98,
+        status: "shipped",
+        purchaseDate: "2025-08-16",
+        customerEmail: "alice.j@email.com",
+      },
+      {
+        id: "PUR-003",
+        orderId: "ORD-015",
+        customer: "Bob Wilson",
+        quantity: 1,
+        unitPrice: 89.99,
+        totalPrice: 89.99,
+        status: "processing",
+        purchaseDate: "2025-08-14",
+        customerEmail: "bob.wilson@email.com",
+      },
+    ],
+    "prod-002": [
+      {
+        id: "PUR-004",
+        orderId: "ORD-003",
+        customer: "Mike Davis",
+        quantity: 1,
+        unitPrice: 199.99,
+        totalPrice: 199.99,
+        status: "processing",
+        purchaseDate: "2025-08-16",
+        customerEmail: "mike.davis@email.com",
+      },
+      {
+        id: "PUR-005",
+        orderId: "ORD-010",
+        customer: "Sarah Brown",
+        quantity: 1,
+        unitPrice: 199.99,
+        totalPrice: 199.99,
+        status: "delivered",
+        purchaseDate: "2025-08-13",
+        customerEmail: "sarah.b@email.com",
+      },
+    ],
+    "prod-004": [
+      {
+        id: "PUR-006",
+        orderId: "ORD-011",
+        customer: "Emma Davis",
+        quantity: 3,
+        unitPrice: 12.99,
+        totalPrice: 38.97,
+        status: "delivered",
+        purchaseDate: "2025-08-17",
+        customerEmail: "emma.davis@email.com",
+      },
+      {
+        id: "PUR-007",
+        orderId: "ORD-012",
+        customer: "Chris Taylor",
+        quantity: 1,
+        unitPrice: 12.99,
+        totalPrice: 12.99,
+        status: "shipped",
+        purchaseDate: "2025-08-15",
+        customerEmail: "chris.t@email.com",
+      },
+    ],
+    "prod-005": [
+      {
+        id: "PUR-008",
+        orderId: "ORD-013",
+        customer: "Lisa Chen",
+        quantity: 1,
+        unitPrice: 49.99,
+        totalPrice: 49.99,
+        status: "delivered",
+        purchaseDate: "2025-08-16",
+        customerEmail: "lisa.chen@email.com",
+      },
+    ],
+    "prod-006": [
+      {
+        id: "PUR-009",
+        orderId: "ORD-014",
+        customer: "David Miller",
+        quantity: 2,
+        unitPrice: 34.99,
+        totalPrice: 69.98,
+        status: "pending",
+        purchaseDate: "2025-08-18",
+        customerEmail: "david.miller@email.com",
+      },
+    ],
+  };
+
+  return purchases[productId] || [];
+};
+
 export interface Product {
   id: string;
   name: string;
@@ -291,7 +420,7 @@ export interface Product {
 
 export const productsData: Product[] = [
   {
-    id: "PROD-001",
+    id: "prod-001",
     name: "Wireless Bluetooth Headphones",
     sku: "WBH-001",
     category: "Electronics",
@@ -304,7 +433,7 @@ export const productsData: Product[] = [
     updatedAt: "2025-08-18",
   },
   {
-    id: "PROD-002",
+    id: "prod-002",
     name: "Smart Fitness Watch",
     sku: "SFW-002",
     category: "Electronics",
@@ -317,7 +446,7 @@ export const productsData: Product[] = [
     updatedAt: "2025-08-17",
   },
   {
-    id: "PROD-003",
+    id: "prod-003",
     name: "Organic Cotton T-Shirt",
     sku: "OCT-003",
     category: "Clothing",
@@ -330,7 +459,7 @@ export const productsData: Product[] = [
     updatedAt: "2025-08-16",
   },
   {
-    id: "PROD-004",
+    id: "prod-004",
     name: "Ceramic Coffee Mug",
     sku: "CCM-004",
     category: "Home & Kitchen",
@@ -343,7 +472,7 @@ export const productsData: Product[] = [
     updatedAt: "2025-08-15",
   },
   {
-    id: "PROD-005",
+    id: "prod-005",
     name: "Yoga Mat Premium",
     sku: "YMP-005",
     category: "Sports & Fitness",
@@ -356,7 +485,7 @@ export const productsData: Product[] = [
     updatedAt: "2025-08-14",
   },
   {
-    id: "PROD-006",
+    id: "prod-006",
     name: "Wireless Charging Pad",
     sku: "WCP-006",
     category: "Electronics",
@@ -369,7 +498,7 @@ export const productsData: Product[] = [
     updatedAt: "2025-08-13",
   },
   {
-    id: "PROD-007",
+    id: "prod-007",
     name: "Leather Wallet",
     sku: "LW-007",
     category: "Accessories",
@@ -382,7 +511,7 @@ export const productsData: Product[] = [
     updatedAt: "2025-08-12",
   },
   {
-    id: "PROD-008",
+    id: "prod-008",
     name: "LED Desk Lamp",
     sku: "LDL-008",
     category: "Home & Office",
@@ -395,7 +524,7 @@ export const productsData: Product[] = [
     updatedAt: "2025-08-11",
   },
   {
-    id: "PROD-009",
+    id: "prod-009",
     name: "Stainless Steel Water Bottle",
     sku: "SSWB-009",
     category: "Sports & Outdoors",
@@ -409,7 +538,7 @@ export const productsData: Product[] = [
     updatedAt: "2025-08-10",
   },
   {
-    id: "PROD-010",
+    id: "prod-010",
     name: "Bluetooth Speaker",
     sku: "BS-010",
     category: "Electronics",
