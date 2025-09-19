@@ -4,7 +4,7 @@ import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { metadataTemplates } from "@/lib/metadata";
 import { FileText, Plus, Package } from "lucide-react";
 import { SectionCards } from "./SectionCards";
-import { ProductsTable } from "./ProductsTable";
+import { OrdersTable } from "./OrdersTable";
 import { productsData, Product } from "@/data/ecommerce";
 import { useState } from "react";
 
@@ -106,7 +106,7 @@ export default function RenderPage() {
       <div className="bg-card rounded-lg border">
         <div className="p-6">
           <h3 className="text-lg font-semibold mb-4">Product Catalog</h3>
-          <ProductsTable
+          <OrdersTable
             products={products}
             onEdit={handleEdit}
             onDelete={handleDelete}

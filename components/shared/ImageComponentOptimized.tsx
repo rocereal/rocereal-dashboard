@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import React, { useState } from "react";
 import { Blurhash } from "react-blurhash";
 import useNextBlurhash from "use-next-blurhash";
@@ -11,7 +11,7 @@ export interface OptimizedImageProps {
   placeholder?: string;
   onLoadComplete?: () => void;
   onError?: () => void;
-  src?: string | null;
+  src?: string | StaticImageData | null;
   alt?: string;
   fill?: boolean;
   priority?: boolean;

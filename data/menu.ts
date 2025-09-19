@@ -70,7 +70,7 @@ export const menudata = {
         },
         { title: "Add Product", url: "/apps/ecommerce/add-product" },
         { title: "Orders", url: "/apps/ecommerce/orders" },
-        { title: "Order Details", url: "/apps/ecommerce/order-details" },
+        { title: "Order Details", url: "/apps/ecommerce/orders/ord-001" },
       ],
     },
     {

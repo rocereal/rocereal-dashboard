@@ -199,10 +199,15 @@ export const conversionFunnelData: FunnelData[] = [
   },
 ];
 
+export interface OrderProduct {
+  name: string;
+  image: string | StaticImageData;
+}
+
 export interface OrderData {
   id: string;
   customer: string;
-  products: string[];
+  products: OrderProduct[];
   orderValue: number;
   status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
   date: string;
@@ -210,65 +215,95 @@ export interface OrderData {
 
 export const ordersData: OrderData[] = [
   {
-    id: "ORD-001",
+    id: "ord-001",
     customer: "John Smith",
-    products: ["Wireless Bluetooth Headphones", "Phone Case"],
+    products: [
+      {
+        name: "Wireless Bluetooth Headphones",
+        image: WirelessBluetoothHeadphones,
+      },
+      { name: "Ceramic Coffee Mug", image: CeramicCoffeeMug },
+    ],
     orderValue: 89.98,
     status: "delivered",
     date: "2025-08-18",
   },
   {
-    id: "ORD-002",
+    id: "ord-002",
     customer: "Sarah Johnson",
-    products: ["Laptop Stand", "USB Cable"],
-    orderValue: 45.5,
+    products: [
+      { name: "LED Desk Lamp", image: LEDDeskLamp },
+      { name: "Leather Wallet", image: LeatherWallet },
+    ],
+    orderValue: 145.5,
     status: "shipped",
     date: "2025-08-17",
   },
   {
-    id: "ORD-003",
+    id: "ord-003",
     customer: "Mike Davis",
-    products: ["Smart Fitness Watch", "Screen Protector"],
+    products: [
+      { name: "Smart Fitness Watch", image: SmartFitnessWatch },
+      {
+        name: "Stainless Steel Water Bottle",
+        image: StainlessSteelWaterBottle,
+      },
+    ],
     orderValue: 199.99,
     status: "processing",
     date: "2025-08-16",
   },
   {
-    id: "ORD-004",
+    id: "ord-004",
     customer: "Emily Chen",
-    products: ["Bluetooth Speaker"],
+    products: [{ name: "Bluetooth Speaker", image: BluetoothSpeaker }],
     orderValue: 79.99,
     status: "pending",
     date: "2025-08-15",
   },
   {
-    id: "ORD-005",
+    id: "ord-005",
     customer: "David Wilson",
-    products: ["Gaming Mouse", "Keyboard", "Mouse Pad"],
+    products: [
+      { name: "Yoga Mat Premium", image: YogaMatPremium },
+      { name: "Organic Cotton T-Shirt", image: OrganicCottonTShirt },
+    ],
     orderValue: 124.97,
     status: "delivered",
     date: "2025-08-14",
   },
   {
-    id: "ORD-006",
+    id: "ord-006",
     customer: "Lisa Brown",
-    products: ["Tablet Cover", "Stylus Pen"],
-    orderValue: 34.98,
+    products: [
+      { name: "Leather Wallet", image: LeatherWallet },
+      {
+        name: "Stainless Steel Water Bottle",
+        image: StainlessSteelWaterBottle,
+      },
+    ],
+    orderValue: 134.98,
     status: "shipped",
     date: "2025-08-13",
   },
   {
-    id: "ORD-007",
+    id: "ord-007",
     customer: "Tom Anderson",
-    products: ["External Hard Drive"],
+    products: [{ name: "Wireless Charging Pad", image: WirelessChargingPad }],
     orderValue: 89.99,
     status: "cancelled",
     date: "2025-08-12",
   },
   {
-    id: "ORD-008",
+    id: "ord-008",
     customer: "Anna Martinez",
-    products: ["Wireless Earbuds", "Charging Case"],
+    products: [
+      {
+        name: "Wireless Bluetooth Headphones",
+        image: WirelessBluetoothHeadphones,
+      },
+      { name: "Organic Cotton T-Shirt", image: OrganicCottonTShirt },
+    ],
     orderValue: 149.98,
     status: "processing",
     date: "2025-08-11",
@@ -293,7 +328,7 @@ export const getProductPurchases = (productId: string): ProductPurchase[] => {
     "prod-001": [
       {
         id: "PUR-001",
-        orderId: "ORD-001",
+        orderId: "ord-001",
         customer: "John Smith",
         quantity: 1,
         unitPrice: 89.99,
@@ -304,7 +339,7 @@ export const getProductPurchases = (productId: string): ProductPurchase[] => {
       },
       {
         id: "PUR-002",
-        orderId: "ORD-009",
+        orderId: "ord-009",
         customer: "Alice Johnson",
         quantity: 2,
         unitPrice: 89.99,
@@ -315,7 +350,7 @@ export const getProductPurchases = (productId: string): ProductPurchase[] => {
       },
       {
         id: "PUR-003",
-        orderId: "ORD-015",
+        orderId: "ord-015",
         customer: "Bob Wilson",
         quantity: 1,
         unitPrice: 89.99,
@@ -328,7 +363,7 @@ export const getProductPurchases = (productId: string): ProductPurchase[] => {
     "prod-002": [
       {
         id: "PUR-004",
-        orderId: "ORD-003",
+        orderId: "ord-003",
         customer: "Mike Davis",
         quantity: 1,
         unitPrice: 199.99,
@@ -339,7 +374,7 @@ export const getProductPurchases = (productId: string): ProductPurchase[] => {
       },
       {
         id: "PUR-005",
-        orderId: "ORD-010",
+        orderId: "ord-010",
         customer: "Sarah Brown",
         quantity: 1,
         unitPrice: 199.99,
@@ -352,7 +387,7 @@ export const getProductPurchases = (productId: string): ProductPurchase[] => {
     "prod-004": [
       {
         id: "PUR-006",
-        orderId: "ORD-011",
+        orderId: "ord-011",
         customer: "Emma Davis",
         quantity: 3,
         unitPrice: 12.99,
@@ -363,7 +398,7 @@ export const getProductPurchases = (productId: string): ProductPurchase[] => {
       },
       {
         id: "PUR-007",
-        orderId: "ORD-012",
+        orderId: "ord-012",
         customer: "Chris Taylor",
         quantity: 1,
         unitPrice: 12.99,
@@ -376,7 +411,7 @@ export const getProductPurchases = (productId: string): ProductPurchase[] => {
     "prod-005": [
       {
         id: "PUR-008",
-        orderId: "ORD-013",
+        orderId: "ord-013",
         customer: "Lisa Chen",
         quantity: 1,
         unitPrice: 49.99,
@@ -389,7 +424,7 @@ export const getProductPurchases = (productId: string): ProductPurchase[] => {
     "prod-006": [
       {
         id: "PUR-009",
-        orderId: "ORD-014",
+        orderId: "ord-014",
         customer: "David Miller",
         quantity: 2,
         unitPrice: 34.99,

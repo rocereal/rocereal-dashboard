@@ -3,6 +3,7 @@
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable, createSortableColumn } from "@/components/ui/data-table";
 import {
   DropdownMenu,
@@ -14,9 +15,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Product } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
+import { Edit, Eye, MoreHorizontal, Trash2, Download } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface ProductsTableProps {
   products: Product[];
@@ -32,7 +34,62 @@ export function ProductsTable({
   onView,
 }: ProductsTableProps) {
   const router = useRouter();
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+
+  // Checkbox handlers
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedProducts(products.map((product) => product.id));
+    } else {
+      setSelectedProducts([]);
+    }
+  };
+
+  const handleSelectProduct = (productId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedProducts((prev) => [...prev, productId]);
+    } else {
+      setSelectedProducts((prev) => prev.filter((id) => id !== productId));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    selectedProducts.forEach((productId) => {
+      const product = products.find((p) => p.id === productId);
+      if (product) {
+        onDelete?.(product);
+      }
+    });
+    setSelectedProducts([]);
+  };
+
+  const isAllSelected =
+    products.length > 0 && selectedProducts.length === products.length;
+  const isIndeterminate =
+    selectedProducts.length > 0 && selectedProducts.length < products.length;
+
   const columns: ColumnDef<Product>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={isAllSelected}
+          onCheckedChange={handleSelectAll}
+          aria-label="Select all products"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={selectedProducts.includes(row.original.id)}
+          onCheckedChange={(checked) =>
+            handleSelectProduct(row.original.id, checked as boolean)
+          }
+          aria-label={`Select product ${row.original.name}`}
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "image",
       header: "Image",
@@ -167,11 +224,48 @@ export function ProductsTable({
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={products}
-      searchKey="name"
-      searchPlaceholder="Search products..."
-    />
+    <div className="space-y-4">
+      {/* Bulk Actions */}
+      {selectedProducts.length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={isAllSelected}
+                  onCheckedChange={handleSelectAll}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm font-medium">
+                  {selectedProducts.length} product
+                  {selectedProducts.length !== 1 ? "s" : ""} selected
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export Selected
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Selected
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <DataTable
+        columns={columns}
+        data={products}
+        searchKey="name"
+        searchPlaceholder="Search products..."
+      />
+    </div>
   );
 }

@@ -25,7 +25,7 @@ interface ProductsTableProps {
   onView?: (product: Product) => void;
 }
 
-export function ProductsTable({
+export function OrdersTable({
   products,
   onEdit,
   onDelete,
@@ -39,8 +39,6 @@ export function ProductsTable({
       cell: ({ row }) => {
         const image = row.getValue("image");
         const productName = row.getValue("name") as string;
-
-        console.log(row);
 
         return (
           <div className="flex items-center justify-center">

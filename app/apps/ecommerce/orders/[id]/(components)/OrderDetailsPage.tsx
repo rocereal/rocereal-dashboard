@@ -35,6 +35,7 @@ import {
 import { ordersData, productsData } from "@/data/ecommerce";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 interface OrderDetailsPageProps {
   orderId: string;
@@ -52,14 +53,15 @@ export default function OrderDetailsPage({ orderId }: OrderDetailsPageProps) {
       // Enhance order with product details
       const enhancedOrder = {
         ...foundOrder,
-        items: foundOrder.products.map((productName) => {
+        items: foundOrder.products.map((orderProduct) => {
           const product = productsData.find((p) =>
-            productName
+            orderProduct.name
               .toLowerCase()
               .includes(p.name.toLowerCase().split(" ")[0])
           );
           return {
-            name: productName,
+            name: orderProduct.name,
+            image: orderProduct.image,
             product: product,
             quantity: 1, // Default quantity, could be enhanced with real data
             price: product?.price || 0,
@@ -194,19 +196,15 @@ export default function OrderDetailsPage({ orderId }: OrderDetailsPageProps) {
                     key={index}
                     className="flex items-center gap-4 p-4 border rounded-lg"
                   >
-                    <Avatar className="h-16 w-16 border">
-                      <AvatarImage
-                        src={
-                          typeof item.product?.image === "string"
-                            ? item.product.image
-                            : undefined
-                        }
+                    <div className="relative w-12 h-12 rounded-md overflow-hidden border">
+                      <ImageComponentOptimized
+                        src={item?.image}
                         alt={item.name}
+                        fill
+                        className="object-cover"
+                        sizes="48px"
                       />
-                      <AvatarFallback>
-                        <Package className="h-6 w-6" />
-                      </AvatarFallback>
-                    </Avatar>
+                    </div>
 
                     <div className="flex-1">
                       <h4 className="font-medium">{item.name}</h4>
@@ -230,10 +228,8 @@ export default function OrderDetailsPage({ orderId }: OrderDetailsPageProps) {
                 ))}
               </div>
 
-              <Separator className="my-4" />
-
               {/* Order Summary */}
-              <div className="space-y-2">
+              <div className="space-y-4 pt-4">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal</span>
                   <span>${order.orderValue.toFixed(2)}</span>

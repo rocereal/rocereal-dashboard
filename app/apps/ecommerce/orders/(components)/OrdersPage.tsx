@@ -1,10 +1,21 @@
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -20,30 +31,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState } from "react";
 import {
-  Eye,
-  Edit,
-  Trash2,
-  Download,
-  Filter,
-  Search,
-  Package,
-  DollarSign,
+  EcommerceMetric,
+  OrderData,
+  ordersData,
+  productsData,
+} from "@/data/ecommerce";
+import {
+  AlertTriangle,
   Calendar,
-  User,
-  MoreHorizontal,
   ChevronDown,
+  DollarSign,
+  Download,
+  Eye,
+  Filter,
+  Package,
+  Search,
+  Trash2,
+  User,
 } from "lucide-react";
-import { ordersData, productsData } from "@/data/ecommerce";
 import Link from "next/link";
+import { useState } from "react";
+import { SectionCards } from "./SectionCards";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState(ordersData);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
+  const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
+  const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
 
   // Filter orders based on search and status
   const filteredOrders = orders.filter((order) => {
@@ -95,6 +113,13 @@ export default function OrdersPage() {
     return product?.image || "/placeholder-product.png";
   };
 
+  const getOrderProductImage = (order: OrderData, index: number) => {
+    return (
+      order.products[index]?.image ||
+      getProductImage(order.products[index]?.name || "")
+    );
+  };
+
   const handleViewOrder = (orderId: string) => {
     console.log("Viewing order:", orderId);
     // Navigate to order details
@@ -106,9 +131,18 @@ export default function OrdersPage() {
   };
 
   const handleDeleteOrder = (orderId: string) => {
-    if (confirm("Are you sure you want to delete this order?")) {
-      setOrders(orders.filter((order) => order.id !== orderId));
+    setOrderToDelete(orderId);
+  };
+
+  const confirmDeleteOrder = () => {
+    if (orderToDelete) {
+      setOrders(orders.filter((order) => order.id !== orderToDelete));
+      setOrderToDelete(null);
     }
+  };
+
+  const cancelDeleteOrder = () => {
+    setOrderToDelete(null);
   };
 
   const handleExportOrders = () => {
@@ -116,7 +150,43 @@ export default function OrdersPage() {
     // Implement export functionality
   };
 
-  // Calculate summary stats
+  // Checkbox handlers
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedOrders(sortedOrders.map((order) => order.id));
+    } else {
+      setSelectedOrders([]);
+    }
+  };
+
+  const handleSelectOrder = (orderId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedOrders((prev) => [...prev, orderId]);
+    } else {
+      setSelectedOrders((prev) => prev.filter((id) => id !== orderId));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedOrders.length > 0) {
+      setOrderToDelete(selectedOrders.join(", ")); // Show selected order IDs
+    }
+  };
+
+  const confirmBulkDelete = () => {
+    if (selectedOrders.length > 0) {
+      setOrders(orders.filter((order) => !selectedOrders.includes(order.id)));
+      setSelectedOrders([]);
+      setOrderToDelete(null);
+    }
+  };
+
+  const isAllSelected =
+    sortedOrders.length > 0 && selectedOrders.length === sortedOrders.length;
+  const isIndeterminate =
+    selectedOrders.length > 0 && selectedOrders.length < sortedOrders.length;
+
+  // Calculate summary stats and create metrics
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, order) => sum + order.orderValue, 0);
   const pendingOrders = orders.filter(
@@ -125,6 +195,55 @@ export default function OrdersPage() {
   const deliveredOrders = orders.filter(
     (order) => order.status === "delivered"
   ).length;
+  const processingOrders = orders.filter(
+    (order) => order.status === "processing"
+  ).length;
+  const shippedOrders = orders.filter(
+    (order) => order.status === "shipped"
+  ).length;
+
+  // Create order metrics for SectionCards
+  const orderMetrics: EcommerceMetric[] = [
+    {
+      id: "total-orders",
+      title: "Total Orders",
+      value: totalOrders,
+      change: `+${Math.floor(totalOrders * 0.15)} this week`,
+      changeType: "positive",
+      icon: Package,
+      description: "Total number of orders placed",
+    },
+    {
+      id: "total-revenue",
+      title: "Total Revenue",
+      value: `$${totalRevenue.toFixed(0)}K`,
+      change: `+${Math.floor(totalRevenue * 0.12)}% vs last month`,
+      changeType: "positive",
+      icon: DollarSign,
+      description: "Total revenue from all orders",
+    },
+    {
+      id: "pending-orders",
+      title: "Pending Orders",
+      value: pendingOrders,
+      change:
+        pendingOrders > 0
+          ? `-${Math.floor(pendingOrders * 0.2)} this week`
+          : "No change",
+      changeType: pendingOrders > 0 ? "negative" : "neutral",
+      icon: Calendar,
+      description: "Orders awaiting processing",
+    },
+    {
+      id: "delivered-orders",
+      title: "Delivered Orders",
+      value: deliveredOrders,
+      change: `+${Math.floor(deliveredOrders * 0.25)} this week`,
+      changeType: "positive",
+      icon: User,
+      description: "Successfully delivered orders",
+    },
+  ];
 
   return (
     <div className="flex flex-col space-y-6">
@@ -142,42 +261,8 @@ export default function OrdersPage() {
         }}
       />
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-card rounded-lg border p-4">
-          <div className="flex items-center gap-2">
-            <Package className="h-5 w-5 text-blue-500" />
-            <span className="text-sm font-medium">Total Orders</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">{totalOrders}</div>
-        </div>
-
-        <div className="bg-card rounded-lg border p-4">
-          <div className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5 text-green-500" />
-            <span className="text-sm font-medium">Total Revenue</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">
-            ${totalRevenue.toFixed(2)}
-          </div>
-        </div>
-
-        <div className="bg-card rounded-lg border p-4">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-orange-500" />
-            <span className="text-sm font-medium">Pending Orders</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">{pendingOrders}</div>
-        </div>
-
-        <div className="bg-card rounded-lg border p-4">
-          <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-purple-500" />
-            <span className="text-sm font-medium">Delivered</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">{deliveredOrders}</div>
-        </div>
-      </div>
+      {/* Order Metrics using SectionCards */}
+      <SectionCards metrics={orderMetrics} />
 
       {/* Filters and Search */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -221,6 +306,41 @@ export default function OrdersPage() {
         </div>
       </div>
 
+      {/* Bulk Actions */}
+      {selectedOrders.length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={isAllSelected}
+                  onCheckedChange={handleSelectAll}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm font-medium">
+                  {selectedOrders.length} order
+                  {selectedOrders.length !== 1 ? "s" : ""} selected
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Export Selected
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Selected
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Orders Table */}
       <div className="bg-card rounded-lg border">
         <div className="p-6">
@@ -234,6 +354,13 @@ export default function OrdersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={isAllSelected}
+                      onCheckedChange={handleSelectAll}
+                      aria-label="Select all orders"
+                    />
+                  </TableHead>
                   <TableHead>Order ID</TableHead>
                   <TableHead>Customer</TableHead>
                   <TableHead>Products</TableHead>
@@ -246,10 +373,19 @@ export default function OrdersPage() {
               <TableBody>
                 {sortedOrders.map((order) => (
                   <TableRow key={order.id}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedOrders.includes(order.id)}
+                        onCheckedChange={(checked) =>
+                          handleSelectOrder(order.id, checked as boolean)
+                        }
+                        aria-label={`Select order ${order.id}`}
+                      />
+                    </TableCell>
                     <TableCell className="font-medium">
                       <Link
                         href={`/apps/ecommerce/orders/${order.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                        className="text-primary hover:underline"
                       >
                         {order.id}
                       </Link>
@@ -276,19 +412,16 @@ export default function OrdersPage() {
                       <div className="flex items-center gap-2">
                         {order.products.slice(0, 2).map((product, index) => (
                           <div key={index} className="relative">
-                            <Avatar className="h-8 w-8 border">
-                              <AvatarImage
-                                src={
-                                  typeof getProductImage(product) === "string"
-                                    ? (getProductImage(product) as string)
-                                    : undefined
-                                }
-                                alt={product}
+                            <div className="relative w-12 h-12 rounded-md overflow-hidden border">
+                              <ImageComponentOptimized
+                                src={product?.image}
+                                alt={product.name}
+                                fill
+                                className="object-cover"
+                                sizes="48px"
                               />
-                              <AvatarFallback className="text-xs">
-                                <Package className="h-3 w-3" />
-                              </AvatarFallback>
-                            </Avatar>
+                            </div>
+
                             {index === 1 && order.products.length > 2 && (
                               <div className="absolute -top-1 -right-1 bg-gray-800 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                                 +{order.products.length - 2}
@@ -318,22 +451,23 @@ export default function OrdersPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleViewOrder(order.id)}
-                          className="h-8 w-8 p-0"
+                        <Link
+                          shallow={true}
+                          href="/apps/ecommerce/orders/[id]"
+                          as={`/apps/ecommerce/orders/${order?.id}`}
+                          passHref
+                          style={{ textDecoration: "none" }}
+                          className="cursor-pointer"
                         >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditOrder(order.id)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </Link>
+
                         <Button
                           variant="ghost"
                           size="sm"
@@ -363,6 +497,42 @@ export default function OrdersPage() {
           )}
         </div>
       </div>
+
+      {/* Delete Order Confirmation Modal */}
+      <AlertDialog open={!!orderToDelete} onOpenChange={cancelDeleteOrder}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              Delete Order
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>
+                Are you sure you want to delete order{" "}
+                <span className="font-medium text-foreground">
+                  {orderToDelete}
+                </span>
+                ?
+              </p>
+              <p className="text-sm text-muted-foreground">
+                This action cannot be undone. This will permanently delete the
+                order and remove all associated data from our servers.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelDeleteOrder}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteOrder}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              Delete Order
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

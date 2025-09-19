@@ -1,11 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CRMMetric } from "@/data/crm-metrics";
+import { EcommerceMetric } from "@/data/ecommerce";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SectionCardsProps {
-  metrics?: CRMMetric[];
+  metrics?: EcommerceMetric[];
   className?: string;
 }
 
