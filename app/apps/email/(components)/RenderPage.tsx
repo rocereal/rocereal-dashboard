@@ -1,158 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+import { Email, emailTabs, mockEmails, sidebarItems } from "@/data/email";
+import { cn } from "@/lib/utils";
 import {
-  Inbox,
-  Send,
-  FileText,
-  Trash2,
-  Star,
   Archive,
-  Search,
-  Plus,
+  Forward,
+  Inbox,
+  Menu,
   MoreVertical,
   Paperclip,
+  Plus,
   Reply,
-  Forward,
-  Menu,
+  Search,
+  Star,
+  Trash2,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-interface Email {
-  id: string;
-  from: string;
-  fromEmail: string;
-  to: string;
-  subject: string;
-  body: string;
-  timestamp: string;
-  isRead: boolean;
-  isStarred: boolean;
-  hasAttachments: boolean;
-  category: "inbox" | "sent" | "drafts" | "trash";
-}
-
-const mockEmails: Email[] = [
-  {
-    id: "1",
-    from: "John Smith",
-    fromEmail: "john.smith@example.com",
-    to: "you@company.com",
-    subject: "Project Update - Q4 Review",
-    body: "Hi team, here's the latest update on our Q4 projects...",
-    timestamp: "2025-01-15T10:30:00Z",
-    isRead: false,
-    isStarred: true,
-    hasAttachments: true,
-    category: "inbox",
-  },
-  {
-    id: "2",
-    from: "Sarah Johnson",
-    fromEmail: "sarah.johnson@client.com",
-    to: "you@company.com",
-    subject: "Meeting Request - Product Demo",
-    body: "I'd like to schedule a product demo for next week...",
-    timestamp: "2025-01-15T09:15:00Z",
-    isRead: true,
-    isStarred: false,
-    hasAttachments: false,
-    category: "inbox",
-  },
-  {
-    id: "3",
-    from: "Mike Davis",
-    fromEmail: "mike.davis@partner.com",
-    to: "you@company.com",
-    subject: "Partnership Proposal",
-    body: "We're excited about the partnership opportunity...",
-    timestamp: "2025-01-14T16:45:00Z",
-    isRead: false,
-    isStarred: false,
-    hasAttachments: true,
-    category: "inbox",
-  },
-  {
-    id: "4",
-    from: "Emily Chen",
-    fromEmail: "emily.chen@vendor.com",
-    to: "you@company.com",
-    subject: "Invoice #INV-2025-001",
-    body: "Please find attached the invoice for our recent services...",
-    timestamp: "2025-01-14T14:20:00Z",
-    isRead: true,
-    isStarred: false,
-    hasAttachments: true,
-    category: "inbox",
-  },
-  {
-    id: "5",
-    from: "David Wilson",
-    fromEmail: "david.wilson@team.com",
-    to: "you@company.com",
-    subject: "Weekly Team Standup Notes",
-    body: "Here are the notes from today's standup meeting...",
-    timestamp: "2025-01-14T11:00:00Z",
-    isRead: true,
-    isStarred: false,
-    hasAttachments: false,
-    category: "inbox",
-  },
-];
-
-const sidebarItems = [
-  {
-    id: "inbox",
-    label: "Inbox",
-    icon: Inbox,
-    count: 12,
-    color: "text-blue-600",
-  },
-  {
-    id: "starred",
-    label: "Starred",
-    icon: Star,
-    count: 3,
-    color: "text-yellow-600",
-  },
-  { id: "sent", label: "Sent", icon: Send, count: 0, color: "text-green-600" },
-  {
-    id: "drafts",
-    label: "Drafts",
-    icon: FileText,
-    count: 2,
-    color: "text-gray-600",
-  },
-  {
-    id: "archive",
-    label: "Archive",
-    icon: Archive,
-    count: 0,
-    color: "text-purple-600",
-  },
-  {
-    id: "trash",
-    label: "Trash",
-    icon: Trash2,
-    count: 0,
-    color: "text-red-600",
-  },
-];
+import { useState } from "react";
 
 export default function RenderPage() {
   const [selectedCategory, setSelectedCategory] = useState("inbox");
+  const [selectedTab, setSelectedTab] = useState("primary");
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set());
+  const [selectAll, setSelectAll] = useState(false);
 
   const filteredEmails = mockEmails.filter(
     (email) =>
       email.category === selectedCategory &&
+      email.tab === selectedTab &&
       (email.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
         email.from.toLowerCase().includes(searchQuery.toLowerCase()) ||
         email.body.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -173,17 +55,37 @@ export default function RenderPage() {
     }
   };
 
+  // Calculate dynamic tab counts
+  const getTabCounts = () => {
+    const counts = {
+      primary: 0,
+      promotions: 0,
+      social: 0,
+      updates: 0,
+    };
+
+    mockEmails.forEach((email) => {
+      if (email.category === selectedCategory) {
+        counts[email.tab]++;
+      }
+    });
+
+    return counts;
+  };
+
+  const tabCounts = getTabCounts();
+
   return (
-    <div className="h-screen flex bg-gray-50">
+    <div className="min-h-screen flex">
       {/* Sidebar */}
       <div
         className={cn(
-          "bg-white border-r border-gray-200 transition-all duration-300",
+          "border-r  transition-all duration-300",
           sidebarOpen ? "w-64" : "w-16"
         )}
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b ">
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
@@ -212,7 +114,7 @@ export default function RenderPage() {
                 onClick={() => setSelectedCategory(item.id)}
                 className={cn(
                   "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-gray-100 transition-colors",
-                  selectedCategory === item.id && "bg-blue-50 text-blue-700"
+                  selectedCategory === item.id && "bg-primary/10 text-primary"
                 )}
               >
                 <Icon className={cn("h-5 w-5", item.color)} />
@@ -237,7 +139,7 @@ export default function RenderPage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="border-b  px-6 py-4">
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -256,31 +158,126 @@ export default function RenderPage() {
           </div>
         </div>
 
-        {/* Email List and Content */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Email List */}
-          <div className="w-96 bg-white border-r border-gray-200 flex flex-col">
-            <div className="p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold capitalize">
-                {selectedCategory}
-              </h2>
-              <p className="text-sm text-gray-600">
-                {filteredEmails.length} emails
-              </p>
+        {/* Email Tabs */}
+        <div className="border-b ">
+          <div className="px-6 py-2">
+            <div className="flex items-center gap-6">
+              {emailTabs.map((tab) => {
+                const count = tabCounts[tab.id as keyof typeof tabCounts];
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setSelectedTab(tab.id)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                      selectedTab === tab.id
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                  >
+                    {tab.label}
+                    {count > 0 && (
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          "text-xs px-1.5 py-0.5",
+                          selectedTab === tab.id &&
+                            "bg-primary text-primary-foreground"
+                        )}
+                      >
+                        {count}
+                      </Badge>
+                    )}
+                  </button>
+                );
+              })}
             </div>
+          </div>
+        </div>
+
+        {/* Email List and Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
+          {/* Email List */}
+          <div className="w-full border-r  flex flex-col">
+            <div className="p-4 border-b ">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold capitalize">
+                    {selectedCategory}
+                  </h2>
+                  <p className="text-sm text-gray-600">
+                    {filteredEmails.length} emails
+                  </p>
+                </div>
+                {selectedEmails.size > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm">
+                      <Archive className="h-4 w-4 mr-2" />
+                      Archive
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Select All Checkbox */}
+            {filteredEmails.length > 0 && (
+              <div className="px-4 py-2 border-b border-gray-100 bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    checked={selectAll}
+                    onCheckedChange={(checked) => {
+                      setSelectAll(checked as boolean);
+                      if (checked) {
+                        setSelectedEmails(
+                          new Set(filteredEmails.map((email) => email.id))
+                        );
+                      } else {
+                        setSelectedEmails(new Set());
+                      }
+                    }}
+                  />
+                  <span className="text-sm text-gray-600">
+                    {selectAll ? "Deselect all" : "Select all"}
+                  </span>
+                </div>
+              </div>
+            )}
 
             <div className="flex-1 overflow-y-auto">
               {filteredEmails.map((email) => (
                 <div
                   key={email.id}
-                  onClick={() => setSelectedEmail(email)}
                   className={cn(
                     "p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors",
-                    selectedEmail?.id === email.id && "bg-blue-50",
-                    !email.isRead && "bg-white font-medium"
+                    selectedEmail?.id === email.id && "bg-primary/5",
+                    !email.isRead && "bg-white font-medium",
+                    selectedEmails.has(email.id) && "bg-primary/5"
                   )}
                 >
                   <div className="flex items-start gap-3">
+                    <Checkbox
+                      checked={selectedEmails.has(email.id)}
+                      onCheckedChange={(checked) => {
+                        const newSelected = new Set(selectedEmails);
+                        if (checked) {
+                          newSelected.add(email.id);
+                        } else {
+                          newSelected.delete(email.id);
+                        }
+                        setSelectedEmails(newSelected);
+                        setSelectAll(
+                          newSelected.size === filteredEmails.length
+                        );
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-1"
+                    />
+
                     <Avatar className="h-8 w-8">
                       <AvatarImage
                         src={`/avatars/${email.from
@@ -295,7 +292,10 @@ export default function RenderPage() {
                       </AvatarFallback>
                     </Avatar>
 
-                    <div className="flex-1 min-w-0">
+                    <div
+                      className="flex-1 min-w-0"
+                      onClick={() => setSelectedEmail(email)}
+                    >
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-medium truncate">
                           {email.from}
@@ -328,11 +328,11 @@ export default function RenderPage() {
           </div>
 
           {/* Email Content */}
-          <div className="flex-1 bg-white flex flex-col">
+          <div className="w-full flex flex-col">
             {selectedEmail ? (
               <>
                 {/* Email Header */}
-                <div className="p-6 border-b border-gray-200">
+                <div className="p-6 border-b ">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-start gap-4">
                       <Avatar className="h-10 w-10">
@@ -353,9 +353,9 @@ export default function RenderPage() {
                         <h3 className="text-lg font-semibold">
                           {selectedEmail.subject}
                         </h3>
-                        {/* <p className="text-sm text-gray-600">
-                          From: {selectedEmail.from} <{selectedEmail.fromEmail}>
-                        </p> */}
+                        <p className="text-sm text-gray-600">
+                          From: {selectedEmail.from}
+                        </p>
                         <p className="text-sm text-gray-600">
                           To: {selectedEmail.to}
                         </p>
@@ -415,7 +415,7 @@ export default function RenderPage() {
                 </div>
 
                 {/* Email Actions */}
-                <div className="p-4 border-t border-gray-200">
+                <div className="p-4 border-t ">
                   <div className="flex items-center gap-2">
                     <Button>
                       <Reply className="h-4 w-4 mr-2" />
@@ -440,10 +440,10 @@ export default function RenderPage() {
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
                   <Inbox className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-lg font-medium mb-2">
                     Select an email to read
                   </h3>
-                  <p className="text-gray-500">
+                  <p className="text-muted-foreground">
                     Choose an email from the list to view its contents
                   </p>
                 </div>
