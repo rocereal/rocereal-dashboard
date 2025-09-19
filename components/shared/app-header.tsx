@@ -111,9 +111,9 @@ export function AppHeader({ className }: AppHeaderProps) {
         className="h-8 w-8"
       >
         {state === "expanded" ? (
-          <X className="h-4 w-4" />
-        ) : (
           <Menu className="h-4 w-4" />
+        ) : (
+          <X className="h-4 w-4" />
         )}
         <span className="sr-only">Toggle sidebar</span>
       </Button>
