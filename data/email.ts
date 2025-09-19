@@ -173,24 +173,28 @@ export const emailTabs = [
   {
     id: "primary",
     label: "Primary",
+    iconName: "Mail",
     count: 8,
     color: "text-primary",
   },
   {
     id: "promotions",
     label: "Promotions",
+    iconName: "ShoppingBag",
     count: 15,
     color: "text-orange-600",
   },
   {
     id: "social",
     label: "Social",
+    iconName: "Users",
     count: 3,
     color: "text-blue-600",
   },
   {
     id: "updates",
     label: "Updates",
+    iconName: "Bell",
     count: 6,
     color: "text-green-600",
   },

@@ -31,9 +31,11 @@ export function TabsWithIcons({
       <TabsPrimitive.Root
         defaultValue={defaultValue || tabs[0]?.id}
         onValueChange={onValueChange}
-        className="w-full"
+        className={cn(className, "w-full")}
       >
-        <TabsPrimitive.List className="border-b border-border w-full">
+        <TabsPrimitive.List
+          className={cn(grid, "border-b border-border w-full")}
+        >
           <div className="flex space-x-8">
             {tabs.map((tab) => {
               const IconComponent = (Icons as any)[tab.iconName];

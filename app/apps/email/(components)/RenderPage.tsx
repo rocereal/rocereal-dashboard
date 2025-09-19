@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
 import { Email, emailTabs, mockEmails, sidebarItems } from "@/data/email";
 import { cn } from "@/lib/utils";
 import {
@@ -159,40 +160,18 @@ export default function RenderPage() {
         </div>
 
         {/* Email Tabs */}
-        <div className="border-b ">
-          <div className="px-6 py-2">
-            <div className="flex items-center gap-6">
-              {emailTabs.map((tab) => {
-                const count = tabCounts[tab.id as keyof typeof tabCounts];
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setSelectedTab(tab.id)}
-                    className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                      selectedTab === tab.id
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    )}
-                  >
-                    {tab.label}
-                    {count > 0 && (
-                      <Badge
-                        variant="secondary"
-                        className={cn(
-                          "text-xs px-1.5 py-0.5",
-                          selectedTab === tab.id &&
-                            "bg-primary text-primary-foreground"
-                        )}
-                      >
-                        {count}
-                      </Badge>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+        <div className="px-8">
+          <TabsWithIcons
+            tabs={emailTabs.map((tab) => ({
+              ...tab,
+              count: tabCounts[tab.id as keyof typeof tabCounts],
+            }))}
+            defaultValue={selectedTab}
+            onValueChange={setSelectedTab}
+            variant="underline"
+            className="!w-full lg:!w-full px-2"
+            grid="!grid !grid-cols-4"
+          />
         </div>
 
         {/* Email List and Content */}
