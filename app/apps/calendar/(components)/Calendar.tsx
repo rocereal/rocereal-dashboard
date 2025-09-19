@@ -1,31 +1,33 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { CalendarEvent, calendarEvents } from "@/data/calendar";
+import {
+  Calendar,
   ChevronLeft,
   ChevronRight,
-  Plus,
   Clock,
   MapPin,
-  Users,
-  Search,
-  Filter,
-  MoreHorizontal,
-  Video,
   Phone,
-  Mail,
+  Plus,
   Settings,
-  Calendar,
+  Users,
+  Video,
 } from "lucide-react";
-import { CalendarEvent, calendarEvents } from "@/data/calendar";
-import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
-import { TabsContent } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
+import { useState } from "react";
+import { CreateEventForm } from "./CreateEventForm";
 
 interface TeamsCalendarProps {
   events?: CalendarEvent[];
@@ -44,6 +46,8 @@ export default function EventsCalendar({
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
     null
   );
+  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  const [isCreateEventSheetOpen, setIsCreateEventSheetOpen] = useState(false);
 
   // Get events for a specific date
   const getEventsForDate = (date: Date) => {
@@ -133,48 +137,48 @@ export default function EventsCalendar({
   const upcomingEvents = getUpcomingEvents();
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div className="bg-gray-50 dark:bg-gray-900 flex flex-col">
       {/* Teams-style Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigateMonth("prev")}
-              >
+        <div className="flex flex-col gap-4 lg:flex-row items-center justify-between">
+          <div className="flex flex-col lg:flex-row items-center gap-6">
+            <div className="flex items-center gap-2 w-full lg:w-fit">
+              <Button variant="outline" onClick={() => navigateMonth("prev")}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={goToToday}>
+              <Button variant="outline" onClick={goToToday}>
                 Today
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigateMonth("next")}
-              >
+              <Button variant="outline" onClick={() => navigateMonth("next")}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
-            <h2 className="text-xl font-medium text-gray-700 dark:text-gray-300">
+            <h2 className="hidden lg:flex text-xl font-medium text-gray-700 dark:text-gray-300">
               {formatMonthYear(currentDate)}
             </h2>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col lg:flex-row items-center gap-3">
             {/* Search */}
             <Input
               placeholder="Search events..."
               className="w-full shadow-xs"
             />
+
+            <Button
+              className="bg-primary w-full lg:w-fit"
+              onClick={() => setIsCreateEventSheetOpen(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              New meeting
+            </Button>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-col lg:flex-row gap-4 overflow-hidden">
         {/* Sidebar */}
-        <div className="w-80  border-r p-4 space-y-6">
+        <div className="w-full lg:w-80 border-r p-0 lg:p-2 space-y-6">
           {/* Mini Calendar */}
           <Card className="shadow-xs w-full">
             <CardHeader className="pb-3">
@@ -267,7 +271,7 @@ export default function EventsCalendar({
               ].map((day) => (
                 <div
                   key={day}
-                  className="p-4 text-center font-medium text-gray-600 dark:text-gray-400 border-r border-gray-200 dark:border-gray-700 last:border-r-0 bg-gray-50 dark:bg-gray-900"
+                  className="p-1 lg:p-4 text-xs lg:text-base text-center font-medium text-gray-600 dark:text-gray-400 border-r border-gray-200 dark:border-gray-700 last:border-r-0 bg-gray-50 dark:bg-gray-900"
                 >
                   {day}
                 </div>
@@ -320,6 +324,7 @@ export default function EventsCalendar({
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedEvent(event);
+                              setIsEventDialogOpen(true);
                             }}
                             title={`${
                               event.title
@@ -356,6 +361,131 @@ export default function EventsCalendar({
           </div>
         </div>
       </div>
+
+      {/* Event Details Dialog */}
+      <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div
+                className="w-4 h-4 rounded-full flex-shrink-0"
+                style={{ backgroundColor: selectedEvent?.color }}
+              />
+              <DialogTitle className="text-lg font-semibold">
+                {selectedEvent?.title}
+              </DialogTitle>
+            </div>
+            {selectedEvent?.description && (
+              <DialogDescription className="text-sm text-muted-foreground">
+                {selectedEvent.description}
+              </DialogDescription>
+            )}
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Time Information */}
+            <div className="flex items-center gap-3">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <div className="text-sm">
+                <div className="font-medium">
+                  {selectedEvent?.start.toLocaleDateString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </div>
+                <div className="text-muted-foreground">
+                  {selectedEvent?.start.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                  {selectedEvent?.end && (
+                    <>
+                      {" - "}
+                      {selectedEvent.end.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Location */}
+            {selectedEvent?.location && (
+              <div className="flex items-center gap-3">
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+                <div className="text-sm">
+                  <div className="font-medium">Location</div>
+                  <div className="text-muted-foreground">
+                    {selectedEvent.location}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Attendees */}
+            {selectedEvent?.attendees && selectedEvent.attendees.length > 0 && (
+              <div className="flex items-start gap-3">
+                <Users className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <div className="text-sm flex-1">
+                  <div className="font-medium mb-1">Attendees</div>
+                  <div className="space-y-1">
+                    {selectedEvent.attendees.map((attendee, index) => (
+                      <div
+                        key={index}
+                        className="text-muted-foreground text-xs"
+                      >
+                        {attendee}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Event Type and Priority */}
+            <div className="flex items-center justify-between pt-2 border-t">
+              <div className="flex items-center gap-4">
+                <div className="text-xs">
+                  <span className="text-muted-foreground">Type:</span>{" "}
+                  <span className="font-medium capitalize">
+                    {selectedEvent?.type}
+                  </span>
+                </div>
+                <div className="text-xs">
+                  <span className="text-muted-foreground">Priority:</span>{" "}
+                  <Badge
+                    variant={
+                      selectedEvent?.priority === "high"
+                        ? "destructive"
+                        : selectedEvent?.priority === "medium"
+                        ? "default"
+                        : "secondary"
+                    }
+                    className="text-xs"
+                  >
+                    {selectedEvent?.priority}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Event Form */}
+      <CreateEventForm
+        open={isCreateEventSheetOpen}
+        onOpenChange={setIsCreateEventSheetOpen}
+        onSubmit={(eventData) => {
+          console.log("New event created:", eventData);
+          // Here you would typically add the event to your calendar data
+          // For now, we'll just log it
+        }}
+      />
     </div>
   );
 }

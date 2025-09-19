@@ -74,7 +74,7 @@ export function DashboardHeader({
       )}
 
       {/* Header Content */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
         {/* Title and Subtitle */}
         <div className="flex flex-col space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
@@ -85,11 +85,11 @@ export function DashboardHeader({
 
         {/* Action Buttons */}
         {(primaryAction || secondaryAction || dateRange) && (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center flex-col lg:flex-row gap-4 w-full lg:w-fit">
             {primaryAction && (
               <Button
                 onClick={() => console.log(`${primaryAction.label} clicked`)}
-                className="flex items-center space-x-2"
+                className="flex w-full lg:w-fit items-center space-x-2"
               >
                 {primaryAction.icon}
                 <span>{primaryAction.label}</span>
@@ -100,14 +100,14 @@ export function DashboardHeader({
                 date={dateRange}
                 onDateChange={onDateRangeChange}
                 placeholder="Select date & time range"
-                className="w-auto"
+                className="flex w-full lg:w-auto items-center space-x-2"
               />
             )}
             {secondaryAction && (
               <Button
                 variant="outline"
                 onClick={() => console.log(`${secondaryAction.label} clicked`)}
-                className="flex items-center space-x-2"
+                className="flex w-full lg:w-fit items-center space-x-2"
               >
                 {secondaryAction.icon}
                 <span>{secondaryAction.label}</span>
