@@ -14,11 +14,11 @@ export default function RenderPage() {
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
-        title="Learning Performance Dashboard"
-        subtitle="Track student progress, course performance, and engagement across programs."
+        title="Education Dashboard"
+        subtitle="Monitor course performance, student engagement, and learning outcomes."
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
-          { label: "Learning Performance Dashboard" },
+          { label: "Education Dashboard" },
         ]}
         primaryAction={{
           label: "Add Course",

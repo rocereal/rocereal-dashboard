@@ -3,10 +3,10 @@ import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
-  "Learning Performance Dashboard",
-  "Track student progress, course performance, and engagement across programs."
+  "Education Dashboard",
+  "Monitor course performance, student engagement, and learning outcomes."
 );
 
-export default function EducationPage() {
+export default function LmsPage() {
   return <RenderPage />;
 }
