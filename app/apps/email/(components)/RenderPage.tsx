@@ -7,6 +7,7 @@ import EmailContent from "./EmailContent";
 import EmailHeader from "./EmailHeader";
 import EmailList from "./EmailList";
 import EmailTabs from "./EmailTabs";
+import MobileEmailContent from "./MobileEmailContent";
 
 export default function RenderPage() {
   const [selectedCategory, setSelectedCategory] = useState("inbox");
@@ -17,6 +18,7 @@ export default function RenderPage() {
   const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [mobileEmailContentOpen, setMobileEmailContentOpen] = useState(false);
 
   const filteredEmails = mockEmails.filter(
     (email) =>
@@ -49,6 +51,10 @@ export default function RenderPage() {
 
   const handleEmailSelect = (email: Email) => {
     setSelectedEmail(email);
+    // On mobile, open the email content sheet
+    if (window.innerWidth < 1024) {
+      setMobileEmailContentOpen(true);
+    }
   };
 
   const handleEmailSelectionChange = (emailId: string, checked: boolean) => {
@@ -108,8 +114,18 @@ export default function RenderPage() {
             onSelectAllChange={handleSelectAllChange}
           />
 
-          <EmailContent selectedEmail={selectedEmail} />
+          {/* Desktop Email Content - Hidden on mobile */}
+          <div className="hidden lg:block">
+            <EmailContent selectedEmail={selectedEmail} />
+          </div>
         </div>
+
+        {/* Mobile Email Content Sheet */}
+        <MobileEmailContent
+          selectedEmail={selectedEmail}
+          isOpen={mobileEmailContentOpen}
+          onOpenChange={setMobileEmailContentOpen}
+        />
       </div>
     </div>
   );

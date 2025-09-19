@@ -17,6 +17,8 @@ interface EmailListProps {
   onEmailSelectionChange: (emailId: string, checked: boolean) => void;
   selectAll: boolean;
   onSelectAllChange: (checked: boolean) => void;
+  isMobile?: boolean;
+  onMobileEmailSelect?: (email: Email) => void;
 }
 
 export default function EmailList({
