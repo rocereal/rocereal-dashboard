@@ -257,54 +257,116 @@ export default function OrderDetailsPage({ orderId }: OrderDetailsPageProps) {
               <CardTitle>Order Timeline</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="font-medium">Order Placed</p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(order.date).toLocaleDateString()} at{" "}
-                      {new Date(order.date).toLocaleTimeString()}
-                    </p>
+              <div className="relative">
+                {/* Connecting Line */}
+                <div className="absolute left-4 top-6 bottom-6 w-0.5 bg-gray-200"></div>
+
+                {/* Timeline Steps */}
+                <div className="space-y-8 relative">
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`w-4 h-4 rounded-full mt-1 border-2 border-white shadow-sm ${
+                        order.status !== "cancelled"
+                          ? "bg-green-500"
+                          : "bg-gray-400"
+                      }`}
+                    ></div>
+                    <div className="flex-1">
+                      <p className="font-medium">Order Placed</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(order.date).toLocaleDateString()} at{" "}
+                        {new Date(order.date).toLocaleTimeString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`w-4 h-4 rounded-full mt-1 border-2 border-white shadow-sm ${
+                        order.status !== "pending" &&
+                        order.status !== "cancelled"
+                          ? "bg-blue-500"
+                          : "bg-gray-300"
+                      }`}
+                    ></div>
+                    <div className="flex-1">
+                      <p
+                        className={`font-medium ${
+                          order.status !== "pending" &&
+                          order.status !== "cancelled"
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        Order Confirmed
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {order.status !== "pending" &&
+                        order.status !== "cancelled"
+                          ? "Order has been confirmed and is being processed"
+                          : "Waiting for confirmation"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`w-4 h-4 rounded-full mt-1 border-2 border-white shadow-sm ${
+                        (order.status === "shipped" ||
+                          order.status === "delivered") &&
+                        order.status !== "cancelled"
+                          ? "bg-yellow-500"
+                          : "bg-gray-300"
+                      }`}
+                    ></div>
+                    <div className="flex-1">
+                      <p
+                        className={`font-medium ${
+                          (order.status === "shipped" ||
+                            order.status === "delivered") &&
+                          order.status !== "cancelled"
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        Order Shipped
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {(order.status === "shipped" ||
+                          order.status === "delivered") &&
+                        order.status !== "cancelled"
+                          ? "Order has been shipped and is on its way"
+                          : "Waiting to be shipped"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`w-4 h-4 rounded-full mt-1 border-2 border-white shadow-sm ${
+                        order.status === "delivered"
+                          ? "bg-green-500"
+                          : "bg-gray-300"
+                      }`}
+                    ></div>
+                    <div className="flex-1">
+                      <p
+                        className={`font-medium ${
+                          order.status === "delivered"
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        Order Delivered
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {order.status === "delivered"
+                          ? "Order has been successfully delivered"
+                          : "Waiting for delivery"}
+                      </p>
+                    </div>
                   </div>
                 </div>
-
-                {order.status !== "pending" && (
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                    <div>
-                      <p className="font-medium">Order Confirmed</p>
-                      <p className="text-sm text-muted-foreground">
-                        Order has been confirmed and is being processed
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {(order.status === "shipped" ||
-                  order.status === "delivered") && (
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
-                    <div>
-                      <p className="font-medium">Order Shipped</p>
-                      <p className="text-sm text-muted-foreground">
-                        Order has been shipped and is on its way
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {order.status === "delivered" && (
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                    <div>
-                      <p className="font-medium">Order Delivered</p>
-                      <p className="text-sm text-muted-foreground">
-                        Order has been successfully delivered
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>
