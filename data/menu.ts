@@ -75,13 +75,8 @@ export const menudata = {
     },
     {
       title: "Email",
-      url: "#",
+      url: "/apps/email",
       icon: Mail,
-      items: [
-        { title: "Inbox", url: "/apps/email/inbox" },
-        { title: "Read", url: "/apps/email/read" },
-        { title: "Compose", url: "/apps/email/compose" },
-      ],
     },
     {
       title: "LMS",
