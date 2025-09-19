@@ -25,32 +25,7 @@ import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
 import { TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-
 import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
-
-// Calendar view tabs data
-const calendarViewTabs = [
-  {
-    id: "month",
-    label: "Month",
-    iconName: "Calendar",
-  },
-  {
-    id: "week",
-    label: "Week",
-    iconName: "CalendarDays",
-  },
-  {
-    id: "day",
-    label: "Day",
-    iconName: "Calendar",
-  },
-  {
-    id: "agenda",
-    label: "Agenda",
-    iconName: "List",
-  },
-];
 
 interface TeamsCalendarProps {
   events?: CalendarEvent[];
@@ -271,58 +246,6 @@ export default function EventsCalendar({
                   </label>
                 </div>
               ))}
-            </CardContent>
-          </Card>
-
-          {/* Upcoming Events */}
-          <Card className="shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-medium">Upcoming</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="max-h-64 overflow-y-auto">
-                <div className="space-y-2 p-4">
-                  {upcomingEvents.length === 0 ? (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
-                      No upcoming events
-                    </p>
-                  ) : (
-                    upcomingEvents.map((event) => (
-                      <div
-                        key={event.id}
-                        className="flex items-start gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
-                        onClick={() => setSelectedEvent(event)}
-                      >
-                        <div
-                          className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0"
-                          style={{ backgroundColor: event.color }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1 mb-1">
-                            {getMeetingIcon(event.type)}
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                              {event.title}
-                            </p>
-                          </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {event.start.toLocaleDateString()} at{" "}
-                            {event.start.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </div>
-                          {event.location && (
-                            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                              <MapPin className="h-3 w-3" />
-                              <span className="truncate">{event.location}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>
