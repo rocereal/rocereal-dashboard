@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { DataTable, createSortableColumn } from "@/components/ui/data-table";
-import { Button } from "@/components/ui/button";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { DataTable, createSortableColumn } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,9 +12,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Trash2, Eye } from "lucide-react";
-import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/data/ecommerce";
+import { ColumnDef } from "@tanstack/react-table";
+import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 
 interface ProductsTableProps {
   products: Product[];
@@ -30,6 +30,30 @@ export function ProductsTable({
   onView,
 }: ProductsTableProps) {
   const columns: ColumnDef<Product>[] = [
+    {
+      accessorKey: "image",
+      header: "Image",
+      cell: ({ row }) => {
+        const image = row.getValue("image") as string;
+        return (
+          <div
+            className="relative overflow-hidden aspect-square w-full flex flex-col rounded-md"
+            onClick={() => {
+              console.log(row, image);
+            }}
+          >
+            <ImageComponentOptimized
+              unoptimized={true}
+              src={image}
+              alt={row.getValue("name") as string}
+              placeholder="blur"
+              fill
+              className="object-cover"
+            />
+          </div>
+        );
+      },
+    },
     createSortableColumn("name", "Product Name"),
     createSortableColumn("sku", "SKU"),
     createSortableColumn("category", "Category"),

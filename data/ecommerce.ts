@@ -1,11 +1,22 @@
+import BluetoothSpeaker from "@/app/assets/products/Bluetooth Speaker.png";
+import CeramicCoffeeMug from "@/app/assets/products/Ceramic Coffee Mug.png";
+import LeatherWallet from "@/app/assets/products/Leather Wallet.png";
+import LEDDeskLamp from "@/app/assets/products/LED Desk Lamp.png";
+import OrganicCottonTShirt from "@/app/assets/products/Organic Cotton T-Shirt.png";
+import SmartFitnessWatch from "@/app/assets/products/Smart Fitness Watch.png";
+import StainlessSteelWaterBottle from "@/app/assets/products/Stainless Steel Water Bottle.png";
+import WirelessBluetoothHeadphones from "@/app/assets/products/Wireless Bluetooth Headphones.png";
+import WirelessChargingPad from "@/app/assets/products/Wireless Charging Pad.png";
+import YogaMatPremium from "@/app/assets/products/Yoga Mat Premium.png";
 import {
   DollarSign,
-  ShoppingCart,
+  Package,
   Receipt,
   RotateCcw,
+  ShoppingCart,
   Star,
-  Package,
 } from "lucide-react";
+import type { StaticImageData } from "next/image";
 
 export interface EcommerceMetric {
   id: string;
@@ -272,7 +283,7 @@ export interface Product {
   price: number;
   stock: number;
   status: "active" | "inactive" | "out-of-stock";
-  image?: string;
+  image: string | StaticImageData;
   description?: string;
   createdAt: string;
   updatedAt: string;
@@ -287,6 +298,7 @@ export const productsData: Product[] = [
     price: 89.99,
     stock: 45,
     status: "active",
+    image: WirelessBluetoothHeadphones,
     description: "High-quality wireless headphones with noise cancellation",
     createdAt: "2025-01-15",
     updatedAt: "2025-08-18",
@@ -299,6 +311,7 @@ export const productsData: Product[] = [
     price: 199.99,
     stock: 23,
     status: "active",
+    image: SmartFitnessWatch,
     description: "Advanced fitness tracking with heart rate monitor",
     createdAt: "2025-02-20",
     updatedAt: "2025-08-17",
@@ -311,6 +324,7 @@ export const productsData: Product[] = [
     price: 24.99,
     stock: 0,
     status: "out-of-stock",
+    image: OrganicCottonTShirt,
     description: "Comfortable organic cotton t-shirt in multiple colors",
     createdAt: "2025-03-10",
     updatedAt: "2025-08-16",
@@ -323,6 +337,7 @@ export const productsData: Product[] = [
     price: 12.99,
     stock: 78,
     status: "active",
+    image: CeramicCoffeeMug,
     description: "Handcrafted ceramic mug, perfect for coffee or tea",
     createdAt: "2025-04-05",
     updatedAt: "2025-08-15",
@@ -335,6 +350,7 @@ export const productsData: Product[] = [
     price: 49.99,
     stock: 12,
     status: "active",
+    image: YogaMatPremium,
     description: "Non-slip yoga mat with carrying strap",
     createdAt: "2025-05-12",
     updatedAt: "2025-08-14",
@@ -347,6 +363,7 @@ export const productsData: Product[] = [
     price: 34.99,
     stock: 56,
     status: "active",
+    image: WirelessChargingPad,
     description: "Fast wireless charging for compatible devices",
     createdAt: "2025-06-08",
     updatedAt: "2025-08-13",
@@ -359,6 +376,7 @@ export const productsData: Product[] = [
     price: 39.99,
     stock: 8,
     status: "active",
+    image: LeatherWallet,
     description: "Genuine leather wallet with RFID protection",
     createdAt: "2025-07-01",
     updatedAt: "2025-08-12",
@@ -371,6 +389,7 @@ export const productsData: Product[] = [
     price: 29.99,
     stock: 0,
     status: "inactive",
+    image: LEDDeskLamp,
     description: "Adjustable LED desk lamp with USB charging port",
     createdAt: "2025-07-15",
     updatedAt: "2025-08-11",
@@ -383,6 +402,7 @@ export const productsData: Product[] = [
     price: 19.99,
     stock: 34,
     status: "active",
+    image: StainlessSteelWaterBottle,
     description:
       "Insulated stainless steel water bottle, keeps drinks cold for 24 hours",
     createdAt: "2025-08-01",
@@ -396,6 +416,7 @@ export const productsData: Product[] = [
     price: 79.99,
     stock: 15,
     status: "active",
+    image: BluetoothSpeaker,
     description: "Portable Bluetooth speaker with waterproof design",
     createdAt: "2025-08-05",
     updatedAt: "2025-08-09",
