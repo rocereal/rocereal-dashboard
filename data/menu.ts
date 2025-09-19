@@ -55,13 +55,8 @@ export const menudata = {
     },
     {
       title: "Calendar",
-      url: "#",
+      url: "/apps/calendar",
       icon: CalendarDays,
-      items: [
-        { title: "Month View", url: "/apps/calendar/month" },
-        { title: "Week View", url: "/apps/calendar/week" },
-        { title: "Day View", url: "/apps/calendar/day" },
-      ],
     },
     {
       title: "E-commerce",

@@ -12,6 +12,7 @@ interface TabsWithIconsProps {
   defaultValue?: string;
   variant?: "default" | "underline";
   children?: ReactNode;
+  onValueChange?: (value: string) => void;
 }
 
 export function TabsWithIcons({
@@ -19,11 +20,13 @@ export function TabsWithIcons({
   defaultValue,
   variant = "default",
   children,
+  onValueChange,
 }: TabsWithIconsProps) {
   if (variant === "underline") {
     return (
       <TabsPrimitive.Root
         defaultValue={defaultValue || tabs[0]?.id}
+        onValueChange={onValueChange}
         className="w-full"
       >
         <TabsPrimitive.List className="border-b border-border w-full">
@@ -51,7 +54,11 @@ export function TabsWithIcons({
   }
 
   return (
-    <Tabs defaultValue={defaultValue || tabs[0]?.id} className="w-full">
+    <Tabs
+      defaultValue={defaultValue || tabs[0]?.id}
+      onValueChange={onValueChange}
+      className="w-full"
+    >
       <TabsList className="grid w-full grid-cols-4">
         {tabs.map((tab) => {
           const IconComponent = (Icons as any)[tab.iconName];

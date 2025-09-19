@@ -101,7 +101,7 @@ export function AppHeader({ className }: AppHeaderProps) {
 
   return (
     <header
-      className={`flex h-16 shrink-0 items-center gap-2 border-b bg-card px-4 ${className}`}
+      className={`sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b bg-card px-4 ${className}`}
     >
       {/* Sidebar Trigger */}
       <Button
