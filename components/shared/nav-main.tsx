@@ -74,7 +74,7 @@ export function NavMain({
                       tooltip={item.title}
                       isActive={isItemActive}
                     >
-                      {item.icon && <item.icon />}
+                      1{item.icon && <item.icon />}
                       <span>{item.title}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
@@ -90,7 +90,7 @@ export function NavMain({
                               isActive={isSubItemActive}
                             >
                               <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
+                                2<span>{subItem.title}</span>
                               </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>

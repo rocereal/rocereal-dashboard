@@ -44,7 +44,7 @@ export function TabsWithIcons({
                   key={tab.id}
                   value={tab.id}
                   className={cn(
-                    "flex items-center space-x-2 border-b-2 border-transparent pb-3 pt-2 font-medium text-muted-background hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary transition-colors"
+                    "flex items-center space-x-2 border-b-2 border-transparent pb-3 pt-2 font-medium text-base text-muted-background hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary transition-all duration-300 ease-in-out"
                   )}
                 >
                   {IconComponent && <IconComponent className="h-4 w-4" />}
@@ -72,9 +72,11 @@ export function TabsWithIcons({
             <TabsTrigger
               key={tab.id}
               value={tab.id}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 transition-all duration-200 ease-in-out"
             >
-              {IconComponent && <IconComponent className="h-4 w-4" />}
+              {IconComponent && (
+                <IconComponent className="h-4 w-4 transition-transform duration-200 ease-in-out group-data-[state=active]:scale-110" />
+              )}
               <span className="hidden sm:inline">{tab.label}</span>
             </TabsTrigger>
           );
