@@ -264,6 +264,144 @@ export const ordersData: OrderData[] = [
   },
 ];
 
+export interface Product {
+  id: string;
+  name: string;
+  sku: string;
+  category: string;
+  price: number;
+  stock: number;
+  status: "active" | "inactive" | "out-of-stock";
+  image?: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const productsData: Product[] = [
+  {
+    id: "PROD-001",
+    name: "Wireless Bluetooth Headphones",
+    sku: "WBH-001",
+    category: "Electronics",
+    price: 89.99,
+    stock: 45,
+    status: "active",
+    description: "High-quality wireless headphones with noise cancellation",
+    createdAt: "2025-01-15",
+    updatedAt: "2025-08-18",
+  },
+  {
+    id: "PROD-002",
+    name: "Smart Fitness Watch",
+    sku: "SFW-002",
+    category: "Electronics",
+    price: 199.99,
+    stock: 23,
+    status: "active",
+    description: "Advanced fitness tracking with heart rate monitor",
+    createdAt: "2025-02-20",
+    updatedAt: "2025-08-17",
+  },
+  {
+    id: "PROD-003",
+    name: "Organic Cotton T-Shirt",
+    sku: "OCT-003",
+    category: "Clothing",
+    price: 24.99,
+    stock: 0,
+    status: "out-of-stock",
+    description: "Comfortable organic cotton t-shirt in multiple colors",
+    createdAt: "2025-03-10",
+    updatedAt: "2025-08-16",
+  },
+  {
+    id: "PROD-004",
+    name: "Ceramic Coffee Mug",
+    sku: "CCM-004",
+    category: "Home & Kitchen",
+    price: 12.99,
+    stock: 78,
+    status: "active",
+    description: "Handcrafted ceramic mug, perfect for coffee or tea",
+    createdAt: "2025-04-05",
+    updatedAt: "2025-08-15",
+  },
+  {
+    id: "PROD-005",
+    name: "Yoga Mat Premium",
+    sku: "YMP-005",
+    category: "Sports & Fitness",
+    price: 49.99,
+    stock: 12,
+    status: "active",
+    description: "Non-slip yoga mat with carrying strap",
+    createdAt: "2025-05-12",
+    updatedAt: "2025-08-14",
+  },
+  {
+    id: "PROD-006",
+    name: "Wireless Charging Pad",
+    sku: "WCP-006",
+    category: "Electronics",
+    price: 34.99,
+    stock: 56,
+    status: "active",
+    description: "Fast wireless charging for compatible devices",
+    createdAt: "2025-06-08",
+    updatedAt: "2025-08-13",
+  },
+  {
+    id: "PROD-007",
+    name: "Leather Wallet",
+    sku: "LW-007",
+    category: "Accessories",
+    price: 39.99,
+    stock: 8,
+    status: "active",
+    description: "Genuine leather wallet with RFID protection",
+    createdAt: "2025-07-01",
+    updatedAt: "2025-08-12",
+  },
+  {
+    id: "PROD-008",
+    name: "LED Desk Lamp",
+    sku: "LDL-008",
+    category: "Home & Office",
+    price: 29.99,
+    stock: 0,
+    status: "inactive",
+    description: "Adjustable LED desk lamp with USB charging port",
+    createdAt: "2025-07-15",
+    updatedAt: "2025-08-11",
+  },
+  {
+    id: "PROD-009",
+    name: "Stainless Steel Water Bottle",
+    sku: "SSWB-009",
+    category: "Sports & Outdoors",
+    price: 19.99,
+    stock: 34,
+    status: "active",
+    description:
+      "Insulated stainless steel water bottle, keeps drinks cold for 24 hours",
+    createdAt: "2025-08-01",
+    updatedAt: "2025-08-10",
+  },
+  {
+    id: "PROD-010",
+    name: "Bluetooth Speaker",
+    sku: "BS-010",
+    category: "Electronics",
+    price: 79.99,
+    stock: 15,
+    status: "active",
+    description: "Portable Bluetooth speaker with waterproof design",
+    createdAt: "2025-08-05",
+    updatedAt: "2025-08-09",
+  },
+];
+
 export const ecommerceCharts = {
   salesByCategory: [
     { name: "Electronics", value: 35, color: "#0088FE" },
