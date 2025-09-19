@@ -34,22 +34,22 @@ export function ProductsTable({
       accessorKey: "image",
       header: "Image",
       cell: ({ row }) => {
-        const image = row.getValue("image") as string;
+        const image = row.getValue("image");
+        const productName = row.getValue("name") as string;
+
+        console.log(row);
+
         return (
-          <div
-            className="relative overflow-hidden aspect-square w-full flex flex-col rounded-md"
-            onClick={() => {
-              console.log(row, image);
-            }}
-          >
-            <ImageComponentOptimized
-              unoptimized={true}
-              src={image}
-              alt={row.getValue("name") as string}
-              placeholder="blur"
-              fill
-              className="object-cover"
-            />
+          <div className="flex items-center justify-center">
+            <div className="relative w-12 h-12 rounded-md overflow-hidden border">
+              <ImageComponentOptimized
+                src={image as any}
+                alt={productName}
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
+            </div>
           </div>
         );
       },
