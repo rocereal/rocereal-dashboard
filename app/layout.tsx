@@ -1,9 +1,9 @@
+import { ConfigPanel } from "@/components/config-panel";
+import { LayoutConfigProvider } from "@/lib/layout-config";
+import { ThemeProvider } from "@/lib/theme-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/lib/theme-provider";
-import { LayoutConfigProvider } from "@/lib/layout-config";
-import { ConfigPanel } from "@/components/config-panel";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

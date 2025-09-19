@@ -7,6 +7,8 @@ type LayoutConfig = {
   headerVisible: boolean;
   footerVisible: boolean;
   colorTheme: "teal" | "blue" | "orange" | "neutral" | "green";
+  fontSize: "sm" | "base" | "lg";
+  maxWidth: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
 };
 
 type LayoutConfigProviderProps = {
@@ -26,6 +28,8 @@ const defaultLayoutConfig: LayoutConfig = {
   headerVisible: true,
   footerVisible: true,
   colorTheme: "neutral",
+  fontSize: "base",
+  maxWidth: "full",
 };
 
 const initialState: LayoutConfigProviderState = {

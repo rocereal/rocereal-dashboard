@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import {
   Table,
@@ -16,30 +14,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import {
+  Activity,
   ArrowLeft,
   Download,
-  Share,
-  Trash2,
   Edit,
-  Star,
   Eye,
-  Lock,
-  Users,
-  Clock,
   FileText,
-  Image,
-  Video,
-  Music,
-  Archive,
-  Calendar,
-  User,
-  Shield,
-  Activity,
   History,
+  Lock,
   Settings,
+  Share,
+  Shield,
+  Star,
+  Trash2,
+  User,
+  Users,
+  type LucideIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface FileDetails {
   id: string;
@@ -56,7 +51,7 @@ interface FileDetails {
   };
   permissions: "private" | "shared" | "public";
   starred: boolean;
-  icon: any;
+  icon: LucideIcon;
   color: string;
   description?: string;
   tags: string[];

@@ -1,20 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import {
-  Send,
-  Paperclip,
-  Smile,
-  Mic,
-  Image,
   Camera,
   File,
+  Image,
+  Mic,
+  Paperclip,
+  Send,
+  Smile,
   User,
 } from "lucide-react";
+import { useState } from "react";
 
 interface Message {
   id: string;

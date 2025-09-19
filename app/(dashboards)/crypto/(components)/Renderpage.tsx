@@ -1,30 +1,16 @@
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
-import { SectionCards } from "./SectionCards";
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { CoinConverter } from "@/components/crypto/coin-converter";
 import { CryptoTable } from "@/components/crypto/crypto-table";
+import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { ChartConfig } from "@/components/ui/charts";
+import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { cryptoMetrics } from "@/data/crypto-metrics";
-import { cryptoPriceData, cryptoCoins } from "@/data/crypto-prices";
+import { cryptoCoins, cryptoPriceData } from "@/data/crypto-prices";
 import { TrendingUp } from "lucide-react";
 import { useState } from "react";
-import { DateTimeRange } from "@/components/ui/date-time-range-picker";
-import { ChartConfig } from "@/components/ui/charts";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-const bitcoinConfig: ChartConfig = {
-  bitcoin: {
-    label: "Bitcoin",
-    color: "var(--chart-1)",
-  },
-};
+import { SectionCards } from "./SectionCards";
 
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();

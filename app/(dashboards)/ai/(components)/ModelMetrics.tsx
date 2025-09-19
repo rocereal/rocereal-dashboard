@@ -1,12 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { modelMetricsData } from "@/data/ai-model-metrics";
-import { latencyData, completionData } from "@/data/model-metrics-charts";
-import { SectionCards } from "./SectionCards";
-import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { SampleBarChart } from "@/components/charts/SampleBarChart";
+import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { ChartConfig } from "@/components/ui/charts";
+import { modelMetricsData } from "@/data/ai-model-metrics";
+import { completionData, latencyData } from "@/data/model-metrics-charts";
+import { SectionCards } from "./SectionCards";
 
 const latencyConfig: ChartConfig = {
   latency: {

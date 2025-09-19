@@ -1,6 +1,6 @@
-import RenderPage from "./(components)/Renderpage";
 import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
+import RenderPage from "./(components)/Renderpage";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
   "E-commerce Performance Dashboard",

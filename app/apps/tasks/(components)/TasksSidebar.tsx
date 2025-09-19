@@ -1,22 +1,22 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+  CheckSquare,
+  Clock,
+  Filter,
+  Home,
+  ListTodo,
   Menu,
   Plus,
-  CheckSquare,
-  ListTodo,
-  Calendar,
-  Filter,
   Search,
-  Home,
   Star,
-  Clock,
-  AlertCircle,
-  CheckCircle2,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface TasksSidebarProps {
   sidebarOpen: boolean;

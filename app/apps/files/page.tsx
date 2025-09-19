@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import FilesSidebar from "./(components)/FilesSidebar";
 import FilesContent from "./(components)/FilesContent";
 import FilesHeader from "./(components)/FilesHeader";
+import FilesSidebar from "./(components)/FilesSidebar";
 
 export default function FilesPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);

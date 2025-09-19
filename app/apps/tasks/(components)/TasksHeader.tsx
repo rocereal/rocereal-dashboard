@@ -1,16 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  MoreVertical,
   CheckSquare,
+  Filter,
   Grid3X3,
   List,
-  Plus,
-  Filter,
-  SortAsc,
+  MoreVertical,
   Search,
+  SortAsc
 } from "lucide-react";
 
 interface TasksHeaderProps {

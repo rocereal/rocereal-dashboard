@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { Menu, Plus, Search, MessageCircle, Users, User } from "lucide-react";
-import { CreateGroupForm } from "./CreateGroupForm";
-import { AddContactForm } from "./AddContactForm";
+import { Menu, MessageCircle, Plus, Search, User, Users } from "lucide-react";
 import { useState } from "react";
+import { AddContactForm } from "./AddContactForm";
+import { CreateGroupForm } from "./CreateGroupForm";
 
 interface Contact {
   id: string;

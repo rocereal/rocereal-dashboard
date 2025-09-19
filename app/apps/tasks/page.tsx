@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import TasksSidebar from "./(components)/TasksSidebar";
-import TasksList from "./(components)/TasksList";
+import { useState } from "react";
 import TasksHeader from "./(components)/TasksHeader";
+import TasksList from "./(components)/TasksList";
+import TasksSidebar from "./(components)/TasksSidebar";
 
 export default function TasksPage() {
   const router = useRouter();

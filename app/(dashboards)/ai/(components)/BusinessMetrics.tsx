@@ -1,9 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BusinessCustomersTable } from "@/components/tables/BusinessCustomersTable";
 import { businessMetricsData } from "@/data/ai-business-metrics";
 import { SectionCards } from "./SectionCards";
-import { BusinessCustomersTable } from "@/components/tables/BusinessCustomersTable";
 
 export function BusinessMetrics() {
   return (

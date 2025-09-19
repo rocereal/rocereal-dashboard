@@ -1,6 +1,9 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FunnelChart } from "@/components/charts/FunnelChart";
+import { PieChart } from "@/components/charts/PieChart";
+import { RadarChart } from "@/components/charts/RadarChart";
+import { WordCloud } from "@/components/charts/WordCloud";
 import { engagementMetricsData } from "@/data/ai-engagement-metrics";
 import {
   featuresData,
@@ -8,10 +11,6 @@ import {
   userJourneyData,
 } from "@/data/engagement-metrics-charts";
 import { SectionCards } from "./SectionCards";
-import { PieChart } from "@/components/charts/PieChart";
-import { RadarChart } from "@/components/charts/RadarChart";
-import { WordCloud } from "@/components/charts/WordCloud";
-import { FunnelChart } from "@/components/charts/FunnelChart";
 
 export function EngagementMetrics() {
   return (

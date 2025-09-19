@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
+import { Logo } from "@/components/shared/Logo";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,10 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
-import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
-import { Logo } from "@/components/shared/Logo";
+import { ArrowLeft, CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);

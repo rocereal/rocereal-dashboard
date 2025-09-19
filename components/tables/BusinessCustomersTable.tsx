@@ -1,8 +1,8 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DataTable, createSortableColumn } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,12 +11,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DataTable, createSortableColumn } from "@/components/ui/data-table";
 import {
   businessCustomers,
   type BusinessCustomer,
 } from "@/data/business-customers";
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 
 export const businessColumns: ColumnDef<BusinessCustomer>[] = [
   createSortableColumn("userOrg", "Customer"),

@@ -1,16 +1,16 @@
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
-import { SectionCards } from "./SectionCards";
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
+import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { CRMCustomerTable } from "@/components/tables/crm-customer-table";
+import { ChartConfig } from "@/components/ui/charts";
+import { DateTimeRange } from "@/components/ui/date-time-range-picker";
+import { crmCustomers } from "@/data/crm-customers";
 import { crmMetrics } from "@/data/crm-metrics";
 import { crmSalesFunnelData } from "@/data/crm-sales-funnel";
-import { crmCustomers } from "@/data/crm-customers";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
-import { DateTimeRange } from "@/components/ui/date-time-range-picker";
-import { ChartConfig } from "@/components/ui/charts";
+import { SectionCards } from "./SectionCards";
 
 const salesFunnelConfig: ChartConfig = {
   leads: {

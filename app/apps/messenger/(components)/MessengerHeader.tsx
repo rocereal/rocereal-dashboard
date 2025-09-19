@@ -2,7 +2,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { MessageCircle, MoreVertical, Phone, Video } from "lucide-react";
 
 // Mock contacts data (same as sidebar for consistency)

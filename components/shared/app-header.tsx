@@ -1,23 +1,22 @@
 "use client";
 
-import * as React from "react";
 import {
   Bell,
-  Search,
-  Maximize,
-  Minimize,
-  Moon,
-  Sun,
-  Monitor,
-  ChevronDown,
   Check,
-  X,
+  Maximize,
   Menu,
+  Minimize,
+  Monitor,
+  Moon,
+  Search,
+  Sun,
+  X,
 } from "lucide-react";
+import * as React from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,18 +24,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useTheme } from "@/lib/theme-provider";
 import { useSidebar } from "@/components/ui/sidebar";
 import { sampleNotifications, type Notification } from "@/data/notifications";
+import { useTheme } from "@/lib/theme-provider";
 
 interface AppHeaderProps {
   className?: string;

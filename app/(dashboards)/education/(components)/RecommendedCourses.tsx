@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { RecommendedCourse } from "@/data/education";
-import { Star, User, ShoppingCart, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { Search, ShoppingCart, Star, User } from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface RecommendedCoursesProps {
   courses: RecommendedCourse[];

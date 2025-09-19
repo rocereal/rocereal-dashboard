@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -9,8 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowUpDown } from "lucide-react";
 import { cryptoCoins } from "@/data/crypto-prices";
+import { ArrowUpDown } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface CoinConverterProps {
   className?: string;

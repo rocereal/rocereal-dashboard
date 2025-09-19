@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
+import { Logo } from "@/components/shared/Logo";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,10 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
-import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
-import { Logo } from "@/components/shared/Logo";
+import { ArrowLeft, CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);

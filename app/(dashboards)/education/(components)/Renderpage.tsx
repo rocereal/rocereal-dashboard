@@ -5,8 +5,8 @@ import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { coursesData, recommendedCourses } from "@/data/education";
 import { BookOpen } from "lucide-react";
 import { useState } from "react";
-import { SectionCards } from "./SectionCards";
 import { RecommendedCourses } from "./RecommendedCourses";
+import { SectionCards } from "./SectionCards";
 
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();

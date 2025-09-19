@@ -1,28 +1,24 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import {
-  Menu,
-  Upload,
-  Download,
-  Trash2,
-  Folder,
-  HardDrive,
-  Cloud,
-  Star,
+  Archive,
   Clock,
-  Share,
-  Settings,
+  FileText,
+  HardDrive,
   Home,
   Image,
-  Video,
-  FileText,
-  Archive,
+  Menu,
   Music,
+  Settings,
+  Share,
+  Star,
+  Upload,
+  Video,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface FilesSidebarProps {
   sidebarOpen: boolean;

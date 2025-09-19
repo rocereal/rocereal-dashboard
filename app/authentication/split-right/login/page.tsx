@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { LoginForm } from "@/components/auth/LoginForm";
+import { Logo } from "@/components/shared/Logo";
 import {
   Card,
   CardContent,
@@ -8,8 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LoginForm } from "@/components/auth/LoginForm";
-import { Logo } from "@/components/shared/Logo";
+import { useState } from "react";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);

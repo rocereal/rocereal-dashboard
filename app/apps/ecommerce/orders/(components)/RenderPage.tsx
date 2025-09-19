@@ -1,12 +1,11 @@
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
-import { metadataTemplates } from "@/lib/metadata";
-import { FileText, Plus, Package } from "lucide-react";
-import { SectionCards } from "./SectionCards";
-import { OrdersTable } from "./OrdersTable";
-import { productsData, Product } from "@/data/ecommerce";
+import { Product, productsData } from "@/data/ecommerce";
+import { FileText, Package, Plus } from "lucide-react";
 import { useState } from "react";
+import { OrdersTable } from "./OrdersTable";
+import { SectionCards } from "./SectionCards";
 
 export default function RenderPage() {
   const [products, setProducts] = useState(productsData);

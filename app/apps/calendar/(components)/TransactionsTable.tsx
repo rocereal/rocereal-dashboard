@@ -1,11 +1,11 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable, createSortableColumn } from "@/components/ui/data-table";
 import { transactionsData, type TransactionData } from "@/data/finance";
-import { ArrowUpDown, TrendingUp, TrendingDown } from "lucide-react";
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, TrendingDown, TrendingUp } from "lucide-react";
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat("en-US", {

@@ -1,23 +1,23 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import {
-  MoreVertical,
-  Grid3X3,
-  List,
-  Upload,
-  Download,
-  Trash2,
-  Share,
-  Search,
-  FolderPlus,
-  RefreshCw,
-  ChevronRight,
-  Home,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  ChevronRight,
+  Download,
+  FolderPlus,
+  Grid3X3,
+  Home,
+  List,
+  MoreVertical,
+  RefreshCw,
+  Search,
+  Share,
+  Trash2,
+  Upload,
+} from "lucide-react";
 
 interface FilesHeaderProps {
   sidebarOpen: boolean;

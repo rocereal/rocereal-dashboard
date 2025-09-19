@@ -1,13 +1,11 @@
 "use client";
 
-import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { PieChart } from "@/components/charts/PieChart";
-import { FunnelChart } from "@/components/charts/FunnelChart";
-import { OrdersTable } from "@/components/ecommerce/orders-table";
+import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
-import { financeMetrics, profitLossData, financeCharts } from "@/data/finance";
+import { financeCharts, financeMetrics, profitLossData } from "@/data/finance";
 import { TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";

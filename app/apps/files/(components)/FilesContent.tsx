@@ -1,27 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import {
-  Folder,
-  File,
-  Image,
-  Video,
-  FileText,
-  Archive,
-  Music,
-  MoreVertical,
-  Download,
-  Share,
-  Trash2,
-  Edit,
-  Star,
-  Eye,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Archive,
+  Download,
+  Eye,
+  FileText,
+  Folder,
+  Image,
+  MoreVertical,
+  Music,
+  Share,
+  Star,
+  Video,
+  type LucideIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface FileItem {
   id: string;
@@ -30,7 +28,7 @@ interface FileItem {
   fileType?: string;
   size?: string;
   modifiedDate: string;
-  icon: any;
+  icon: LucideIcon;
   color: string;
   starred?: boolean;
 }

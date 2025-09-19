@@ -22,7 +22,6 @@ import {
   MapPin,
   Phone,
   Plus,
-  Settings,
   Users,
   Video,
 } from "lucide-react";
@@ -34,14 +33,10 @@ interface TeamsCalendarProps {
   className?: string;
 }
 
-type ViewType = "month" | "week" | "day" | "agenda";
-
 export default function EventsCalendar({
   events = calendarEvents,
-  className,
 }: TeamsCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<ViewType>("month");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
     null
@@ -57,25 +52,12 @@ export default function EventsCalendar({
     });
   };
 
-  // Get upcoming events (next 7 days)
-  const getUpcomingEvents = () => {
-    const today = new Date();
-    const nextWeek = new Date(today);
-    nextWeek.setDate(today.getDate() + 7);
-
-    return events
-      .filter((event) => event.start >= today && event.start <= nextWeek)
-      .sort((a, b) => a.start.getTime() - b.start.getTime())
-      .slice(0, 5);
-  };
-
   // Generate calendar days for month view
   const generateMonthDays = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
@@ -133,8 +115,6 @@ export default function EventsCalendar({
         return <Calendar className="h-3 w-3" />;
     }
   };
-
-  const upcomingEvents = getUpcomingEvents();
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 flex flex-col">

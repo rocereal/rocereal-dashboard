@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { RegisterForm } from "@/components/auth/RegisterForm";
+import { Logo } from "@/components/shared/Logo";
 import {
   Card,
   CardContent,
@@ -8,8 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Logo } from "@/components/shared/Logo";
-import { RegisterForm } from "@/components/auth/RegisterForm";
+import { useState } from "react";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);

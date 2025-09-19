@@ -1,5 +1,5 @@
-import { AppSidebar } from "@/components/shared/app-sidebar";
 import { AppHeader } from "@/components/shared/app-header";
+import { AppSidebar } from "@/components/shared/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function DashboardsLayout({

@@ -1,14 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MetricData } from "@/data/analytics";
+import { cn } from "@/lib/utils";
 import {
+  BarChart3,
+  DollarSign,
   TrendingDown,
   TrendingUp,
-  DollarSign,
-  BarChart3,
   Wallet,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface SectionCardsProps {
   metrics?: MetricData[];
@@ -49,7 +49,6 @@ export function SectionCards({ metrics, className }: SectionCardsProps) {
         const IconComponent = getIconComponent(metric.icon);
         const isPositive = metric.changeType === "positive";
         const isNegative = metric.changeType === "negative";
-        const isNeutral = metric.changeType === "neutral";
 
         return (
           <Card

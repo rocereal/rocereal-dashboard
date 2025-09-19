@@ -1,8 +1,8 @@
 "use client";
 
-import { onboardingSteps } from "@/data/onboarding";
-import { Info, Check } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
+import { onboardingSteps } from "@/data/onboarding";
+import { Check, Info } from "lucide-react";
 
 interface OnboardingWizardProps {
   currentStep: number;

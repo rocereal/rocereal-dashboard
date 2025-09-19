@@ -3,18 +3,16 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Combobox } from "@/components/ui/combobox";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, User } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import {
   languages,
-  timezones,
   notificationOptions,
   onboardingSteps,
+  timezones,
 } from "@/data/onboarding";
+import Link from "next/link";
+import { useState } from "react";
 
 interface StepTwoData {
   language: string;

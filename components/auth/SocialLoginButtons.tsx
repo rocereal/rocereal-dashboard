@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Github, Chrome } from "lucide-react";
 import { Facebook, Google } from "@/components/svg/Icons";
+import { Button } from "@/components/ui/button";
 
 interface SocialLoginButtonsProps {
   separatorText?: string;

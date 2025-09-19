@@ -1,16 +1,15 @@
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EducationMetric, CourseData } from "@/data/education";
+import { CourseData, EducationMetric } from "@/data/education";
+import { cn } from "@/lib/utils";
 import {
+  CheckCircle,
+  Star,
   TrendingDown,
   TrendingUp,
   Users,
-  CheckCircle,
-  Star,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 interface SectionCardsProps {
   metrics?: EducationMetric[];

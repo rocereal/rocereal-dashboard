@@ -2,7 +2,6 @@
 
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 import { StepFour } from "@/components/onboarding/StepFour";
-import { StepThree } from "@/components/onboarding/StepThree";
 import { Separator } from "@/components/ui/separator";
 import { onboardingSteps } from "@/data/onboarding";
 import { useState } from "react";

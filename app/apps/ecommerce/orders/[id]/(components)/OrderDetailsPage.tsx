@@ -1,41 +1,30 @@
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ordersData, productsData } from "@/data/ecommerce";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { useState, useEffect } from "react";
-import {
-  ArrowLeft,
-  Package,
-  Truck,
   CheckCircle,
   Clock,
-  MapPin,
-  Phone,
-  Mail,
   CreditCard,
-  Calendar,
   DollarSign,
-  User,
-  Edit,
-  Printer,
   Download,
+  Edit,
+  Mail,
+  MapPin,
+  Package,
+  Phone,
+  Printer,
+  Truck,
+  User
 } from "lucide-react";
-import { ordersData, productsData } from "@/data/ecommerce";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { useEffect, useState } from "react";
 
 interface OrderDetailsPageProps {
   orderId: string;

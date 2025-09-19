@@ -2,10 +2,6 @@
 
 import * as React from "react";
 
-import { NavMain } from "./nav-main";
-import { NavProjects } from "./nav-projects";
-import { NavUser } from "./nav-user";
-import { LogoTop } from "./LogoTop";
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +10,9 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { menudata } from "@/data/menu";
+import { LogoTop } from "./LogoTop";
+import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

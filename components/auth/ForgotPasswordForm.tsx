@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Mail, AlertCircle } from "lucide-react";
+import { AlertCircle, Mail } from "lucide-react";
+import { useState } from "react";
 
 interface ForgotPasswordFormProps {
   onSubmit: (email: string) => void;

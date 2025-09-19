@@ -1,15 +1,15 @@
 "use client";
 
-import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { FunnelChart } from "@/components/charts/FunnelChart";
-import { OrdersTable } from "@/components/ecommerce/orders-table";
+import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { OrdersTable } from "@/components/ecommerce/orders-table";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import {
+  conversionFunnelData,
   ecommerceMetrics,
   revenueData,
-  conversionFunnelData,
 } from "@/data/ecommerce";
 import { TrendingUp } from "lucide-react";
 import { useState } from "react";

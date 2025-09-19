@@ -1,6 +1,7 @@
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,7 +54,6 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState(ordersData);

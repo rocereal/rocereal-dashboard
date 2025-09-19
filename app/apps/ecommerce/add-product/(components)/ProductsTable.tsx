@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Product } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Eye, MoreHorizontal, Trash2, Download } from "lucide-react";
+import { Download, Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

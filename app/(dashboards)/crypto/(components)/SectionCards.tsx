@@ -1,8 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CryptoMetric } from "@/data/crypto-metrics";
-import { TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TrendingDown, TrendingUp } from "lucide-react";
 
 interface SectionCardsProps {
   metrics?: CryptoMetric[];

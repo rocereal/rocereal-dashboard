@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import MessengerSidebar from "./(components)/MessengerSidebar";
 import MessengerChat from "./(components)/MessengerChat";
 import MessengerHeader from "./(components)/MessengerHeader";
+import MessengerSidebar from "./(components)/MessengerSidebar";
 
 export default function MessengerPage() {
   const [selectedContact, setSelectedContact] = useState<string | null>(null);

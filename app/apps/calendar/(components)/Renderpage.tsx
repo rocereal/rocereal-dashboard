@@ -2,7 +2,6 @@
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
-import { calendarEvents } from "@/data/calendar";
 import { CalendarDays } from "lucide-react";
 import { useState } from "react";
 import EventsCalendar from "./Calendar";

@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { onboardingSteps } from "@/data/onboarding";
 import { Mail, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { Separator } from "@/components/ui/separator";
-import { onboardingSteps } from "@/data/onboarding";
 
 interface StepOneData {
   firstName: string;

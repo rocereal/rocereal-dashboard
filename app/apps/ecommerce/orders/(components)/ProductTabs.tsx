@@ -1,14 +1,11 @@
 "use client";
 
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
-import { TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DataTable, createSortableColumn } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -16,28 +13,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DataTable, createSortableColumn } from "@/components/ui/data-table";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { TabsContent } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Product,
   ProductPurchase,
   getProductPurchases,
 } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
 import {
-  ArrowLeft,
-  Package,
-  Edit,
-  Image,
-  ShoppingCart,
-  Settings,
-  FileText,
-  Eye,
   BarChart3,
-  Save,
-  X,
   Info,
+  Package,
+  Save,
+  Settings,
+  ShoppingCart,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 
 interface productProps {
   product: Product;
