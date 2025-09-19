@@ -77,7 +77,7 @@ export function CreateGroupForm({
     contact.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAddMember = (contact: Contact) => {
+  const handleAddMember = (contact: GroupMember) => {
     if (!selectedMembers.find((member) => member.id === contact.id)) {
       setSelectedMembers([...selectedMembers, contact]);
     }

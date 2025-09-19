@@ -98,9 +98,9 @@ export const menudata = {
       url: "#",
       icon: FileText,
       items: [
-        { title: "Task List", url: "/apps/tasks/list" },
-        { title: "Task Details", url: "/apps/tasks/details" },
-        { title: "New Task", url: "/apps/tasks/new" },
+        { title: "Task List", url: "/apps/tasks" },
+        { title: "Task Details", url: "/apps/tasks/1" },
+        { title: "Create Task", url: "/apps/tasks/create" },
       ],
     },
 
