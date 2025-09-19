@@ -44,7 +44,7 @@ export function TabsWithIcons({
                   key={tab.id}
                   value={tab.id}
                   className={cn(
-                    "flex items-center space-x-2 border-b-2 border-transparent pb-3 pt-2 font-medium text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary transition-colors"
+                    "flex items-center space-x-2 border-b-2 border-transparent pb-3 pt-2 font-medium text-muted-background hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary transition-colors"
                   )}
                 >
                   {IconComponent && <IconComponent className="h-4 w-4" />}

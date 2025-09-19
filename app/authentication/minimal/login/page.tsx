@@ -51,7 +51,7 @@ export default function LoginPage() {
             isLoading={isLoading}
             forgotPasswordHref="/authentication/minimal/forgot-password"
             signUpHref="/authentication/minimal/register"
-            inputClassName="bg-white/50 dark:bg-slate-700/50"
+            inputClassName="bg-white/50 dark:bg-slate-900/50"
             socialLoginProps={{
               separatorText: "Or continue with",
             }}

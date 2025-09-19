@@ -1,6 +1,6 @@
 "use client";
 
-import { BusinessCustomersTable } from "@/components/tables/BusinessCustomersTable";
+import { BusinessCustomersTable } from "@/app/(dashboards)/ai/(components)/BusinessCustomersTable";
 import { businessMetricsData } from "@/data/ai-business-metrics";
 import { SectionCards } from "./SectionCards";
 

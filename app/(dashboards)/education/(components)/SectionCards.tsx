@@ -37,7 +37,7 @@ export function SectionCards({
           return (
             <Card
               key={course.id}
-              className="relative overflow-hidden border bg-card/50 shadow-xs backdrop-blur-sm"
+              className="relative overflow-hidden border !bg-card shadow-xs backdrop-blur-sm"
             >
               <div className="relative overflow-hidden aspect-video w-full flex flex-col">
                 <ImageComponentOptimized
@@ -123,7 +123,7 @@ export function SectionCards({
         return (
           <Card
             key={metric.id}
-            className="relative overflow-hidden border bg-card/50 shadow-xs backdrop-blur-sm"
+            className="relative overflow-hidden border !bg-card shadow-xs backdrop-blur-sm"
           >
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -131,7 +131,9 @@ export function SectionCards({
                   {metric.title}
                 </CardTitle>
                 {IconComponent && (
-                  <IconComponent className="h-4 w-4 text-muted-foreground" />
+                  <div className="bg-primary/20 size-8 items-center rounded-full flex justify-center">
+                    <IconComponent className="h-3 w-3 rounded-full text-primary" />
+                  </div>
                 )}
               </div>
               <div className="text-2xl font-bold tabular-nums">

@@ -45,27 +45,27 @@ export default function RootLayout({
                   root.setAttribute('data-theme', theme);
                 }
 
-                // Apply sidebar colors immediately
+                // Apply sidebar colors immediately using Tailwind 'stone' palette
                 const sidebarColors = {
                   dark: {
-                    primary: 'oklch(0.929 0.013 255.508)',
-                    'primary-foreground': 'oklch(0.208 0.042 265.755)',
-                    accent: 'oklch(0.279 0.041 260.031)',
-                    'accent-foreground': 'oklch(0.984 0.003 247.858)',
-                    sidebar: 'oklch(0.208 0.042 265.755)',
-                    'sidebar-foreground': 'oklch(0.984 0.003 247.858)',
-                    border: 'oklch(1 0 0 / 10%)',
-                    ring: 'oklch(0.551 0.027 264.364)'
+                    primary: 'oklch(0.554 0.046 257.417)',           // brand primary (unchanged)
+                    'primary-foreground': 'oklch(0.984 0.003 247.858)', // brand fg (unchanged)
+                    accent: 'oklch(0.36 0.006 70)',                  // stone-700
+                    'accent-foreground': 'oklch(0.99 0.002 70)',     // stone-50
+                    sidebar: 'oklch(0.15 0.004 70)',                 // stone-900
+                    'sidebar-foreground': 'oklch(0.99 0.002 70)',    // stone-50
+                    border: 'oklch(0.36 0.006 70)',                  // stone-700
+                    ring: 'oklch(0.7 0.005 70)'                      // stone-400
                   },
                   light: {
-                    primary: 'oklch(0.208 0.042 265.755)',
-                    'primary-foreground': 'oklch(0.984 0.003 247.858)',
-                    accent: 'oklch(0.968 0.007 247.896)',
-                    'accent-foreground': 'oklch(0.208 0.042 265.755)',
-                    sidebar: 'oklch(1 0 0)',
-                    'sidebar-foreground': 'oklch(0.129 0.042 264.695)',
-                    border: 'oklch(0.929 0.013 255.508)',
-                    ring: 'oklch(0.704 0.04 256.788)'
+                    primary: 'oklch(0.208 0.042 265.755)',            // brand primary (unchanged)
+                    'primary-foreground': 'oklch(0.984 0.003 247.858)', // brand fg (unchanged)
+                    accent: 'oklch(0.97 0.003 70)',                  // stone-100
+                    'accent-foreground': 'oklch(0.15 0.004 70)',     // stone-900
+                    sidebar: 'oklch(0.99 0.002 70)',                 // stone-50
+                    'sidebar-foreground': 'oklch(0.15 0.004 70)',    // stone-900
+                    border: 'oklch(0.93 0.004 70)',                  // stone-200
+                    ring: 'oklch(0.54 0.006 70)'                     // stone-500
                   }
                 };
 

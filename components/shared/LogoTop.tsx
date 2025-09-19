@@ -48,7 +48,7 @@ export function LogoTop() {
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
-            className="h-8 w-8"
+            className="h-8 w-8 flex lg:hidden"
           >
             <X className="h-4 w-4" />
             <span className="sr-only">Toggle sidebar</span>
