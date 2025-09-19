@@ -90,13 +90,8 @@ export const menudata = {
     },
     {
       title: "Messenger",
-      url: "#",
+      url: "/apps/messenger",
       icon: MessageSquare,
-      items: [
-        { title: "Chats", url: "/apps/messenger/chats" },
-        { title: "Groups", url: "/apps/messenger/groups" },
-        { title: "Contacts", url: "/apps/messenger/contacts" },
-      ],
     },
     {
       title: "Tasks",

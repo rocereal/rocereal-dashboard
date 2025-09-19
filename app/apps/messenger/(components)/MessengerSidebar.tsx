@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Menu, Plus, Search, MessageCircle, Users, User } from "lucide-react";
+import { CreateGroupForm } from "./CreateGroupForm";
+import { AddContactForm } from "./AddContactForm";
+import { useState } from "react";
 
 interface Contact {
   id: string;
@@ -71,6 +74,9 @@ export default function MessengerSidebar({
   sidebarOpen,
   onSidebarToggle,
 }: MessengerSidebarProps) {
+  const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
+  const [isAddContactOpen, setIsAddContactOpen] = useState(false);
+
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -84,6 +90,27 @@ export default function MessengerSidebar({
     } else {
       return date.toLocaleDateString([], { month: "short", day: "numeric" });
     }
+  };
+
+  const handleCreateGroup = (groupData: {
+    name: string;
+    description: string;
+    members: { id: string; name: string; avatar: string; isOnline: boolean }[];
+  }) => {
+    console.log("Creating group:", groupData);
+    // Here you would typically add the group to your data store
+    // For now, we'll just log it
+  };
+
+  const handleAddContact = (contactData: {
+    name: string;
+    email: string;
+    phone?: string;
+    notes?: string;
+  }) => {
+    console.log("Adding contact:", contactData);
+    // Here you would typically add the contact to your data store
+    // For now, we'll just log it
   };
 
   return (
@@ -204,7 +231,12 @@ export default function MessengerSidebar({
                 <div className="text-center py-8 text-gray-500">
                   <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p className="text-sm">No groups yet</p>
-                  <Button variant="outline" size="sm" className="mt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => setIsCreateGroupOpen(true)}
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Create Group
                   </Button>
@@ -217,6 +249,19 @@ export default function MessengerSidebar({
               value="contacts"
               className="flex-1 overflow-y-auto mt-0"
             >
+              {/* Add Contact Button */}
+              <div className="px-4 pb-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => setIsAddContactOpen(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Contact
+                </Button>
+              </div>
+
               <nav className="px-2">
                 {mockContacts.map((contact) => (
                   <button
@@ -305,6 +350,19 @@ export default function MessengerSidebar({
             ))}
           </nav>
         )}
+
+        {/* Form Components */}
+        <CreateGroupForm
+          open={isCreateGroupOpen}
+          onOpenChange={setIsCreateGroupOpen}
+          onSubmit={handleCreateGroup}
+        />
+
+        <AddContactForm
+          open={isAddContactOpen}
+          onOpenChange={setIsAddContactOpen}
+          onSubmit={handleAddContact}
+        />
       </div>
     </div>
   );

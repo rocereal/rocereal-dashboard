@@ -5,7 +5,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Send, Paperclip, Smile } from "lucide-react";
+import {
+  Send,
+  Paperclip,
+  Smile,
+  Mic,
+  Image,
+  Camera,
+  File,
+  User,
+} from "lucide-react";
 
 interface Message {
   id: string;
@@ -160,10 +169,10 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col relative">
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4">
-        <div className="space-y-4">
+        <div className="space-y-4 pb-4">
           {chatMessages.map((message) => (
             <div
               key={message.id}
@@ -213,36 +222,100 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
         </div>
       </div>
 
-      {/* Chat Input */}
-      <div className="border-t p-4">
-        <div className="flex items-end gap-2">
-          <Button variant="ghost" size="sm">
-            <Paperclip className="h-4 w-4" />
+      {/* Chat Input - Sticks to Bottom of Chat Area */}
+      <div className="sticky bottom-0 bg-white border-t p-4">
+        <div className="flex items-end gap-3">
+          {/* Attachment Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-500 hover:text-gray-700 p-2"
+          >
+            <Paperclip className="h-5 w-5" />
           </Button>
 
+          {/* Message Input */}
           <div className="flex-1 relative">
-            <Input
-              placeholder="Type a message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="pr-12"
-            />
+            <div className="relative bg-gray-100 rounded-full px-4 py-2">
+              <Input
+                placeholder="Type a message..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 pr-12"
+              />
+
+              {/* Emoji Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1 h-8 w-8"
+              >
+                <Smile className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Voice Message or Send Button */}
+          {newMessage.trim() ? (
+            <Button
+              onClick={handleSendMessage}
+              size="sm"
+              className="bg-green-500 hover:bg-green-600 text-white rounded-full p-3 h-10 w-10"
+            >
+              <Send className="h-5 w-5" />
+            </Button>
+          ) : (
             <Button
               variant="ghost"
               size="sm"
-              className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              className="text-gray-500 hover:text-gray-700 rounded-full p-3 h-10 w-10"
             >
-              <Smile className="h-4 w-4" />
+              <Mic className="h-5 w-5" />
             </Button>
-          </div>
+          )}
+        </div>
+
+        {/* Attachment Options (Hidden by default, can be toggled) */}
+        <div className="hidden mt-3 grid grid-cols-4 gap-4">
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center gap-2 p-4 h-auto"
+          >
+            <div className="bg-blue-100 rounded-full p-3">
+              <Image className="h-6 w-6 text-blue-600" />
+            </div>
+            <span className="text-xs text-gray-600">Gallery</span>
+          </Button>
 
           <Button
-            onClick={handleSendMessage}
-            disabled={!newMessage.trim()}
-            size="sm"
+            variant="ghost"
+            className="flex flex-col items-center gap-2 p-4 h-auto"
           >
-            <Send className="h-4 w-4" />
+            <div className="bg-green-100 rounded-full p-3">
+              <Camera className="h-6 w-6 text-green-600" />
+            </div>
+            <span className="text-xs text-gray-600">Camera</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center gap-2 p-4 h-auto"
+          >
+            <div className="bg-purple-100 rounded-full p-3">
+              <File className="h-6 w-6 text-purple-600" />
+            </div>
+            <span className="text-xs text-gray-600">Document</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center gap-2 p-4 h-auto"
+          >
+            <div className="bg-orange-100 rounded-full p-3">
+              <User className="h-6 w-6 text-orange-600" />
+            </div>
+            <span className="text-xs text-gray-600">Contact</span>
           </Button>
         </div>
       </div>
