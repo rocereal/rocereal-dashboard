@@ -29,10 +29,12 @@ interface DashboardHeaderProps {
   primaryAction?: {
     label: string;
     icon?: ReactNode;
+    onClick?: () => void;
   };
   secondaryAction?: {
     label: string;
     icon?: ReactNode;
+    onClick?: () => void;
   };
   dateRange?: DateTimeRange;
   onDateRangeChange?: (dateRange: DateTimeRange | undefined) => void;
@@ -88,7 +90,7 @@ export function DashboardHeader({
           <div className="flex items-center flex-col lg:flex-row gap-4 w-full lg:w-fit">
             {primaryAction && (
               <Button
-                onClick={() => console.log(`${primaryAction.label} clicked`)}
+                onClick={primaryAction.onClick}
                 className="flex w-full lg:w-fit items-center space-x-2"
               >
                 {primaryAction.icon}
@@ -106,7 +108,7 @@ export function DashboardHeader({
             {secondaryAction && (
               <Button
                 variant="outline"
-                onClick={() => console.log(`${secondaryAction.label} clicked`)}
+                onClick={secondaryAction.onClick}
                 className="flex w-full lg:w-fit items-center space-x-2"
               >
                 {secondaryAction.icon}

@@ -686,7 +686,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        " text-neutral-800 dark:text-neutral-200 ring-sidebar-ring hover:bg-secondary hover:text-primary active:bg-primary active:text-primary [&>svg]: text-neutral-800 dark:text-neutral-200 flex h-10 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+        " text-neutral-800 dark:text-neutral-200 ring-sidebar-ring hover:bg-secondary hover:text-primary active:bg-secondary active:text-primary [&>svg]: text-neutral-800 dark:text-neutral-200 flex h-10 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
         "transition-colors duration-200 ease-in-out",
         "data-[active=true]:bg-sidebar-border data-[active=true]:text-sidebar-text data-[active=true]:border-l-2 data-[active=true]:border-sidebar-primary data-[active=true]:font-medium",
         size === "sm" && "text-xs",

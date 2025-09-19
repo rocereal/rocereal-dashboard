@@ -11,7 +11,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, UserPlus } from "lucide-react";
+import { Mail, Phone, User, UserPlus } from "lucide-react";
 import { useState } from "react";
 
 interface AddContactFormProps {
@@ -83,10 +83,7 @@ export function AddContactForm({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="w-[400px] sm:w-[540px] flex flex-col"
-      >
+      <SheetContent side="right" className="w-full sm:w-[540px] flex flex-col">
         <SheetHeader className="flex-shrink-0">
           <SheetTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5" />
@@ -100,7 +97,10 @@ export function AddContactForm({
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
           {/* Contact Name */}
           <div className="space-y-2">
-            <Label htmlFor="contact-name">Full Name *</Label>
+            <Label htmlFor="contact-email" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Full Name *
+            </Label>
             <Input
               id="contact-name"
               placeholder="Enter full name"
@@ -162,15 +162,14 @@ export function AddContactForm({
                 variant="outline"
                 className="justify-start h-auto p-4"
                 onClick={() => {
-                  // This would typically send an invitation email
                   console.log("Send invitation to:", formData.email);
                 }}
                 disabled={!formData.email.trim()}
               >
-                <Mail className="h-4 w-4 mr-3" />
-                <div className="text-left">
+                <Mail className="h-4 w-4 mr-3 shrink-0" />
+                <div className="flex flex-col text-left min-w-0">
                   <div className="font-medium">Send Invitation</div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground break-words">
                     Send an email invitation to join messenger
                   </div>
                 </div>

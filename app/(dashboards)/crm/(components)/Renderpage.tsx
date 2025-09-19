@@ -11,6 +11,7 @@ import { crmSalesFunnelData } from "@/data/crm-sales-funnel";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
+import { AddContactForm } from "@/app/apps/messenger/(components)/AddContactForm";
 
 const salesFunnelConfig: ChartConfig = {
   leads: {
@@ -48,6 +49,19 @@ const dealsConfig: ChartConfig = {
 
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
+  const [isAddContactOpen, setIsAddContactOpen] = useState(false);
+
+  const handleAddContact = (contactData: {
+    name: string;
+    email: string;
+    phone?: string;
+    notes?: string;
+  }) => {
+    console.log("Adding contact:", contactData);
+    // Here you would typically add the contact to your data store
+    // For now, we'll just log it
+    setIsAddContactOpen(false);
+  };
 
   return (
     <div className="flex flex-col space-y-4">
@@ -60,6 +74,7 @@ export default function RenderPage() {
         ]}
         primaryAction={{
           label: "Add User",
+          onClick: () => setIsAddContactOpen(true),
           icon: <UserPlus className="h-4 w-4" />,
         }}
         dateRange={dateRange}
@@ -97,6 +112,12 @@ export default function RenderPage() {
       </div>
 
       <CRMCustomerTable data={crmCustomers} />
+
+      <AddContactForm
+        open={isAddContactOpen}
+        onOpenChange={setIsAddContactOpen}
+        onSubmit={handleAddContact}
+      />
     </div>
   );
 }
