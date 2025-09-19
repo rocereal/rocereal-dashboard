@@ -75,7 +75,7 @@ export default function EmailList({
 
       {/* Select All Checkbox */}
       {filteredEmails.length > 0 && (
-        <div className="px-4 py-2 border-b border-gray-100 bg-gray-50">
+        <div className="px-4 py-2 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <Checkbox
               checked={selectAll}
@@ -95,9 +95,9 @@ export default function EmailList({
           <div
             key={email.id}
             className={cn(
-              "p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors",
+              "p-4 border-b border-gray-100 cursor-pointer transition-colors",
               selectedEmail?.id === email.id && "bg-primary/5",
-              !email.isRead && "bg-white font-medium",
+              !email.isRead && "font-medium",
               selectedEmails.has(email.id) && "bg-primary/5"
             )}
           >

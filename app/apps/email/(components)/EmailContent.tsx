@@ -70,7 +70,7 @@ export default function EmailContent({ selectedEmail }: EmailContentProps) {
         </div>
 
         {selectedEmail.hasAttachments && (
-          <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-900 rounded-lg">
             <Paperclip className="h-4 w-4 text-gray-500" />
             <span className="text-sm text-gray-700">2 attachments</span>
             <Button variant="ghost" size="sm" className="ml-auto">
