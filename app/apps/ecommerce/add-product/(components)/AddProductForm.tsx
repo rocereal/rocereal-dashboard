@@ -21,8 +21,6 @@ import { DollarSign, Info, Plus, Save, Search, Upload, X } from "lucide-react";
 import { useState } from "react";
 
 export default function AddProductForm() {
-  const [activeTab, setActiveTab] = useState("information");
-
   const [productData, setProductData] = useState({
     // Information tab
     name: "",

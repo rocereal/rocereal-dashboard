@@ -1,45 +1,12 @@
-"use client";
+import { metadataTemplates } from "@/lib/metadata";
+import type { Metadata } from "next";
+import RenderPage from "./(components)/RenderPage";
 
-import { useState } from "react";
-import FilesContent from "./(components)/FilesContent";
-import FilesHeader from "./(components)/FilesHeader";
-import FilesSidebar from "./(components)/FilesSidebar";
+export const metadata: Metadata = metadataTemplates.dashboard(
+  "Files Dashboard",
+  "Manage your files and folders with advanced organization and sharing capabilities."
+);
 
 export default function FilesPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [currentPath, setCurrentPath] = useState("/");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
-
-  return (
-    <div className="min-h-screen flex bg-gray-50">
-      <FilesSidebar
-        sidebarOpen={sidebarOpen}
-        onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
-        currentPath={currentPath}
-        onPathChange={setCurrentPath}
-      />
-
-      <div className="flex-1 flex flex-col">
-        <FilesHeader
-          sidebarOpen={sidebarOpen}
-          onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
-          currentPath={currentPath}
-          onPathChange={setCurrentPath}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          selectedFiles={selectedFiles}
-          onSelectionChange={setSelectedFiles}
-        />
-
-        <FilesContent
-          currentPath={currentPath}
-          onPathChange={setCurrentPath}
-          viewMode={viewMode}
-          selectedFiles={selectedFiles}
-          onSelectionChange={setSelectedFiles}
-        />
-      </div>
-    </div>
-  );
+  return <RenderPage />;
 }

@@ -5,8 +5,8 @@ import type { Metadata } from "next";
 import { AITabs } from "./(components)/AITabs";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
-  "Customer Relationship Dashboard",
-  "Track pipeline health, customer engagement, and revenue performance in real time."
+  "Artificial Intelligence Dashboard",
+  "Monitor AI models, user engagement, and business intelligence insights with advanced analytics."
 );
 
 export default function AiPage() {

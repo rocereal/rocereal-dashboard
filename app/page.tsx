@@ -10,7 +10,7 @@ export const metadata: Metadata = metadataTemplates.page(
   ["fisio", "dashboard", "welcome", "home"]
 );
 
-export default function Home() {
+export default function HomePage() {
   return (
     <SidebarProvider>
       <AppSidebar />

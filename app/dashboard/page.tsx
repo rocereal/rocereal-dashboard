@@ -9,7 +9,7 @@ export const metadata: Metadata = metadataTemplates.dashboard(
   "Welcome to your Fisio dashboard. Monitor key metrics, manage projects, and access all your tools in one place."
 );
 
-export default function Page() {
+export default function DashboardPage() {
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import RenderPage from "./(components)/RenderPage";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
-  "Calendar Dashboard",
-  "Stay on top of events, tasks, and team schedules with real-time insights."
+  "Email Dashboard",
+  "Manage your emails, organize communications, and stay connected with your team."
 );
 
 export default function EmailPage() {

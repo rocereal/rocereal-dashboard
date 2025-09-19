@@ -259,7 +259,7 @@ export default function FileDetailsPage() {
           <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
           <h2 className="text-xl font-semibold mb-2">File not found</h2>
           <p className="text-gray-600 mb-4">
-            The file you're looking for doesn't exist.
+            The file you&apos;re looking for doesn&apos;t exist.
           </p>
           <Button onClick={() => router.push("/apps/files")}>
             <ArrowLeft className="h-4 w-4 mr-2" />
