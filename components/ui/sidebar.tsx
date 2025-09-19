@@ -426,7 +426,7 @@ function SidebarGroupAction({
       data-slot="sidebar-group-action"
       data-sidebar="group-action"
       className={cn(
-        " text-neutral-800 dark:text-neutral-200 ring-sidebar-ring hover:bg-primary hover:text-primary-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        " text-neutral-800 dark:text-neutral-200 ring-sidebar-ring hover:bg-primary hover:text-primary absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
         // Increases the hit area of the button on mobile.
         "after:absolute after:-inset-2 md:after:hidden",
         "group-data-[collapsible=icon]:hidden",
@@ -474,13 +474,13 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm text-neutral-800 dark:text-neutral-200 outline-hidden ring-sidebar-ring transition-[width,height,padding,colors] duration-200 ease-in-out hover:bg-primary hover:text-primary-foreground focus-visible:ring-2 active:bg-primary active:text-primary-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-primary/20 data-[active=true]:font-medium data-[active=true]:text-sidebar-primary-foreground data-[active=true]:border-l-2 data-[active=true]:border-sidebar-primary group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:data-[active=true]:bg-sidebar-primary [&>svg]:data-[active=true]:text-sidebar-primary-foreground [&>svg]:data-[active=true]:rounded [&>svg]:data-[active=true]:p-1",
+  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm text-neutral-800 dark:text-neutral-200 outline-hidden ring-sidebar-ring transition-[width,height,padding,colors] duration-200 ease-in-out hover:bg-secondary hover:text-primary focus-visible:ring-2 active:bg-card active:text-primary disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-primary/20 data-[active=true]:font-medium data-[active=true]:text-sidebar-primary-foreground data-[active=true]:border-l-2 data-[active=true]:border-sidebar-primary group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:data-[active=true]:bg-sidebar-primary [&>svg]:data-[active=true]:text-sidebar-primary-foreground [&>svg]:data-[active=true]:rounded [&>svg]:data-[active=true]:p-1",
   {
     variants: {
       variant: {
-        default: "hover:bg-primary hover:text-primary-foreground",
+        default: "hover:bg-secondary hover:text-primary",
         outline:
-          "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-primary hover:text-primary-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
+          "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-secondary hover:text-primary hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
       },
       size: {
         default: "h-8 text-sm",
@@ -561,7 +561,7 @@ function SidebarMenuAction({
       data-slot="sidebar-menu-action"
       data-sidebar="menu-action"
       className={cn(
-        " text-neutral-800 dark:text-neutral-200 ring-sidebar-ring hover:bg-primary hover:text-primary-foreground peer-hover/menu-button:text-primary-foreground absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        " text-neutral-800 dark:text-neutral-200 ring-sidebar-ring hover:bg-primary hover:text-primary peer-hover/menu-button:text-primary absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
         // Increases the hit area of the button on mobile.
         "after:absolute after:-inset-2 md:after:hidden",
         "peer-data-[size=sm]/menu-button:top-1",
@@ -569,7 +569,7 @@ function SidebarMenuAction({
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
-          "peer-data-[active=true]/menu-button:text-primary-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
+          "peer-data-[active=true]/menu-button:text-primary group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
         className
       )}
       {...props}
@@ -686,7 +686,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        " text-neutral-800 dark:text-neutral-200 ring-sidebar-ring hover:bg-secondary hover:text-primary-foreground active:bg-primary active:text-primary-foreground [&>svg]: text-neutral-800 dark:text-neutral-200 flex h-10 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+        " text-neutral-800 dark:text-neutral-200 ring-sidebar-ring hover:bg-secondary hover:text-primary active:bg-primary active:text-primary [&>svg]: text-neutral-800 dark:text-neutral-200 flex h-10 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
         "transition-colors duration-200 ease-in-out",
         "data-[active=true]:bg-sidebar-border data-[active=true]:text-sidebar-text data-[active=true]:border-l-2 data-[active=true]:border-sidebar-primary data-[active=true]:font-medium",
         size === "sm" && "text-xs",
