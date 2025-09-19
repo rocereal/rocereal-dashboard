@@ -14,6 +14,8 @@ import {
   SquareTerminal,
   User,
   UserPlus,
+  File,
+  FolderKanban,
 } from "lucide-react";
 import { addScaleCorrector } from "motion/react";
 
@@ -101,6 +103,16 @@ export const menudata = {
         { title: "Task List", url: "/apps/tasks" },
         { title: "Task Details", url: "/apps/tasks/1" },
         { title: "Create Task", url: "/apps/tasks/create" },
+      ],
+    },
+    {
+      title: "File Manager",
+      url: "#",
+      icon: FolderKanban,
+      items: [
+        { title: "File Manager", url: "/apps/files" },
+        { title: "File Details", url: "/apps/files/1" },
+        { title: "Add File", url: "/apps/files/create" },
       ],
     },
 
