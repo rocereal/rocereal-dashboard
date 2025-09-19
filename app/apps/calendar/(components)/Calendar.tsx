@@ -261,19 +261,20 @@ export default function EventsCalendar({
             {/* Day headers */}
             <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
               {[
-                "Sunday",
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
+                { full: "Sunday", short: "Sun" },
+                { full: "Monday", short: "Mon" },
+                { full: "Tuesday", short: "Tue" },
+                { full: "Wednesday", short: "Wed" },
+                { full: "Thursday", short: "Thu" },
+                { full: "Friday", short: "Fri" },
+                { full: "Saturday", short: "Sat" },
               ].map((day) => (
                 <div
-                  key={day}
+                  key={day.full}
                   className="p-1 lg:p-4 text-xs lg:text-base text-center font-medium text-gray-600 dark:text-gray-400 border-r border-gray-200 dark:border-gray-700 last:border-r-0 bg-gray-50 dark:bg-gray-900"
                 >
-                  {day}
+                  <span className="lg:hidden">{day.short}</span>
+                  <span className="hidden lg:block">{day.full}</span>
                 </div>
               ))}
             </div>
