@@ -36,19 +36,20 @@ export function StudentEngagementChart({ data }: StudentEngagementChartProps) {
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: "hsl(var(--card))",
-              border: "1px solid hsl(var(--border))",
+              backgroundColor: "hsl(0 0% 100%)",
+              border: "1px solid hsl(0 0% 90%)",
               borderRadius: "6px",
+              boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
             }}
-            labelStyle={{ color: "hsl(var(--foreground))" }}
+            labelStyle={{ color: "hsl(0 0% 9%)" }}
           />
           <Line
             type="monotone"
             dataKey="activeLearners"
-            stroke="hsl(var(--primary))"
+            stroke="#3b82f6"
             strokeWidth={2}
-            dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
-            activeDot={{ r: 6, stroke: "hsl(var(--primary))", strokeWidth: 2 }}
+            dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
+            activeDot={{ r: 6, stroke: "#3b82f6", strokeWidth: 2 }}
           />
         </LineChart>
       </ResponsiveContainer>
