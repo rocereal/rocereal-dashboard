@@ -51,15 +51,6 @@ export function AppHeader({ className }: AppHeaderProps) {
   const [notifications, setNotifications] =
     React.useState<Notification[]>(sampleNotifications);
 
-  // Multi-select options (placeholder data)
-  const multiSelectOptions = [
-    { id: "option1", label: "Dashboard" },
-    { id: "option2", label: "Analytics" },
-    { id: "option3", label: "Reports" },
-    { id: "option4", label: "Settings" },
-    { id: "option5", label: "Users" },
-  ];
-
   // Handle fullscreen toggle
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {

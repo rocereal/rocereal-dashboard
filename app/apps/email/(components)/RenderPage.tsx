@@ -5,6 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
 import { Email, emailTabs, mockEmails, sidebarItems } from "@/data/email";
 import { cn } from "@/lib/utils";
@@ -20,6 +26,7 @@ import {
   Search,
   Star,
   Trash2,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -31,6 +38,7 @@ export default function RenderPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const filteredEmails = mockEmails.filter(
     (email) =>
@@ -78,70 +86,84 @@ export default function RenderPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <div
-        className={cn(
-          "border-r  transition-all duration-300",
-          sidebarOpen ? "w-64" : "w-16"
-        )}
-      >
-        {/* Sidebar Header */}
-        <div className="p-4 border-b ">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2"
-            >
-              <Menu className="h-4 w-4" />
-            </Button>
-            {sidebarOpen && (
-              <Button size="sm" className="ml-2">
-                <Plus className="h-4 w-4 mr-2" />
-                Compose
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Sidebar Navigation */}
-        <nav className="p-2">
-          {sidebarItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setSelectedCategory(item.id)}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-gray-100 transition-colors",
-                  selectedCategory === item.id && "bg-primary/10 text-primary"
-                )}
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block">
+        <div
+          className={cn(
+            "border-r transition-all duration-300",
+            sidebarOpen ? "w-64" : "w-16"
+          )}
+        >
+          {/* Sidebar Header */}
+          <div className="p-4 border-b">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2"
               >
-                <Icon className={cn("h-5 w-5", item.color)} />
-                {sidebarOpen && (
-                  <>
-                    <span className="flex-1 text-sm font-medium">
-                      {item.label}
-                    </span>
-                    {item.count > 0 && (
-                      <Badge variant="secondary" className="text-xs">
-                        {item.count}
-                      </Badge>
-                    )}
-                  </>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+                <Menu className="h-4 w-4" />
+              </Button>
+              {sidebarOpen && (
+                <Button size="sm" className="ml-2">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Compose
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Sidebar Navigation */}
+          <nav className="p-2">
+            {sidebarItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setSelectedCategory(item.id)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-gray-100 transition-colors",
+                    selectedCategory === item.id && "bg-primary/10 text-primary"
+                  )}
+                >
+                  <Icon className={cn("h-5 w-5", item.color)} />
+                  {sidebarOpen && (
+                    <>
+                      <span className="flex-1 text-sm font-medium">
+                        {item.label}
+                      </span>
+                      {item.count > 0 && (
+                        <Badge variant="secondary" className="text-xs">
+                          {item.count}
+                        </Badge>
+                      )}
+                    </>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="border-b  px-6 py-4">
+        <div className="border-b px-6 py-4">
           <div className="flex items-center gap-4">
+            {/* Mobile Close Button - Only visible on mobile */}
+            <div className="lg:hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileSidebarOpen(false)}
+              >
+                <X className="h-4 w-4 mr-2" />
+                Close
+              </Button>
+            </div>
+
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
