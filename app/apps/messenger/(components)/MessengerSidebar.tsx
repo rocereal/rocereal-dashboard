@@ -144,7 +144,7 @@ export default function MessengerSidebar({
         {/* Tabs */}
         {sidebarOpen && (
           <Tabs defaultValue="chats" className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-3 mx-4 mb-4">
+            <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger
                 value="chats"
                 className="flex items-center gap-2 text-xs"
@@ -184,7 +184,7 @@ export default function MessengerSidebar({
                     key={contact.id}
                     onClick={() => onContactSelect(contact.id)}
                     className={cn(
-                      "w-full p-3 text-left hover:bg-card cursor-pointer transition-colors rounded-lg mb-1",
+                      "w-full p-3 text-left hover:bg-secondary cursor-pointer transition-colors rounded-lg mb-1",
                       selectedContact === contact.id && "bg-primary/5"
                     )}
                   >
@@ -277,7 +277,7 @@ export default function MessengerSidebar({
                     key={contact.id}
                     onClick={() => onContactSelect(contact.id)}
                     className={cn(
-                      "w-full p-3 text-left hover:bg-gray-50 transition-colors rounded-lg mb-1",
+                      "w-full p-3 text-left hover:bg-secondary transition-colors rounded-lg mb-1",
                       selectedContact === contact.id && "bg-primary/5"
                     )}
                   >
@@ -329,7 +329,7 @@ export default function MessengerSidebar({
                 key={contact.id}
                 onClick={() => onContactSelect(contact.id)}
                 className={cn(
-                  "w-full p-2 text-center hover:bg-gray-50 transition-colors rounded-lg mb-1",
+                  "w-full p-2 text-center hover:bg-secondary transition-colors rounded-lg mb-1",
                   selectedContact === contact.id && "bg-primary/5"
                 )}
               >
