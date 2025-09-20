@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   CheckSquare,
   Filter,
@@ -9,7 +10,7 @@ import {
   List,
   MoreVertical,
   Search,
-  SortAsc
+  SortAsc,
 } from "lucide-react";
 
 interface TasksHeaderProps {
@@ -22,7 +23,7 @@ export default function TasksHeader({
   onSidebarToggle,
 }: TasksHeaderProps) {
   return (
-    <div className="border-b bg-white px-6 py-4">
+    <div className="border-b  px-6 py-4">
       <div className="flex flex-col gap-4 lg:flex-row items-center justify-between">
         <div className="flex items-center gap-4">
           {/* Mobile Menu Toggle */}
@@ -34,8 +35,8 @@ export default function TasksHeader({
 
           {/* Header Content */}
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">All Tasks</h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <h1 className="text-xl font-semibold">All Tasks</h1>
+            <p className="text-sm text-gray-600 dark:text-muted-foreground mt-1">
               Manage your tasks and stay organized
             </p>
           </div>
@@ -44,7 +45,7 @@ export default function TasksHeader({
         {/* Action Buttons */}
         <div className="flex flex-col lg:flex-row items-center gap-3">
           {/* View Toggle */}
-          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
             <Button
               variant="ghost"
               size="sm"
@@ -63,11 +64,10 @@ export default function TasksHeader({
 
           {/* Search */}
           <div className="relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              placeholder="Search tasks..."
-              className="w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input placeholder="Search..." className="pl-10" />
+            </div>
           </div>
 
           {/* Filters & Sort */}
@@ -88,7 +88,7 @@ export default function TasksHeader({
       <div className="flex items-center gap-6 mt-4 pt-4 border-t">
         <div className="flex items-center gap-2">
           <CheckSquare className="h-4 w-4 text-green-600" />
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-muted-foreground">
             <span className="font-medium text-green-600">8</span> of{" "}
             <span className="font-medium">24</span> tasks completed
           </span>

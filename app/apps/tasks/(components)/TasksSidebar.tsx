@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
@@ -86,7 +87,7 @@ export default function TasksSidebar({
     <div className="hidden lg:block">
       <div
         className={cn(
-          "border-r transition-all duration-300 bg-white",
+          "border-r transition-all duration-300 bg-card h-full",
           sidebarOpen ? "w-80" : "w-16"
         )}
       >
@@ -113,12 +114,11 @@ export default function TasksSidebar({
         {/* Search */}
         {sidebarOpen && (
           <div className="p-4 border-b">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                placeholder="Search tasks..."
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
+            <div className="pb-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input placeholder="Search..." className="pl-10" />
+              </div>
             </div>
           </div>
         )}
@@ -126,7 +126,9 @@ export default function TasksSidebar({
         {/* Task Statistics */}
         {sidebarOpen && (
           <div className="p-4 border-b">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Overview</h3>
+            <h3 className="text-sm font-medium text-gray-700  dark:text-muted-foreground mb-3">
+              Overview
+            </h3>
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-blue-50 p-3 rounded-lg">
                 <div className="flex items-center gap-2">
@@ -174,7 +176,7 @@ export default function TasksSidebar({
             <button
               key={item.id}
               className={cn(
-                "w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100",
+                "w-full p-4 text-left hover:bg-secondary transition-colors border-b ",
                 item.active && "bg-primary/5 border-l-4 border-l-primary"
               )}
             >
@@ -182,7 +184,9 @@ export default function TasksSidebar({
                 <item.icon
                   className={cn(
                     "h-5 w-5",
-                    item.active ? "text-primary" : "text-gray-500"
+                    item.active
+                      ? "text-primary"
+                      : "text-gray-500  dark:text-muted-foreground"
                   )}
                 />
                 {sidebarOpen && (
@@ -192,7 +196,7 @@ export default function TasksSidebar({
                         "text-sm",
                         item.active
                           ? "font-medium text-primary"
-                          : "text-gray-700"
+                          : "text-gray-700  dark:text-muted-foreground"
                       )}
                     >
                       {item.label}
@@ -214,8 +218,10 @@ export default function TasksSidebar({
         {sidebarOpen && (
           <div className="p-4 border-t">
             <div className="flex items-center gap-2 mb-3">
-              <Filter className="h-4 w-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">Filters</span>
+              <Filter className="h-4 w-4 text-gray-500  dark:text-muted-foreground" />
+              <span className="text-sm font-medium text-gray-700  dark:text-muted-foreground">
+                Filters
+              </span>
             </div>
             <div className="space-y-2">
               <Button

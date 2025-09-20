@@ -19,7 +19,7 @@ export default function RenderPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex bg-card border rounded-md overflow-hidden">
       <TasksSidebar
         sidebarOpen={sidebarOpen}
         onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}

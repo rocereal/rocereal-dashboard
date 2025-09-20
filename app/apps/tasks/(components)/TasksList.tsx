@@ -132,7 +132,7 @@ export default function TasksList({ onTaskSelect }: TasksListProps) {
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col items-start gap-3">
                   <Checkbox
                     checked={task.completed}
                     onCheckedChange={() => handleTaskToggle(task.id)}
@@ -141,7 +141,8 @@ export default function TasksList({ onTaskSelect }: TasksListProps) {
                   <CardTitle
                     className={cn(
                       "text-lg",
-                      task.completed && "line-through text-gray-500"
+                      task.completed &&
+                        "line-through text-gray-500 dark:text-gray-50"
                     )}
                   >
                     {task.title}
@@ -157,21 +158,21 @@ export default function TasksList({ onTaskSelect }: TasksListProps) {
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <p className="text-sm text-gray-600 line-clamp-2">
+              <p className="text-sm text-gray-600  dark:text-muted-foreground line-clamp-2">
                 {task.description}
               </p>
 
               {/* Checklist Progress */}
               {task.checklist.length > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="space-y-2 ">
+                  <div className="flex items-center justify-between text-xs text-gray-500  dark:text-muted-foreground">
                     <span>Checklist</span>
                     <span>
                       {task.checklist.filter((item) => item.completed).length} /{" "}
                       {task.checklist.length}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200  dark:text-muted-foreground rounded-full h-2">
                     <div
                       className="bg-primary h-2 rounded-full transition-all"
                       style={{
@@ -188,7 +189,7 @@ export default function TasksList({ onTaskSelect }: TasksListProps) {
               )}
 
               {/* Task Metadata */}
-              <div className="flex items-center justify-between text-xs text-gray-500">
+              <div className="flex flex-col items-start gap-4 justify-between text-xs text-gray-500  dark:text-muted-foreground">
                 <div className="flex items-center gap-4">
                   {task.dueDate && (
                     <div className="flex items-center gap-1">
