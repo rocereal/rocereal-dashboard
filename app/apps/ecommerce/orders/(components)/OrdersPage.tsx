@@ -31,12 +31,8 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
-import {
-  OrdersFilters,
-  OrdersBulkActions,
-  OrderStatusBadge,
-  OrderDeleteDialog,
-} from "./index";
+import { OrdersFilters, OrdersBulkActions, OrderStatusBadge } from "./index";
+import { DeleteConfirmationDialog } from "@/components/dialogs";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState(ordersData);
@@ -378,10 +374,11 @@ export default function OrdersPage() {
       </div>
 
       {/* Delete Order Confirmation Modal */}
-      <OrderDeleteDialog
+      <DeleteConfirmationDialog
         isOpen={!!orderToDelete}
-        orderToDelete={orderToDelete || ""}
-        onCancel={cancelDeleteOrder}
+        itemName={orderToDelete || ""}
+        itemType="order"
+        onClose={cancelDeleteOrder}
         onConfirm={confirmDeleteOrder}
       />
     </div>

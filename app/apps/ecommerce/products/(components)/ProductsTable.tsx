@@ -1,5 +1,6 @@
 "use client";
 
+import { DeleteConfirmationDialog } from "@/components/dialogs";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ export function ProductsTable({
 }: ProductsTableProps) {
   const router = useRouter();
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [productToDelete, setProductToDelete] = useState<string | null>(null);
 
   // Checkbox handlers
   const handleSelectAll = (checked: boolean) => {
@@ -61,6 +63,21 @@ export function ProductsTable({
       }
     });
     setSelectedProducts([]);
+  };
+
+  const handleDeleteProduct = (orderId: string) => {
+    setProductToDelete(orderId);
+  };
+
+  const cancelDeleteProduct = () => {
+    setProductToDelete(null);
+  };
+
+  const confirmDeleteProduct = () => {
+    if (productToDelete) {
+      // Please apply delete logic
+      setProductToDelete(null);
+    }
   };
 
   const isAllSelected =
@@ -208,7 +225,7 @@ export function ProductsTable({
 
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => onDelete?.(product)}
+                onClick={() => handleDeleteProduct(product.id)}
                 className="text-destructive focus:text-destructive"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -263,6 +280,15 @@ export function ProductsTable({
         data={products}
         searchKey="name"
         searchPlaceholder="Search products..."
+      />
+
+      {/* Delete Order Confirmation Modal */}
+      <DeleteConfirmationDialog
+        isOpen={!!productToDelete}
+        itemName={productToDelete || ""}
+        itemType="product"
+        onClose={cancelDeleteProduct}
+        onConfirm={confirmDeleteProduct}
       />
     </div>
   );

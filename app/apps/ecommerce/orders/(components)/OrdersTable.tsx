@@ -3,7 +3,7 @@
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DataTable, createSortableColumn } from "@/components/ui/data-table";
+import { createSortableColumn, DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +16,8 @@ import { ordersData, Product } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { OrderDeleteDialog } from "./OrderDeleteDialog";
 import { useState } from "react";
+import { DeleteConfirmationDialog } from "@/components/dialogs";
 
 interface ProductsTableProps {
   products: Product[];
@@ -195,10 +194,11 @@ export function OrdersTable({
       />
 
       {/* Delete Order Confirmation Modal */}
-      <OrderDeleteDialog
+      <DeleteConfirmationDialog
         isOpen={!!orderToDelete}
-        orderToDelete={orderToDelete || ""}
-        onCancel={cancelDeleteOrder}
+        itemName={orderToDelete || ""}
+        itemType="product"
+        onClose={cancelDeleteOrder}
         onConfirm={confirmDeleteOrder}
       />
     </>

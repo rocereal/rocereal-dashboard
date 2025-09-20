@@ -4,18 +4,16 @@ import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import {
   educationMetrics,
+  recentStudentsData,
   studentEngagementData,
   timeSpentByCourseData,
-  recentStudentsData,
-  recommendedCourses,
 } from "@/data/education";
-import { BookOpen, Users, TrendingUp } from "lucide-react";
+import { BookOpen, TrendingUp, Users } from "lucide-react";
 import { useState } from "react";
-import { RecommendedCourses } from "./RecommendedCourses";
+import { RecentStudentsTable } from "./RecentStudentsTable";
 import { SectionCards } from "./SectionCards";
 import { StudentEngagementChart } from "./StudentEngagementChart";
 import { TimeSpentChart } from "./TimeSpentChart";
-import { RecentStudentsTable } from "./RecentStudentsTable";
 
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
@@ -79,8 +77,6 @@ export default function RenderPage() {
           <RecentStudentsTable students={recentStudentsData} />
         </div>
       </div>
-
-      <RecommendedCourses courses={recommendedCourses} />
     </div>
   );
 }

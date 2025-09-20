@@ -33,6 +33,16 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import {
+  ProductImage,
+  ProductDetails,
+  ProductMetadata,
+  BasicInfoForm,
+  PricingInventoryForm,
+  DescriptionForm,
+  SEOSettings,
+  ProductSettings,
+} from "./index";
 
 interface productProps {
   product: Product;
@@ -109,61 +119,14 @@ function ProductOverviewTab({ product }: { product: any }) {
         {/* Product Image */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Product Image</h3>
-          <div className="aspect-square max-w-sm rounded-lg overflow-hidden border">
-            <img
-              src={product.image.src || product.image}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <ProductImage
+            src={product.image.src || product.image}
+            alt={product.name}
+          />
         </div>
 
         {/* Product Details */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Product Details</h3>
-          <div className="space-y-3">
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Name
-              </label>
-              <p className="text-sm">{product.name}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                SKU
-              </label>
-              <p className="text-sm">{product.sku}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Category
-              </label>
-              <p className="text-sm">{product.category}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Price
-              </label>
-              <p className="text-lg font-semibold">
-                ${product.price.toFixed(2)}
-              </p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Stock
-              </label>
-              <p className="text-sm">{product.stock} units</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Status
-              </label>
-              <p className="text-sm capitalize">
-                {product.status.replace("-", " ")}
-              </p>
-            </div>
-          </div>
-        </div>
+        <ProductDetails product={product} />
       </div>
 
       {/* Description */}
@@ -175,27 +138,7 @@ function ProductOverviewTab({ product }: { product: any }) {
       <Separator />
 
       {/* Metadata */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Metadata</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm font-medium text-muted-foreground">
-              Created
-            </label>
-            <p className="text-sm">
-              {new Date(product.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-muted-foreground">
-              Last Updated
-            </label>
-            <p className="text-sm">
-              {new Date(product.updatedAt).toLocaleDateString()}
-            </p>
-          </div>
-        </div>
-      </div>
+      <ProductMetadata product={product} />
     </div>
   );
 }
@@ -290,113 +233,29 @@ function ProductEditTab({ product }: { product: any }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <h4 className="text-md font-semibold">Basic Information</h4>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Product Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Enter product name"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-              />
-            </div>
+        <BasicInfoForm
+          formData={{
+            name: formData.name,
+            sku: formData.sku,
+            category: formData.category,
+          }}
+          onChange={handleInputChange}
+        />
 
-            <div className="space-y-2">
-              <Label htmlFor="sku">SKU</Label>
-              <Input
-                id="sku"
-                type="text"
-                placeholder="Enter SKU"
-                value={formData.sku}
-                onChange={(e) => handleInputChange("sku", e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => handleInputChange("category", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Electronics">Electronics</SelectItem>
-                  <SelectItem value="Clothing">Clothing</SelectItem>
-                  <SelectItem value="Home & Kitchen">Home & Kitchen</SelectItem>
-                  <SelectItem value="Sports & Fitness">
-                    Sports & Fitness
-                  </SelectItem>
-                  <SelectItem value="Accessories">Accessories</SelectItem>
-                  <SelectItem value="Home & Office">Home & Office</SelectItem>
-                  <SelectItem value="Sports & Outdoors">
-                    Sports & Outdoors
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h4 className="text-md font-semibold">Pricing & Inventory</h4>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="price">Price ($)</Label>
-              <Input
-                id="price"
-                type="number"
-                step="0.01"
-                placeholder="0.00"
-                value={formData.price}
-                onChange={(e) => handleInputChange("price", e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="stock">Stock Quantity</Label>
-              <Input
-                id="stock"
-                type="number"
-                placeholder="0"
-                value={formData.stock}
-                onChange={(e) => handleInputChange("stock", e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleInputChange("status", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="out-of-stock">Out of Stock</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <h4 className="text-md font-semibold">Description</h4>
-        <Textarea
-          placeholder="Enter product description"
-          value={formData.description}
-          onChange={(e) => handleInputChange("description", e.target.value)}
-          rows={4}
+        <PricingInventoryForm
+          formData={{
+            price: formData.price,
+            stock: formData.stock,
+            status: formData.status,
+          }}
+          onChange={handleInputChange}
         />
       </div>
+
+      <DescriptionForm
+        description={formData.description}
+        onChange={(value) => handleInputChange("description", value)}
+      />
     </div>
   );
 }
@@ -596,187 +455,14 @@ function ProductSettingsTab({ product }: { product: any }) {
 
   return (
     <div className="space-y-8">
-      {/* SEO Settings */}
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            SEO & Metadata
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Configure how your product appears in search engines and social
-            media
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          {/* Meta Title */}
-          <div className="space-y-2">
-            <Label htmlFor="metaTitle" className="flex items-center gap-2">
-              Meta Title
-              <Info className="h-4 w-4 text-muted-foreground" />
-            </Label>
-            <Input
-              id="metaTitle"
-              type="text"
-              placeholder="Enter meta title"
-              value={seoData.metaTitle}
-              onChange={(e) => handleSeoChange("metaTitle", e.target.value)}
-              maxLength={60}
-            />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <p>
-                Appears in browser tabs, search results, and social media links.
-                Keep it under 60 characters for best results.
-              </p>
-              <span>{seoData.metaTitle.length}/60</span>
-            </div>
-          </div>
-
-          {/* Meta Description */}
-          <div className="space-y-2">
-            <Label
-              htmlFor="metaDescription"
-              className="flex items-center gap-2"
-            >
-              Meta Description
-              <Info className="h-4 w-4 text-muted-foreground" />
-            </Label>
-            <Textarea
-              id="metaDescription"
-              placeholder="Enter meta description"
-              value={seoData.metaDescription}
-              onChange={(e) =>
-                handleSeoChange("metaDescription", e.target.value)
-              }
-              rows={3}
-              maxLength={160}
-            />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <p>
-                Appears under the title in search results. Write a compelling
-                summary that encourages clicks. Keep it under 160 characters.
-              </p>
-              <span>{seoData.metaDescription.length}/160</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SEOSettings seoData={seoData} onChange={handleSeoChange} />
 
       <Separator />
 
-      {/* Product Settings */}
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold">Product Settings</h3>
-          <p className="text-sm text-muted-foreground">
-            Configure product behavior and visibility
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          {/* Product Visibility */}
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="space-y-1">
-              <h4 className="font-medium">Product Visibility</h4>
-              <p className="text-sm text-muted-foreground">
-                Control whether this product is visible to customers on your
-                store
-              </p>
-            </div>
-            <Switch
-              checked={settings.visibility}
-              onCheckedChange={(value) =>
-                handleSettingChange("visibility", value)
-              }
-            />
-          </div>
-
-          {/* SEO Optimization */}
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="space-y-1">
-              <h4 className="font-medium">SEO Optimization</h4>
-              <p className="text-sm text-muted-foreground">
-                Enable search engine optimization features for this product
-              </p>
-            </div>
-            <Switch
-              checked={settings.seoOptimization}
-              onCheckedChange={(value) =>
-                handleSettingChange("seoOptimization", value)
-              }
-            />
-          </div>
-
-          {/* Inventory Tracking */}
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="space-y-1">
-              <h4 className="font-medium">Inventory Tracking</h4>
-              <p className="text-sm text-muted-foreground">
-                Automatically track and update product stock levels
-              </p>
-            </div>
-            <Switch
-              checked={settings.inventoryTracking}
-              onCheckedChange={(value) =>
-                handleSettingChange("inventoryTracking", value)
-              }
-            />
-          </div>
-
-          {/* Low Stock Alerts */}
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="space-y-1">
-              <h4 className="font-medium">Low Stock Alerts</h4>
-              <p className="text-sm text-muted-foreground">
-                Receive notifications when product stock is running low
-              </p>
-            </div>
-            <Switch
-              checked={settings.lowStockAlerts}
-              onCheckedChange={(value) =>
-                handleSettingChange("lowStockAlerts", value)
-              }
-            />
-          </div>
-
-          {/* Featured Product */}
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="space-y-1">
-              <h4 className="font-medium">Featured Product</h4>
-              <p className="text-sm text-muted-foreground">
-                Display this product prominently on your homepage and featured
-                sections
-              </p>
-            </div>
-            <Switch
-              checked={settings.featuredProduct}
-              onCheckedChange={(value) =>
-                handleSettingChange("featuredProduct", value)
-              }
-            />
-          </div>
-
-          {/* Allow Reviews */}
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="space-y-1">
-              <h4 className="font-medium">Customer Reviews</h4>
-              <p className="text-sm text-muted-foreground">
-                Allow customers to leave reviews and ratings for this product
-              </p>
-            </div>
-            <Switch
-              checked={settings.allowReviews}
-              onCheckedChange={(value) =>
-                handleSettingChange("allowReviews", value)
-              }
-            />
-          </div>
-        </div>
-      </div>
+      <ProductSettings settings={settings} onChange={handleSettingChange} />
 
       {/* Save Button */}
-      <div className="flex justify-end pt-6 ">
+      <div className="flex justify-end pt-6">
         <Button onClick={handleSaveSettings}>
           <Save className="h-4 w-4 mr-2" />
           Save Settings
