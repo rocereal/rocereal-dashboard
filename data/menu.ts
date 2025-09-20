@@ -86,8 +86,7 @@ export const menudata = {
       icon: Notebook,
       items: [
         { title: "Courses", url: "/apps/lms" },
-        { title: "Course Details", url: "/apps/lms/course-details" },
-        { title: "New Course", url: "/apps/lms/new-course" },
+        { title: "Course Details", url: "/apps/lms/web-development-basics" },
       ],
     },
     {

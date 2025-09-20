@@ -216,8 +216,9 @@ export default async function CourseCurriculumPage({
             <CardContent>
               <div className="space-y-3">
                 {lessons.map((lesson, index) => {
-                  const isCompleted =
-                    mockUserProgress[lesson.id] || lesson.completed;
+                  const isCompleted = Boolean(
+                    mockUserProgress[lesson.id] || lesson.completed
+                  );
                   const globalIndex =
                     course.curriculum?.findIndex((l) => l.id === lesson.id) ||
                     0;
@@ -227,8 +228,8 @@ export default async function CourseCurriculumPage({
                       key={lesson.id}
                       className={`flex items-center justify-between p-4 rounded-lg border transition-colors cursor-pointer ${
                         isCompleted
-                          ? "bg-green-50 border-green-200 hover:bg-green-100"
-                          : "hover:bg-muted/50"
+                          ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-secondary dark:border-secondary dark:hover:bg-secondary cursor-pointer"
+                          : "hover:bg-muted/50 cursor-pointer"
                       }`}
                     >
                       <div className="flex items-center gap-4">

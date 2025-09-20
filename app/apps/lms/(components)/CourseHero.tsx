@@ -4,6 +4,7 @@ import { CourseData } from "@/data/education";
 import { Award, BookOpen, Clock, Play, Star, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { EnrollmentPreview } from "./EnrollmentPreview";
 
 interface CourseHeroProps {
   course: CourseData;
@@ -93,10 +94,7 @@ export function CourseHero({
               </>
             ) : (
               <>
-                <Button size="lg" className="px-8">
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Enroll Now
-                </Button>
+                <EnrollmentPreview course={course} />
                 <Link href={`/apps/lms/${course.courseId}/curriculum`}>
                   <Button variant="outline" size="lg">
                     <Play className="h-4 w-4 mr-2" />

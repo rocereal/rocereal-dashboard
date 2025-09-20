@@ -15,6 +15,7 @@ import {
   Tag,
   User,
 } from "lucide-react";
+import { EnrollmentPreview } from "./EnrollmentPreview";
 
 interface CourseSidebarProps {
   course: CourseData;
@@ -164,10 +165,22 @@ export function CourseSidebar({
 
           <Separator />
 
-          <Button className="w-full" size="lg">
-            <BookOpen className="h-4 w-4 mr-2" />
-            {isEnrolled ? "Continue Learning" : "Enroll Now"}
-          </Button>
+          {isEnrolled ? (
+            <Button className="w-full" size="lg">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Continue Learning
+            </Button>
+          ) : (
+            <EnrollmentPreview
+              course={course}
+              trigger={
+                <Button className="w-full" size="lg">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Enroll Now
+                </Button>
+              }
+            />
+          )}
         </CardContent>
       </Card>
 

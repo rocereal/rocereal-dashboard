@@ -51,7 +51,7 @@ const originalCoursesData: CourseData[] = [
     avgRating: 4.5,
     courses: "10 lessons",
     image: backgroundOne,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Learn the fundamentals of data science and analytics. This comprehensive course covers data collection, cleaning, analysis, and visualization techniques using Python and popular libraries like Pandas, NumPy, and Matplotlib.",
     instructor: "Dr. Sarah Chen",
@@ -137,7 +137,7 @@ const originalCoursesData: CourseData[] = [
     avgRating: 4.2,
     courses: "12 lessons",
     image: backgroundTwo,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Master the basics of HTML, CSS, and JavaScript. Build responsive websites from scratch and learn modern web development practices including semantic HTML, CSS Grid/Flexbox, and JavaScript fundamentals.",
     instructor: "Prof. Michael Rodriguez",
@@ -235,7 +235,7 @@ const originalCoursesData: CourseData[] = [
     avgRating: 4.7,
     courses: "13 lessons",
     image: backgroundThree,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Apply data analytics to business decision making. Learn how to use data to drive business insights, create dashboards, and make data-driven decisions that impact organizational performance.",
     instructor: "Dr. James Wilson",
@@ -351,7 +351,7 @@ const originalCoursesData: CourseData[] = [
     avgRating: 4.6,
     courses: "14 lessons",
     image: backgroundFour,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Introduction to artificial intelligence concepts. Learn the fundamentals of AI, machine learning, and neural networks. Understand how AI systems work and their applications in various industries.",
     instructor: "Dr. Emily White",
@@ -491,7 +491,7 @@ const recommendedCoursesData: CourseData[] = [
     avgRating: 4.8,
     courses: "10 lessons",
     image: backgroundFive,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Take your Python skills to the next level with advanced concepts including decorators, generators, metaclasses, and performance optimization techniques.",
     instructor: "Dr. Sarah Chen",
@@ -520,7 +520,7 @@ const recommendedCoursesData: CourseData[] = [
     avgRating: 4.9,
     courses: "11 lessons",
     image: backgroundSix,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Master the core concepts of machine learning including supervised and unsupervised learning, model evaluation, and practical applications.",
     instructor: "Dr. James Wilson",
@@ -544,7 +544,7 @@ const recommendedCoursesData: CourseData[] = [
     avgRating: 4.6,
     courses: "12 lessons",
     image: backgroundSeven,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Learn to create stunning data visualizations and dashboards in Excel. Master charts, pivot tables, and advanced visualization techniques.",
     instructor: "Lisa Thompson",
