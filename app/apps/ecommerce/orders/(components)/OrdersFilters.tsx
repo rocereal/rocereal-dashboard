@@ -42,7 +42,7 @@ export function OrdersFilters({
         </div>
 
         <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-          <SelectTrigger className="w-40">
+          <SelectTrigger className="w-full lg:w-40">
             <Filter className="h-4 w-4 mr-2" />
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
@@ -57,7 +57,7 @@ export function OrdersFilters({
         </Select>
 
         <Select value={sortBy} onValueChange={onSortByChange}>
-          <SelectTrigger className="w-40">
+          <SelectTrigger className="w-full lg:w-40">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>

@@ -704,7 +704,7 @@ function SEOTab({ productData, setProductData }: any) {
               placeholder="product-name"
               value={productData.urlSlug}
               onChange={(e) => handleInputChange("urlSlug", e.target.value)}
-              className="!rounded-none"
+              className="!rounded-l-none"
             />
           </div>
           <p className="text-xs text-muted-foreground">

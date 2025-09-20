@@ -4,44 +4,25 @@ import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable, createSortableColumn } from "@/components/ui/data-table";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import { TabsContent } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Product,
   ProductPurchase,
   getProductPurchases,
 } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  BarChart3,
-  Info,
-  Package,
-  Save,
-  Settings,
-  ShoppingCart,
-  X,
-} from "lucide-react";
+import { BarChart3, Package, Save, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import {
-  ProductImage,
-  ProductDetails,
-  ProductMetadata,
   BasicInfoForm,
-  PricingInventoryForm,
   DescriptionForm,
-  SEOSettings,
+  PricingInventoryForm,
+  ProductDetails,
+  ProductImage,
+  ProductMetadata,
   ProductSettings,
+  SEOSettings,
 } from "./index";
 
 interface productProps {
@@ -256,48 +237,6 @@ function ProductEditTab({ product }: { product: any }) {
         description={formData.description}
         onChange={(value) => handleInputChange("description", value)}
       />
-    </div>
-  );
-}
-
-function ProductAnalyticsTab({ product }: { product: any }) {
-  return (
-    <div className="space-y-6">
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <p className="text-sm text-green-800">
-          <strong>Note:</strong> This tab would display sales analytics, views,
-          conversion rates, and performance metrics for the product.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card p-4 rounded-lg border">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-blue-500" />
-            <span className="text-sm font-medium">Views</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">1,234</div>
-          <p className="text-xs text-muted-foreground">+12% from last month</p>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg border">
-          <div className="flex items-center gap-2">
-            <Package className="h-5 w-5 text-green-500" />
-            <span className="text-sm font-medium">Sales</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">89</div>
-          <p className="text-xs text-muted-foreground">+8% from last month</p>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg border">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-purple-500" />
-            <span className="text-sm font-medium">Conversion</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">7.2%</div>
-          <p className="text-xs text-muted-foreground">+2.1% from last month</p>
-        </div>
-      </div>
     </div>
   );
 }

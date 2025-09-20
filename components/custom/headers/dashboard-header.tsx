@@ -76,7 +76,7 @@ export function DashboardHeader({
       )}
 
       {/* Header Content */}
-      <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
         {/* Title and Subtitle */}
         <div className="flex flex-col space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
