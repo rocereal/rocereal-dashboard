@@ -1,21 +1,48 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import TasksHeader from "./TasksHeader";
 import TasksList from "./TasksList";
 import TasksSidebar from "./TasksSidebar";
+import TaskDetailsDrawer from "./TaskDetailsDrawer";
+import CreateTaskDrawer from "./CreateTaskDrawer";
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  completed: boolean;
+  priority: "low" | "medium" | "high";
+  dueDate: string | null;
+  createdAt: string;
+  assignee: string;
+  tags: string[];
+  checklist: {
+    id: string;
+    text: string;
+    completed: boolean;
+  }[];
+}
 
 export default function RenderPage() {
-  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [taskDetailsOpen, setTaskDetailsOpen] = useState(false);
+  const [createTaskOpen, setCreateTaskOpen] = useState(false);
 
   const handleTaskSelect = (taskId: string) => {
-    router.push(`/apps/tasks/${taskId}`);
+    setSelectedTaskId(taskId);
+    setTaskDetailsOpen(true);
   };
 
   const handleCreateTask = () => {
-    router.push("/apps/tasks/create");
+    setCreateTaskOpen(true);
+  };
+
+  const handleTaskCreated = (task: Task) => {
+    // Here you would typically add the task to your state or refetch data
+    console.log("Task created:", task);
+    // For now, we'll just close the drawer
   };
 
   return (
@@ -34,6 +61,20 @@ export default function RenderPage() {
 
         <TasksList onTaskSelect={handleTaskSelect} />
       </div>
+
+      {/* Task Details Drawer */}
+      <TaskDetailsDrawer
+        taskId={selectedTaskId}
+        isOpen={taskDetailsOpen}
+        onOpenChange={setTaskDetailsOpen}
+      />
+
+      {/* Create Task Drawer */}
+      <CreateTaskDrawer
+        isOpen={createTaskOpen}
+        onOpenChange={setCreateTaskOpen}
+        onTaskCreated={handleTaskCreated}
+      />
     </div>
   );
 }
