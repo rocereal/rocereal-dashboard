@@ -4,6 +4,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Message,
+  MessengerChatProps,
+  mockContacts,
+  mockMessages,
+} from "@/data/chats";
+import {
   Camera,
   File,
   Image,
@@ -14,102 +20,6 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-
-interface Message {
-  id: string;
-  senderId: string;
-  content: string;
-  timestamp: string;
-  isMine: boolean;
-}
-
-interface MessengerChatProps {
-  selectedContact: string | null;
-}
-
-// Mock messages data
-const mockMessages: Record<string, Message[]> = {
-  "1": [
-    {
-      id: "1",
-      senderId: "1",
-      content: "Hey! How are you doing?",
-      timestamp: "2024-01-15T10:30:00Z",
-      isMine: false,
-    },
-    {
-      id: "2",
-      senderId: "me",
-      content: "Hi Alice! I'm doing great, thanks for asking. How about you?",
-      timestamp: "2024-01-15T10:31:00Z",
-      isMine: true,
-    },
-    {
-      id: "3",
-      senderId: "1",
-      content:
-        "I'm good too! Just working on some projects. Have you seen the new design updates?",
-      timestamp: "2024-01-15T10:32:00Z",
-      isMine: false,
-    },
-    {
-      id: "4",
-      senderId: "me",
-      content: "Yes, I love the new color scheme! The gradients look amazing.",
-      timestamp: "2024-01-15T10:33:00Z",
-      isMine: true,
-    },
-  ],
-  "2": [
-    {
-      id: "1",
-      senderId: "2",
-      content: "Thanks for your help with the project yesterday!",
-      timestamp: "2024-01-15T09:15:00Z",
-      isMine: false,
-    },
-    {
-      id: "2",
-      senderId: "me",
-      content: "No problem at all! Glad I could help.",
-      timestamp: "2024-01-15T09:16:00Z",
-      isMine: true,
-    },
-  ],
-  "3": [
-    {
-      id: "1",
-      senderId: "3",
-      content: "See you tomorrow for the meeting!",
-      timestamp: "2024-01-14T16:45:00Z",
-      isMine: false,
-    },
-  ],
-  "4": [
-    {
-      id: "1",
-      senderId: "4",
-      content: "The project is coming along nicely. Should be done by Friday.",
-      timestamp: "2024-01-14T14:20:00Z",
-      isMine: false,
-    },
-    {
-      id: "2",
-      senderId: "me",
-      content: "Great! Looking forward to seeing the final result.",
-      timestamp: "2024-01-14T14:21:00Z",
-      isMine: true,
-    },
-  ],
-};
-
-// Mock contacts data for avatars
-const mockContacts = [
-  { id: "1", name: "Alice Johnson", avatar: "/avatars/alice.jpg" },
-  { id: "2", name: "Bob Smith", avatar: "/avatars/bob.jpg" },
-  { id: "3", name: "Carol Davis", avatar: "/avatars/carol.jpg" },
-  { id: "4", name: "David Wilson", avatar: "/avatars/david.jpg" },
-];
 
 export default function MessengerChat({ selectedContact }: MessengerChatProps) {
   const [newMessage, setNewMessage] = useState("");
@@ -222,100 +132,53 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
       </div>
 
       {/* Chat Input - Sticks to Bottom of Chat Area */}
-      <div className="sticky bottom-0 bg-white border-t p-4">
-        <div className="flex items-end gap-3">
-          {/* Attachment Button */}
+      <div className="sticky bottom-0 bg-secondary backdrop-blur border-t px-4">
+        <div className="flex items-center gap-2 border rounded-full shadow-none px-3 py-2">
+          {/* Attachment Button (inside input) */}
           <Button
             variant="ghost"
-            size="sm"
-            className="text-gray-500 hover:text-gray-700 p-2"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground rounded-full h-9 w-9"
           >
             <Paperclip className="h-5 w-5" />
           </Button>
 
           {/* Message Input */}
-          <div className="flex-1 relative">
-            <div className="relative bg-gray-100 rounded-full px-4 py-2">
-              <Input
-                placeholder="Type a message..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 pr-12"
-              />
+          <Input
+            placeholder="Type a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-2"
+          />
 
-              {/* Emoji Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1 h-8 w-8"
-              >
-                <Smile className="h-5 w-5" />
-              </Button>
-            </div>
-          </div>
+          {/* Emoji Button (inside input) */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground rounded-full h-9 w-9"
+          >
+            <Smile className="h-5 w-5" />
+          </Button>
 
-          {/* Voice Message or Send Button */}
+          {/* Send / Mic Button (inside input, right aligned) */}
           {newMessage.trim() ? (
             <Button
               onClick={handleSendMessage}
-              size="sm"
-              className="bg-green-500 hover:bg-green-600 text-white rounded-full p-3 h-10 w-10"
+              size="icon"
+              className="bg-green-500 hover:bg-green-600 text-white rounded-full h-9 w-9"
             >
               <Send className="h-5 w-5" />
             </Button>
           ) : (
             <Button
               variant="ghost"
-              size="sm"
-              className="text-gray-500 hover:text-gray-700 rounded-full p-3 h-10 w-10"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground rounded-full h-9 w-9"
             >
               <Mic className="h-5 w-5" />
             </Button>
           )}
-        </div>
-
-        {/* Attachment Options (Hidden by default, can be toggled) */}
-        <div className="hidden mt-3 grid grid-cols-4 gap-4">
-          <Button
-            variant="ghost"
-            className="flex flex-col items-center gap-2 p-4 h-auto"
-          >
-            <div className="bg-blue-100 rounded-full p-3">
-              <Image className="h-6 w-6 text-blue-600" />
-            </div>
-            <span className="text-xs text-gray-600">Gallery</span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="flex flex-col items-center gap-2 p-4 h-auto"
-          >
-            <div className="bg-green-100 rounded-full p-3">
-              <Camera className="h-6 w-6 text-green-600" />
-            </div>
-            <span className="text-xs text-gray-600">Camera</span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="flex flex-col items-center gap-2 p-4 h-auto"
-          >
-            <div className="bg-purple-100 rounded-full p-3">
-              <File className="h-6 w-6 text-purple-600" />
-            </div>
-            <span className="text-xs text-gray-600">Document</span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="flex flex-col items-center gap-2 p-4 h-auto"
-          >
-            <div className="bg-orange-100 rounded-full p-3">
-              <User className="h-6 w-6 text-orange-600" />
-            </div>
-            <span className="text-xs text-gray-600">Contact</span>
-          </Button>
         </div>
       </div>
     </div>
