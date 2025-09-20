@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 
 interface SectionCardsProps {
   metrics?: EducationMetric[];
@@ -39,7 +40,7 @@ export function SectionCards({
 
           return (
             <Card
-              key={course.id}
+              key={course.courseId}
               className="relative overflow-hidden border !bg-card shadow-xs backdrop-blur-sm"
             >
               <div className="relative overflow-hidden aspect-video w-full flex flex-col">
@@ -110,13 +111,22 @@ export function SectionCards({
                     </div>
                   </div>
 
-                  <Button
-                    variant="outline"
-                    className="flex w-full lg:w-fit items-center space-x-2"
+                  <Link
+                    shallow={true}
+                    href="/apps/lms/[courseId]"
+                    as={`/apps/lms/${course?.courseId}`}
+                    passHref
+                    style={{ textDecoration: "none" }}
+                    className="cursor-pointer"
                   >
-                    Continue
-                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                  </Button>
+                    <Button
+                      variant="outline"
+                      className="flex w-full lg:w-fit items-center space-x-2"
+                    >
+                      Continue
+                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

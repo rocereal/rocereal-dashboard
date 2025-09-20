@@ -7,7 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { RecommendedCourse } from "@/data/education";
 import { cn } from "@/lib/utils";
-import { Book, Search, ShoppingCart, Star, User, Users } from "lucide-react";
+import {
+  Book,
+  Clock,
+  Search,
+  ShoppingCart,
+  Star,
+  User,
+  Users,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 
 interface RecommendedCoursesProps {
@@ -97,17 +105,15 @@ export function RecommendedCourses({
               <div className="grid grid-cols-2 justify-between align-middle">
                 <div className="flex flex-col items-start justify-between text-sm">
                   <div className="flex items-center gap-1">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Enrolled</span>
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{course.time}</span>
                   </div>
-                  <span className="font-medium">{course.enrolled}</span>
                 </div>
                 <div className="flex flex-col items-end justify-between text-sm">
                   <div className="flex items-center gap-1">
                     <Book className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Lessons</span>
+                    <span className="font-medium">{course.courses}</span>
                   </div>
-                  <span className="font-medium">{course.courses}</span>
                 </div>
               </div>
 
