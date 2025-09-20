@@ -40,17 +40,27 @@ export default function TasksList({ onTaskSelect }: TasksListProps) {
             )}
             onClick={() => onTaskSelect(task.id)}
           >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex flex-col items-start gap-3">
-                  <Checkbox
-                    checked={task.completed}
-                    onCheckedChange={() => handleTaskToggle(task.id)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+            <CardHeader className="pb-3 w-full">
+              <div className="flex flex-col items-start justify-between w-full">
+                <div className="flex flex-col items-start gap-3 w-full">
+                  <div className="flex flex-row w-full justify-between">
+                    <Checkbox
+                      checked={task.completed}
+                      onCheckedChange={() => handleTaskToggle(task.id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+
+                    <Badge
+                      className={cn("text-xs", getPriorityColor(task.priority))}
+                    >
+                      {getPriorityIcon(task.priority)}
+                      <span className="ml-1 capitalize">{task.priority}</span>
+                    </Badge>
+                  </div>
+
                   <CardTitle
                     className={cn(
-                      "text-lg",
+                      "text-lg w-full ",
                       task.completed &&
                         "line-through text-gray-500 dark:text-gray-50"
                     )}
@@ -58,12 +68,6 @@ export default function TasksList({ onTaskSelect }: TasksListProps) {
                     {task.title}
                   </CardTitle>
                 </div>
-                <Badge
-                  className={cn("text-xs", getPriorityColor(task.priority))}
-                >
-                  {getPriorityIcon(task.priority)}
-                  <span className="ml-1 capitalize">{task.priority}</span>
-                </Badge>
               </div>
             </CardHeader>
 

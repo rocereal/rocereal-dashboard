@@ -9,7 +9,7 @@ import CreateTaskDrawer from "./CreateTaskDrawer";
 import { Task } from "@/data/tasks";
 
 export default function RenderPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [taskDetailsOpen, setTaskDetailsOpen] = useState(false);
   const [createTaskOpen, setCreateTaskOpen] = useState(false);
@@ -38,10 +38,7 @@ export default function RenderPage() {
       />
 
       <div className="flex-1 flex flex-col">
-        <TasksHeader
-          sidebarOpen={sidebarOpen}
-          onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
-        />
+        <TasksHeader onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} />
 
         <TasksList onTaskSelect={handleTaskSelect} />
       </div>

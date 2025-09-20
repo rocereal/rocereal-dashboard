@@ -14,14 +14,10 @@ import {
 } from "lucide-react";
 
 interface TasksHeaderProps {
-  sidebarOpen: boolean;
   onSidebarToggle: () => void;
 }
 
-export default function TasksHeader({
-  sidebarOpen,
-  onSidebarToggle,
-}: TasksHeaderProps) {
+export default function TasksHeader({ onSidebarToggle }: TasksHeaderProps) {
   return (
     <div className="border-b  px-6 py-4">
       <div className="flex flex-col gap-4 lg:flex-row items-start lg:items-center justify-between">
