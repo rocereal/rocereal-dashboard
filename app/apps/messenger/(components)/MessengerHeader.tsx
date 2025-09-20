@@ -47,7 +47,7 @@ export default function MessengerHeader({
 
   if (!selectedContact || !contact) {
     return (
-      <div className="border-b px-6 py-4 bg-white">
+      <div className="border-b px-6 py-4">
         <div className="flex items-center justify-center">
           <div className="text-center">
             <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-400" />

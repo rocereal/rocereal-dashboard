@@ -117,7 +117,7 @@ export default function MessengerSidebar({
     <div className="hidden lg:block">
       <div
         className={cn(
-          "border-r transition-all duration-300",
+          "border-r transition-all duration-300 h-full",
           sidebarOpen ? "w-80" : "w-16"
         )}
       >
@@ -145,15 +145,24 @@ export default function MessengerSidebar({
         {sidebarOpen && (
           <Tabs defaultValue="chats" className="flex-1 flex flex-col">
             <TabsList className="grid w-full grid-cols-3 mx-4 mb-4">
-              <TabsTrigger value="chats" className="flex items-center gap-2">
+              <TabsTrigger
+                value="chats"
+                className="flex items-center gap-2 text-xs"
+              >
                 <MessageCircle className="h-4 w-4" />
                 Chats
               </TabsTrigger>
-              <TabsTrigger value="groups" className="flex items-center gap-2">
+              <TabsTrigger
+                value="groups"
+                className="flex items-center gap-2 text-xs"
+              >
                 <Users className="h-4 w-4" />
                 Groups
               </TabsTrigger>
-              <TabsTrigger value="contacts" className="flex items-center gap-2">
+              <TabsTrigger
+                value="contacts"
+                className="flex items-center gap-2 text-xs"
+              >
                 <User className="h-4 w-4" />
                 Contacts
               </TabsTrigger>
@@ -175,7 +184,7 @@ export default function MessengerSidebar({
                     key={contact.id}
                     onClick={() => onContactSelect(contact.id)}
                     className={cn(
-                      "w-full p-3 text-left hover:bg-gray-50 transition-colors rounded-lg mb-1",
+                      "w-full p-3 text-left hover:bg-card cursor-pointer transition-colors rounded-lg mb-1",
                       selectedContact === contact.id && "bg-primary/5"
                     )}
                   >

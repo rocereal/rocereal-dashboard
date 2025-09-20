@@ -10,7 +10,7 @@ export default function RenderPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex border rounded-md">
       <MessengerSidebar
         selectedContact={selectedContact}
         onContactSelect={setSelectedContact}

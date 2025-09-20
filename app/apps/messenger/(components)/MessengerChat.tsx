@@ -195,7 +195,7 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
                 className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                   message.isMine
                     ? "bg-primary text-primary-foreground"
-                    : "bg-gray-100 text-gray-900"
+                    : "bg-card text-muted-foreground"
                 }`}
               >
                 <p className="text-sm">{message.content}</p>
