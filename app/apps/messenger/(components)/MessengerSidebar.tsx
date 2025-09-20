@@ -26,6 +26,7 @@ interface MessengerSidebarProps {
   onContactSelect: (contactId: string) => void;
   sidebarOpen: boolean;
   onSidebarToggle: () => void;
+  onMobileChatOpen?: () => void;
 }
 
 // Mock contacts data
@@ -73,6 +74,7 @@ export default function MessengerSidebar({
   onContactSelect,
   sidebarOpen,
   onSidebarToggle,
+  onMobileChatOpen,
 }: MessengerSidebarProps) {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [isAddContactOpen, setIsAddContactOpen] = useState(false);
@@ -114,7 +116,7 @@ export default function MessengerSidebar({
   };
 
   return (
-    <div className="hidden lg:block">
+    <div className="block">
       <div
         className={cn(
           "border-r transition-all duration-300 h-full",
@@ -122,7 +124,7 @@ export default function MessengerSidebar({
         )}
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b">
+        <div className="hidden lg:block p-4 border-b">
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
@@ -182,7 +184,13 @@ export default function MessengerSidebar({
                 {mockContacts.map((contact) => (
                   <button
                     key={contact.id}
-                    onClick={() => onContactSelect(contact.id)}
+                    onClick={() => {
+                      onContactSelect(contact.id);
+                      // Trigger mobile chat on mobile devices
+                      if (window.innerWidth < 768 && onMobileChatOpen) {
+                        onMobileChatOpen();
+                      }
+                    }}
                     className={cn(
                       "w-full p-3 text-left hover:bg-secondary cursor-pointer transition-colors rounded-lg mb-1",
                       selectedContact === contact.id && "bg-primary/5"

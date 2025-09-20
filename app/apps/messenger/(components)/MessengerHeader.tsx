@@ -65,13 +65,6 @@ export default function MessengerHeader({
     <div className="border-b px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          {/* Mobile Menu Toggle */}
-          <div className="lg:hidden">
-            <Button variant="ghost" size="sm" onClick={onSidebarToggle}>
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </div>
-
           <div className="flex items-center gap-3">
             <div className="relative">
               <Avatar className="h-10 w-10">
