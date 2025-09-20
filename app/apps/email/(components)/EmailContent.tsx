@@ -44,19 +44,21 @@ export default function EmailContent({ selectedEmail }: EmailContentProps) {
               </AvatarFallback>
             </Avatar>
 
-            <div>
+            <div className="grid grid-cols-1 gap-2">
               <h3 className="text-lg font-semibold">{selectedEmail.subject}</h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-200 dark:text-muted-foreground">
                 From: {selectedEmail.from}
               </p>
-              <p className="text-sm text-gray-600">To: {selectedEmail.to}</p>
+              <p className="text-sm text-gray-200 dark:text-muted-foreground">
+                To: {selectedEmail.to}
+              </p>
+              <span className="text-xs text-gray-200 dark:text-muted-foreground">
+                {new Date(selectedEmail.timestamp).toLocaleString()}
+              </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">
-              {new Date(selectedEmail.timestamp).toLocaleString()}
-            </span>
             <Button variant="ghost" size="sm">
               <Star className="h-4 w-4" />
             </Button>
@@ -70,9 +72,11 @@ export default function EmailContent({ selectedEmail }: EmailContentProps) {
         </div>
 
         {selectedEmail.hasAttachments && (
-          <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-900 rounded-lg">
-            <Paperclip className="h-4 w-4 text-gray-500" />
-            <span className="text-sm text-gray-700">2 attachments</span>
+          <div className="flex flex-col lg:flex-row items-center gap-2 p-3 bg-secondary rounded-lg">
+            <Paperclip className="h-4 w-4 text-gray-200 dark:text-muted-foreground" />
+            <span className="text-sm text-gray-200 dark:text-muted-foreground">
+              2 attachments
+            </span>
             <Button variant="ghost" size="sm" className="ml-auto">
               Download all
             </Button>
@@ -83,20 +87,15 @@ export default function EmailContent({ selectedEmail }: EmailContentProps) {
       {/* Email Body */}
       <div className="flex-1 p-6 overflow-y-auto">
         <div className="prose prose-sm max-w-none">
-          <p className="text-gray-800 leading-relaxed">{selectedEmail.body}</p>
+          <p className="text-gray-200 dark:text-muted-background leading-relaxed">
+            {selectedEmail.body}
+          </p>
 
-          <p className="text-gray-800 leading-relaxed mt-4">
+          <p className="text-gray-200 dark:text-muted-background leading-relaxed mt-4">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
             aliquip ex ea commodo consequat.
-          </p>
-
-          <p className="text-gray-800 leading-relaxed mt-4">
-            Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-            cupidatat non proident, sunt in culpa qui officia deserunt mollit
-            anim id est laborum.
           </p>
         </div>
       </div>

@@ -14,6 +14,7 @@ export interface CourseData {
   enrolled: number;
   completionRate: number;
   avgRating: number;
+  courses: string;
   image: any;
   icon: any;
   description?: string;
@@ -26,6 +27,7 @@ export const coursesData: CourseData[] = [
     enrolled: 320,
     completionRate: 78,
     avgRating: 4.5,
+    courses: "10 lessons",
     image: backgroundOne,
     icon: GraduationCap,
     description: "Learn the fundamentals of data science and analytics",
@@ -36,6 +38,7 @@ export const coursesData: CourseData[] = [
     enrolled: 510,
     completionRate: 65,
     avgRating: 4.2,
+    courses: "12 lessons",
     image: backgroundTwo,
     icon: GraduationCap,
     description: "Master the basics of HTML, CSS, and JavaScript",
@@ -46,6 +49,7 @@ export const coursesData: CourseData[] = [
     enrolled: 210,
     completionRate: 82,
     avgRating: 4.7,
+    courses: "13 lessons",
     image: backgroundThree,
     icon: GraduationCap,
     description: "Apply data analytics to business decision making",
@@ -56,6 +60,7 @@ export const coursesData: CourseData[] = [
     enrolled: 450,
     completionRate: 70,
     avgRating: 4.6,
+    courses: "14 lessons",
     image: backgroundFour,
     icon: GraduationCap,
     description: "Introduction to artificial intelligence concepts",
@@ -75,8 +80,10 @@ export interface EducationMetric {
 export interface RecommendedCourse {
   id: string;
   title: string;
+  courses: string;
   authors: string[];
   rating: number;
+  enrolled: number;
   price: number;
   image: any;
 }
@@ -87,7 +94,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Advanced Python Programming",
     authors: ["Dr. Sarah Chen", "Prof. Michael Rodriguez"],
     rating: 4.8,
+    courses: "10 lessons",
     price: 89.99,
+    enrolled: 100,
     image: backgroundFive,
   },
   {
@@ -95,7 +104,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Machine Learning Fundamentals",
     authors: ["Dr. James Wilson"],
     rating: 4.9,
+    courses: "11 lessons",
     price: 129.99,
+    enrolled: 150,
     image: backgroundSix,
   },
   {
@@ -103,7 +114,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Data Visualization with Excel",
     authors: ["Lisa Thompson", "Mark Davis"],
     rating: 4.6,
+    courses: "12 lessons",
     price: 49.99,
+    enrolled: 200,
     image: backgroundSeven,
   },
   {
@@ -111,7 +124,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Cloud Computing with AWS",
     authors: ["Dr. Robert Kim", "Jennifer Liu"],
     rating: 4.7,
+    courses: "13 lessons",
     price: 99.99,
+    enrolled: 250,
     image: backgroundEight,
   },
   {
@@ -119,7 +134,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "React.js Masterclass",
     authors: ["Alex Johnson", "Maria Garcia"],
     rating: 4.8,
+    courses: "14 lessons",
     price: 79.99,
+    enrolled: 300,
     image: backgroundOne,
   },
   {
@@ -127,7 +144,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Digital Marketing Strategy",
     authors: ["Prof. David Brown"],
     rating: 4.5,
+    courses: "15 lessons",
     price: 69.99,
+    enrolled: 350,
     image: backgroundTwo,
   },
   {
@@ -135,7 +154,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Cybersecurity Essentials",
     authors: ["Dr. Emily White", "Mark Stevens"],
     rating: 4.7,
+    courses: "16 lessons",
     price: 94.99,
+    enrolled: 400,
     image: backgroundThree,
   },
   {
@@ -143,7 +164,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Blockchain Technology Fundamentals",
     authors: ["Dr. Kevin Park"],
     rating: 4.6,
+    courses: "17 lessons",
     price: 109.99,
+    enrolled: 450,
     image: backgroundFour,
   },
   {
@@ -151,6 +174,8 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "UI/UX Design Principles",
     authors: ["Sarah Mitchell", "Tom Anderson"],
     rating: 4.9,
+    enrolled: 500,
+    courses: "18 lessons",
     price: 84.99,
     image: backgroundFive,
   },
@@ -159,6 +184,8 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Financial Modeling for Beginners",
     authors: ["Prof. Rachel Green"],
     rating: 4.4,
+    enrolled: 5500,
+    courses: "19 lessons",
     price: 74.99,
     image: backgroundSix,
   },
@@ -167,7 +194,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Mobile App Development with Flutter",
     authors: ["Carlos Rodriguez", "Anna Kim"],
     rating: 4.8,
+    courses: "20 lessons",
     price: 119.99,
+    enrolled: 600,
     image: backgroundSeven,
   },
   {
@@ -175,7 +204,9 @@ export const recommendedCourses: RecommendedCourse[] = [
     title: "Project Management Professional",
     authors: ["Dr. Michael Chen", "Lisa Wong"],
     rating: 4.6,
+    courses: "21 lessons",
     price: 89.99,
+    enrolled: 650,
     image: backgroundEight,
   },
 ];

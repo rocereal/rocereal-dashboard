@@ -24,7 +24,7 @@ export default function EmailHeader({
 }: EmailHeaderProps) {
   return (
     <div className="border-b px-0 lg:px-4 py-4">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 justify-between">
         {/* Mobile Menu Toggle */}
         <MobileSidebar
           selectedCategory={selectedCategory}

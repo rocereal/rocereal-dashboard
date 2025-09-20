@@ -23,7 +23,7 @@ export default function DesktopSidebar({
     <div className="hidden lg:block">
       <div
         className={cn(
-          "border-r transition-all duration-300",
+          "border-r transition-all duration-300 h-full",
           sidebarOpen ? "w-64" : "w-16"
         )}
       >
@@ -56,7 +56,7 @@ export default function DesktopSidebar({
                 key={item.id}
                 onClick={() => onCategoryChange(item.id)}
                 className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-gray-100 transition-colors",
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-secondary cursor-pointer transition-colors",
                   selectedCategory === item.id && "bg-primary/10 text-primary"
                 )}
               >

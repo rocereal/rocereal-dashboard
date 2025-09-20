@@ -4,9 +4,10 @@ import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { RecommendedCourse } from "@/data/education";
 import { cn } from "@/lib/utils";
-import { Search, ShoppingCart, Star, User } from "lucide-react";
+import { Book, Search, ShoppingCart, Star, User, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 
 interface RecommendedCoursesProps {
@@ -91,11 +92,30 @@ export function RecommendedCourses({
                 </div>
               </div>
 
+              <Separator />
+
+              <div className="grid grid-cols-2 justify-between align-middle">
+                <div className="flex flex-col items-start justify-between text-sm">
+                  <div className="flex items-center gap-1">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">Enrolled</span>
+                  </div>
+                  <span className="font-medium">{course.enrolled}</span>
+                </div>
+                <div className="flex flex-col items-end justify-between text-sm">
+                  <div className="flex items-center gap-1">
+                    <Book className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">Lessons</span>
+                  </div>
+                  <span className="font-medium">{course.courses}</span>
+                </div>
+              </div>
+
               <div className="flex items-center justify-between">
                 <div className="text-lg font-bold text-primary">
                   ${course.price}
                 </div>
-                <Button size="sm" className="h-8 px-3">
+                <Button className="h-8 px-3 rounded-sm">
                   <ShoppingCart className="h-3 w-3 mr-1" />
                   Enroll
                 </Button>

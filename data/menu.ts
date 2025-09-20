@@ -85,7 +85,7 @@ export const menudata = {
       url: "#",
       icon: Notebook,
       items: [
-        { title: "Courses", url: "/apps/lms/courses" },
+        { title: "Courses", url: "/apps/lms" },
         { title: "Course Details", url: "/apps/lms/course-details" },
         { title: "New Course", url: "/apps/lms/new-course" },
       ],

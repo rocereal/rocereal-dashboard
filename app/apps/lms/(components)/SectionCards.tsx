@@ -1,9 +1,12 @@
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CourseData, EducationMetric } from "@/data/education";
 import { cn } from "@/lib/utils";
 import {
+  ArrowRight,
+  Book,
   CheckCircle,
   Star,
   TrendingDown,
@@ -54,24 +57,30 @@ export function SectionCards({
                     <IconComponent className="h-5 w-5 text-white" />
                   )}
                 </div>
+
+                <div className="absolute bottom-0 w-full bg-muted rounded-none h-1">
+                  <div
+                    className="bg-primary h-1 rounded-r-full transition-all duration-300"
+                    style={{ width: `${course.completionRate}%` }}
+                  />
+                </div>
               </div>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-foreground line-clamp-2">
                   {course.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-0 space-y-3">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">Enrolled</span>
+              <CardContent className="pt-0">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 justify-between align-middle">
+                    <div className="flex flex-col items-start justify-between text-sm">
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Enrolled</span>
+                      </div>
+                      <span className="font-medium">{course.enrolled}</span>
                     </div>
-                    <span className="font-medium">{course.enrolled}</span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex flex-col items-end justify-between text-sm">
                       <div className="flex items-center gap-1">
                         <CheckCircle className="h-4 w-4 text-muted-foreground" />
                         <span className="text-muted-foreground">
@@ -82,21 +91,32 @@ export function SectionCards({
                         {course.completionRate}%
                       </span>
                     </div>
-                    <div className="w-full bg-muted rounded-full h-2">
-                      <div
-                        className="bg-primary h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${course.completionRate}%` }}
-                      />
+                  </div>
+
+                  <div className="grid grid-cols-2 justify-between align-middle">
+                    <div className="flex flex-col items-start justify-between text-sm">
+                      <div className="flex items-center gap-1">
+                        <Book className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Lessons</span>
+                      </div>
+                      <span className="font-medium">{course.courses}</span>
+                    </div>
+                    <div className="flex flex-col items-end justify-between text-sm">
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Rating</span>
+                      </div>
+                      <span className="font-medium">{course.avgRating}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">Rating</span>
-                    </div>
-                    <span className="font-medium">{course.avgRating}/5</span>
-                  </div>
+                  <Button
+                    variant="outline"
+                    className="flex w-full lg:w-fit items-center space-x-2"
+                  >
+                    Continue
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
