@@ -21,9 +21,12 @@ export function RelatedCourses({ courses }: RelatedCoursesProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {courses.map((course) => (
             <Link
-              key={course.courseId}
-              href={`/apps/lms/${course.courseId}`}
-              className="block"
+              shallow={true}
+              href="/apps/lms/[courseId]"
+              as={`/apps/lms/${course?.courseId}`}
+              passHref
+              style={{ textDecoration: "none" }}
+              className="cursor-pointer"
             >
               <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
                 <h4 className="font-medium mb-2">{course.title}</h4>

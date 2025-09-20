@@ -52,6 +52,20 @@ export default async function CourseDetailsPage({
     );
   }
 
+  // Mock enrollment status - in a real app, this would come from user authentication/session
+  // For demo purposes, let's assume the first course is enrolled and others are not
+  const isEnrolled = course.courseId === "intro-data-science";
+
+  // Mock user progress - in a real app, this would come from the database
+  const mockUserProgress: { [lessonId: string]: boolean } = {};
+  if (isEnrolled && course.curriculum) {
+    // Simulate 60% completion for enrolled users
+    const completedCount = Math.floor(course.curriculum.length * 0.6);
+    course.curriculum.slice(0, completedCount).forEach((lesson) => {
+      mockUserProgress[lesson.id] = true;
+    });
+  }
+
   // Get related courses (excluding current course)
   const relatedCourses = coursesData
     .filter((c) => c.courseId !== course.courseId)
@@ -69,7 +83,7 @@ export default async function CourseDetailsPage({
           { label: course.title },
         ]}
         primaryAction={{
-          label: "Enroll Now",
+          label: isEnrolled ? "Continue Learning" : "Enroll Now",
           icon: <BookOpen className="h-4 w-4" />,
         }}
         secondaryAction={{
@@ -79,19 +93,31 @@ export default async function CourseDetailsPage({
       />
 
       {/* Course Hero Section */}
-      <CourseHero course={course} />
+      <CourseHero
+        course={course}
+        isEnrolled={isEnrolled}
+        progress={isEnrolled ? 60 : 0}
+      />
 
       {/* Course Details Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           <CourseOverview course={course} />
-          <CourseCurriculum course={course} />
+          <CourseCurriculum
+            course={course}
+            isEnrolled={isEnrolled}
+            userProgress={mockUserProgress}
+          />
           <RelatedCourses courses={relatedCourses} />
         </div>
 
         {/* Sidebar */}
-        <CourseSidebar course={course} />
+        <CourseSidebar
+          course={course}
+          isEnrolled={isEnrolled}
+          userProgress={mockUserProgress}
+        />
       </div>
     </div>
   );

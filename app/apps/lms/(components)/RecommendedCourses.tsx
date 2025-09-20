@@ -16,6 +16,7 @@ import {
   User,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 interface RecommendedCoursesProps {
@@ -121,10 +122,19 @@ export function RecommendedCourses({
                 <div className="text-lg font-bold text-primary">
                   ${course.price}
                 </div>
-                <Button className="h-8 px-3 rounded-sm">
-                  <ShoppingCart className="h-3 w-3 mr-1" />
-                  Enroll
-                </Button>
+                <Link
+                  shallow={true}
+                  href="/apps/lms/[courseId]"
+                  as={`/apps/lms/${course?.id}`}
+                  passHref
+                  style={{ textDecoration: "none" }}
+                  className="cursor-pointer"
+                >
+                  <Button className="h-8 px-3 rounded-sm">
+                    <ShoppingCart className="h-3 w-3 mr-1" />
+                    Enroll
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>

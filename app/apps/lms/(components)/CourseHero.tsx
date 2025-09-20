@@ -3,12 +3,19 @@ import { Button } from "@/components/ui/button";
 import { CourseData } from "@/data/education";
 import { Award, BookOpen, Clock, Play, Star, Users } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface CourseHeroProps {
   course: CourseData;
+  isEnrolled?: boolean;
+  progress?: number;
 }
 
-export function CourseHero({ course }: CourseHeroProps) {
+export function CourseHero({
+  course,
+  isEnrolled = false,
+  progress = 0,
+}: CourseHeroProps) {
   return (
     <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
@@ -23,6 +30,11 @@ export function CourseHero({ course }: CourseHeroProps) {
                 Certificate
               </Badge>
             )}
+            {isEnrolled && (
+              <Badge variant="default" className="text-sm bg-green-600">
+                Enrolled
+              </Badge>
+            )}
           </div>
 
           <div className="space-y-4">
@@ -31,6 +43,21 @@ export function CourseHero({ course }: CourseHeroProps) {
               {course.description}
             </p>
           </div>
+
+          {isEnrolled && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Your Progress</span>
+                <span>{progress}% Complete</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div
+                  className="bg-primary h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="flex items-center gap-6 text-sm">
             <div className="flex items-center gap-2">
@@ -51,14 +78,33 @@ export function CourseHero({ course }: CourseHeroProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button size="lg" className="px-8">
-              <BookOpen className="h-4 w-4 mr-2" />
-              Enroll Now
-            </Button>
-            <Button variant="outline" size="lg">
-              <Play className="h-4 w-4 mr-2" />
-              Preview Course
-            </Button>
+            {isEnrolled ? (
+              <>
+                <Button size="lg" className="px-8">
+                  <Play className="h-4 w-4 mr-2" />
+                  Continue Learning
+                </Button>
+                <Link href={`/apps/lms/${course.courseId}/curriculum`}>
+                  <Button variant="outline" size="lg">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    View Curriculum
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Button size="lg" className="px-8">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Enroll Now
+                </Button>
+                <Link href={`/apps/lms/${course.courseId}/curriculum`}>
+                  <Button variant="outline" size="lg">
+                    <Play className="h-4 w-4 mr-2" />
+                    Preview Curriculum
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -71,6 +117,13 @@ export function CourseHero({ course }: CourseHeroProps) {
               className="object-cover"
             />
           </div>
+          {isEnrolled && (
+            <div className="absolute top-4 right-4">
+              <Badge variant="secondary" className="bg-green-600 text-white">
+                Continue Your Journey
+              </Badge>
+            </div>
+          )}
         </div>
       </div>
     </div>

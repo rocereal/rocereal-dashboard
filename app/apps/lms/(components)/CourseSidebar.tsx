@@ -18,42 +18,80 @@ import {
 
 interface CourseSidebarProps {
   course: CourseData;
+  isEnrolled?: boolean;
+  userProgress?: { [lessonId: string]: boolean };
 }
 
-export function CourseSidebar({ course }: CourseSidebarProps) {
+export function CourseSidebar({
+  course,
+  isEnrolled = false,
+  userProgress = {},
+}: CourseSidebarProps) {
+  const completedLessons = Object.values(userProgress).filter(Boolean).length;
+  const totalLessons = course.curriculum?.length || 0;
+  const userProgressPercentage =
+    totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+
   return (
     <div className="space-y-6">
-      {/* Course Stats */}
+      {/* Course Stats or User Progress */}
       <Card>
         <CardHeader>
-          <CardTitle>Course Statistics</CardTitle>
+          <CardTitle>
+            {isEnrolled ? "Your Progress" : "Course Statistics"}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">
-                Completion Rate
-              </span>
-              <span className="font-medium">{course.completionRate}%</span>
-            </div>
-            <Progress value={course.completionRate} className="h-2" />
+            {isEnrolled ? (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">
+                    Lessons Completed
+                  </span>
+                  <span className="font-medium">
+                    {completedLessons} of {totalLessons}
+                  </span>
+                </div>
+                <Progress value={userProgressPercentage} className="h-2" />
 
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">
-                Students Enrolled
-              </span>
-              <span className="font-medium">{course.enrolled}</span>
-            </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">
+                    Overall Progress
+                  </span>
+                  <span className="font-medium">
+                    {Math.round(userProgressPercentage)}%
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">
+                    Completion Rate
+                  </span>
+                  <span className="font-medium">{course.completionRate}%</span>
+                </div>
+                <Progress value={course.completionRate} className="h-2" />
 
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">
-                Average Rating
-              </span>
-              <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span className="font-medium">{course.avgRating}</span>
-              </div>
-            </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">
+                    Students Enrolled
+                  </span>
+                  <span className="font-medium">{course.enrolled}</span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">
+                    Average Rating
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="font-medium">{course.avgRating}</span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -111,7 +149,7 @@ export function CourseSidebar({ course }: CourseSidebarProps) {
               </div>
             )}
 
-            {course.price && (
+            {course.price && !isEnrolled && (
               <div className="flex items-center gap-3">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <div>
@@ -128,7 +166,7 @@ export function CourseSidebar({ course }: CourseSidebarProps) {
 
           <Button className="w-full" size="lg">
             <BookOpen className="h-4 w-4 mr-2" />
-            Enroll Now
+            {isEnrolled ? "Continue Learning" : "Enroll Now"}
           </Button>
         </CardContent>
       </Card>
