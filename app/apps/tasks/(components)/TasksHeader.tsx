@@ -24,8 +24,8 @@ export default function TasksHeader({
 }: TasksHeaderProps) {
   return (
     <div className="border-b  px-6 py-4">
-      <div className="flex flex-col gap-4 lg:flex-row items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row items-start lg:items-center justify-between">
+        <div className="flex items-start lg:items-center gap-4">
           {/* Mobile Menu Toggle */}
           <div className="lg:hidden">
             <Button variant="ghost" size="sm" onClick={onSidebarToggle}>
@@ -43,9 +43,9 @@ export default function TasksHeader({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col lg:flex-row items-center gap-3">
+        <div className="flex flex-col lg:flex-row w-full lg:w-fit items-start lg:items-center gap-3">
           {/* View Toggle */}
-          <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
+          <div className="flex w-fit items-start lg:items-center gap-1 bg-secondary rounded-lg p-1">
             <Button
               variant="ghost"
               size="sm"
@@ -63,7 +63,7 @@ export default function TasksHeader({
           </div>
 
           {/* Search */}
-          <div className="relative hidden md:block">
+          <div className="relative w-full hidden md:block">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input placeholder="Search..." className="pl-10" />
@@ -71,7 +71,7 @@ export default function TasksHeader({
           </div>
 
           {/* Filters & Sort */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full">
             <Button variant="outline" size="sm">
               <Filter className="h-4 w-4 mr-2" />
               Filter
@@ -85,7 +85,7 @@ export default function TasksHeader({
       </div>
 
       {/* Task Statistics Bar */}
-      <div className="flex items-center gap-6 mt-4 pt-4 border-t">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 mt-4 pt-4 border-t">
         <div className="flex items-center gap-2">
           <CheckSquare className="h-4 w-4 text-green-600" />
           <span className="text-sm text-gray-600 dark:text-muted-foreground">
@@ -94,7 +94,7 @@ export default function TasksHeader({
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <Badge variant="secondary" className="text-xs">
             <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>8
             Completed

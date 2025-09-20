@@ -6,23 +6,7 @@ import TasksList from "./TasksList";
 import TasksSidebar from "./TasksSidebar";
 import TaskDetailsDrawer from "./TaskDetailsDrawer";
 import CreateTaskDrawer from "./CreateTaskDrawer";
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  completed: boolean;
-  priority: "low" | "medium" | "high";
-  dueDate: string | null;
-  createdAt: string;
-  assignee: string;
-  tags: string[];
-  checklist: {
-    id: string;
-    text: string;
-    completed: boolean;
-  }[];
-}
+import { Task } from "@/data/tasks";
 
 export default function RenderPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
