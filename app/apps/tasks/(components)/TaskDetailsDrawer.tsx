@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import {
   AlertCircle,
   Calendar,
+  CheckCircle,
   CheckSquare,
   Clock,
   Edit,
@@ -25,6 +26,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Task, mockTasks } from "@/data/tasks";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface TaskDetailsDrawerProps {
   taskId: string | null;

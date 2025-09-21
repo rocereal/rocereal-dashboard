@@ -7,6 +7,6 @@ export const metadata: Metadata = metadataTemplates.dashboard(
   "Manage your tasks, track progress, and collaborate with your team efficiently."
 );
 
-export default function MessengerPage() {
+export default function DetailsMessengerPage() {
   return <RenderPage />;
 }

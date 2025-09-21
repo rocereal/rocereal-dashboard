@@ -1,16 +1,12 @@
 "use client";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Task, mockTasks } from "@/data/tasks";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
@@ -23,12 +19,9 @@ import {
   Tag,
   Trash2,
   User,
-  X,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Task, mockTasks } from "@/data/tasks";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function TaskDetailsPage() {
   const params = useParams();
