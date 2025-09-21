@@ -26,159 +26,54 @@ import {
   Lock,
   Settings,
   Share,
-  Shield,
   Star,
   Trash2,
   User,
   Users,
-  type LucideIcon,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  FileDetails,
+  VersionHistory,
+  AccessEntry,
+  mockFileDetails,
+  mockVersionHistory,
+  mockAccessList,
+  formatDate,
+  formatDateShort,
+} from "@/data/files";
+import FileDetailsTab from "../(components)/FileDetailsTab";
+import VersionHistoryTab from "../(components)/VersionHistoryTab";
+import AccessSharingTab from "../(components)/AccessSharingTab";
+import ActivityTab from "../(components)/ActivityTab";
 
-interface FileDetails {
-  id: string;
-  name: string;
-  type: "folder" | "file";
-  fileType?: string;
-  size?: string;
-  createdDate: string;
-  modifiedDate: string;
-  owner: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-  permissions: "private" | "shared" | "public";
-  starred: boolean;
-  icon: LucideIcon;
-  color: string;
-  description?: string;
-  tags: string[];
-}
-
-interface VersionHistory {
-  id: string;
-  version: string;
-  modifiedBy: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-  modifiedDate: string;
-  size: string;
-  changes: string;
-}
-
-interface AccessEntry {
-  id: string;
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-  role: "owner" | "editor" | "viewer";
-  grantedDate: string;
-  lastAccess: string;
-}
-
-// Mock data
-const mockFileDetails: FileDetails = {
-  id: "4",
-  name: "project-proposal.pdf",
-  type: "file",
-  fileType: "PDF",
-  size: "2.4 MB",
-  createdDate: "2024-01-10T09:30:00Z",
-  modifiedDate: "2024-01-15T14:20:00Z",
-  owner: {
-    name: "John Doe",
-    email: "john.doe@company.com",
-    avatar: "/avatars/john.jpg",
-  },
-  permissions: "shared",
-  starred: true,
-  icon: FileText,
-  color: "text-red-600",
-  description:
-    "Comprehensive project proposal for the new marketing campaign including budget breakdown and timeline.",
-  tags: ["project", "proposal", "marketing", "budget"],
+// Utility functions
+const getPermissionIcon = (permissions: string) => {
+  switch (permissions) {
+    case "private":
+      return <Lock className="h-4 w-4" />;
+    case "shared":
+      return <Users className="h-4 w-4" />;
+    case "public":
+      return <Lock className="h-4 w-4" />;
+    default:
+      return <Lock className="h-4 w-4" />;
+  }
 };
 
-const mockVersionHistory: VersionHistory[] = [
-  {
-    id: "1",
-    version: "v1.3",
-    modifiedBy: {
-      name: "John Doe",
-      email: "john.doe@company.com",
-      avatar: "/avatars/john.jpg",
-    },
-    modifiedDate: "2024-01-15T14:20:00Z",
-    size: "2.4 MB",
-    changes: "Updated budget section and added timeline",
-  },
-  {
-    id: "2",
-    version: "v1.2",
-    modifiedBy: {
-      name: "Jane Smith",
-      email: "jane.smith@company.com",
-      avatar: "/avatars/jane.jpg",
-    },
-    modifiedDate: "2024-01-14T11:45:00Z",
-    size: "2.2 MB",
-    changes: "Added executive summary and objectives",
-  },
-  {
-    id: "3",
-    version: "v1.1",
-    modifiedBy: {
-      name: "John Doe",
-      email: "john.doe@company.com",
-      avatar: "/avatars/john.jpg",
-    },
-    modifiedDate: "2024-01-12T16:30:00Z",
-    size: "1.8 MB",
-    changes: "Initial draft with basic structure",
-  },
-];
-
-const mockAccessList: AccessEntry[] = [
-  {
-    id: "1",
-    user: {
-      name: "John Doe",
-      email: "john.doe@company.com",
-      avatar: "/avatars/john.jpg",
-    },
-    role: "owner",
-    grantedDate: "2024-01-10T09:30:00Z",
-    lastAccess: "2024-01-15T14:20:00Z",
-  },
-  {
-    id: "2",
-    user: {
-      name: "Jane Smith",
-      email: "jane.smith@company.com",
-      avatar: "/avatars/jane.jpg",
-    },
-    role: "editor",
-    grantedDate: "2024-01-11T10:15:00Z",
-    lastAccess: "2024-01-14T11:45:00Z",
-  },
-  {
-    id: "3",
-    user: {
-      name: "Bob Johnson",
-      email: "bob.johnson@company.com",
-      avatar: "/avatars/bob.jpg",
-    },
-    role: "viewer",
-    grantedDate: "2024-01-12T13:20:00Z",
-    lastAccess: "2024-01-13T09:10:00Z",
-  },
-];
+const getRoleColor = (role: string) => {
+  switch (role) {
+    case "owner":
+      return "bg-purple-100 text-purple-700";
+    case "editor":
+      return "bg-blue-100 text-blue-700";
+    case "viewer":
+      return "bg-gray-100 text-gray-700";
+    default:
+      return "bg-gray-100 text-gray-700";
+  }
+};
 
 export default function FileDetailsPage() {
   const params = useParams();
@@ -194,52 +89,6 @@ export default function FileDetailsPage() {
     setFile(foundFile);
     setLoading(false);
   }, [fileId]);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const formatDateShort = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case "owner":
-        return "bg-purple-100 text-purple-700";
-      case "editor":
-        return "bg-blue-100 text-blue-700";
-      case "viewer":
-        return "bg-gray-100 text-gray-700";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
-
-  const getPermissionIcon = (permissions: string) => {
-    switch (permissions) {
-      case "private":
-        return <Lock className="h-4 w-4" />;
-      case "shared":
-        return <Users className="h-4 w-4" />;
-      case "public":
-        return <Shield className="h-4 w-4" />;
-      default:
-        return <Lock className="h-4 w-4" />;
-    }
-  };
 
   if (loading) {
     return (
@@ -271,10 +120,10 @@ export default function FileDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen space-y-4">
       {/* Header */}
-      <div className="bg-white border-b px-6 py-4">
-        <div className="max-w-6xl mx-auto">
+      <div className=" border-b px-2 lg:px-6 py-4 rounded-md border">
+        <div className="mx-auto">
           <div className="flex items-center gap-4 mb-4">
             <Button
               variant="ghost"
@@ -286,8 +135,8 @@ export default function FileDetailsPage() {
             </Button>
           </div>
 
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col lg:flex-row gap-4 items-start justify-between">
+            <div className="flex items-start gap-4">
               <file.icon className={cn("h-12 w-12", file.color)} />
               <div>
                 <div className="flex items-center gap-2">
@@ -297,9 +146,11 @@ export default function FileDetailsPage() {
                   )}
                 </div>
                 {file.description && (
-                  <p className="text-gray-600 mt-1">{file.description}</p>
+                  <p className="text-gray-600  dark:text-muted-foreground mt-1">
+                    {file.description}
+                  </p>
                 )}
-                <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-muted-background">
                   <span>{file.size}</span>
                   <span>•</span>
                   <span>{file.fileType}</span>
@@ -309,7 +160,7 @@ export default function FileDetailsPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center flex-wrap gap-2">
               <Button variant="outline">
                 <Eye className="h-4 w-4 mr-2" />
                 Preview
@@ -339,7 +190,7 @@ export default function FileDetailsPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="mx-auto p-6 rounded-md border">
         <Tabs defaultValue="details" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="details" className="flex items-center gap-2">
