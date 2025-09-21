@@ -28,7 +28,7 @@ interface ProductsTableProps {
   onView?: (product: Product) => void;
 }
 
-export function OrdersTable({ products }: ProductsTableProps) {
+export function ProductsTable({ products }: ProductsTableProps) {
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
   const [orders, setOrders] = useState(ordersData);
 

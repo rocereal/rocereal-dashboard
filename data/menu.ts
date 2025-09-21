@@ -42,7 +42,7 @@ export const menudata = {
         { title: "AI", url: "/ai" },
         { title: "CRM", url: "/crm" },
         { title: "Crypto", url: "/crypto" },
-        { title: "E-commerce", url: "/ecommerce" },
+        { title: "E-Commerce", url: "/ecommerce" },
         { title: "Education", url: "/education" },
         { title: "Finance", url: "/finance" },
       ],

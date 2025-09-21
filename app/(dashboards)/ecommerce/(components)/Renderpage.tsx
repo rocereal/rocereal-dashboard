@@ -15,7 +15,7 @@ import {
 import { TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
-import { OrdersTable } from "@/app/apps/ecommerce/orders/(components)/OrdersTable";
+import { ProductsTable } from "./ProductsTable";
 
 const revenueConfig: ChartConfig = {
   revenue: {
@@ -96,7 +96,7 @@ export default function RenderPage() {
       <div className="bg-card rounded-lg border">
         <div className="p-6">
           <h3 className="text-lg font-semibold mb-4">Product Catalog</h3>
-          <OrdersTable
+          <ProductsTable
             products={products}
             onEdit={handleEdit}
             onDelete={handleDelete}

@@ -2,7 +2,7 @@
 
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { CoinConverter } from "@/components/crypto/coin-converter";
-import { CryptoTable } from "@/components/crypto/crypto-table";
+import { CryptoTable } from "@/app/(dashboards)/crypto/(components)/CryptoTable";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
