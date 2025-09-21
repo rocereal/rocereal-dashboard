@@ -45,8 +45,7 @@ export default function RenderPage() {
   };
 
   const handleAddInvoice = () => {
-    console.log("Add new invoice");
-    // Implement add invoice functionality
+    window.location.href = "/invoice/add-invoice";
   };
 
   const handleGenerateReport = () => {
@@ -105,6 +104,7 @@ export default function RenderPage() {
         primaryAction={{
           label: "Create Invoice",
           icon: <Plus className="h-4 w-4" />,
+          onClick: handleAddInvoice,
         }}
         secondaryAction={{
           label: "Export Report",
