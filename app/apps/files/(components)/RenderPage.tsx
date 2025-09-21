@@ -12,7 +12,7 @@ export default function RenderPage() {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex rounded-md border">
       <FilesSidebar
         sidebarOpen={sidebarOpen}
         onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}

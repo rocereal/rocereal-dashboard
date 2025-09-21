@@ -1,34 +1,17 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
-  Activity,
   ArrowLeft,
   Download,
   Edit,
   Eye,
   FileText,
-  History,
   Lock,
-  Settings,
   Share,
   Star,
   Trash2,
-  User,
   Users,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -43,10 +26,7 @@ import {
   formatDate,
   formatDateShort,
 } from "@/data/files";
-import FileDetailsTab from "../(components)/FileDetailsTab";
-import VersionHistoryTab from "../(components)/VersionHistoryTab";
-import AccessSharingTab from "../(components)/AccessSharingTab";
-import ActivityTab from "../(components)/ActivityTab";
+import FileTabs from "../(components)/FileTabs";
 
 // Utility functions
 const getPermissionIcon = (permissions: string) => {
@@ -191,346 +171,15 @@ export default function FileDetailsPage() {
 
       {/* Content */}
       <div className="mx-auto p-6 rounded-md border">
-        <Tabs defaultValue="details" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="details" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Details
-            </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
-              <History className="h-4 w-4" />
-              Version History
-            </TabsTrigger>
-            <TabsTrigger value="access" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Access & Sharing
-            </TabsTrigger>
-            <TabsTrigger value="activity" className="flex items-center gap-2">
-              <Activity className="h-4 w-4" />
-              Activity
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Details Tab */}
-          <TabsContent value="details" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* File Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    File Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        File Name
-                      </Label>
-                      <p className="text-sm mt-1">{file.name}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        File Type
-                      </Label>
-                      <p className="text-sm mt-1">{file.fileType}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Size
-                      </Label>
-                      <p className="text-sm mt-1">{file.size}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Permissions
-                      </Label>
-                      <div className="flex items-center gap-2 mt-1">
-                        {getPermissionIcon(file.permissions)}
-                        <span className="text-sm capitalize">
-                          {file.permissions}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Created
-                      </Label>
-                      <p className="text-sm mt-1">
-                        {formatDate(file.createdDate)}
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">
-                        Modified
-                      </Label>
-                      <p className="text-sm mt-1">
-                        {formatDate(file.modifiedDate)}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Owner Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    Owner
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={file.owner.avatar} />
-                      <AvatarFallback>
-                        {file.owner.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{file.owner.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {file.owner.email}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Tags */}
-            {file.tags.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tags</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {file.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-
-          {/* Version History Tab */}
-          <TabsContent value="history">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <History className="h-5 w-5" />
-                  Version History
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Version</TableHead>
-                      <TableHead>Modified By</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Size</TableHead>
-                      <TableHead>Changes</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockVersionHistory.map((version) => (
-                      <TableRow key={version.id}>
-                        <TableCell className="font-medium">
-                          {version.version}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-6 w-6">
-                              <AvatarImage src={version.modifiedBy.avatar} />
-                              <AvatarFallback className="text-xs">
-                                {version.modifiedBy.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="text-sm font-medium">
-                                {version.modifiedBy.name}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {version.modifiedBy.email}
-                              </p>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          {formatDate(version.modifiedDate)}
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          {version.size}
-                        </TableCell>
-                        <TableCell className="text-sm max-w-xs truncate">
-                          {version.changes}
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Access & Sharing Tab */}
-          <TabsContent value="access">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Access & Sharing
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Granted</TableHead>
-                      <TableHead>Last Access</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockAccessList.map((access) => (
-                      <TableRow key={access.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage src={access.user.avatar} />
-                              <AvatarFallback>
-                                {access.user.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="text-sm font-medium">
-                                {access.user.name}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {access.user.email}
-                              </p>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            className={cn("text-xs", getRoleColor(access.role))}
-                          >
-                            {access.role}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          {formatDateShort(access.grantedDate)}
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          {formatDateShort(access.lastAccess)}
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm">
-                            <Settings className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-
-                <div className="mt-6 pt-6 border-t">
-                  <Button>
-                    <Users className="h-4 w-4 mr-2" />
-                    Share with more people
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Activity Tab */}
-          <TabsContent value="activity">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5" />
-                  Recent Activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {[
-                    {
-                      action: "Downloaded",
-                      user: "John Doe",
-                      time: "2 hours ago",
-                      avatar: "/avatars/john.jpg",
-                    },
-                    {
-                      action: "Shared with",
-                      user: "Jane Smith",
-                      time: "1 day ago",
-                      avatar: "/avatars/jane.jpg",
-                    },
-                    {
-                      action: "Modified",
-                      user: "John Doe",
-                      time: "2 days ago",
-                      avatar: "/avatars/john.jpg",
-                    },
-                    {
-                      action: "Created",
-                      user: "John Doe",
-                      time: "1 week ago",
-                      avatar: "/avatars/john.jpg",
-                    },
-                  ].map((activity, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={activity.avatar} />
-                        <AvatarFallback>
-                          {activity.user
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <p className="text-sm">
-                          <span className="font-medium">{activity.user}</span>{" "}
-                          {activity.action}{" "}
-                          <span className="font-medium">this file</span>
-                        </p>
-                        <p className="text-xs text-gray-500">{activity.time}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        <FileTabs
+          file={file}
+          versionHistory={mockVersionHistory}
+          accessList={mockAccessList}
+          formatDate={formatDate}
+          formatDateShort={formatDateShort}
+          getPermissionIcon={getPermissionIcon}
+          getRoleColor={getRoleColor}
+        />
       </div>
     </div>
   );
