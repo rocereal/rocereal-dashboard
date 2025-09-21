@@ -1,26 +1,10 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wrench, Clock, Mail } from "lucide-react";
-import ContactForm from "../(components)/ContactForm";
-import { Maintenance } from "@/components/svg/Icons";
-import Header from "../(components)/ContactHeader";
 import CountdownTimer from "@/app/coming-soon/(components)/CountdownTimer";
+import Header from "@/app/contact/(components)/ContactHeader";
+import { Maintenance } from "@/components/svg/Icons";
 
 export default function MaintenancePage() {
-  const handleFormSubmit = (data: {
-    name: string;
-    email: string;
-    phone: string;
-    subject: string;
-    message: string;
-  }) => {
-    console.log("Maintenance contact form submitted:", data);
-    alert(
-      `Thank you ${data.name}! We'll notify you when we're back online at ${data.email}.`
-    );
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl mx-auto justify-center align-center items-center">

@@ -235,18 +235,16 @@ export const menudata = {
       icon: LifeBuoy,
       items: [
         { title: "Contact Form", url: "/contact/contact-form" },
-        { title: "Maintenance", url: "/contact/maintenance" },
         { title: "FAQ", url: "/contact/faq" },
       ],
     },
     {
-      title: "Error",
+      title: "Errors",
       url: "#",
       icon: User,
       items: [
-        { title: "404 Not Found", url: "/error/404" },
-        { title: "500 Server Error", url: "/error/500" },
-        { title: "Maintenance", url: "/error/maintenance" },
+        { title: "404 Not Found", url: "/errors/404" },
+        { title: "Maintenance", url: "/errors/maintenance" },
       ],
     },
     {
