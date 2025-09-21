@@ -262,9 +262,8 @@ export const menudata = {
       url: "#",
       icon: ShoppingCart,
       items: [
-        { title: "Plans", url: "/pricing/plans" },
-        { title: "Subscriptions", url: "/pricing/subscriptions" },
-        { title: "Comparison", url: "/pricing/comparison" },
+        { title: "Classic", url: "/pricing/plans" },
+        { title: "Classic Icons", url: "/pricing/design2" },
       ],
     },
 
