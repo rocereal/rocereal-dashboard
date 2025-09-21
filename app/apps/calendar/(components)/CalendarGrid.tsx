@@ -17,9 +17,6 @@ interface CalendarGridProps {
 
 export function CalendarGrid({
   monthDays,
-  events,
-  currentDate,
-  selectedDate,
   onDateSelect,
   onEventSelect,
   getEventsForDate,

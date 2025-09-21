@@ -114,6 +114,16 @@ export const menudata = {
         { title: "Add File", url: "/apps/files/add-file" },
       ],
     },
+    {
+      title: "Users",
+      url: "#",
+      icon: UserPlus,
+      items: [
+        { title: "Users", url: "/apps/users" },
+        { title: "File Details", url: "/apps/users/1" },
+        { title: "Add File", url: "/apps/users/add-user" },
+      ],
+    },
 
     // ======================
     // Pages

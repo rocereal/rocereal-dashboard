@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { RecentStudent } from "@/data/education";
-import { Download, Mail, Trash2 } from "lucide-react";
+import { Download, Mail } from "lucide-react";
+import { useState } from "react";
 
 interface RecentStudentsTableProps {
   students: RecentStudent[];
@@ -53,8 +53,6 @@ export function RecentStudentsTable({ students }: RecentStudentsTableProps) {
 
   const isAllSelected =
     students.length > 0 && selectedStudents.length === students.length;
-  const isIndeterminate =
-    selectedStudents.length > 0 && selectedStudents.length < students.length;
 
   const getStatusColor = (status: string) => {
     switch (status) {
