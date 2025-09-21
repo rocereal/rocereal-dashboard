@@ -77,8 +77,8 @@ export function PieChart({
                 outerRadius={80}
                 dataKey={dataKey}
                 nameKey={nameKey}
-                label={({ name, percent }: PieChartLabelProps) =>
-                  `${name} ${(percent * 100).toFixed(0)}%`
+                label={({ name, percent }: any) =>
+                  `${name} ${((percent as number) * 100).toFixed(0)}%`
                 }
                 labelLine={false}
               >

@@ -12,8 +12,7 @@ import { X } from "lucide-react";
 import React from "react";
 
 export function LogoTop() {
-  const { toggleSidebar, state } = useSidebar();
-  const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const { toggleSidebar } = useSidebar();
 
   return (
     <SidebarMenu>
