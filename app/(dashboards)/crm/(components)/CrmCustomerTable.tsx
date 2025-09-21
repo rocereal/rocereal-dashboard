@@ -179,12 +179,16 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
   );
 
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      searchKey="customerName"
-      searchPlaceholder="Search customers..."
-      bulkActions={bulkActions}
-    />
+    <div className="bg-card rounded-lg border">
+      <div className="p-6">
+        <DataTable
+          columns={columns}
+          data={data}
+          searchKey="customerName"
+          searchPlaceholder="Search customers..."
+          bulkActions={bulkActions}
+        />
+      </div>
+    </div>
   );
 }

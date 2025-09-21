@@ -181,14 +181,16 @@ export function BusinessCustomersTable() {
   );
 
   return (
-    <div className="w-full">
-      <DataTable
-        columns={businessColumns}
-        data={businessCustomers}
-        searchKey="userOrg"
-        searchPlaceholder="Filter customers..."
-        bulkActions={bulkActions}
-      />
+    <div className="bg-card rounded-lg border">
+      <div className="p-6">
+        <DataTable
+          columns={businessColumns}
+          data={businessCustomers}
+          searchKey="userOrg"
+          searchPlaceholder="Filter customers..."
+          bulkActions={bulkActions}
+        />
+      </div>
     </div>
   );
 }

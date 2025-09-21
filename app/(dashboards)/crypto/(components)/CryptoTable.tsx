@@ -260,14 +260,16 @@ export function CryptoTable() {
   );
 
   return (
-    <div className="w-full">
-      <DataTable
-        columns={columns}
-        data={cryptoTableData}
-        searchKey="name"
-        searchPlaceholder="Filter cryptocurrencies..."
-        bulkActions={bulkActions}
-      />
+    <div className="bg-card rounded-lg border">
+      <div className="p-6">
+        <DataTable
+          columns={columns}
+          data={cryptoTableData}
+          searchKey="name"
+          searchPlaceholder="Filter cryptocurrencies..."
+          bulkActions={bulkActions}
+        />
+      </div>
     </div>
   );
 }
