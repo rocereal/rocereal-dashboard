@@ -223,9 +223,10 @@ export const menudata = {
       url: "#",
       icon: SquareTerminal,
       items: [
-        { title: "App", url: "/coming-soon/app" },
-        { title: "Product", url: "/coming-soon/product" },
-        { title: "Website", url: "/coming-soon/website" },
+        { title: "Centered", url: "/coming-soon/centered" },
+        { title: "Minimal", url: "/coming-soon/minimal" },
+        { title: "Split-Left", url: "/coming-soon/split-left" },
+        { title: "Split-Right", url: "/coming-soon/split-right" },
       ],
     },
     {
