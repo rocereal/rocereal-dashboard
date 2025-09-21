@@ -113,17 +113,19 @@ export function DeleteConfirmationDialog({
       title={`Delete ${itemType}`}
       description={
         <div className="space-y-2">
-          <p>
+          <div>
             Are you sure you want to delete {itemType.toLowerCase()}{" "}
             <span className="font-medium text-foreground">{itemName}</span>?
-          </p>
-          <p className="text-sm text-muted-foreground">
+          </div>
+          <div className="text-sm text-muted-foreground">
             This action cannot be undone. This will permanently delete the{" "}
             {itemType.toLowerCase()} and remove all associated data from our
             servers.
-          </p>
+          </div>
           {additionalInfo && (
-            <p className="text-sm text-muted-foreground">{additionalInfo}</p>
+            <div className="text-sm text-muted-foreground">
+              {additionalInfo}
+            </div>
           )}
         </div>
       }
