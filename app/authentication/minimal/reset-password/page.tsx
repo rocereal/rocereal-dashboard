@@ -1,6 +1,6 @@
 "use client";
 
-import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
+import { ResetPasswordForm } from "@/components/forms/auth/ResetPasswordForm";
 import { Logo } from "@/components/shared/Logo";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";

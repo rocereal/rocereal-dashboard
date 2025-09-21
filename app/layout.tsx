@@ -2,6 +2,7 @@ import { ConfigPanel } from "@/components/config-panel";
 import { LayoutConfigProvider } from "@/lib/layout-config";
 import { ThemeProvider } from "@/lib/theme-provider";
 import type { Metadata } from "next";
+import NextTopLoader from "nextjs-toploader";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -85,6 +86,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
+        <NextTopLoader
+          color="var(--primary)"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px var(--primary),0 0 5px var(--primary)"
+          zIndex={1600}
+        />
         <ThemeProvider defaultTheme="dark" storageKey="fisio-ui-theme">
           <LayoutConfigProvider storageKey="fisio-layout-config">
             {children}

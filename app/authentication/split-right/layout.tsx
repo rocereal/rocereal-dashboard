@@ -1,4 +1,4 @@
-import AuthCarousel from "@/components/auth/AuthCarousel";
+import AuthCarousel from "@/components/forms/auth/AuthCarousel";
 import { sliders } from "@/data/sliders";
 
 export default function SplitLeftLayout({

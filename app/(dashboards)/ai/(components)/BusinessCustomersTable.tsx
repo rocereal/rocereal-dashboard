@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable, createSortableColumn } from "@/components/ui/data-table";
 import {
   DropdownMenu,
@@ -11,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { BulkActions } from "@/components/tables/BulkActions";
 import {
   businessCustomers,
   type BusinessCustomer,
@@ -19,6 +21,28 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
 export const businessColumns: ColumnDef<BusinessCustomer>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   createSortableColumn("userOrg", "Customer"),
   {
     accessorKey: "planType",
@@ -128,6 +152,23 @@ export const businessColumns: ColumnDef<BusinessCustomer>[] = [
 ];
 
 export function BusinessCustomersTable() {
+  const bulkActions = (selectedRows: BusinessCustomer[], table: any) => (
+    <BulkActions
+      selectedItems={selectedRows}
+      isAllSelected={table.getIsAllPageRowsSelected()}
+      onSelectAll={(checked) => table.toggleAllPageRowsSelected(checked)}
+      onBulkDelete={() => {
+        // For now, just clear selection. In a real app, you'd delete the selected items.
+        table.setRowSelection({});
+      }}
+      onExport={() => {
+        // Placeholder for export functionality
+        console.log("Exporting selected customers:", selectedRows);
+      }}
+      itemName="customer"
+    />
+  );
+
   return (
     <div className="w-full">
       <DataTable
@@ -135,6 +176,7 @@ export function BusinessCustomersTable() {
         data={businessCustomers}
         searchKey="userOrg"
         searchPlaceholder="Filter customers..."
+        bulkActions={bulkActions}
       />
     </div>
   );
