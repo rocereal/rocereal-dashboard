@@ -128,13 +128,6 @@ export default function CreateTaskDrawer({
               <Plus className="h-5 w-5" />
               Create New Task
             </SheetTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         </SheetHeader>
 
