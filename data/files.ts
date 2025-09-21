@@ -15,7 +15,7 @@ export interface FileDetails {
   };
   permissions: "private" | "shared" | "public";
   starred: boolean;
-  icon: LucideIcon;
+  iconName: string;
   color: string;
   description?: string;
   tags: string[];
@@ -47,27 +47,115 @@ export interface AccessEntry {
 }
 
 // Mock data
-export const mockFileDetails: FileDetails = {
-  id: "4",
-  name: "project-proposal.pdf",
-  type: "file",
-  fileType: "PDF",
-  size: "2.4 MB",
-  createdDate: "2024-01-10T09:30:00Z",
-  modifiedDate: "2024-01-15T14:20:00Z",
-  owner: {
-    name: "John Doe",
-    email: "john.doe@company.com",
-    avatar: "/avatars/john.jpg",
+export const mockFilesData: FileDetails[] = [
+  {
+    id: "1",
+    name: "annual-report-2024.docx",
+    type: "file",
+    fileType: "Word Document",
+    size: "5.2 MB",
+    createdDate: "2024-01-01T08:00:00Z",
+    modifiedDate: "2024-01-20T16:45:00Z",
+    owner: {
+      name: "Sarah Johnson",
+      email: "sarah.johnson@company.com",
+      avatar: "/avatars/sarah.jpg",
+    },
+    permissions: "private",
+    starred: false,
+    iconName: "FileText",
+    color: "text-blue-600",
+    description:
+      "Annual company report for 2024 with financial summaries and strategic initiatives.",
+    tags: ["report", "annual", "finance", "strategy"],
   },
-  permissions: "shared",
-  starred: true,
-  icon: FileText,
-  color: "text-red-600",
-  description:
-    "Comprehensive project proposal for the new marketing campaign including budget breakdown and timeline.",
-  tags: ["project", "proposal", "marketing", "budget"],
-};
+  {
+    id: "2",
+    name: "design-assets",
+    type: "folder",
+    fileType: "Folder",
+    size: "45.8 MB",
+    createdDate: "2024-01-05T10:15:00Z",
+    modifiedDate: "2024-01-18T12:30:00Z",
+    owner: {
+      name: "Mike Chen",
+      email: "mike.chen@company.com",
+      avatar: "/avatars/mike.jpg",
+    },
+    permissions: "shared",
+    starred: true,
+    iconName: "FileText",
+    color: "text-yellow-600",
+    description:
+      "Design assets folder containing logos, icons, and brand guidelines.",
+    tags: ["design", "assets", "brand", "graphics"],
+  },
+  {
+    id: "3",
+    name: "meeting-notes.xlsx",
+    type: "file",
+    fileType: "Excel Spreadsheet",
+    size: "1.8 MB",
+    createdDate: "2024-01-08T14:20:00Z",
+    modifiedDate: "2024-01-16T09:10:00Z",
+    owner: {
+      name: "Emma Wilson",
+      email: "emma.wilson@company.com",
+      avatar: "/avatars/emma.jpg",
+    },
+    permissions: "shared",
+    starred: false,
+    iconName: "FileText",
+    color: "text-green-600",
+    description:
+      "Meeting notes and action items from quarterly planning sessions.",
+    tags: ["meeting", "notes", "planning", "quarterly"],
+  },
+  {
+    id: "4",
+    name: "project-proposal.pdf",
+    type: "file",
+    fileType: "PDF",
+    size: "2.4 MB",
+    createdDate: "2024-01-10T09:30:00Z",
+    modifiedDate: "2024-01-15T14:20:00Z",
+    owner: {
+      name: "John Doe",
+      email: "john.doe@company.com",
+      avatar: "/avatars/john.jpg",
+    },
+    permissions: "shared",
+    starred: true,
+    iconName: "FileText",
+    color: "text-red-600",
+    description:
+      "Comprehensive project proposal for the new marketing campaign including budget breakdown and timeline.",
+    tags: ["project", "proposal", "marketing", "budget"],
+  },
+  {
+    id: "5",
+    name: "presentation.pptx",
+    type: "file",
+    fileType: "PowerPoint",
+    size: "8.7 MB",
+    createdDate: "2024-01-12T11:00:00Z",
+    modifiedDate: "2024-01-19T15:25:00Z",
+    owner: {
+      name: "David Brown",
+      email: "david.brown@company.com",
+      avatar: "/avatars/david.jpg",
+    },
+    permissions: "public",
+    starred: false,
+    iconName: "FileText",
+    color: "text-orange-600",
+    description:
+      "Client presentation for the new product launch with market analysis and projections.",
+    tags: ["presentation", "client", "product", "launch"],
+  },
+];
+
+export const mockFileDetails = mockFilesData[3]; // Default to the 4th item for backward compatibility
 
 export const mockVersionHistory: VersionHistory[] = [
   {
