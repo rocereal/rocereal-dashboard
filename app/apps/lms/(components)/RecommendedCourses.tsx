@@ -66,7 +66,6 @@ export function RecommendedCourses({
                 unoptimized={true}
                 src={course.image}
                 alt={course.title}
-                placeholder="blur"
                 fill
                 className="object-cover"
               />

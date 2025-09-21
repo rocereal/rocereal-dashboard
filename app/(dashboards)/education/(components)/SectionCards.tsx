@@ -36,7 +36,7 @@ export function SectionCards({
 
           return (
             <Card
-              key={course.id}
+              key={course.courseId}
               className="relative overflow-hidden border !bg-card shadow-xs backdrop-blur-sm"
             >
               <div className="relative overflow-hidden aspect-video w-full flex flex-col">
@@ -44,7 +44,6 @@ export function SectionCards({
                   unoptimized={true}
                   src={course.image}
                   alt={course.title}
-                  placeholder="blur"
                   fill
                   className="object-cover"
                 />

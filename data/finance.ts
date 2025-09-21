@@ -38,6 +38,7 @@ export const financeMetrics: MetricData[] = [
 export interface ProfitLossData {
   date: string;
   profit: number;
+  [key: string]: string | number | undefined;
 }
 
 export const profitLossData: ProfitLossData[] = [

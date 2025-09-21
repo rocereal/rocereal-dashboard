@@ -8,6 +8,7 @@ export interface CryptoPriceData {
   chainlink: number;
   avalanche: number;
   polygon: number;
+  [key: string]: string | number | undefined;
 }
 
 export const cryptoPriceData: CryptoPriceData[] = [

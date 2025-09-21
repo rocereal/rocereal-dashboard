@@ -11,12 +11,13 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import ImageComponentOptimized from "../shared/ImageComponentOptimized";
 import { Button } from "../ui/button";
+import type { StaticImageData } from "next/image";
 
 export interface TestimonialSlide {
   id: number;
-  image: string;
-  quote: string;
-  name: string;
+  image: string | StaticImageData;
+  quote?: string;
+  name?: string;
   title: string;
   subtitle?: string;
 }
@@ -113,9 +114,8 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
               <div className="relative overflow-hidden h-[30vh] lg:h-screen w-full flex flex-col">
                 <ImageComponentOptimized
                   unoptimized={true}
-                  alt={slide.name}
+                  alt={slide.name || slide.title}
                   src={slide.image}
-                  placeholder="blur"
                   fill
                   className="object-cover"
                 />

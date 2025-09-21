@@ -88,6 +88,7 @@ export const ecommerceMetrics: EcommerceMetric[] = [
 export interface RevenueData {
   date: string;
   revenue: number;
+  [key: string]: string | number | undefined;
 }
 
 export const revenueData: RevenueData[] = [
