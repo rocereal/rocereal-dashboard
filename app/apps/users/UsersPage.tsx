@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { users, userMetrics, userActions, User } from "@/data/users/users-data";
 import { UserMetricsComponent, UserFilters, UsersTable } from "./components";
 
 export default function UsersPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [planFilter, setPlanFilter] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
@@ -34,8 +37,7 @@ export default function UsersPage() {
 
     switch (action) {
       case "view":
-        console.log("View user profile:", user);
-        // Navigate to user detail page or open modal
+        router.push(`/apps/users/${userId}`);
         break;
       case "edit":
         console.log("Edit user:", user);
@@ -85,6 +87,7 @@ export default function UsersPage() {
     setStatusFilter("");
     setRoleFilter("");
     setPlanFilter("");
+    setSelectedUsers([]);
   };
 
   return (
@@ -128,6 +131,8 @@ export default function UsersPage() {
             users={filteredUsers}
             actions={userActions}
             onAction={handleAction}
+            selectedUsers={selectedUsers}
+            onSelectionChange={setSelectedUsers}
           />
         )}
       </div>

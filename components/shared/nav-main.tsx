@@ -64,7 +64,6 @@ export function NavMain({
             return (
               <Collapsible
                 key={index}
-                asChild
                 defaultOpen={isItemActive || hasActiveSubItem}
                 className="group/collapsible"
               >

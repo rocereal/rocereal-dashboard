@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Table,
@@ -22,6 +23,8 @@ interface UsersTableProps {
   users: User[];
   actions: UserAction[];
   onAction: (userId: string, action: string) => void;
+  selectedUsers: string[];
+  onSelectionChange: (userIds: string[]) => void;
 }
 
 const statusColors = {
@@ -38,7 +41,13 @@ const roleColors = {
   viewer: "bg-gray-100 text-gray-800",
 };
 
-export function UsersTable({ users, actions, onAction }: UsersTableProps) {
+export function UsersTable({
+  users,
+  actions,
+  onAction,
+  selectedUsers,
+  onSelectionChange,
+}: UsersTableProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
   };
@@ -62,11 +71,42 @@ export function UsersTable({ users, actions, onAction }: UsersTableProps) {
     return "Never";
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      onSelectionChange(users.map((user) => user.id));
+    } else {
+      onSelectionChange([]);
+    }
+  };
+
+  const handleSelectUser = (userId: string, checked: boolean) => {
+    if (checked) {
+      onSelectionChange([...selectedUsers, userId]);
+    } else {
+      onSelectionChange(selectedUsers.filter((id) => id !== userId));
+    }
+  };
+
+  const isAllSelected =
+    users.length > 0 && selectedUsers.length === users.length;
+  const isIndeterminate =
+    selectedUsers.length > 0 && selectedUsers.length < users.length;
+
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-12">
+              <Checkbox
+                checked={isAllSelected}
+                onCheckedChange={handleSelectAll}
+                aria-label="Select all users"
+                className={
+                  isIndeterminate ? "data-[state=checked]:bg-orange-500" : ""
+                }
+              />
+            </TableHead>
             <TableHead className="w-[250px]">User</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Status</TableHead>
@@ -80,6 +120,16 @@ export function UsersTable({ users, actions, onAction }: UsersTableProps) {
         <TableBody>
           {users.map((user) => (
             <TableRow key={user.id}>
+              {/* Checkbox */}
+              <TableCell>
+                <Checkbox
+                  checked={selectedUsers.includes(user.id)}
+                  onCheckedChange={(checked) =>
+                    handleSelectUser(user.id, !!checked)
+                  }
+                  aria-label={`Select ${user.firstName} ${user.lastName}`}
+                />
+              </TableCell>
               {/* User Info */}
               <TableCell className="font-medium">
                 <div className="flex items-center space-x-3">
