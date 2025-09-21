@@ -3,8 +3,10 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { Button } from "@/components/ui/button";
 import { users, userMetrics, userActions, User } from "@/data/users/users-data";
 import { UserMetricsComponent, UserFilters, UsersTable } from "./components";
+import { User as UserIcon } from "lucide-react";
 
 export default function UsersPage() {
   const router = useRouter();
@@ -118,6 +120,10 @@ export default function UsersPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Users ({filteredUsers.length})</h2>
+          <Button onClick={() => router.push("/apps/users/add")}>
+            <UserIcon className="w-4 h-4 mr-2" />
+            Add User
+          </Button>
         </div>
 
         {filteredUsers.length === 0 ? (
