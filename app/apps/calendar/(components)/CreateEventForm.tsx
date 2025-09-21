@@ -289,14 +289,60 @@ export function CreateEventForm({
                 <SelectValue placeholder="Select color" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="#3b82f6">Blue</SelectItem>
-                <SelectItem value="#10b981">Green</SelectItem>
-                <SelectItem value="#f59e0b">Orange</SelectItem>
-                <SelectItem value="#ef4444">Red</SelectItem>
-                <SelectItem value="#8b5cf6">Purple</SelectItem>
-                <SelectItem value="#06b6d4">Cyan</SelectItem>
-                <SelectItem value="#ec4899">Pink</SelectItem>
-                <SelectItem value="#84cc16">Lime</SelectItem>
+                <SelectItem value="#3b82f6">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="size-2 bg-[#3b82f6] rounded-full" />
+                    Blue
+                  </div>
+                </SelectItem>
+                <SelectItem value="#10b981">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="size-2 bg-[#10b981] rounded-full" />
+                    <span>Green</span>
+                  </div>
+                </SelectItem>
+
+                <SelectItem value="#f59e0b">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="size-2 bg-[#f59e0b] rounded-full" />
+                    <span>Orange</span>
+                  </div>
+                </SelectItem>
+
+                <SelectItem value="#ef4444">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="size-2 bg-[#ef4444] rounded-full" />
+                    <span>Red</span>
+                  </div>
+                </SelectItem>
+
+                <SelectItem value="#8b5cf6">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="size-2 bg-[#8b5cf6] rounded-full" />
+                    <span>Purple</span>
+                  </div>
+                </SelectItem>
+
+                <SelectItem value="#06b6d4">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="size-2 bg-[#06b6d4] rounded-full" />
+                    <span>Cyan</span>
+                  </div>
+                </SelectItem>
+
+                <SelectItem value="#ec4899">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="size-2 bg-[#ec4899] rounded-full" />
+                    <span>Pink</span>
+                  </div>
+                </SelectItem>
+
+                <SelectItem value="#84cc16">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="size-2 bg-[#84cc16] rounded-full" />
+                    <span>Lime</span>
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
