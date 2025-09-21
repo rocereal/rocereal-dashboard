@@ -119,85 +119,121 @@ export const profitLossData: ProfitLossData[] = [
 export interface TransactionData {
   id: string;
   date: string;
+  time: string;
   description: string;
   category: string;
   amount: number;
-  type: "income" | "expense";
+  currency: string;
+  type: "debit" | "credit" | "transfer" | "refund";
+  method: "card" | "bank_transfer" | "mobile_money" | "cash";
   status: "completed" | "pending" | "failed";
+  balanceAfter: number;
 }
 
 export const transactionsData: TransactionData[] = [
   {
     id: "TXN-001",
     date: "2025-08-18",
+    time: "14:30:00",
     description: "Client Payment - ABC Corp",
     category: "Revenue",
     amount: 25000,
-    type: "income",
+    currency: "USD",
+    type: "credit",
+    method: "bank_transfer",
     status: "completed",
+    balanceAfter: 125000,
   },
   {
     id: "TXN-002",
     date: "2025-08-17",
+    time: "09:15:00",
     description: "Office Supplies Purchase",
     category: "Operations",
     amount: -1250,
-    type: "expense",
+    currency: "USD",
+    type: "debit",
+    method: "card",
     status: "completed",
+    balanceAfter: 100000,
   },
   {
     id: "TXN-003",
     date: "2025-08-16",
+    time: "16:45:00",
     description: "Software Subscription",
     category: "Technology",
     amount: -890,
-    type: "expense",
+    currency: "USD",
+    type: "debit",
+    method: "card",
     status: "completed",
+    balanceAfter: 101250,
   },
   {
     id: "TXN-004",
     date: "2025-08-15",
+    time: "11:20:00",
     description: "Consulting Services",
     category: "Revenue",
     amount: 18500,
-    type: "income",
+    currency: "USD",
+    type: "credit",
+    method: "bank_transfer",
     status: "completed",
+    balanceAfter: 102140,
   },
   {
     id: "TXN-005",
     date: "2025-08-14",
+    time: "13:10:00",
     description: "Marketing Campaign",
     category: "Marketing",
     amount: -3200,
-    type: "expense",
+    currency: "USD",
+    type: "debit",
+    method: "card",
     status: "completed",
+    balanceAfter: 83640,
   },
   {
     id: "TXN-006",
     date: "2025-08-13",
+    time: "10:30:00",
     description: "Equipment Purchase",
     category: "Operations",
     amount: -8500,
-    type: "expense",
+    currency: "USD",
+    type: "debit",
+    method: "bank_transfer",
     status: "pending",
+    balanceAfter: 86840,
   },
   {
     id: "TXN-007",
     date: "2025-08-12",
+    time: "15:45:00",
     description: "Freelance Payment",
     category: "Revenue",
     amount: 4200,
-    type: "income",
+    currency: "USD",
+    type: "credit",
+    method: "mobile_money",
     status: "completed",
+    balanceAfter: 95340,
   },
   {
     id: "TXN-008",
     date: "2025-08-11",
+    time: "08:00:00",
     description: "Insurance Premium",
     category: "Operations",
     amount: -1200,
-    type: "expense",
+    currency: "USD",
+    type: "debit",
+    method: "bank_transfer",
     status: "completed",
+    balanceAfter: 91140,
   },
 ];
 
