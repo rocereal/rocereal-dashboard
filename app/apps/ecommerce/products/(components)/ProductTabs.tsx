@@ -2,18 +2,29 @@
 
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable, createSortableColumn } from "@/components/ui/data-table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { TabsContent } from "@/components/ui/tabs";
+import { BulkActions } from "@/components/tables/BulkActions";
 import {
   Product,
   ProductPurchase,
   getProductPurchases,
 } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
-import { Save, ShoppingCart, X } from "lucide-react";
+import { Eye, Mail, MoreHorizontal, Save, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import {
   BasicInfoForm,
@@ -24,6 +35,7 @@ import {
   ProductSettings,
   SEOSettings,
 } from "./index";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface productProps {
   product: Product;
@@ -134,13 +146,15 @@ function ProductOverviewTab({ product }: { product: Product }) {
 function ProductImagesTab({ product }: { product: Product }) {
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
-          <strong>Note:</strong> This tab would contain image upload and
-          management functionality for product photos, thumbnails, and
-          galleries.
-        </p>
-      </div>
+      <Alert variant={"primary"}>
+        <AlertDescription>
+          <p className="text-sm">
+            <strong>Note:</strong> This tab would contain image upload and
+            management functionality for product photos, thumbnails, and
+            galleries.
+          </p>
+        </AlertDescription>
+      </Alert>
 
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Current Images</h3>
@@ -253,7 +267,54 @@ function ProductPurchasesTab({ product }: { product: Product }) {
   const purchases = getProductPurchases(product.id);
 
   const columns: ColumnDef<ProductPurchase>[] = [
-    createSortableColumn("customer", "Customer"),
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "customer",
+      header: "Customer",
+      cell: ({ row }) => {
+        const customer = row.getValue("customer") as string;
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={`/avatars/${customer.toLowerCase().replace(" ", "-")}.jpg`}
+                alt={customer}
+              />
+              <AvatarFallback>
+                {customer
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="font-medium">{customer}</div>
+            </div>
+          </div>
+        );
+      },
+    },
     {
       accessorKey: "quantity",
       header: "Quantity",
@@ -324,7 +385,64 @@ function ProductPurchasesTab({ product }: { product: Product }) {
         );
       },
     },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const purchase = row.original;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(purchase.orderId)}
+              >
+                Copy order ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Eye className="mr-2 h-4 w-4" />
+                View order details
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Mail className="mr-2 h-4 w-4" />
+                Contact customer
+              </DropdownMenuItem>
+              <DropdownMenuItem>View customer profile</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-600">
+                Cancel order
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
   ];
+
+  const bulkActions = (selectedRows: ProductPurchase[], table: any) => (
+    <BulkActions
+      selectedItems={selectedRows}
+      isAllSelected={table.getIsAllPageRowsSelected()}
+      onSelectAll={(checked) => table.toggleAllPageRowsSelected(checked)}
+      onBulkDelete={() => {
+        // For now, just clear selection. In a real app, you'd delete the selected items.
+        table.setRowSelection({});
+      }}
+      onExport={() => {
+        // Placeholder for export functionality
+        console.log("Exporting selected purchases:", selectedRows);
+      }}
+      itemName="purchase"
+    />
+  );
 
   return (
     <div className="space-y-6">
@@ -349,6 +467,7 @@ function ProductPurchasesTab({ product }: { product: Product }) {
               data={purchases}
               searchKey="customer"
               searchPlaceholder="Search purchases..."
+              bulkActions={bulkActions}
             />
           </div>
         </div>
@@ -357,8 +476,8 @@ function ProductPurchasesTab({ product }: { product: Product }) {
           <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h4 className="text-lg font-medium mb-2">No purchases yet</h4>
           <p className="text-sm text-muted-foreground">
-            This product hasn&apos;t been purchased yet. Purchases will appear
-            here once customers start buying.
+            This product hasn't been purchased yet. Purchases will appear here
+            once customers start buying.
           </p>
         </div>
       )}

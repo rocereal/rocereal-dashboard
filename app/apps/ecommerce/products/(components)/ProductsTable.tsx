@@ -211,19 +211,10 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
                 </DropdownMenuItem>
               </Link>
 
-              <Link
-                shallow={true}
-                href="/apps/ecommerce/products/[id]"
-                as={`/apps/ecommerce/products/${product?.id}?tab=edit`}
-                passHref
-                style={{ textDecoration: "none" }}
-                className="cursor-pointer"
-              >
-                <DropdownMenuItem className="cursor-pointer">
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit product
-                </DropdownMenuItem>
-              </Link>
+              <DropdownMenuItem className="cursor-pointer">
+                <Edit className="mr-2 h-4 w-4" />
+                Edit product
+              </DropdownMenuItem>
 
               <DropdownMenuSeparator />
               <DropdownMenuItem

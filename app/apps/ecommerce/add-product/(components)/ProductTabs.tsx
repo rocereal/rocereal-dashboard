@@ -2,6 +2,7 @@
 
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable, createSortableColumn } from "@/components/ui/data-table";
@@ -197,13 +198,15 @@ function ProductOverviewTab({ product }: { product: Product }) {
 function ProductImagesTab({ product }: { product: Product }) {
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
-          <strong>Note:</strong> This tab would contain image upload and
-          management functionality for product photos, thumbnails, and
-          galleries.
-        </p>
-      </div>
+      <Alert variant={"primary"}>
+        <AlertDescription>
+          <p className="text-sm">
+            <strong>Note:</strong> This tab would contain image upload and
+            management functionality for product photos, thumbnails, and
+            galleries.
+          </p>
+        </AlertDescription>
+      </Alert>
 
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Current Images</h3>

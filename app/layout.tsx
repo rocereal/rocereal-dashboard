@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Configurable Next.js Template",
+  title: "Configurable Fisio Next.js Template",
   description: "A Next.js template with configurable layout and theme",
 };
 
