@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { showToast } from "@/components/ui/sonner";
 import { Product } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
 import { Download, Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
@@ -181,7 +182,17 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(product.id)}
+                onClick={() => {
+                  navigator.clipboard.writeText(product.id);
+                  showToast({
+                    title: `Copied ${product.id}`,
+                    description: "Product ID copied to clipboard",
+                    button: {
+                      label: "Close",
+                      onClick: () => console.log("Undo clicked"),
+                    },
+                  });
+                }}
               >
                 Copy product ID
               </DropdownMenuItem>

@@ -17,6 +17,7 @@ import { BulkActions } from "@/components/tables/BulkActions";
 import { CRMCustomer } from "@/data/crm-customers";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
+import { showToast } from "@/components/ui/sonner";
 
 interface CRMCustomerTableProps {
   data: CRMCustomer[];
@@ -132,9 +133,17 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(customer.customerName)
-                }
+                onClick={() => {
+                  navigator.clipboard.writeText(customer.id);
+                  showToast({
+                    title: `Copied ${customer.id}`,
+                    description: "Customer ID copied to clipboard",
+                    button: {
+                      label: "Close",
+                      onClick: () => console.log("Undo clicked"),
+                    },
+                  });
+                }}
               >
                 Copy customer name
               </DropdownMenuItem>

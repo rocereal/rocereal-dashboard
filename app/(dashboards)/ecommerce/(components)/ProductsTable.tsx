@@ -2,6 +2,7 @@
 
 import { DeleteConfirmationDialog } from "@/components/dialogs";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { BulkActions } from "@/components/tables/BulkActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BulkActions } from "@/components/tables/BulkActions";
+import { showToast } from "@/components/ui/sonner";
 import { ordersData, Product } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
@@ -154,7 +155,17 @@ export function ProductsTable({ products }: ProductsTableProps) {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(product.id)}
+                  onClick={() => {
+                    navigator.clipboard.writeText(product.id);
+                    showToast({
+                      title: `Copied ${product.id}`,
+                      description: "Product ID copied to clipboard",
+                      button: {
+                        label: "Close",
+                        onClick: () => console.log("Undo clicked"),
+                      },
+                    });
+                  }}
                 >
                   Copy product ID
                 </DropdownMenuItem>

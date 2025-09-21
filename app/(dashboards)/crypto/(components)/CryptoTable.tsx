@@ -20,6 +20,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
+import { showToast } from "@/components/ui/sonner";
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat("en-US", {
@@ -212,7 +213,17 @@ export const columns: ColumnDef<CryptoTableData>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(coin.name)}
+              onClick={() => {
+                navigator.clipboard.writeText(coin.id);
+                showToast({
+                  title: `Copied ${coin.id}`,
+                  description: "Coin ID copied to clipboard",
+                  button: {
+                    label: "Close",
+                    onClick: () => console.log("Undo clicked"),
+                  },
+                });
+              }}
             >
               Copy coin name
             </DropdownMenuItem>

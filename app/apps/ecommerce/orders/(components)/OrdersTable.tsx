@@ -20,6 +20,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { showToast } from "@/components/ui/sonner";
 
 interface ProductsTableProps {
   products: Product[];
@@ -154,7 +155,17 @@ export function OrdersTable({ products }: ProductsTableProps) {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(product.id)}
+                  onClick={() => {
+                    navigator.clipboard.writeText(product.id);
+                    showToast({
+                      title: `Copied ${product.id}`,
+                      description: "Product ID copied to clipboard",
+                      button: {
+                        label: "Close",
+                        onClick: () => console.log("Undo clicked"),
+                      },
+                    });
+                  }}
                 >
                   Copy product ID
                 </DropdownMenuItem>

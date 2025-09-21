@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { showToast } from "@/components/ui/sonner";
 import { Invoice } from "@/data/invoices";
 import { ColumnDef } from "@tanstack/react-table";
 import { Download, Eye, MoreHorizontal, Printer, Trash2 } from "lucide-react";
@@ -185,7 +186,17 @@ export function InvoicesTable({
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(invoice.id)}
+                  onClick={() => {
+                    navigator.clipboard.writeText(invoice.id);
+                    showToast({
+                      title: `Copied ${invoice.id}`,
+                      description: "Invoice ID copied to clipboard",
+                      button: {
+                        label: "Close",
+                        onClick: () => console.log("Undo clicked"),
+                      },
+                    });
+                  }}
                 >
                   Copy invoice ID
                 </DropdownMenuItem>

@@ -1,8 +1,9 @@
 import { ConfigPanel } from "@/components/config-panel";
 import { LayoutConfigProvider } from "@/lib/layout-config";
-import { ThemeProvider } from "@/lib/theme-provider";
+import { ThemeProvider, useTheme } from "@/lib/theme-provider";
 import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
+import { Toaster } from "@/components/ui/sonner";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -102,6 +103,7 @@ export default function RootLayout({
           <LayoutConfigProvider storageKey="fisio-layout-config">
             {children}
             <ConfigPanel />
+            <Toaster />
           </LayoutConfigProvider>
         </ThemeProvider>
       </body>

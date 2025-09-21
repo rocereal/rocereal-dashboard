@@ -19,6 +19,7 @@ import {
 } from "@/data/business-customers";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { showToast } from "@/components/ui/sonner";
 
 export const businessColumns: ColumnDef<BusinessCustomer>[] = [
   {
@@ -133,7 +134,17 @@ export const businessColumns: ColumnDef<BusinessCustomer>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(customer.id)}
+              onClick={() => {
+                navigator.clipboard.writeText(customer.id);
+                showToast({
+                  title: `Copied ${customer.id}`,
+                  description: "Customer ID copied to clipboard",
+                  button: {
+                    label: "Close",
+                    onClick: () => console.log("Undo clicked"),
+                  },
+                });
+              }}
             >
               Copy customer ID
             </DropdownMenuItem>

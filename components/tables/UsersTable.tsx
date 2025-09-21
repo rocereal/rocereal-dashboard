@@ -14,6 +14,7 @@ import {
 import { sampleUsers, type User } from "@/data/sample-table-data";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { showToast } from "../ui/sonner";
 
 export const columns: ColumnDef<User>[] = [
   createSortableColumn("name", "Name"),
@@ -105,7 +106,17 @@ export const columns: ColumnDef<User>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
+              onClick={() => {
+                navigator.clipboard.writeText(user.id);
+                showToast({
+                  title: `Copied ${user.id}`,
+                  description: "User ID copied to clipboard",
+                  button: {
+                    label: "Close",
+                    onClick: () => console.log("Undo clicked"),
+                  },
+                });
+              }}
             >
               Copy user ID
             </DropdownMenuItem>
