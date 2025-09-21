@@ -16,6 +16,7 @@ import {
 import { Invoice } from "@/data/invoices";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, MoreHorizontal, Printer, Trash2, Download } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -179,24 +180,6 @@ export function InvoicesTable({
 
         return (
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onView?.(invoice)}
-              className="h-8 px-2"
-            >
-              <Eye className="h-4 w-4 mr-1" />
-              View
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPrint?.(invoice)}
-              className="h-8 px-2"
-            >
-              <Printer className="h-4 w-4 mr-1" />
-              Print
-            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
@@ -212,13 +195,19 @@ export function InvoicesTable({
                   Copy invoice ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => onView?.(invoice)}
+                <Link
+                  shallow={true}
+                  href="/invoice/[id]"
+                  as={`/invoice/${invoice?.id}`}
+                  passHref
+                  style={{ textDecoration: "none" }}
                   className="cursor-pointer"
                 >
-                  <Eye className="mr-2 h-4 w-4" />
-                  View Invoice
-                </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Eye className="mr-2 h-4 w-4" />
+                    View details
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem
                   onClick={() => onPrint?.(invoice)}
                   className="cursor-pointer"
