@@ -10,7 +10,7 @@ import {
   queryTopicsData,
   userJourneyData,
 } from "@/data/engagement-metrics-charts";
-import { SectionCards } from "@/components/shared/cards/SectionCards";
+import { SectionCards } from "./SectionCards";
 
 export function EngagementMetrics() {
   return (

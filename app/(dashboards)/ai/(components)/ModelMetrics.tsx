@@ -5,7 +5,7 @@ import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { ChartConfig } from "@/components/ui/charts";
 import { modelMetricsData } from "@/data/ai-model-metrics";
 import { completionData, latencyData } from "@/data/model-metrics-charts";
-import { SectionCards } from "@/components/shared/cards/SectionCards";
+import { SectionCards } from "./SectionCards";
 
 const latencyConfig: ChartConfig = {
   latency: {

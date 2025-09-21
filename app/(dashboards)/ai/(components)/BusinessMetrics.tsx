@@ -2,7 +2,7 @@
 
 import { BusinessCustomersTable } from "@/app/(dashboards)/ai/(components)/BusinessCustomersTable";
 import { businessMetricsData } from "@/data/ai-business-metrics";
-import { SectionCards } from "@/components/shared/cards/SectionCards";
+import { SectionCards } from "./SectionCards";
 
 export function BusinessMetrics() {
   return (
