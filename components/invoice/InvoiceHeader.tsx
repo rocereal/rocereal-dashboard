@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Logo } from "../shared/Logo";
 
 interface InvoiceHeaderProps {
   company: {
@@ -18,13 +19,9 @@ export function InvoiceHeader({ company, invoice }: InvoiceHeaderProps) {
         <p className="text-gray-600 text-lg">#{invoice.number}</p>
       </div>
       <div className="text-right">
-        <Image
-          src={company.logo}
-          alt={`${company.name} Logo`}
-          width={96}
-          height={96}
-          className="object-contain"
-        />
+        <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
+          <Logo />
+        </div>
       </div>
     </div>
   );

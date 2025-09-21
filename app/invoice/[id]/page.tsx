@@ -53,7 +53,7 @@ export default async function ClassicInvoice({ params }: PageProps) {
       <InvoicePaymentMethods paymentMethod={paymentMethod} />
 
       {/* Footer / Signature */}
-      <div className="border-t-2 border-gray-300 pt-6">
+      <div className="pt-6">
         <div className="flex justify-between items-end">
           <div className="flex-1">
             <p className="text-xs text-gray-600 mb-4">
@@ -63,7 +63,7 @@ export default async function ClassicInvoice({ params }: PageProps) {
             </p>
           </div>
           <div className="text-right">
-            <div className="border-b border-gray-600 w-48 mb-2"></div>
+            <div className="border-b  w-48 mb-2"></div>
             <p className="text-sm text-gray-700">Authorized Signature</p>
           </div>
         </div>
