@@ -2,11 +2,11 @@
 
 import { SampleBarChart } from "@/components/charts/SampleBarChart";
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
+import { SectionCards } from "@/components/shared/cards/SectionCards";
 import { ChartConfig } from "@/components/ui/charts";
 import { userMetrics as aiUserMetrics } from "@/data/ai-user-metrics";
 import { chartData } from "@/data/charts";
 import { salesData } from "@/data/sales-data";
-import { SectionCards } from "./SectionCards";
 
 const salesConfig: ChartConfig = {
   revenue: {
