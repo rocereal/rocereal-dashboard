@@ -111,7 +111,7 @@ export const menudata = {
       items: [
         { title: "File Manager", url: "/apps/files" },
         { title: "File Details", url: "/apps/files/1" },
-        { title: "Add File", url: "/apps/files/create" },
+        { title: "Add File", url: "/apps/files/add-file" },
       ],
     },
 

@@ -265,3 +265,60 @@ export const getRoleColor = (role: string) => {
       return "bg-gray-100 text-gray-700";
   }
 };
+
+// Mock data for file creation
+export const mockUsersForSharing = [
+  {
+    id: "1",
+    name: "Sarah Johnson",
+    email: "sarah.johnson@company.com",
+    avatar: "/avatars/sarah.jpg",
+    role: "Editor",
+  },
+  {
+    id: "2",
+    name: "Mike Chen",
+    email: "mike.chen@company.com",
+    avatar: "/avatars/mike.jpg",
+    role: "Viewer",
+  },
+  {
+    id: "3",
+    name: "Emma Wilson",
+    email: "emma.wilson@company.com",
+    avatar: "/avatars/emma.jpg",
+    role: "Editor",
+  },
+  {
+    id: "4",
+    name: "David Brown",
+    email: "david.brown@company.com",
+    avatar: "/avatars/david.jpg",
+    role: "Viewer",
+  },
+];
+
+export const mockFoldersForUpload = [
+  { id: "root", name: "Root", path: "/" },
+  { id: "docs", name: "Documents", path: "/Documents" },
+  { id: "projects", name: "Projects", path: "/Projects" },
+  { id: "shared", name: "Shared", path: "/Shared" },
+];
+
+export const permissionOptions = [
+  {
+    value: "private",
+    label: "Private",
+    description: "Only you can access",
+  },
+  {
+    value: "shared",
+    label: "Shared",
+    description: "Share with specific people",
+  },
+  {
+    value: "public",
+    label: "Public",
+    description: "Anyone can view",
+  },
+] as const;
