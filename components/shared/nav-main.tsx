@@ -81,10 +81,10 @@ export function NavMain({
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {item.items!.map((subItem) => {
+                      {item.items!.map((subItem, index) => {
                         const isSubItemActive = pathname === subItem.url;
                         return (
-                          <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubItem key={index}>
                             <SidebarMenuSubButton
                               asChild
                               isActive={isSubItemActive}
