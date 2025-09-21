@@ -4,6 +4,7 @@ import {
   Cell,
   Pie,
   PieChart as RechartsPieChart,
+  PieLabelRenderProps,
   ResponsiveContainer,
 } from "recharts";
 
@@ -16,8 +17,10 @@ import {
 } from "@/components/ui/card";
 
 export interface PieChartDataItem {
-  [key: string]: any;
+  [key: string]: string | number | undefined;
   color?: string;
+  name?: string;
+  value?: number;
 }
 
 export interface PieChartLabelProps {
@@ -77,8 +80,10 @@ export function PieChart({
                 outerRadius={80}
                 dataKey={dataKey}
                 nameKey={nameKey}
-                label={({ name, percent }: any) =>
-                  `${name} ${((percent as number) * 100).toFixed(0)}%`
+                label={(props: PieLabelRenderProps) =>
+                  `${props.name} ${((Number(props.percent) || 0) * 100).toFixed(
+                    0
+                  )}%`
                 }
                 labelLine={false}
               >

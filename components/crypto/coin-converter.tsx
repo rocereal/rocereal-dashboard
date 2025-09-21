@@ -16,22 +16,22 @@ interface CoinConverterProps {
   className?: string;
 }
 
+// Mock current prices (in a real app, this would come from an API)
+const currentPrices = {
+  bitcoin: 53500,
+  ethereum: 3650,
+  solana: 205,
+  cardano: 0.52,
+  polkadot: 8.5,
+  chainlink: 16.8,
+  avalanche: 33.5,
+  polygon: 0.62,
+};
+
 export function CoinConverter({ className }: CoinConverterProps) {
   const [fromCoin, setFromCoin] = useState("bitcoin");
   const [toCoin, setToCoin] = useState("ethereum");
   const [conversionRate, setConversionRate] = useState<number | null>(null);
-
-  // Mock current prices (in a real app, this would come from an API)
-  const currentPrices = {
-    bitcoin: 53500,
-    ethereum: 3650,
-    solana: 205,
-    cardano: 0.52,
-    polkadot: 8.5,
-    chainlink: 16.8,
-    avalanche: 33.5,
-    polygon: 0.62,
-  };
 
   useEffect(() => {
     if (fromCoin && toCoin) {

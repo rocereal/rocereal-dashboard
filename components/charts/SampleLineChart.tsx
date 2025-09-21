@@ -27,8 +27,16 @@ import {
 } from "@/components/ui/select";
 import { userActivityData } from "@/data/user-activity";
 
+export interface LineChartDataItem {
+  [key: string]: string | number | Date | undefined;
+  date?: string | Date;
+  dau?: number;
+  wau?: number;
+  mau?: number;
+}
+
 export interface LineChartProps {
-  data?: any[];
+  data?: LineChartDataItem[];
   title?: string;
   description?: string;
   config?: ChartConfig;
@@ -82,7 +90,9 @@ export function SampleLineChart({
     if (!data || !Array.isArray(data)) return [];
 
     return data.filter((item) => {
-      const date = new Date(item[dateKey]);
+      const dateValue = item[dateKey];
+      if (!dateValue) return false;
+      const date = new Date(dateValue);
       const referenceDate = new Date("2025-09-18"); // Updated to current date
       let daysToSubtract = 90;
       if (timeRange === "30d") {
@@ -211,7 +221,7 @@ export function SampleLineChart({
             />
             {dataKeys.map((key, index) => (
               <Area
-                key={key}
+                key={index}
                 dataKey={key}
                 type="natural"
                 fill={`url(#fill${key.charAt(0).toUpperCase() + key.slice(1)})`}

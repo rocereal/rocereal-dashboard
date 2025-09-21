@@ -17,6 +17,13 @@ interface TabsWithIconsProps {
   onValueChange?: (value: string) => void;
 }
 
+// Type-safe icon accessor
+function getIconComponent(iconName: string) {
+  return (Icons as Record<string, unknown>)[iconName] as React.ComponentType<{
+    className?: string;
+  }> | null;
+}
+
 export function TabsWithIcons({
   tabs,
   defaultValue,
@@ -38,7 +45,7 @@ export function TabsWithIcons({
         >
           <div className="flex space-x-8">
             {tabs.map((tab) => {
-              const IconComponent = (Icons as any)[tab.iconName];
+              const IconComponent = getIconComponent(tab.iconName);
               return (
                 <TabsPrimitive.Trigger
                   key={tab.id}
@@ -67,7 +74,7 @@ export function TabsWithIcons({
     >
       <TabsList className={cn(grid, "grid w-full grid-cols-4")}>
         {tabs.map((tab) => {
-          const IconComponent = (Icons as any)[tab.iconName];
+          const IconComponent = getIconComponent(tab.iconName);
           return (
             <TabsTrigger
               key={tab.id}

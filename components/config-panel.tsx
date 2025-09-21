@@ -24,7 +24,7 @@ export function ConfigPanel() {
     setTheme(newTheme);
   };
 
-  const handleLayoutChange = (key: keyof typeof config, value: any) => {
+  const handleLayoutChange = (key: keyof typeof config, value: string) => {
     updateConfig({ [key]: value });
   };
 

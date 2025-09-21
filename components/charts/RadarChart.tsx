@@ -8,8 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+export interface RadarChartDataItem {
+  [key: string]: string | number | undefined;
+  name?: string;
+  value?: number;
+}
+
 export interface RadarChartProps {
-  data: any[];
+  data: RadarChartDataItem[];
   title?: string;
   description?: string;
   dataKey?: string;
@@ -27,7 +33,7 @@ export function RadarChart({
 }: RadarChartProps) {
   const size = 200;
   const center = size / 2;
-  const maxValue = Math.max(...data.map((item) => item[dataKey]));
+  const maxValue = Math.max(...data.map((item) => Number(item[dataKey]) || 0));
   const angleStep = (Math.PI * 2) / data.length;
 
   // Colors for data points
@@ -43,7 +49,7 @@ export function RadarChart({
   // Calculate points for the radar shape
   const points = data.map((item, index) => {
     const angle = index * angleStep - Math.PI / 2; // Start from top
-    const radius = (item[dataKey] / maxValue) * (size * 0.35);
+    const radius = ((Number(item[dataKey]) || 0) / maxValue) * (size * 0.35);
     const x = center + radius * Math.cos(angle);
     const y = center + radius * Math.sin(angle);
     return { x, y, ...item };

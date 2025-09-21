@@ -8,7 +8,6 @@ import useNextBlurhash from "use-next-blurhash";
 export interface OptimizedImageProps {
   className?: string;
   blurDataURL?: string;
-  placeholder?: string;
   onLoadComplete?: () => void;
   onError?: () => void;
   src?: string | StaticImageData | null;
@@ -21,7 +20,6 @@ export interface OptimizedImageProps {
   width?: number;
   height?: number;
   aspectRatio?: string;
-  layout?: "responsive" | "fill" | "fixed" | "intrinsic";
 }
 
 const DEFAULT_BLURHASHES = [
@@ -37,7 +35,6 @@ const DEFAULT_BLURHASHES = [
 const ImageComponentOptimized: React.FC<OptimizedImageProps> = ({
   className = "",
   blurDataURL,
-  placeholder,
   priority = false,
   unoptimized = false,
   onLoadComplete,
@@ -50,7 +47,6 @@ const ImageComponentOptimized: React.FC<OptimizedImageProps> = ({
   width,
   height,
   aspectRatio,
-  layout = "fill",
   ...args
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);

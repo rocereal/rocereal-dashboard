@@ -18,8 +18,15 @@ import {
 } from "@/components/ui/charts";
 import { chartData } from "@/data/charts";
 
+export interface BarChartDataItem {
+  [key: string]: string | number | Date | undefined;
+  date?: string | Date;
+  desktop?: number;
+  mobile?: number;
+}
+
 export interface BarChartProps {
-  data?: any[];
+  data?: BarChartDataItem[];
   title?: string;
   description?: string;
   config?: ChartConfig;
@@ -54,7 +61,10 @@ export function SampleBarChart({
     const totals: Record<string, number> = {};
     if (data && Array.isArray(data)) {
       dataKeys.forEach((key) => {
-        totals[key] = data.reduce((acc, curr) => acc + (curr[key] || 0), 0);
+        totals[key] = data.reduce(
+          (acc, curr) => acc + (Number(curr[key]) || 0),
+          0
+        );
       });
     }
     return totals;

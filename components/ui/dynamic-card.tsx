@@ -12,13 +12,20 @@ interface DynamicCardProps {
   size?: "sm" | "md" | "lg";
 }
 
+// Type-safe icon accessor
+function getIconComponent(iconName: string) {
+  return (Icons as Record<string, unknown>)[iconName] as React.ComponentType<{
+    className?: string;
+  }> | null;
+}
+
 export function DynamicCard({
   metric,
   className,
   size = "md",
 }: DynamicCardProps) {
   const IconComponent = metric.icon
-    ? (Icons as any)[metric.icon]
+    ? getIconComponent(metric.icon) || Icons.BarChart3
     : Icons.BarChart3;
 
   const sizeClasses = {

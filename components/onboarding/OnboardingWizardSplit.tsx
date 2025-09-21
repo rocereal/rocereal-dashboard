@@ -1,9 +1,10 @@
 "use client";
 
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import type { StaticImageData } from "next/image";
 
 interface OnboardingWizardSplitProps {
-  image: any;
+  image: string | StaticImageData;
   title: string;
   subtitle: string;
 }
@@ -20,7 +21,6 @@ export function OnboardingWizardSplit({
           unoptimized={true}
           alt={"Onboarding Wizard"}
           src={image}
-          placeholder="blur"
           fill
           className="object-cover"
         />
