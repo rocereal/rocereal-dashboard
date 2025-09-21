@@ -178,7 +178,6 @@ export function StepThree({
               unoptimized={true}
               alt="Selected image preview"
               src={selectedImage}
-              placeholder="blur"
               fill
               className="object-cover"
             />
