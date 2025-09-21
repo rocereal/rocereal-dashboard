@@ -220,12 +220,12 @@ export default function FilesContent({
         </div>
 
         {/* Grid Layout */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {files.map((file) => (
             <div
               key={file.id}
               className={cn(
-                "group relative bg-white border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer",
+                "group relative bg-secondary border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer",
                 selectedFiles.includes(file.id) &&
                   "ring-2 ring-primary bg-primary/5"
               )}
@@ -245,12 +245,12 @@ export default function FilesContent({
 
               {/* File Icon */}
               <div className="flex justify-center mb-3">
-                <file.icon className={cn("h-12 w-12", file.color)} />
+                <file.icon className={cn("h-12 w-12 ", file.color)} />
               </div>
 
               {/* File Name */}
               <div className="text-center">
-                <h3 className="text-sm font-medium text-gray-900 truncate mb-1">
+                <h3 className="text-sm font-medium text-gray-900  dark:text-muted-foreground truncate mb-1">
                   {file.name}
                 </h3>
 
@@ -281,13 +281,13 @@ export default function FilesContent({
   return (
     <div className="flex-1">
       {/* List Header */}
-      <div className="border-b bg-gray-50 px-6 py-3">
+      <div className="border-b  px-6 py-3">
         <div className="flex items-center gap-4">
           <Checkbox
             checked={selectedFiles.length === files.length}
             onCheckedChange={handleSelectAll}
           />
-          <div className="grid grid-cols-12 gap-4 flex-1 text-sm font-medium text-gray-700">
+          <div className="grid grid-cols-12 gap-4 flex-1 text-sm font-medium text-gray-700  dark:text-muted-foreground">
             <div className="col-span-6">Name</div>
             <div className="col-span-2">Type</div>
             <div className="col-span-2">Size</div>
@@ -302,7 +302,7 @@ export default function FilesContent({
           <div
             key={file.id}
             className={cn(
-              "hover:bg-gray-50 transition-colors",
+              "hover:bg-secondary transition-colors",
               selectedFiles.includes(file.id) && "bg-primary/5"
             )}
           >

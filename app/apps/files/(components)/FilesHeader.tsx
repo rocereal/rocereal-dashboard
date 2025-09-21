@@ -73,7 +73,7 @@ export default function FilesHeader({
   };
 
   return (
-    <div className="border-b bg-white px-6 py-4">
+    <div className="border-b px-6 py-4">
       <div className="flex flex-col gap-4 lg:flex-row items-center justify-between">
         <div className="flex items-center gap-4 flex-1">
           {/* Mobile Menu Toggle */}
@@ -138,14 +138,14 @@ export default function FilesHeader({
           )}
 
           {/* View Toggle */}
-          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onViewModeChange("grid")}
               className={cn(
                 "h-8 w-8 p-0",
-                viewMode === "grid" && "bg-white shadow-sm"
+                viewMode === "grid" && "bg-card shadow-sm"
               )}
             >
               <Grid3X3 className="h-4 w-4" />
@@ -156,7 +156,7 @@ export default function FilesHeader({
               onClick={() => onViewModeChange("list")}
               className={cn(
                 "h-8 w-8 p-0",
-                viewMode === "list" && "bg-white shadow-sm"
+                viewMode === "list" && "bg-card shadow-sm"
               )}
             >
               <List className="h-4 w-4" />
@@ -174,11 +174,11 @@ export default function FilesHeader({
 
           {/* Main Actions */}
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleCreateFolder}>
+            <Button variant="outline" onClick={handleCreateFolder}>
               <FolderPlus className="h-4 w-4 mr-2" />
               New Folder
             </Button>
-            <Button size="sm" onClick={handleUpload}>
+            <Button onClick={handleUpload}>
               <Upload className="h-4 w-4 mr-2" />
               Upload
             </Button>
@@ -187,7 +187,7 @@ export default function FilesHeader({
       </div>
 
       {/* Additional Info Bar */}
-      <div className="flex items-center justify-between mt-4 pt-4 border-t text-sm text-gray-600">
+      <div className="flex items-center justify-between mt-4 pt-4 border-t text-sm text-gray-600 dark:text-muted-foreground">
         <div className="flex items-center gap-4">
           <span>
             {currentPath === "/"

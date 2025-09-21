@@ -85,7 +85,7 @@ export default function FilesSidebar({
     <div className="hidden lg:block">
       <div
         className={cn(
-          "border-r transition-all duration-300 bg-white",
+          "border-r transition-all duration-300 h-full",
           sidebarOpen ? "w-80" : "w-16"
         )}
       >
@@ -119,17 +119,17 @@ export default function FilesSidebar({
 
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">
+                <span className="text-gray-600 dark:text-muted-foreground">
                   {storageData.used} {storageData.unit} used
                 </span>
-                <span className="text-gray-600">
+                <span className="text-gray-600 dark:text-muted-foreground">
                   {storageData.total} {storageData.unit} total
                 </span>
               </div>
 
               <Progress value={storagePercentage} className="h-2" />
 
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 dark:text-muted-background">
                 {storageData.total - storageData.used} {storageData.unit} free
               </div>
             </div>
@@ -139,7 +139,7 @@ export default function FilesSidebar({
         {/* Quick Access */}
         <nav className="flex-1 overflow-y-auto">
           <div className="p-4 border-b">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-muted-foreground mb-3">
               {sidebarOpen ? "Quick Access" : ""}
             </h3>
             <div className="space-y-1">
@@ -148,9 +148,8 @@ export default function FilesSidebar({
                   key={item.id}
                   onClick={() => onPathChange(item.path)}
                   className={cn(
-                    "w-full p-3 text-left hover:bg-gray-50 transition-colors rounded-lg",
-                    currentPath === item.path &&
-                      "bg-primary/5 border-l-4 border-l-primary"
+                    "w-full p-3 text-left hover:bg-secondary transition-colors rounded-lg",
+                    currentPath === item.path && "bg-secondary"
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -159,7 +158,7 @@ export default function FilesSidebar({
                         "h-5 w-5",
                         currentPath === item.path
                           ? "text-primary"
-                          : "text-gray-500"
+                          : "text-gray-500 dark:text-muted-foreground"
                       )}
                     />
                     {sidebarOpen && (
@@ -169,7 +168,7 @@ export default function FilesSidebar({
                             "text-sm",
                             currentPath === item.path
                               ? "font-medium text-primary"
-                              : "text-gray-700"
+                              : "text-gray-700 dark:text-muted-foreground"
                           )}
                         >
                           {item.label}
@@ -188,7 +187,7 @@ export default function FilesSidebar({
           {/* File Types */}
           {sidebarOpen && (
             <div className="p-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-muted-foreground mb-3">
                 File Types
               </h3>
               <div className="space-y-3">
@@ -196,8 +195,10 @@ export default function FilesSidebar({
                   <div key={stat.type} className="flex items-center gap-3">
                     <stat.icon className={cn("h-4 w-4", stat.color)} />
                     <div className="flex-1">
-                      <div className="text-sm text-gray-700">{stat.type}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-sm text-gray-700 dark:text-muted-foreground">
+                        {stat.type}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-muted-background">
                         {stat.count} files
                       </div>
                     </div>
