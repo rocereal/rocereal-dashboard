@@ -7,6 +7,7 @@ export interface CRMSalesData {
   closedLost: number;
   dealsCreated: number;
   dealsClosed: number;
+  [key: string]: string | number | undefined;
 }
 
 export const crmSalesFunnelData: CRMSalesData[] = [
