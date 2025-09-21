@@ -1,9 +1,11 @@
 "use client";
 
+import { BulkActions } from "@/components/tables/BulkActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { createSortableColumn, DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,221 +14,223 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { showToast } from "@/components/ui/sonner";
 import { RecentStudent } from "@/data/education";
-import { Download, Eye, Mail, MoreHorizontal } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Eye, Mail, MoreHorizontal } from "lucide-react";
 
 interface RecentStudentsTableProps {
   students: RecentStudent[];
 }
 
 export function RecentStudentsTable({ students }: RecentStudentsTableProps) {
-  const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
-
-  // Checkbox handlers
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedStudents(students.map((student) => student.id));
-    } else {
-      setSelectedStudents([]);
-    }
-  };
-
-  const handleSelectStudent = (studentId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedStudents((prev) => [...prev, studentId]);
-    } else {
-      setSelectedStudents((prev) => prev.filter((id) => id !== studentId));
-    }
-  };
-
-  const handleBulkEmail = () => {
-    const selectedEmails = students
-      .filter((student) => selectedStudents.includes(student.id))
-      .map((student) => student.email);
-    console.log("Sending bulk email to:", selectedEmails);
-  };
-
-  const handleBulkExport = () => {
-    console.log("Exporting selected students:", selectedStudents);
-  };
-
-  const isAllSelected =
-    students.length > 0 && selectedStudents.length === students.length;
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "completed":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "inactive":
-        return "bg-gray-100 text-gray-800 border-gray-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  return (
-    <div className="space-y-4">
-      {/* Bulk Actions */}
-      {selectedStudents.length > 0 && (
-        <div className=" border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={isAllSelected}
-                  onCheckedChange={handleSelectAll}
-                  className="h-4 w-4"
-                />
-                <span className="text-sm font-medium">
-                  {selectedStudents.length} student
-                  {selectedStudents.length !== 1 ? "s" : ""} selected
-                </span>
+  const columns: ColumnDef<RecentStudent>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: "Student",
+      cell: ({ row }) => {
+        const student = row.original;
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={
+                  (typeof student.avatar === "string"
+                    ? student.avatar
+                    : student.avatar?.src) ||
+                  `/avatars/${student.name.toLowerCase().replace(" ", "-")}.jpg`
+                }
+                alt={student.name}
+              />
+              <AvatarFallback>
+                {student.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="font-medium">{student.name}</div>
+              <div className="text-sm text-muted-foreground">
+                {student.email}
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handleBulkEmail}>
-                <Mail className="h-4 w-4 mr-2" />
-                Send Email
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleBulkExport}>
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
-            </div>
           </div>
-        </div>
-      )}
+        );
+      },
+    },
+    createSortableColumn("course", "Course"),
+    {
+      accessorKey: "enrollmentDate",
+      header: "Enrollment Date",
+      cell: ({ row }) => {
+        const date = row.getValue("enrollmentDate") as string;
+        return (
+          <div className="text-muted-foreground">
+            {new Date(date).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "progress",
+      header: "Progress",
+      cell: ({ row }) => {
+        const progress = row.getValue("progress") as number;
+        return (
+          <div className="flex items-center gap-2">
+            <div className="w-16 bg-secondary rounded-full h-2">
+              <div
+                className="bg-primary h-2 rounded-full"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+            <span className="text-sm font-medium">{progress}%</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "certificates",
+      header: "Certificates",
+      cell: ({ row }) => {
+        const certificates = row.getValue("certificates") as number;
+        return (
+          <div className="flex items-center gap-1">
+            <span className="text-sm font-medium">{certificates}</span>
+            {certificates > 0 && <span className="text-yellow-500">🏆</span>}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        const getStatusColor = (status: string) => {
+          switch (status) {
+            case "active":
+              return "bg-green-100 text-green-800 border-green-200";
+            case "completed":
+              return "bg-blue-100 text-blue-800 border-blue-200";
+            case "inactive":
+              return "bg-gray-100 text-gray-800 border-gray-200";
+            default:
+              return "bg-gray-100 text-gray-800 border-gray-200";
+          }
+        };
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">
-                <Checkbox
-                  checked={isAllSelected}
-                  onCheckedChange={handleSelectAll}
-                  aria-label="Select all students"
-                />
-              </TableHead>
-              <TableHead>Student</TableHead>
-              <TableHead>Course</TableHead>
-              <TableHead>Enrollment Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {students.map((student) => (
-              <TableRow key={student.id}>
-                <TableCell>
-                  <Checkbox
-                    checked={selectedStudents.includes(student.id)}
-                    onCheckedChange={(checked) =>
-                      handleSelectStudent(student.id, checked as boolean)
-                    }
-                    aria-label={`Select ${student.name}`}
-                  />
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={
-                          student.avatar ||
-                          `/avatars/${student.name
-                            .toLowerCase()
-                            .replace(" ", "-")}.jpg`
-                        }
-                        alt={student.name}
-                      />
-                      <AvatarFallback>
-                        {student.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">{student.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {student.email}
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="font-medium">{student.course}</TableCell>
-                <TableCell className="text-muted-foreground">
-                  {formatDate(student.enrollmentDate)}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant="outline"
-                    className={getStatusColor(student.status)}
-                  >
-                    {student.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          navigator.clipboard.writeText(student.name)
-                        }
-                      >
-                        Copy student name
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Mail className="mr-2 h-4 w-4" />
-                        Send email
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>Edit student</DropdownMenuItem>
-                      <DropdownMenuItem>View progress</DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-red-600">
-                        Remove student
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+        return (
+          <Badge variant="outline" className={getStatusColor(status)}>
+            {status}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const student = row.original;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(student.id);
+                  showToast({
+                    title: `Copied ${student.id}`,
+                    description: "Customer ID copied to clipboard",
+                    button: {
+                      label: "Close",
+                      onClick: () => console.log("Undo clicked"),
+                    },
+                  });
+                }}
+              >
+                Copy student name
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Eye className="mr-2 h-4 w-4" />
+                View details
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Mail className="mr-2 h-4 w-4" />
+                Send email
+              </DropdownMenuItem>
+              <DropdownMenuItem>Edit student</DropdownMenuItem>
+              <DropdownMenuItem>View progress</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-600">
+                Remove student
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
+  const bulkActions = (selectedRows: RecentStudent[], table: any) => (
+    <BulkActions
+      selectedItems={selectedRows}
+      isAllSelected={table.getIsAllPageRowsSelected()}
+      onSelectAll={(checked) => table.toggleAllPageRowsSelected(checked)}
+      onBulkDelete={() => {
+        // For now, just clear selection. In a real app, you'd delete the selected items.
+        table.setRowSelection({});
+      }}
+      onExport={() => {
+        // Placeholder for export functionality
+        console.log("Exporting selected students:", selectedRows);
+      }}
+      itemName="student"
+    />
+  );
+
+  return (
+    <DataTable
+      columns={columns}
+      data={students}
+      searchKey="name"
+      searchPlaceholder="Search students..."
+      bulkActions={bulkActions}
+    />
   );
 }

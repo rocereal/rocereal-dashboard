@@ -126,10 +126,10 @@ export function DataTable<TData, TValue>({
       {/* Table container with viewport constraints */}
       <div className="w-full overflow-x-auto">
         <div className="rounded-md border min-w-full">
-          <Table className="w-full min-w-[800px]">
+          <Table className="w-full min-w-[800px] overflow-hidden rounded-md">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="bg-secondary">
                   {headerGroup.headers.map((header) => {
                     return (
                       <TableHead

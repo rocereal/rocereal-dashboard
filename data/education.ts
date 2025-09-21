@@ -7,6 +7,18 @@ import backgroundFive from "@/app/assets/images/background_five.jpg";
 import backgroundSix from "@/app/assets/images/background_six.jpg";
 import backgroundSeven from "@/app/assets/images/background_seven.jpg";
 import backgroundEight from "@/app/assets/images/background_eight.jpg";
+import one from "@/app/assets/avatars/one.jpg";
+import two from "@/app/assets/avatars/two.jpg";
+import three from "@/app/assets/avatars/three.jpg";
+import four from "@/app/assets/avatars/four.jpg";
+import five from "@/app/assets/avatars/five.jpg";
+import six from "@/app/assets/avatars/six.jpg";
+import seven from "@/app/assets/avatars/seven.jpg";
+import eight from "@/app/assets/avatars/eight.jpg";
+import nine from "@/app/assets/avatars/nine.jpg";
+import ten from "@/app/assets/avatars/ten.jpg";
+
+import type { StaticImageData } from "next/image";
 
 export interface CourseData {
   courseId: string;
@@ -800,7 +812,9 @@ export interface RecentStudent {
   course: string;
   enrollmentDate: string;
   status: "active" | "inactive" | "completed";
-  avatar?: string;
+  avatar?: string | StaticImageData;
+  progress: number; // Progress percentage (0-100)
+  certificates: number; // Number of certificates earned
 }
 
 export const recentStudentsData: RecentStudent[] = [
@@ -810,7 +824,10 @@ export const recentStudentsData: RecentStudent[] = [
     email: "sarah.j@example.com",
     course: "Intro to Data Science",
     enrollmentDate: "2025-01-15",
+    avatar: eight,
     status: "active",
+    progress: 75,
+    certificates: 1,
   },
   {
     id: "2",
@@ -818,7 +835,10 @@ export const recentStudentsData: RecentStudent[] = [
     email: "m.chen@example.com",
     course: "Web Development Basics",
     enrollmentDate: "2025-01-14",
+    avatar: five,
     status: "active",
+    progress: 60,
+    certificates: 0,
   },
   {
     id: "3",
@@ -827,6 +847,9 @@ export const recentStudentsData: RecentStudent[] = [
     course: "Business Analytics",
     enrollmentDate: "2025-01-13",
     status: "completed",
+    avatar: nine,
+    progress: 100,
+    certificates: 2,
   },
   {
     id: "4",
@@ -834,7 +857,10 @@ export const recentStudentsData: RecentStudent[] = [
     email: "d.kim@example.com",
     course: "AI for Beginners",
     enrollmentDate: "2025-01-12",
+    avatar: four,
     status: "active",
+    progress: 45,
+    certificates: 0,
   },
   {
     id: "5",
@@ -842,15 +868,21 @@ export const recentStudentsData: RecentStudent[] = [
     email: "l.thompson@example.com",
     course: "Advanced Python",
     enrollmentDate: "2025-01-11",
+    avatar: seven,
     status: "inactive",
+    progress: 30,
+    certificates: 1,
   },
   {
     id: "6",
     name: "James Wilson",
     email: "j.wilson@example.com",
     course: "Machine Learning",
+    avatar: one,
     enrollmentDate: "2025-01-10",
     status: "active",
+    progress: 80,
+    certificates: 1,
   },
   {
     id: "7",
@@ -858,14 +890,20 @@ export const recentStudentsData: RecentStudent[] = [
     email: "a.martinez@example.com",
     course: "Data Visualization",
     enrollmentDate: "2025-01-09",
+    avatar: ten,
     status: "completed",
+    progress: 100,
+    certificates: 3,
   },
   {
     id: "8",
     name: "Robert Brown",
     email: "r.brown@example.com",
+    avatar: six,
     course: "Cloud Computing",
     enrollmentDate: "2025-01-08",
     status: "active",
+    progress: 55,
+    certificates: 0,
   },
 ];
