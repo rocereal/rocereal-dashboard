@@ -234,7 +234,7 @@ export const menudata = {
       url: "#",
       icon: LifeBuoy,
       items: [
-        { title: "Contact Form", url: "/contact/form" },
+        { title: "Contact Form", url: "/contact/contact-form" },
         { title: "Support", url: "/contact/support" },
         { title: "FAQ", url: "/contact/faq" },
       ],

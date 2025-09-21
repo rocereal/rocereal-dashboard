@@ -1,7 +1,3 @@
-"use client";
-
-import { LoginForm } from "@/components/auth/LoginForm";
-import { Logo } from "@/components/shared/Logo";
 import {
   Card,
   CardContent,
@@ -9,10 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState } from "react";
 import CountdownTimer from "../(components)/CountdownTimer";
-import SocialProof from "../(components)/SocialProof";
 import Subscribe from "../(components)/Form";
+import SocialProof from "../(components)/SocialProof";
 
 export default function LoginPage() {
   return (
