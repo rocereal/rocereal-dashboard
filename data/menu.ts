@@ -252,8 +252,8 @@ export const menudata = {
       url: "#",
       icon: Receipt,
       items: [
-        { title: "List", url: "/invoice/list" },
-        { title: "Details", url: "/invoice/details" },
+        { title: "Classic", url: "/invoice/classic" },
+        { title: "Modern", url: "/invoice/modern" },
         { title: "Edit", url: "/invoice/edit" },
       ],
     },
