@@ -22,7 +22,11 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen py-12">
       <div className="container mx-auto px-4">
-        <ContactHeader />
+        <ContactHeader
+          title=" Contact Us"
+          subtitle=" Get in touch with us. We'd love to hear from you and answer any
+        questions you may have."
+        />
 
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Form */}
