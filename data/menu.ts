@@ -252,9 +252,9 @@ export const menudata = {
       url: "#",
       icon: Receipt,
       items: [
-        { title: "Classic", url: "/invoice/classic" },
-        { title: "Modern", url: "/invoice/modern" },
-        { title: "Edit", url: "/invoice/edit" },
+        { title: "Invoices", url: "/invoice" },
+        { title: "View Invoice", url: "/invoice/modern" },
+        { title: "Add Invoice", url: "/invoice/add-invoice" },
       ],
     },
     {
