@@ -15,16 +15,6 @@ export function LogoTop() {
   const { toggleSidebar, state } = useSidebar();
   const [isFullscreen, setIsFullscreen] = React.useState(false);
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
-    }
-  };
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>

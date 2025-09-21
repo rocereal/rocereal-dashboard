@@ -21,8 +21,27 @@ import {
   SEOPreview,
 } from "./index";
 
+interface ProductData {
+  name: string;
+  sku: string;
+  category: string;
+  description: string;
+  price: string;
+  comparePrice: string;
+  costPrice: string;
+  taxRate: string;
+  stock: string;
+  lowStockThreshold: string;
+  trackInventory: boolean;
+  allowBackorders: boolean;
+  metaTitle: string;
+  metaDescription: string;
+  urlSlug: string;
+  images: File[];
+}
+
 export default function AddProductForm() {
-  const [productData, setProductData] = useState({
+  const [productData, setProductData] = useState<ProductData>({
     // Information tab
     name: "",
     sku: "",
@@ -47,7 +66,7 @@ export default function AddProductForm() {
     urlSlug: "",
 
     // Images tab
-    images: [] as File[],
+    images: [],
   });
 
   const tabs = [
@@ -183,9 +202,14 @@ export default function AddProductForm() {
 }
 
 // Information Tab Component
-function InformationTab({ productData, setProductData }: any) {
+interface TabProps {
+  productData: ProductData;
+  setProductData: React.Dispatch<React.SetStateAction<ProductData>>;
+}
+
+function InformationTab({ productData, setProductData }: TabProps) {
   const handleInputChange = (field: string, value: string) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -213,19 +237,19 @@ function InformationTab({ productData, setProductData }: any) {
 }
 
 // Images Tab Component
-function ImagesTab({ productData, setProductData }: any) {
+function ImagesTab({ productData, setProductData }: TabProps) {
   const handleImageUpload = (files: FileList) => {
     const newImages = Array.from(files);
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
       images: [...prev.images, ...newImages],
     }));
   };
 
   const removeImage = (index: number) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
-      images: prev.images.filter((_: any, i: number) => i !== index),
+      images: prev.images.filter((_, i) => i !== index),
     }));
   };
 
@@ -247,9 +271,9 @@ function ImagesTab({ productData, setProductData }: any) {
 }
 
 // Pricing Tab Component
-function PricingTab({ productData, setProductData }: any) {
+function PricingTab({ productData, setProductData }: TabProps) {
   const handleInputChange = (field: string, value: string) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -287,9 +311,9 @@ function PricingTab({ productData, setProductData }: any) {
 }
 
 // Inventory Tab Component
-function InventoryTab({ productData, setProductData }: any) {
+function InventoryTab({ productData, setProductData }: TabProps) {
   const handleInputChange = (field: string, value: string | boolean) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -328,9 +352,9 @@ function InventoryTab({ productData, setProductData }: any) {
 }
 
 // SEO Tab Component
-function SEOTab({ productData, setProductData }: any) {
+function SEOTab({ productData, setProductData }: TabProps) {
   const handleInputChange = (field: string, value: string) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
       [field]: value,
     }));

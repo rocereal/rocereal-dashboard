@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Logo } from "../shared/Logo";
 
 interface InvoiceHeaderProps {
@@ -11,7 +10,7 @@ interface InvoiceHeaderProps {
   };
 }
 
-export function InvoiceHeader({ company, invoice }: InvoiceHeaderProps) {
+export function InvoiceHeader({ invoice }: InvoiceHeaderProps) {
   return (
     <div className="flex justify-between items-start mb-6 pb-4 border-b-1 border-gray-300">
       <div>

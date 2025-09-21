@@ -3,15 +3,15 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
-import { AlertCircle, Calendar, CheckSquare, Clock, User } from "lucide-react";
-import { useState } from "react";
 import {
   Task,
-  mockTasks,
   getPriorityColor,
   getPriorityIcon,
+  mockTasks,
 } from "@/data/tasks";
+import { cn } from "@/lib/utils";
+import { Calendar, User } from "lucide-react";
+import { useState } from "react";
 
 interface TasksListProps {
   onTaskSelect: (taskId: string) => void;

@@ -17,9 +17,9 @@ export default function SocialProof({ className }: SocialProofProps) {
       </div>
       <div className="text-sm text-gray-600 dark:text-muted-foreground">
         <span className="font-semibold">12,000+ people</span> already joined the
-        Fisio's
+        Fisio&apos;s
         <br />
-        plan. We'll let you know when we launch!
+        plan. We&apos;ll let you know when we launch!
       </div>
     </div>
   );

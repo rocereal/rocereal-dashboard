@@ -1,6 +1,13 @@
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
 import {
+  formatDateShort,
+  mockAccessList,
+  mockFilesData,
+  mockVersionHistory,
+} from "@/data/files";
+import { cn } from "@/lib/utils";
+import {
   ArrowLeft,
   Download,
   Edit,
@@ -11,47 +18,11 @@ import {
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import {
-  FileDetails,
-  mockFilesData,
-  mockVersionHistory,
-  mockAccessList,
-  formatDate,
-  formatDateShort,
-} from "@/data/files";
 import FileTabs from "../(components)/FileTabs";
 
 export const metadata = {
   title: "File Details | Files",
   description: "View and manage file details, permissions, and version history",
-};
-
-// Utility functions
-const getPermissionIcon = (permissions: string) => {
-  switch (permissions) {
-    case "private":
-      return <FileText className="h-4 w-4" />;
-    case "shared":
-      return <FileText className="h-4 w-4" />;
-    case "public":
-      return <FileText className="h-4 w-4" />;
-    default:
-      return <FileText className="h-4 w-4" />;
-  }
-};
-
-const getRoleColor = (role: string) => {
-  switch (role) {
-    case "owner":
-      return "bg-purple-100 text-purple-700";
-    case "editor":
-      return "bg-blue-100 text-blue-700";
-    case "viewer":
-      return "bg-gray-100 text-gray-700";
-    default:
-      return "bg-gray-100 text-gray-700";
-  }
 };
 
 export default async function FileDetailsPage({

@@ -35,14 +35,6 @@ export function ConfigurableLayout({
     lg: "text-lg",
   };
 
-  const borderRadiusClasses = {
-    none: "rounded-none",
-    sm: "rounded-sm",
-    md: "rounded-md",
-    lg: "rounded-lg",
-    xl: "rounded-xl",
-  };
-
   return (
     <div
       className={cn(

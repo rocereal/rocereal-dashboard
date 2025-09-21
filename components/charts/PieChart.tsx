@@ -15,8 +15,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+export interface PieChartDataItem {
+  [key: string]: any;
+  color?: string;
+}
+
+export interface PieChartLabelProps {
+  name: string;
+  percent: number;
+}
+
 export interface PieChartProps {
-  data: any[];
+  data: PieChartDataItem[];
   title?: string;
   description?: string;
   dataKey?: string;
@@ -67,8 +77,8 @@ export function PieChart({
                 outerRadius={80}
                 dataKey={dataKey}
                 nameKey={nameKey}
-                label={({ name, percent }: any) =>
-                  `${name} ${((percent as number) * 100).toFixed(0)}%`
+                label={({ name, percent }: PieChartLabelProps) =>
+                  `${name} ${(percent * 100).toFixed(0)}%`
                 }
                 labelLine={false}
               >

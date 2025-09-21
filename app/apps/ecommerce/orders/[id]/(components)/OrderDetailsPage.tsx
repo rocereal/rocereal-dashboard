@@ -1,26 +1,37 @@
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
-import { ordersData, productsData } from "@/data/ecommerce";
-import { Download, Printer } from "lucide-react";
+import { OrderData, ordersData, Product, productsData } from "@/data/ecommerce";
 import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  OrderStatusHeader,
-  OrderItemsCard,
-  OrderTimeline,
   CustomerInformation,
-  ShippingAddress,
-  PaymentInformation,
+  OrderItemsCard,
+  OrderStatusHeader,
   OrderSummaryCard,
+  OrderTimeline,
+  PaymentInformation,
+  ShippingAddress,
 } from "./index";
 
 interface OrderDetailsPageProps {
   orderId: string;
 }
 
+interface EnhancedOrderItem {
+  name: string;
+  image: string;
+  product: Product | undefined;
+  quantity: number;
+  price: number;
+}
+
+interface EnhancedOrderData extends OrderData {
+  items: EnhancedOrderItem[];
+}
+
 export default function OrderDetailsPage({ orderId }: OrderDetailsPageProps) {
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<EnhancedOrderData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +50,10 @@ export default function OrderDetailsPage({ orderId }: OrderDetailsPageProps) {
           );
           return {
             name: orderProduct.name,
-            image: orderProduct.image,
+            image:
+              typeof orderProduct.image === "string"
+                ? orderProduct.image
+                : orderProduct.image.src,
             product: product,
             quantity: 1, // Default quantity, could be enhanced with real data
             price: product?.price || 0,

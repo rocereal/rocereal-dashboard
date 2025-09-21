@@ -1,19 +1,19 @@
 "use client";
 
-import { TabsContent } from "@/components/ui/tabs";
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
+import { TabsContent } from "@/components/ui/tabs";
 import {
-  FileDetails,
-  VersionHistory,
   AccessEntry,
+  FileDetails,
   formatDate,
   formatDateShort,
+  VersionHistory,
 } from "@/data/files";
-import { FileText, Lock, Users } from "lucide-react";
-import FileDetailsTab from "./FileDetailsTab";
-import VersionHistoryTab from "./VersionHistoryTab";
+import { Lock, Users } from "lucide-react";
 import AccessSharingTab from "./AccessSharingTab";
 import ActivityTab from "./ActivityTab";
+import FileDetailsTab from "./FileDetailsTab";
+import VersionHistoryTab from "./VersionHistoryTab";
 
 interface FileTabsProps {
   file: FileDetails;
@@ -64,19 +64,6 @@ export default function FileTabs({
         return <Lock className="h-4 w-4" />;
       default:
         return <Lock className="h-4 w-4" />;
-    }
-  };
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case "owner":
-        return "bg-purple-100 text-purple-700";
-      case "editor":
-        return "bg-blue-100 text-blue-700";
-      case "viewer":
-        return "bg-gray-100 text-gray-700";
-      default:
-        return "bg-gray-100 text-gray-700";
     }
   };
 

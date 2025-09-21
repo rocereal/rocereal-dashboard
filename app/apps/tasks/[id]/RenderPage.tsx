@@ -1,16 +1,12 @@
 "use client";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Task, mockTasks } from "@/data/tasks";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
@@ -23,12 +19,9 @@ import {
   Tag,
   Trash2,
   User,
-  X,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Task, mockTasks } from "@/data/tasks";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function TaskDetailsPage() {
   const params = useParams();
@@ -104,7 +97,7 @@ export default function TaskDetailsPage() {
           <CheckSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
           <h2 className="text-xl font-semibold mb-2">Task not found</h2>
           <p className="text-gray-600 mb-4">
-            The task you're looking for doesn't exist.
+            The task you&apos;re looking for doesn&apos;t exist.
           </p>
           <Button onClick={() => router.push("/apps/tasks")}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -154,7 +147,7 @@ export default function TaskDetailsPage() {
               <CheckSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <h3 className="text-lg font-semibold mb-2">Task not found</h3>
               <p className="text-gray-600">
-                The task you're looking for doesn't exist.
+                The task you&apos;re looking for doesn&apos;t exist.
               </p>
             </div>
           </div>

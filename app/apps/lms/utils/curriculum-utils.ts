@@ -1,4 +1,4 @@
-import { CourseData, CourseLesson } from "@/data/education";
+import { CourseLesson } from "@/data/education";
 
 export interface CurriculumSection {
   type: string;

@@ -1,21 +1,20 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Plus, X } from "lucide-react";
-import { useState } from "react";
 import { Task } from "@/data/tasks";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 import BasicInfoSection from "./BasicInfoSection";
 import ChecklistSection from "./ChecklistSection";
-import TaskSettingsSection from "./TaskSettingsSection";
+import FormActionsSection from "./FormActionsSection";
 import TagsSection from "./TagsSection";
 import TaskPreviewSection from "./TaskPreviewSection";
-import FormActionsSection from "./FormActionsSection";
+import TaskSettingsSection from "./TaskSettingsSection";
 
 interface CreateTaskDrawerProps {
   isOpen: boolean;

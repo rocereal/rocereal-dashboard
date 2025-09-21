@@ -1,28 +1,19 @@
 "use client";
 
-import { notFound } from "next/navigation";
-import { invoiceDetailsData, InvoiceDetail } from "@/data/invoices";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
-import { ArrowLeft } from "lucide-react";
 import {
-  InvoiceHeader,
-  InvoiceDetails,
   InvoiceAddresses,
+  InvoiceDetails,
+  InvoiceHeader,
   InvoiceItemsTable,
-  InvoiceTotals,
   InvoiceNotes,
   InvoicePaymentMethods,
+  InvoiceTotals,
 } from "@/components/invoice";
 import { Button } from "@/components/ui/button";
-import {
-  Download,
-  Edit,
-  Eye,
-  FileText,
-  Share,
-  Star,
-  Trash2,
-} from "lucide-react";
+import { InvoiceDetail, invoiceDetailsData } from "@/data/invoices";
+import { Download, Edit, Eye, Share, Trash2 } from "lucide-react";
+import { notFound } from "next/navigation";
 
 interface RenderPageProps {
   id: string;
@@ -46,10 +37,6 @@ export default function RenderPage({ id }: RenderPageProps) {
     paymentMethod,
     metadata,
   } = data;
-
-  const handleBack = () => {
-    window.history.back();
-  };
 
   return (
     <div className="flex flex-col space-y-6">

@@ -147,7 +147,7 @@ export function SampleLineChart({
             <defs>
               {dataKeys.map((key, index) => (
                 <linearGradient
-                  key={key}
+                  key={index}
                   id={`fill${key.charAt(0).toUpperCase() + key.slice(1)}`}
                   x1="0"
                   y1="0"

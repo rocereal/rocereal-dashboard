@@ -11,23 +11,19 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Task, mockTasks } from "@/data/tasks";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
   Calendar,
-  CheckCircle,
   CheckSquare,
   Clock,
   Edit,
   Tag,
   Trash2,
   User,
-  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Task, mockTasks } from "@/data/tasks";
-
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface TaskDetailsDrawerProps {
   taskId: string | null;
@@ -118,7 +114,7 @@ export default function TaskDetailsDrawer({
               <CheckSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <h3 className="text-lg font-semibold mb-2">Task not found</h3>
               <p className="text-gray-600">
-                The task you're looking for doesn't exist.
+                The task you&apos;re looking for doesn&apos;t exist.
               </p>
             </div>
           </div>

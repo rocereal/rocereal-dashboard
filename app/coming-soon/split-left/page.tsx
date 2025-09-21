@@ -20,8 +20,8 @@ export default function SplitLeftPage() {
             Something Exciting is on the Way
           </CardTitle>
           <CardDescription className="text-start">
-            We're working behind the scenes to bring you a fresh experience.
-            Stay tuned!
+            We&apos;re working behind the scenes to bring you a fresh
+            experience. Stay tuned!
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

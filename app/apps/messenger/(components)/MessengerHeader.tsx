@@ -40,8 +40,6 @@ interface MessengerHeaderProps {
 
 export default function MessengerHeader({
   selectedContact,
-  sidebarOpen,
-  onSidebarToggle,
 }: MessengerHeaderProps) {
   const contact = mockContacts.find((c) => c.id === selectedContact);
 

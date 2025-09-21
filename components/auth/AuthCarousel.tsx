@@ -18,11 +18,12 @@ export interface TestimonialSlide {
   quote: string;
   name: string;
   title: string;
+  subtitle?: string;
 }
 
 export interface TestimonialCarouselProps {
   className?: string;
-  slides?: any[];
+  slides?: TestimonialSlide[];
   type?: "left" | "right";
 }
 
@@ -108,7 +109,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
       >
         <CarouselContent className="ml-0">
           {slides?.map((slide, index) => (
-            <CarouselItem key={slide.id} className="pl-0">
+            <CarouselItem key={index} className="pl-0">
               <div className="relative overflow-hidden h-[30vh] lg:h-screen w-full flex flex-col">
                 <ImageComponentOptimized
                   unoptimized={true}

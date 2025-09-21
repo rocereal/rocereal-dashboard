@@ -1,31 +1,26 @@
 "use client";
 
-import { useMemo } from "react";
-import { notFound } from "next/navigation";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
-import { users, User } from "@/data/users/users-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { users } from "@/data/users/users-data";
 import {
-  User as UserIcon,
+  Activity,
+  Bell,
+  Briefcase,
+  Calendar,
+  Clock,
+  CreditCard,
+  Link as LinkIcon,
   Mail,
   Phone,
-  Calendar,
-  MapPin,
-  Briefcase,
-  Building,
-  Globe,
   Shield,
-  Clock,
-  Activity,
-  CreditCard,
-  Bell,
-  Eye,
-  Settings,
-  Link as LinkIcon,
+  User as UserIcon,
 } from "lucide-react";
+import { notFound } from "next/navigation";
+import { useMemo } from "react";
 
 interface UserDetailsPageProps {
   userId: string;

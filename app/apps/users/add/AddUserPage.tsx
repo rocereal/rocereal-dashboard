@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,25 +15,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, UserMetadata } from "@/data/users/users-data";
+import { User } from "@/data/users/users-data";
 import {
-  User as UserIcon,
+  Bell,
+  Briefcase,
+  Globe,
   Mail,
   Phone,
-  Calendar,
-  Briefcase,
-  Building,
-  Globe,
-  Shield,
-  Bell,
-  Settings,
   Save,
+  Settings,
+  Shield,
+  User as UserIcon,
   X,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface FormData {
   firstName: string;

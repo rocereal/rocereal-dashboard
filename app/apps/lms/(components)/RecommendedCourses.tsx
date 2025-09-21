@@ -7,15 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { RecommendedCourse } from "@/data/education";
 import { cn } from "@/lib/utils";
-import {
-  Book,
-  Clock,
-  Search,
-  ShoppingCart,
-  Star,
-  User,
-  Users,
-} from "lucide-react";
+import { Book, Clock, Search, ShoppingCart, Star, User } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 

@@ -126,7 +126,7 @@ export function StepThree({
             htmlFor="emailVerified"
             className="text-sm leading-relaxed cursor-pointer"
           >
-            I've verified my email
+            I&apos;ve verified my email
           </Label>
         </div>
         {/* Two-Factor Authentication */}

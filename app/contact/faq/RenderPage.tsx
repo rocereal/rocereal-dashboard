@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { faqData } from "@/data/faq";
-import FAQHeader from "./(components)/FAQHeader";
-import FAQSearch from "./(components)/FAQSearch";
+import { useState } from "react";
+import Header from "../(components)/ContactHeader";
 import FAQAccordion from "./(components)/FAQAccordion";
 import FAQContactCTA from "./(components)/FAQContactCTA";
-import Header from "../(components)/ContactHeader";
+import FAQSearch from "./(components)/FAQSearch";
 
 export default function FAQPage() {
   const [searchTerm, setSearchTerm] = useState("");

@@ -19,8 +19,9 @@ export function RelatedCourses({ courses }: RelatedCoursesProps) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {courses.map((course) => (
+          {courses.map((course, index) => (
             <Link
+              key={index}
               shallow={true}
               href="/apps/lms/[courseId]"
               as={`/apps/lms/${course?.courseId}`}

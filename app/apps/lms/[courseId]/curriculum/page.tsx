@@ -1,9 +1,8 @@
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { coursesData } from "@/data/education";
 import {
   ArrowLeft,
   BookOpen,
@@ -225,7 +224,7 @@ export default async function CourseCurriculumPage({
 
                   return (
                     <div
-                      key={lesson.id}
+                      key={index}
                       className={`flex items-center justify-between p-4 rounded-lg border transition-colors cursor-pointer ${
                         isCompleted
                           ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-secondary dark:border-secondary dark:hover:bg-secondary cursor-pointer"

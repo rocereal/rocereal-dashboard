@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Message, MessengerChatProps, mockMessages } from "@/data/chats";
-import { Mic, Paperclip, Send, Smile, X } from "lucide-react";
+import { Mic, Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
 
 interface Contact {

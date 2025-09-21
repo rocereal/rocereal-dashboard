@@ -15,9 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Invoice } from "@/data/invoices";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, MoreHorizontal, Printer, Trash2, Download } from "lucide-react";
+import { Download, Eye, MoreHorizontal, Printer, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface InvoicesTableProps {
@@ -29,11 +28,9 @@ interface InvoicesTableProps {
 
 export function InvoicesTable({
   invoices,
-  onView,
   onPrint,
   onDelete,
 }: InvoicesTableProps) {
-  const router = useRouter();
   const [selectedInvoices, setSelectedInvoices] = useState<string[]>([]);
   const [invoiceToDelete, setInvoiceToDelete] = useState<string | null>(null);
 
@@ -84,13 +81,11 @@ export function InvoicesTable({
 
   const isAllSelected =
     invoices.length > 0 && selectedInvoices.length === invoices.length;
-  const isIndeterminate =
-    selectedInvoices.length > 0 && selectedInvoices.length < invoices.length;
 
   const columns: ColumnDef<Invoice>[] = [
     {
       id: "select",
-      header: ({ table }) => (
+      header: () => (
         <Checkbox
           checked={isAllSelected}
           onCheckedChange={handleSelectAll}

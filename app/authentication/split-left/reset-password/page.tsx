@@ -18,14 +18,9 @@ import { useState } from "react";
 export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleResetPassword = async (
-    password: string,
-    confirmPassword: string
-  ) => {
+  const handleResetPassword = async () => {
     setIsLoading(true);
-    setError("");
 
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 2000));

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
-import { users, userMetrics, userActions, User } from "@/data/users/users-data";
-import { UserMetricsComponent, UserFilters, UsersTable } from "./components";
+import { userActions, userMetrics, users } from "@/data/users/users-data";
 import { User as UserIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { UserFilters, UserMetricsComponent, UsersTable } from "./components";
 
 export default function UsersPage() {
   const router = useRouter();

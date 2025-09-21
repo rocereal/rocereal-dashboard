@@ -21,8 +21,6 @@ export function OrdersBulkActions({
 }: OrdersBulkActionsProps) {
   const isAllSelected =
     totalOrders > 0 && selectedOrders.length === totalOrders;
-  const isIndeterminate =
-    selectedOrders.length > 0 && selectedOrders.length < totalOrders;
 
   if (selectedOrders.length === 0) {
     return null;

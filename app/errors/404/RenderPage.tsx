@@ -1,8 +1,7 @@
 "use client";
 
-import CountdownTimer from "@/app/coming-soon/(components)/CountdownTimer";
 import Header from "@/app/contact/(components)/ContactHeader";
-import { Fourfour, Maintenance } from "@/components/svg/Icons";
+import { Fourfour } from "@/components/svg/Icons";
 
 export default function MaintenancePage() {
   return (

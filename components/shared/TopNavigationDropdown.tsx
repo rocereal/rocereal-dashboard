@@ -1,32 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import {
-  Home,
-  FileText,
-  Users,
   BarChart3,
+  BookOpen,
   Calendar,
+  ChevronDown,
+  CreditCard,
+  FileText,
+  Home,
   Mail,
   MessageSquare,
-  ShoppingCart,
-  CreditCard,
-  BookOpen,
-  TrendingUp,
-  ChevronDown,
   Settings,
+  ShoppingCart,
+  TrendingUp,
+  Users,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { usePathname, useRouter } from "next/navigation";
 
 const navigationGroups = [
   {
@@ -158,8 +157,8 @@ export function TopNavigationDropdown() {
     <nav className="sticky top-16 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-12 items-center space-x-4">
-          {navigationGroups.map((group, groupIndex) => (
-            <DropdownMenu key={group.label}>
+          {navigationGroups.map((group, index) => (
+            <DropdownMenu key={index}>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"

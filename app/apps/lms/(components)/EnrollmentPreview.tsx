@@ -114,7 +114,7 @@ export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
           {course.skills && course.skills.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>What You'll Learn</CardTitle>
+                <CardTitle>What You&apos;ll Learn</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

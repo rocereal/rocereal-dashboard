@@ -24,7 +24,7 @@ export function CourseOverview({ course }: CourseOverviewProps) {
         {/* Skills You'll Learn */}
         {course.skills && course.skills.length > 0 && (
           <div>
-            <h4 className="font-semibold mb-3">Skills you'll learn:</h4>
+            <h4 className="font-semibold mb-3">Skills you&apos;ll learn:</h4>
             <div className="flex flex-wrap gap-2">
               {course.skills.map((skill, index) => (
                 <Badge key={index} variant="outline">

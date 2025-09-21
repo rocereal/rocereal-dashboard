@@ -1,11 +1,11 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AITab } from "@/data/ai";
-import { ReactNode } from "react";
-import * as Icons from "lucide-react";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+import * as Icons from "lucide-react";
+import { ReactNode } from "react";
 
 interface TabsWithIconsProps {
   tabs: AITab[];

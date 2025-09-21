@@ -1,12 +1,13 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { OrderProduct } from "@/data/ecommerce";
 import { DollarSign } from "lucide-react";
 
 interface OrderSummaryCardProps {
   order: {
     date: string;
-    products: any[];
+    products: OrderProduct[];
     orderValue: number;
   };
 }

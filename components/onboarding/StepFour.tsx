@@ -25,7 +25,6 @@ export function StepFour({
   onSubmit,
   isLoading = false,
   className = "",
-  inputClassName = "",
   onboardingHref,
   skipHref,
 }: StepFourProps) {

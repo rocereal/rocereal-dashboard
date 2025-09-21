@@ -1,6 +1,7 @@
 "use client";
 
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable, createSortableColumn } from "@/components/ui/data-table";
@@ -23,15 +24,7 @@ import {
   getProductPurchases,
 } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  BarChart3,
-  Info,
-  Package,
-  Save,
-  Settings,
-  ShoppingCart,
-  X,
-} from "lucide-react";
+import { Info, Save, Settings, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 
 interface productProps {
@@ -102,7 +95,7 @@ export const ProductTabs: React.FC<productProps> = ({ product }) => {
 };
 
 // Tab Components
-function ProductOverviewTab({ product }: { product: any }) {
+function ProductOverviewTab({ product }: { product: Product }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -110,10 +103,11 @@ function ProductOverviewTab({ product }: { product: any }) {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Product Image</h3>
           <div className="aspect-square max-w-sm rounded-lg overflow-hidden border">
-            <img
-              src={product.image.src || product.image}
+            <ImageComponentOptimized
+              src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
         </div>
@@ -200,7 +194,7 @@ function ProductOverviewTab({ product }: { product: any }) {
   );
 }
 
-function ProductImagesTab({ product }: { product: any }) {
+function ProductImagesTab({ product }: { product: Product }) {
   return (
     <div className="space-y-6">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -215,10 +209,11 @@ function ProductImagesTab({ product }: { product: any }) {
         <h3 className="text-lg font-semibold">Current Images</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="aspect-square rounded-lg overflow-hidden border">
-            <img
-              src={product.image.src || product.image}
+            <ImageComponentOptimized
+              src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
           <div className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center">
@@ -233,7 +228,7 @@ function ProductImagesTab({ product }: { product: any }) {
   );
 }
 
-function ProductEditTab({ product }: { product: any }) {
+function ProductEditTab({ product }: { product: Product }) {
   const [formData, setFormData] = useState({
     name: product.name,
     sku: product.sku,
@@ -401,49 +396,7 @@ function ProductEditTab({ product }: { product: any }) {
   );
 }
 
-function ProductAnalyticsTab({ product }: { product: any }) {
-  return (
-    <div className="space-y-6">
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <p className="text-sm text-green-800">
-          <strong>Note:</strong> This tab would display sales analytics, views,
-          conversion rates, and performance metrics for the product.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card p-4 rounded-lg border">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-blue-500" />
-            <span className="text-sm font-medium">Views</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">1,234</div>
-          <p className="text-xs text-muted-foreground">+12% from last month</p>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg border">
-          <div className="flex items-center gap-2">
-            <Package className="h-5 w-5 text-green-500" />
-            <span className="text-sm font-medium">Sales</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">89</div>
-          <p className="text-xs text-muted-foreground">+8% from last month</p>
-        </div>
-
-        <div className="bg-card p-4 rounded-lg border">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-purple-500" />
-            <span className="text-sm font-medium">Conversion</span>
-          </div>
-          <div className="text-2xl font-bold mt-2">7.2%</div>
-          <p className="text-xs text-muted-foreground">+2.1% from last month</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ProductPurchasesTab({ product }: { product: any }) {
+function ProductPurchasesTab({ product }: { product: Product }) {
   const purchases = getProductPurchases(product.id);
 
   const columns: ColumnDef<ProductPurchase>[] = [
@@ -551,8 +504,8 @@ function ProductPurchasesTab({ product }: { product: any }) {
           <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h4 className="text-lg font-medium mb-2">No purchases yet</h4>
           <p className="text-sm text-muted-foreground">
-            This product hasn't been purchased yet. Purchases will appear here
-            once customers start buying.
+            This product hasn&apos;t been purchased yet. Purchases will appear
+            here once customers start buying.
           </p>
         </div>
       )}
@@ -560,7 +513,7 @@ function ProductPurchasesTab({ product }: { product: any }) {
   );
 }
 
-function ProductSettingsTab({ product }: { product: any }) {
+function ProductSettingsTab({ product }: { product: Product }) {
   const [settings, setSettings] = useState({
     visibility: true,
     seoOptimization: true,

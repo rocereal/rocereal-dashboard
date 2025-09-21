@@ -9,16 +9,7 @@ import {
   mockContacts,
   mockMessages,
 } from "@/data/chats";
-import {
-  Camera,
-  File,
-  Image,
-  Mic,
-  Paperclip,
-  Send,
-  Smile,
-  User,
-} from "lucide-react";
+import { Mic, Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
 
 export default function MessengerChat({ selectedContact }: MessengerChatProps) {

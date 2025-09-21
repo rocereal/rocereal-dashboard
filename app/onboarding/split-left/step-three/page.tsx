@@ -9,7 +9,7 @@ import { useState } from "react";
 export default function StepThreePage() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleForm = async (data: any) => {
+  const handleForm = async () => {
     setIsLoading(true);
 
     // Simulate API call

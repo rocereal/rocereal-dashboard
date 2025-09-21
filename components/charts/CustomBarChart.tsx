@@ -16,8 +16,15 @@ import {
   YAxis,
 } from "recharts";
 
+export interface ChartDataItem {
+  [key: string]: string | number | undefined;
+  name?: string;
+  value?: number;
+  color?: string;
+}
+
 export interface CustomBarChartProps {
-  data: any[];
+  data: ChartDataItem[];
   title?: string;
   description?: string;
   dataKey?: string;

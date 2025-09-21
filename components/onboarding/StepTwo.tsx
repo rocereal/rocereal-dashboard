@@ -33,7 +33,6 @@ export function StepTwo({
   onSubmit,
   isLoading = false,
   className = "",
-  inputClassName = "",
   onboardingHref,
   skipHref,
 }: StepTwoProps) {

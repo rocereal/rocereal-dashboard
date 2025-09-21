@@ -74,7 +74,6 @@ const Accordion: React.FC<AccordionProps> = ({
 };
 
 const AccordionItem: React.FC<AccordionItemProps> = ({
-  value,
   children,
   className,
 }) => {

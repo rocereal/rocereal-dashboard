@@ -28,16 +28,6 @@ export default function RenderPage() {
     // Implement view details functionality
   };
 
-  const handleAddProduct = () => {
-    console.log("Add new product");
-    // Implement add product functionality
-  };
-
-  const handleGenerateReport = () => {
-    console.log("Generate products report");
-    // Implement report generation
-  };
-
   // Create metrics for SectionCards
   const productMetrics = [
     {

@@ -1,5 +1,6 @@
 "use client";
 
+import { DeleteConfirmationDialog } from "@/components/dialogs";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { DeleteConfirmationDialog } from "@/components/dialogs";
 
 interface ProductsTableProps {
   products: Product[];
@@ -26,12 +26,7 @@ interface ProductsTableProps {
   onView?: (product: Product) => void;
 }
 
-export function OrdersTable({
-  products,
-  onEdit,
-  onDelete,
-  onView,
-}: ProductsTableProps) {
+export function OrdersTable({ products }: ProductsTableProps) {
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
   const [orders, setOrders] = useState(ordersData);
 
@@ -55,14 +50,14 @@ export function OrdersTable({
       accessorKey: "image",
       header: "Image",
       cell: ({ row }) => {
-        const image = row.getValue("image");
+        const image = row.getValue("image") as string;
         const productName = row.getValue("name") as string;
 
         return (
           <div className="flex items-center justify-center">
             <div className="relative w-12 h-12 rounded-md overflow-hidden border">
               <ImageComponentOptimized
-                src={image as any}
+                src={image}
                 alt={productName}
                 fill
                 className="object-cover"

@@ -13,7 +13,6 @@ import {
   Filter,
   Home,
   ListTodo,
-  Menu,
   Plus,
   Search,
   Star,

@@ -48,11 +48,6 @@ export default function RenderPage() {
     window.location.href = "/invoice/add-invoice";
   };
 
-  const handleGenerateReport = () => {
-    console.log("Generate invoices report");
-    // Implement report generation
-  };
-
   // Create metrics for SectionCards
   const invoiceMetrics = [
     {

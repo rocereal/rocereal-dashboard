@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -9,20 +8,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { useTheme } from "@/lib/theme-provider";
 import { useLayoutConfig } from "@/lib/layout-config";
+import { useTheme } from "@/lib/theme-provider";
+import { Monitor, Moon, RotateCcw, Sun, X } from "lucide-react";
+import { useState } from "react";
 import { FloatingConfigButton } from "./shared/floating-config-button";
-import { Moon, Sun, Monitor, RotateCcw, X } from "lucide-react";
 
 export function ConfigPanel() {
   const [isOpen, setIsOpen] = useState(false);

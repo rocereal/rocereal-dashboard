@@ -72,7 +72,7 @@ export function RadarChart({
               {/* Background circles */}
               {[0.2, 0.4, 0.6, 0.8, 1.0].map((scale, index) => (
                 <circle
-                  key={scale}
+                  key={index}
                   cx={center}
                   cy={center}
                   r={size * 0.35 * scale}

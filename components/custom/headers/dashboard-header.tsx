@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,11 +8,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import {
-  DateTimeRangePicker,
   DateTimeRange,
+  DateTimeRangePicker,
 } from "@/components/ui/date-time-range-picker";
-import { Calendar } from "@/components/ui/calendar";
 
 import { ReactNode, useState } from "react";
 
@@ -49,8 +48,6 @@ export function DashboardHeader({
   dateRange,
   onDateRangeChange,
 }: DashboardHeaderProps) {
-  const [date, setDate] = useState<Date | undefined>(new Date(2025, 5, 12));
-
   return (
     <div className="flex flex-col space-y-4 pb-6">
       {/* Breadcrumb */}

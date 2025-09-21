@@ -1,18 +1,9 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { User, UserAction } from "@/data/users/users-data";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Shield,
-  Clock,
-  Activity,
-  Users,
-} from "lucide-react";
+import { Activity, Calendar, Clock, Phone, Shield, Users } from "lucide-react";
 
 interface UserCardProps {
   user: User;

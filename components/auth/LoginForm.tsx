@@ -154,7 +154,7 @@ export function LoginForm({
       {signUpHref && (
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href={signUpHref}
               className="text-primary hover:underline font-medium"

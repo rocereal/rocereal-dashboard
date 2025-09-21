@@ -31,14 +31,12 @@ interface FilesHeaderProps {
 }
 
 export default function FilesHeader({
-  sidebarOpen,
   onSidebarToggle,
   currentPath,
   onPathChange,
   viewMode,
   onViewModeChange,
   selectedFiles,
-  onSelectionChange,
 }: FilesHeaderProps) {
   const pathSegments = currentPath.split("/").filter(Boolean);
 

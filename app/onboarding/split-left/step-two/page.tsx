@@ -4,14 +4,12 @@ import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 import { StepTwo } from "@/components/onboarding/StepTwo";
 import { Separator } from "@/components/ui/separator";
 import { onboardingSteps } from "@/data/onboarding";
-import { useOnboardingStep } from "@/utils/useOnboardingStep";
 import { useState } from "react";
 
 export default function StepTwoPage() {
-  const { currentStep, stepData } = useOnboardingStep();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleForm = async (data: any) => {
+  const handleForm = async () => {
     setIsLoading(true);
 
     // Simulate API call

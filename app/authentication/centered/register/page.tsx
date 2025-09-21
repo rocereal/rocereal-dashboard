@@ -14,14 +14,13 @@ import { useState } from "react";
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = async (data: any) => {
+  const handleRegister = async () => {
     setIsLoading(true);
 
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     setIsLoading(false);
-    console.log("Register attempt:", data);
   };
 
   return (

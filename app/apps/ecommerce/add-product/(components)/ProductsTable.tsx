@@ -17,7 +17,6 @@ import { Product } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
 import { Download, Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface ProductsTableProps {
@@ -27,13 +26,7 @@ interface ProductsTableProps {
   onView?: (product: Product) => void;
 }
 
-export function ProductsTable({
-  products,
-  onEdit,
-  onDelete,
-  onView,
-}: ProductsTableProps) {
-  const router = useRouter();
+export function ProductsTable({ products, onDelete }: ProductsTableProps) {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
   // Checkbox handlers
@@ -65,13 +58,11 @@ export function ProductsTable({
 
   const isAllSelected =
     products.length > 0 && selectedProducts.length === products.length;
-  const isIndeterminate =
-    selectedProducts.length > 0 && selectedProducts.length < products.length;
 
   const columns: ColumnDef<Product>[] = [
     {
       id: "select",
-      header: ({ table }) => (
+      header: () => (
         <Checkbox
           checked={isAllSelected}
           onCheckedChange={handleSelectAll}
@@ -94,16 +85,14 @@ export function ProductsTable({
       accessorKey: "image",
       header: "Image",
       cell: ({ row }) => {
-        const image = row.getValue("image");
+        const image = row.getValue("image") as string;
         const productName = row.getValue("name") as string;
-
-        console.log(row);
 
         return (
           <div className="flex items-center justify-center">
             <div className="relative w-12 h-12 rounded-md overflow-hidden border">
               <ImageComponentOptimized
-                src={image as any}
+                src={image}
                 alt={productName}
                 fill
                 className="object-cover"

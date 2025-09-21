@@ -20,9 +20,31 @@ import { Textarea } from "@/components/ui/textarea";
 import { DollarSign, Info, Plus, Save, Search, Upload, X } from "lucide-react";
 import { useState } from "react";
 
-export default function AddProductForm() {
-  const [activeTab, setActiveTab] = useState("information");
+interface ProductData {
+  name: string;
+  sku: string;
+  category: string;
+  description: string;
+  price: string;
+  comparePrice: string;
+  costPrice: string;
+  taxRate: string;
+  stock: string;
+  lowStockThreshold: string;
+  trackInventory: boolean;
+  allowBackorders: boolean;
+  metaTitle: string;
+  metaDescription: string;
+  urlSlug: string;
+  images: File[];
+}
 
+interface TabProps {
+  productData: ProductData;
+  setProductData: React.Dispatch<React.SetStateAction<ProductData>>;
+}
+
+export default function AddProductForm() {
   const [productData, setProductData] = useState({
     // Information tab
     name: "",
@@ -184,9 +206,9 @@ export default function AddProductForm() {
 }
 
 // Information Tab Component
-function InformationTab({ productData, setProductData }: any) {
+function InformationTab({ productData, setProductData }: TabProps) {
   const handleInputChange = (field: string, value: string) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -272,12 +294,12 @@ function InformationTab({ productData, setProductData }: any) {
 }
 
 // Images Tab Component
-function ImagesTab({ productData, setProductData }: any) {
+function ImagesTab({ productData, setProductData }: TabProps) {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
       const newImages = Array.from(files);
-      setProductData((prev: any) => ({
+      setProductData((prev) => ({
         ...prev,
         images: [...prev.images, ...newImages],
       }));
@@ -285,9 +307,9 @@ function ImagesTab({ productData, setProductData }: any) {
   };
 
   const removeImage = (index: number) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
-      images: prev.images.filter((_: any, i: number) => i !== index),
+      images: prev.images.filter((_, i) => i !== index),
     }));
   };
 
@@ -368,9 +390,9 @@ function ImagesTab({ productData, setProductData }: any) {
 }
 
 // Pricing Tab Component
-function PricingTab({ productData, setProductData }: any) {
+function PricingTab({ productData, setProductData }: TabProps) {
   const handleInputChange = (field: string, value: string) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -507,9 +529,9 @@ function PricingTab({ productData, setProductData }: any) {
 }
 
 // Inventory Tab Component
-function InventoryTab({ productData, setProductData }: any) {
+function InventoryTab({ productData, setProductData }: TabProps) {
   const handleInputChange = (field: string, value: string | boolean) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -622,9 +644,9 @@ function InventoryTab({ productData, setProductData }: any) {
 }
 
 // SEO Tab Component
-function SEOTab({ productData, setProductData }: any) {
+function SEOTab({ productData, setProductData }: TabProps) {
   const handleInputChange = (field: string, value: string) => {
-    setProductData((prev: any) => ({
+    setProductData((prev) => ({
       ...prev,
       [field]: value,
     }));

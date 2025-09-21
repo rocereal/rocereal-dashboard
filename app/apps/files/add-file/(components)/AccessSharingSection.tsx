@@ -70,7 +70,11 @@ export default function AccessSharingSection({
                     ? "border-primary bg-primary/5"
                     : "border-gray-200 hover:border-gray-300 dark:border-secondary"
                 }`}
-                onClick={() => onPermissionsChange(option.value as any)}
+                onClick={() =>
+                  onPermissionsChange(
+                    option.value as "private" | "shared" | "public"
+                  )
+                }
               >
                 <div className="flex items-center gap-2 mb-2">
                   {getPermissionIcon(option.value)}

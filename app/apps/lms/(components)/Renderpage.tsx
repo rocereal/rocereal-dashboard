@@ -1,10 +1,8 @@
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
-import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { coursesData, recommendedCourses } from "@/data/education";
 import { BookOpen, ChartBar } from "lucide-react";
-import { useState } from "react";
 import { RecommendedCourses } from "./RecommendedCourses";
 import { SectionCards } from "./SectionCards";
 

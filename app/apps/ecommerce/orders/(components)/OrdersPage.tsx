@@ -1,6 +1,7 @@
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DeleteConfirmationDialog } from "@/components/dialogs";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -13,12 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  EcommerceMetric,
-  OrderData,
-  ordersData,
-  productsData,
-} from "@/data/ecommerce";
+import { EcommerceMetric, ordersData } from "@/data/ecommerce";
 import {
   Calendar,
   DollarSign,
@@ -31,8 +27,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
-import { OrdersFilters, OrdersBulkActions, OrderStatusBadge } from "./index";
-import { DeleteConfirmationDialog } from "@/components/dialogs";
+import { OrdersBulkActions, OrdersFilters, OrderStatusBadge } from "./index";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState(ordersData);
@@ -111,18 +106,8 @@ export default function OrdersPage() {
     }
   };
 
-  const confirmBulkDelete = () => {
-    if (selectedOrders.length > 0) {
-      setOrders(orders.filter((order) => !selectedOrders.includes(order.id)));
-      setSelectedOrders([]);
-      setOrderToDelete(null);
-    }
-  };
-
   const isAllSelected =
     sortedOrders.length > 0 && selectedOrders.length === sortedOrders.length;
-  const isIndeterminate =
-    selectedOrders.length > 0 && selectedOrders.length < sortedOrders.length;
 
   // Calculate summary stats and create metrics
   const totalOrders = orders.length;
@@ -132,12 +117,6 @@ export default function OrdersPage() {
   ).length;
   const deliveredOrders = orders.filter(
     (order) => order.status === "delivered"
-  ).length;
-  const processingOrders = orders.filter(
-    (order) => order.status === "processing"
-  ).length;
-  const shippedOrders = orders.filter(
-    (order) => order.status === "shipped"
   ).length;
 
   // Create order metrics for SectionCards
