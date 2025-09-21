@@ -1,9 +1,9 @@
 import backgroundThree from "@/app/assets/images/background_three.jpg";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, CreditCard } from "lucide-react";
+import LeftContent from "./LeftContent";
 
 export default function RenderPage() {
   return (
@@ -11,50 +11,14 @@ export default function RenderPage() {
       <div className="container mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-8">
-            <div className="space-y-6">
-              <h1 className="text-5xl lg:text-6xl font-bold text-balance">
-                Something Exciting is on the Way
-              </h1>
-
-              <p className="text-lg text-gray-600 max-w-md text-pretty">
-                We’re working behind the scenes to bring you a fresh experience.
-                Stay tuned!
-              </p>
-
-              <Button
-                size="lg"
-                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-full"
-              >
-                Start 14 days free trial
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
-
-            {/* Social Proof */}
-            <div className="flex items-center gap-4">
-              <div className="flex -space-x-2">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 border-2 border-white"></div>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-blue-500 border-2 border-white"></div>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-red-500 border-2 border-white"></div>
-                <div className="w-10 h-10 rounded-full bg-gray-800 border-2 border-white flex items-center justify-center">
-                  <span className="text-white text-xs font-semibold">12k+</span>
-                </div>
-              </div>
-              <div className="text-sm text-gray-600">
-                <span className="font-semibold">12,000+ people</span> already
-                joined the Fantop's
-                <br />
-                increase followers plan. Get started today!
-              </div>
-            </div>
-          </div>
+          <LeftContent />
 
           {/* Right Content - Hero Image and Payment Cards */}
           <div className="relative">
             {/* Main Hero Image */}
-            <div className="relative align-end">
-              <div className="relative overflow-hidden h-[30vh] lg:h-screen w-3/4 align-end flex flex-col">
+            <div className="relative flex justify-end items-end">
+              {/* Image container */}
+              <div className="relative overflow-hidden h-[30vh] lg:h-screen w-3/4 flex flex-col">
                 <ImageComponentOptimized
                   unoptimized={true}
                   alt={"Fisio"}
