@@ -4,67 +4,17 @@ import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 import { User } from "@/data/users-data";
-import {
-  Bell,
-  Briefcase,
-  Globe,
-  Mail,
-  Phone,
-  Save,
-  Settings,
-  Shield,
-  User as UserIcon,
-  X,
-} from "lucide-react";
+import { Mail, Phone, Save, User as UserIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  dateOfBirth: string;
-  gender: "male" | "female" | "other" | "prefer_not_to_say";
-  role: "admin" | "manager" | "user" | "viewer";
-  status: "active" | "inactive" | "pending" | "suspended";
-  plan: "free" | "starter" | "professional" | "enterprise";
-  jobTitle: string;
-  department: string;
-  company: string;
-  industry: string;
-  experience: string;
-  timezone: string;
-  language: string;
-  theme: "light" | "dark" | "system";
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-  smsNotifications: boolean;
-  marketingNotifications: boolean;
-  profileVisibility: "public" | "private" | "team";
-  dataSharing: boolean;
-  analytics: boolean;
-  twoFactorEnabled: boolean;
-  securityQuestions: boolean;
-}
+import { AddUserTabs, UserFormData } from "./AddUserTabs";
 
 export default function AddUserPage() {
   const router = useRouter();
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<UserFormData>({
     firstName: "",
     lastName: "",
     email: "",
@@ -91,17 +41,16 @@ export default function AddUserPage() {
     analytics: true,
     twoFactorEnabled: false,
     securityQuestions: false,
+    emergencyContacts: [],
+    addresses: [],
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (
-    field: keyof FormData,
-    value: string | boolean
-  ) => {
+  const handleFormDataChange = (data: Partial<UserFormData>) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      ...data,
     }));
   };
 
@@ -122,6 +71,7 @@ export default function AddUserPage() {
         role: formData.role,
         status: formData.status,
         plan: formData.plan,
+        avatar: `/avatars/${formData.firstName.toLowerCase()}-${formData.lastName.toLowerCase()}.jpg`,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         metadata: {
@@ -204,7 +154,7 @@ export default function AddUserPage() {
         {/* User Preview */}
         <Card>
           <CardContent className="pt-6">
-            <div className="flex items-start space-x-4">
+            <div className="flex flex-wrap items-start space-x-4">
               <Avatar className="w-20 h-20">
                 <AvatarFallback className="text-lg">
                   {formData.firstName && formData.lastName ? (
@@ -214,11 +164,10 @@ export default function AddUserPage() {
                   )}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center space-x-2">
+              <div className="flex-1 flex-wrap space-y-2">
+                <div className="flex flex-wrap items-center gap-4">
                   <h1 className="text-2xl font-bold">
-                    {formData.firstName || "First Name"}{" "}
-                    {formData.lastName || "Last Name"}
+                    {formData.firstName || ""} {formData.lastName || ""}
                   </h1>
                   <Badge className={`bg-green-100 text-green-800`}>
                     {formData.status.charAt(0).toUpperCase() +
@@ -246,459 +195,11 @@ export default function AddUserPage() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <UserIcon className="w-5 h-5" />
-                <span>Basic Information</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name *</Label>
-                  <Input
-                    id="firstName"
-                    value={formData.firstName}
-                    onChange={(e) =>
-                      handleInputChange("firstName", e.target.value)
-                    }
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name *</Label>
-                  <Input
-                    id="lastName"
-                    value={formData.lastName}
-                    onChange={(e) =>
-                      handleInputChange("lastName", e.target.value)
-                    }
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange("phone", e.target.value)}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                  <Input
-                    id="dateOfBirth"
-                    type="date"
-                    value={formData.dateOfBirth}
-                    onChange={(e) =>
-                      handleInputChange("dateOfBirth", e.target.value)
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="gender">Gender</Label>
-                  <Select
-                    value={formData.gender}
-                    onValueChange={(value) =>
-                      handleInputChange("gender", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                      <SelectItem value="prefer_not_to_say">
-                        Prefer not to say
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Account Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Settings className="w-5 h-5" />
-                <span>Account Settings</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role *</Label>
-                  <Select
-                    value={formData.role}
-                    onValueChange={(value) => handleInputChange("role", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="viewer">Viewer</SelectItem>
-                      <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="manager">Manager</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status *</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value) =>
-                      handleInputChange("status", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="suspended">Suspended</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="plan">Plan *</Label>
-                <Select
-                  value={formData.plan}
-                  onValueChange={(value) => handleInputChange("plan", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="free">Free</SelectItem>
-                    <SelectItem value="starter">Starter</SelectItem>
-                    <SelectItem value="professional">Professional</SelectItem>
-                    <SelectItem value="enterprise">Enterprise</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Professional Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Briefcase className="w-5 h-5" />
-                <span>Professional Information</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="jobTitle">Job Title</Label>
-                <Input
-                  id="jobTitle"
-                  value={formData.jobTitle}
-                  onChange={(e) =>
-                    handleInputChange("jobTitle", e.target.value)
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Input
-                  id="department"
-                  value={formData.department}
-                  onChange={(e) =>
-                    handleInputChange("department", e.target.value)
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="company">Company</Label>
-                <Input
-                  id="company"
-                  value={formData.company}
-                  onChange={(e) => handleInputChange("company", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="industry">Industry</Label>
-                <Input
-                  id="industry"
-                  value={formData.industry}
-                  onChange={(e) =>
-                    handleInputChange("industry", e.target.value)
-                  }
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="experience">Experience</Label>
-                <Input
-                  id="experience"
-                  value={formData.experience}
-                  onChange={(e) =>
-                    handleInputChange("experience", e.target.value)
-                  }
-                  placeholder="e.g., 5+ years"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Preferences & Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Globe className="w-5 h-5" />
-                <span>Preferences & Settings</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="timezone">Timezone</Label>
-                  <Select
-                    value={formData.timezone}
-                    onValueChange={(value) =>
-                      handleInputChange("timezone", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="America/New_York">
-                        Eastern Time
-                      </SelectItem>
-                      <SelectItem value="America/Chicago">
-                        Central Time
-                      </SelectItem>
-                      <SelectItem value="America/Denver">
-                        Mountain Time
-                      </SelectItem>
-                      <SelectItem value="America/Los_Angeles">
-                        Pacific Time
-                      </SelectItem>
-                      <SelectItem value="Europe/London">London</SelectItem>
-                      <SelectItem value="Europe/Paris">Paris</SelectItem>
-                      <SelectItem value="Asia/Tokyo">Tokyo</SelectItem>
-                      <SelectItem value="Australia/Sydney">Sydney</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="language">Language</Label>
-                  <Select
-                    value={formData.language}
-                    onValueChange={(value) =>
-                      handleInputChange("language", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="en-US">English (US)</SelectItem>
-                      <SelectItem value="en-GB">English (UK)</SelectItem>
-                      <SelectItem value="es-ES">Spanish</SelectItem>
-                      <SelectItem value="fr-FR">French</SelectItem>
-                      <SelectItem value="de-DE">German</SelectItem>
-                      <SelectItem value="zh-CN">Chinese</SelectItem>
-                      <SelectItem value="ja-JP">Japanese</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="theme">Theme</Label>
-                <Select
-                  value={formData.theme}
-                  onValueChange={(value) => handleInputChange("theme", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Security Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Shield className="w-5 h-5" />
-                <span>Security Settings</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="twoFactorEnabled"
-                  checked={formData.twoFactorEnabled}
-                  onCheckedChange={(checked) =>
-                    handleInputChange("twoFactorEnabled", !!checked)
-                  }
-                />
-                <Label htmlFor="twoFactorEnabled">
-                  Enable Two-Factor Authentication
-                </Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="securityQuestions"
-                  checked={formData.securityQuestions}
-                  onCheckedChange={(checked) =>
-                    handleInputChange("securityQuestions", !!checked)
-                  }
-                />
-                <Label htmlFor="securityQuestions">
-                  Set up Security Questions
-                </Label>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Notification Preferences */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Bell className="w-5 h-5" />
-                <span>Notification Preferences</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="emailNotifications"
-                    checked={formData.emailNotifications}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("emailNotifications", !!checked)
-                    }
-                  />
-                  <Label htmlFor="emailNotifications">
-                    Email Notifications
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="pushNotifications"
-                    checked={formData.pushNotifications}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("pushNotifications", !!checked)
-                    }
-                  />
-                  <Label htmlFor="pushNotifications">Push Notifications</Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="smsNotifications"
-                    checked={formData.smsNotifications}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("smsNotifications", !!checked)
-                    }
-                  />
-                  <Label htmlFor="smsNotifications">SMS Notifications</Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="marketingNotifications"
-                    checked={formData.marketingNotifications}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("marketingNotifications", !!checked)
-                    }
-                  />
-                  <Label htmlFor="marketingNotifications">
-                    Marketing Communications
-                  </Label>
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label htmlFor="profileVisibility">Profile Visibility</Label>
-                  <Select
-                    value={formData.profileVisibility}
-                    onValueChange={(value) =>
-                      handleInputChange("profileVisibility", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="public">Public</SelectItem>
-                      <SelectItem value="team">Team Only</SelectItem>
-                      <SelectItem value="private">Private</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="dataSharing"
-                    checked={formData.dataSharing}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("dataSharing", !!checked)
-                    }
-                  />
-                  <Label htmlFor="dataSharing">Allow Data Sharing</Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="analytics"
-                    checked={formData.analytics}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("analytics", !!checked)
-                    }
-                  />
-                  <Label htmlFor="analytics">Enable Analytics</Label>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Tabbed Form Content */}
+        <AddUserTabs
+          formData={formData}
+          onFormDataChange={handleFormDataChange}
+        />
 
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4">

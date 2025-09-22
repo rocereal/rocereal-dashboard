@@ -203,7 +203,10 @@ export function PersonalInformationTab({
         <CardContent>
           <div className="space-y-4">
             {emergencyContacts.map((contact) => (
-              <div key={contact.id} className="border rounded-lg p-4">
+              <div
+                key={contact.id}
+                className="border-0 lg:border rounded-lg p-0 lg:p-4"
+              >
                 <div className="flex flex-col-reverse  items-end justify-end">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 w-full">
                     <div className="space-y-2">
@@ -255,7 +258,10 @@ export function PersonalInformationTab({
         <CardContent>
           <div className="space-y-4">
             {addresses.map((address) => (
-              <div key={address.id} className="border rounded-lg p-4">
+              <div
+                key={address.id}
+                className="border-0 lg:border rounded-lg p-0 lg:p-4"
+              >
                 <div className="flex flex-col-reverse items-end justify-end">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 w-full">
                     <div className="space-y-2">
