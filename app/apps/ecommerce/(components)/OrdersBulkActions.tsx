@@ -8,7 +8,7 @@ interface OrdersBulkActionsProps {
   selectedOrders: string[];
   totalOrders: number;
   onSelectAll: (checked: boolean) => void;
-  onBulkDelete: () => void;
+  onBulkDelete: (selectedOrderIds: string[]) => void;
   onBulkExport: () => void;
 }
 
@@ -47,7 +47,11 @@ export function OrdersBulkActions({
             <Download className="h-4 w-4 mr-2" />
             Export Selected
           </Button>
-          <Button variant="destructive" size="sm" onClick={onBulkDelete}>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => onBulkDelete(selectedOrders)}
+          >
             <Trash2 className="h-4 w-4 mr-2" />
             Delete Selected
           </Button>

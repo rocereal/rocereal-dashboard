@@ -6,20 +6,25 @@ import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DataTable, createSortableColumn } from "@/components/ui/data-table";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { EcommerceMetric, ordersData } from "@/data/ecommerce";
+import { ColumnDef } from "@tanstack/react-table";
 import {
+  ArrowUpDown,
   Calendar,
   DollarSign,
   Download,
   Eye,
+  Mail,
+  MoreHorizontal,
   Package,
   Trash2,
   User,
@@ -35,7 +40,6 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
-  const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
 
   // Filter orders based on search and status
   const filteredOrders = orders.filter((order) => {
@@ -83,31 +87,214 @@ export default function OrdersPage() {
     // Implement export functionality
   };
 
-  // Checkbox handlers
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedOrders(sortedOrders.map((order) => order.id));
-    } else {
-      setSelectedOrders([]);
+  const handleBulkDelete = (selectedOrderIds: string[]) => {
+    if (selectedOrderIds.length > 0) {
+      setOrderToDelete(selectedOrderIds.join(", ")); // Show selected order IDs
     }
   };
 
-  const handleSelectOrder = (orderId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedOrders((prev) => [...prev, orderId]);
-    } else {
-      setSelectedOrders((prev) => prev.filter((id) => id !== orderId));
-    }
-  };
+  // Column definitions for DataTable
+  const columns: ColumnDef<(typeof ordersData)[0]>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "id",
+      header: "Order ID",
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <Link
+            href={`/apps/ecommerce/orders/${order.id}`}
+            className="text-primary hover:underline font-medium"
+          >
+            {order.id}
+          </Link>
+        );
+      },
+    },
+    {
+      accessorKey: "customer",
+      header: "Customer",
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={`/avatars/${order.customer
+                  .toLowerCase()
+                  .replace(" ", "-")}.jpg`}
+              />
+              <AvatarFallback>
+                {order.customer
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+            <span className="font-medium">{order.customer}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "products",
+      header: "Products",
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            {order.products.slice(0, 2).map((product, index) => (
+              <div key={index} className="relative">
+                <div className="relative w-12 h-12 rounded-md overflow-hidden border">
+                  <ImageComponentOptimized
+                    src={product?.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                    sizes="48px"
+                  />
+                </div>
+                {index === 1 && order.products.length > 2 && (
+                  <div className="absolute -top-1 -right-1 bg-gray-800 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    +{order.products.length - 2}
+                  </div>
+                )}
+              </div>
+            ))}
+            <span className="text-sm text-muted-foreground ml-2">
+              {order.products.length} item
+              {order.products.length !== 1 ? "s" : ""}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "orderValue",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Order Value
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <div className="font-medium">${order.orderValue.toFixed(2)}</div>
+        );
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const order = row.original;
+        return <OrderStatusBadge status={order.status} />;
+      },
+    },
+    {
+      accessorKey: "date",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <div className="text-muted-foreground">
+            {new Date(order.date).toLocaleDateString()}
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(order.id)}
+              >
+                Copy order ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Eye className="mr-2 h-4 w-4" />
+                View order details
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Mail className="mr-2 h-4 w-4" />
+                Contact customer
+              </DropdownMenuItem>
+              <DropdownMenuItem>Download invoice</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => handleDeleteOrder(order.id)}
+                className="text-red-600"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete order
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
 
-  const handleBulkDelete = () => {
-    if (selectedOrders.length > 0) {
-      setOrderToDelete(selectedOrders.join(", ")); // Show selected order IDs
-    }
-  };
-
-  const isAllSelected =
-    sortedOrders.length > 0 && selectedOrders.length === sortedOrders.length;
+  // Bulk actions function for DataTable
+  const bulkActions = (selectedRows: typeof ordersData, table: any) => (
+    <OrdersBulkActions
+      selectedOrders={selectedRows.map((order) => order.id)}
+      totalOrders={sortedOrders.length}
+      onSelectAll={(checked) => table.toggleAllPageRowsSelected(checked)}
+      onBulkDelete={handleBulkDelete}
+      onBulkExport={handleExportOrders}
+    />
+  );
 
   // Calculate summary stats and create metrics
   const totalOrders = orders.length;
@@ -181,25 +368,6 @@ export default function OrdersPage() {
       {/* Order Metrics using SectionCards */}
       <SectionCards metrics={orderMetrics} />
 
-      {/* Filters and Search */}
-      <OrdersFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-        sortBy={sortBy}
-        onSortByChange={setSortBy}
-      />
-
-      {/* Bulk Actions */}
-      <OrdersBulkActions
-        selectedOrders={selectedOrders}
-        totalOrders={sortedOrders.length}
-        onSelectAll={handleSelectAll}
-        onBulkDelete={handleBulkDelete}
-        onBulkExport={handleExportOrders}
-      />
-
       {/* Orders Table */}
       <div className="bg-card rounded-lg border">
         <div className="p-6">
@@ -209,134 +377,13 @@ export default function OrdersPage() {
             </h3>
           </div>
 
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">
-                    <Checkbox
-                      checked={isAllSelected}
-                      onCheckedChange={handleSelectAll}
-                      aria-label="Select all orders"
-                    />
-                  </TableHead>
-                  <TableHead>Order ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Products</TableHead>
-                  <TableHead>Order Value</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedOrders.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedOrders.includes(order.id)}
-                        onCheckedChange={(checked) =>
-                          handleSelectOrder(order.id, checked as boolean)
-                        }
-                        aria-label={`Select order ${order.id}`}
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      <Link
-                        href={`/apps/ecommerce/orders/${order.id}`}
-                        className="text-primary hover:underline"
-                      >
-                        {order.id}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage
-                            src={`/avatars/${order.customer
-                              .toLowerCase()
-                              .replace(" ", "-")}.jpg`}
-                          />
-                          <AvatarFallback>
-                            {order.customer
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium">{order.customer}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {order.products.slice(0, 2).map((product, index) => (
-                          <div key={index} className="relative">
-                            <div className="relative w-12 h-12 rounded-md overflow-hidden border">
-                              <ImageComponentOptimized
-                                src={product?.image}
-                                alt={product.name}
-                                fill
-                                className="object-cover"
-                                sizes="48px"
-                              />
-                            </div>
-
-                            {index === 1 && order.products.length > 2 && (
-                              <div className="absolute -top-1 -right-1 bg-gray-800 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                                +{order.products.length - 2}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                        <span className="text-sm text-muted-foreground ml-2">
-                          {order.products.length} item
-                          {order.products.length !== 1 ? "s" : ""}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      ${order.orderValue.toFixed(2)}
-                    </TableCell>
-                    <TableCell>
-                      <OrderStatusBadge status={order.status} />
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {new Date(order.date).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          shallow={true}
-                          href="/apps/ecommerce/orders/[id]"
-                          as={`/apps/ecommerce/orders/${order?.id}`}
-                          passHref
-                          style={{ textDecoration: "none" }}
-                          className="cursor-pointer"
-                        >
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </Link>
-
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteOrder(order.id)}
-                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <DataTable
+            columns={columns}
+            data={sortedOrders}
+            searchKey="customer"
+            searchPlaceholder="Search orders..."
+            bulkActions={bulkActions}
+          />
 
           {sortedOrders.length === 0 && (
             <div className="text-center py-12">
