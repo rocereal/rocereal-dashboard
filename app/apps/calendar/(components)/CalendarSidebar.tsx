@@ -15,6 +15,19 @@ interface CalendarSidebarProps {
   formatMonthYear: (date: Date) => string;
 }
 
+/**
+ * Calendar Sidebar Component
+ * Renders the sidebar section of the calendar with a mini calendar widget and calendar management options
+ * Includes a compact calendar for date selection, month navigation controls, and a list of user calendars with visibility toggles
+ * Provides quick access to date selection and calendar filtering functionality
+ * @param currentDate - The current date being displayed in the main calendar
+ * @param selectedDate - The currently selected date in the sidebar calendar
+ * @param onDateSelect - Callback function when a date is selected in the mini calendar
+ * @param onMonthChange - Callback function when the month changes in the mini calendar
+ * @param onNavigateMonth - Callback function to navigate months in the sidebar
+ * @param formatMonthYear - Function to format the date as month and year string
+ * @returns The JSX element representing the calendar sidebar
+ */
 export function CalendarSidebar({
   currentDate,
   selectedDate,

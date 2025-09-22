@@ -12,6 +12,18 @@ interface CalendarHeaderProps {
   formatMonthYear: (date: Date) => string;
 }
 
+/**
+ * Calendar Header Component
+ * Renders the header section of the calendar with navigation controls and action buttons
+ * Includes previous/next month buttons, today button, month/year display, search input, and create event button
+ * Provides responsive layout that adapts to different screen sizes
+ * @param currentDate - The current date being displayed in the calendar
+ * @param onNavigateMonth - Callback function to navigate to previous or next month
+ * @param onGoToToday - Callback function to jump to today's date
+ * @param onCreateEvent - Callback function to open the create event form
+ * @param formatMonthYear - Function to format the date as month and year string
+ * @returns The JSX element representing the calendar header
+ */
 export function CalendarHeader({
   currentDate,
   onNavigateMonth,

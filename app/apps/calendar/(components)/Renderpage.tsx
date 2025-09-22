@@ -6,6 +6,14 @@ import { CalendarDays } from "lucide-react";
 import { useState } from "react";
 import EventsCalendar from "./Calendar";
 
+/**
+ * Render Page Component
+ * This is the main rendering component for the calendar dashboard page
+ * It combines the dashboard header with breadcrumbs and date range picker
+ * Renders the full calendar interface including header, sidebar, and event management
+ * Manages date range state for potential filtering (currently not fully implemented)
+ * @returns The JSX element representing the complete calendar dashboard page
+ */
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
 

@@ -15,6 +15,24 @@ interface CalendarGridProps {
   getMeetingIcon: (type?: string) => React.JSX.Element;
 }
 
+/**
+ * Calendar Grid Component
+ * Renders the month view grid of the calendar, displaying days of the month in a 7-column layout
+ * Shows day headers (Sun-Sat), day numbers, and events for each day
+ * Handles date selection and event selection interactions
+ * Displays up to 3 events per day with color coding and icons, with overflow indicator for more events
+ * @param monthDays - Array of Date objects representing all days to display in the grid (42 days for full month view)
+ * @param events - Array of all calendar events to potentially display
+ * @param currentDate - The current date being viewed in the calendar
+ * @param selectedDate - The currently selected date, if any
+ * @param onDateSelect - Callback function when a date is clicked
+ * @param onEventSelect - Callback function when an event is clicked
+ * @param getEventsForDate - Function to get events for a specific date
+ * @param isToday - Function to check if a date is today
+ * @param isCurrentMonth - Function to check if a date is in the current month being viewed
+ * @param getMeetingIcon - Function to get the appropriate icon for event types
+ * @returns The JSX element representing the calendar grid
+ */
 export function CalendarGrid({
   monthDays,
   onDateSelect,

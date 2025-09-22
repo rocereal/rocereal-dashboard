@@ -27,6 +27,17 @@ interface CreateEventFormProps {
   onSubmit?: (event: Partial<CalendarEvent>) => void;
 }
 
+/**
+ * Create Event Form Component
+ * Renders a slide-out form sheet for creating new calendar events
+ * Includes comprehensive form fields for event details including title, description, date/time, location, attendees, type, priority, and color
+ * Manages form state internally and provides validation for required fields
+ * Submits event data to parent component and resets form upon successful creation
+ * @param open - Boolean indicating whether the form sheet is open
+ * @param onOpenChange - Callback function to control the sheet's open/close state
+ * @param onSubmit - Optional callback function called when the form is submitted with the new event data
+ * @returns The JSX element representing the create event form sheet
+ */
 export function CreateEventForm({
   open,
   onOpenChange,
@@ -46,6 +57,13 @@ export function CreateEventForm({
     color: "#3b82f6",
   });
 
+  /**
+   * Handle Input Change
+   * Updates the form data state when any input field value changes
+   * Dynamically updates the specified field with the new value
+   * @param field - The name of the form field to update
+   * @param value - The new value for the field
+   */
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -53,6 +71,13 @@ export function CreateEventForm({
     }));
   };
 
+  /**
+   * Handle Submit
+   * Processes the form submission, validates required fields, and creates a new event
+   * Combines date and time fields into Date objects, parses attendees, and calls the onSubmit callback
+   * Resets the form and closes the sheet after successful submission
+   * Performs basic validation on the event title
+   */
   const handleSubmit = () => {
     if (!formData.title.trim()) {
       return; // Basic validation
@@ -107,6 +132,12 @@ export function CreateEventForm({
     onOpenChange(false);
   };
 
+  /**
+   * Handle Cancel
+   * Cancels the form submission and closes the sheet without creating an event
+   * Resets all form fields to their initial empty/default state
+   * Called when the user clicks the Cancel button
+   */
   const handleCancel = () => {
     // Reset form
     setFormData({

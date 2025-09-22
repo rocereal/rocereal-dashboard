@@ -15,6 +15,25 @@ interface SectionCardsProps {
   className?: string;
 }
 
+/**
+ * Section Cards Component
+ * Renders a responsive grid of metric cards displaying key performance indicators
+ * Each card shows a title, value, icon, and change indicator with appropriate styling
+ * Supports positive/negative change types with color-coded badges and trend icons
+ * Dynamically maps icon names to Lucide React components for visual representation
+ * @param metrics - Optional array of metric data objects to display in the cards
+ * @param className - Optional CSS class name for additional styling of the grid container
+ * @returns The JSX element representing the grid of metric cards
+ */
+
+/**
+ * Get Icon Component
+ * Maps icon name strings to their corresponding Lucide React icon components
+ * Provides a centralized way to handle icon selection for metric cards
+ * Falls back to DollarSign icon if the requested icon is not found
+ * @param iconName - The string name of the icon to retrieve
+ * @returns The corresponding Lucide React icon component
+ */
 const getIconComponent = (iconName?: string) => {
   switch (iconName) {
     case "DollarSign":

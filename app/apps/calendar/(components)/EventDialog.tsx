@@ -17,6 +17,17 @@ interface EventDialogProps {
   onClose: () => void;
 }
 
+/**
+ * Event Dialog Component
+ * Renders a modal dialog displaying detailed information about a selected calendar event
+ * Shows event title, description, date/time, location, attendees, type, and priority
+ * Provides a clean, organized view of all event details with appropriate icons and formatting
+ * Closes when the user clicks outside or uses the close button
+ * @param isOpen - Boolean indicating whether the dialog is open
+ * @param event - The calendar event object to display, or null if no event is selected
+ * @param onClose - Callback function to close the dialog
+ * @returns The JSX element representing the event details dialog
+ */
 export function EventDialog({ isOpen, event, onClose }: EventDialogProps) {
   if (!event) return null;
 
