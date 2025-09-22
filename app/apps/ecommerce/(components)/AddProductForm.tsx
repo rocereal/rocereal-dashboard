@@ -7,17 +7,18 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Save, X } from "lucide-react";
 import { useState } from "react";
 import {
-  BasicInfoForm,
-  DescriptionForm,
+  FormSection,
+  basicInfoFields,
+  descriptionFields,
+  pricingFields,
+  costTaxFields,
+  stockManagementFields,
+  seoFields,
   ImageUpload,
   ImagePreview,
-  PricingForm,
-  CostTaxForm,
   PricingPreview,
-  StockManagement,
   InventorySettings,
   InventoryStatus,
-  SEOFields,
   SEOPreview,
 } from "./index";
 
@@ -218,8 +219,10 @@ function InformationTab({ productData, setProductData }: TabProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <BasicInfoForm
-          productData={{
+        <FormSection
+          title="Basic Information"
+          fields={basicInfoFields}
+          data={{
             name: productData.name,
             sku: productData.sku,
             category: productData.category,
@@ -227,9 +230,13 @@ function InformationTab({ productData, setProductData }: TabProps) {
           onChange={handleInputChange}
         />
 
-        <DescriptionForm
-          description={productData.description}
-          onChange={(value) => handleInputChange("description", value)}
+        <FormSection
+          title="Description"
+          fields={descriptionFields}
+          data={{
+            description: productData.description,
+          }}
+          onChange={handleInputChange}
         />
       </div>
     </div>
@@ -282,16 +289,20 @@ function PricingTab({ productData, setProductData }: TabProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <PricingForm
-          productData={{
+        <FormSection
+          title="Pricing Information"
+          fields={pricingFields}
+          data={{
             price: productData.price,
             comparePrice: productData.comparePrice,
           }}
           onChange={handleInputChange}
         />
 
-        <CostTaxForm
-          productData={{
+        <FormSection
+          title="Cost & Tax"
+          fields={costTaxFields}
+          data={{
             costPrice: productData.costPrice,
             taxRate: productData.taxRate,
           }}
@@ -322,8 +333,10 @@ function InventoryTab({ productData, setProductData }: TabProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <StockManagement
-          productData={{
+        <FormSection
+          title="Stock Management"
+          fields={stockManagementFields}
+          data={{
             stock: productData.stock,
             lowStockThreshold: productData.lowStockThreshold,
           }}
@@ -371,8 +384,10 @@ function SEOTab({ productData, setProductData }: TabProps) {
         </p>
       </div>
 
-      <SEOFields
-        productData={{
+      <FormSection
+        title=""
+        fields={seoFields}
+        data={{
           metaTitle: productData.metaTitle,
           metaDescription: productData.metaDescription,
           urlSlug: productData.urlSlug,

@@ -11,7 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
-import { ProductTabs } from "../(components)/ProductTabs";
+import { ProductTabs } from "../../(components)/ProductTabs";
 import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
 
@@ -70,7 +70,7 @@ export default async function ProductDetailsPage({
             { label: product.name },
           ]}
         />
-        <div className="flex items-center flex-wrap gap-3">
+        <div className="flex items-center justify-start lg:justify-end flex-wrap gap-3">
           <Button variant="outline">
             <Eye className="h-4 w-4 mr-2" />
             Preview
