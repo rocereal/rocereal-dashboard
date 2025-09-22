@@ -18,6 +18,7 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
+import Link from "next/link";
 
 interface FilesHeaderProps {
   sidebarOpen: boolean;
@@ -72,7 +73,7 @@ export default function FilesHeader({
 
   return (
     <div className="border-b px-6 py-4">
-      <div className="flex flex-col gap-4 lg:flex-row items-center justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row items-start lg:items-center justify-between">
         <div className="flex items-center gap-4 flex-1">
           {/* Mobile Menu Toggle */}
           <div className="lg:hidden">
@@ -136,7 +137,7 @@ export default function FilesHeader({
           )}
 
           {/* View Toggle */}
-          <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
+          <div className="hidden lg:flex items-center gap-1 bg-secondary rounded-lg p-1">
             <Button
               variant="ghost"
               size="sm"
@@ -162,7 +163,7 @@ export default function FilesHeader({
           </div>
 
           {/* Search */}
-          <div className="relative hidden md:block">
+          <div className="relative flex md:block">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search files..."
@@ -176,17 +177,20 @@ export default function FilesHeader({
               <FolderPlus className="h-4 w-4 mr-2" />
               New Folder
             </Button>
-            <Button onClick={handleUpload}>
-              <Upload className="h-4 w-4 mr-2" />
-              Upload
-            </Button>
+
+            <Link href="/apps/files/add-file">
+              <Button onClick={handleUpload}>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
 
       {/* Additional Info Bar */}
       <div className="flex items-center justify-between mt-4 pt-4 border-t text-sm text-gray-600 dark:text-muted-foreground">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <span>
             {currentPath === "/"
               ? "Home"
@@ -196,7 +200,7 @@ export default function FilesHeader({
           <span>24 items</span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <Button variant="ghost" size="sm" className="text-xs">
             <RefreshCw className="h-3 w-3 mr-1" />
             Refresh

@@ -18,6 +18,7 @@ import {
   permissionOptions,
   getRoleColor,
 } from "@/data/files";
+import { mockContacts } from "@/data/contacts";
 
 interface AccessSharingSectionProps {
   permissions: "private" | "shared" | "public";
@@ -91,10 +92,10 @@ export default function AccessSharingSection({
           <div className="space-y-4">
             <Label>Share with Users</Label>
             <div className="space-y-3">
-              {mockUsersForSharing.map((user) => (
+              {mockContacts.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-3 border rounded-lg"
+                  className="flex flex-wrap gap-4 items-center justify-between p-3 border rounded-lg"
                 >
                   <div className="flex items-center gap-3">
                     <Checkbox
@@ -103,7 +104,17 @@ export default function AccessSharingSection({
                       onCheckedChange={() => onUserToggle(user.id)}
                     />
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar} />
+                      <AvatarImage
+                        src={
+                          (typeof user.avatar === "string"
+                            ? user.avatar
+                            : user.avatar?.src) ||
+                          `/avatars/${user.name
+                            .toLowerCase()
+                            .replace(" ", "-")}.jpg`
+                        }
+                        alt={user.name}
+                      />
                       <AvatarFallback>
                         {user.name
                           .split(" ")
@@ -128,16 +139,10 @@ export default function AccessSharingSection({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="viewer">
-                          <Badge className={getRoleColor("viewer")}>
-                            Viewer
-                          </Badge>
+                        <SelectItem value="viewer" className="bg-secondary">
+                          Viewer
                         </SelectItem>
-                        <SelectItem value="editor">
-                          <Badge className={getRoleColor("editor")}>
-                            Editor
-                          </Badge>
-                        </SelectItem>
+                        <SelectItem value="editor">Editor</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -146,8 +151,8 @@ export default function AccessSharingSection({
             </div>
 
             {selectedUsers.length > 0 && (
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800">
+              <div className="p-3 bg-secondary border rounded-md">
+                <p className="text-sm ">
                   <Users className="h-4 w-4 inline mr-1" />
                   File will be shared with {selectedUsers.length} user
                   {selectedUsers.length > 1 ? "s" : ""}

@@ -1,3 +1,11 @@
+import eight from "@/app/assets/avatars/eight.jpg";
+import five from "@/app/assets/avatars/five.jpg";
+import four from "@/app/assets/avatars/four.jpg";
+import nine from "@/app/assets/avatars/nine.jpg";
+import one from "@/app/assets/avatars/one.jpg";
+import seven from "@/app/assets/avatars/seven.jpg";
+import six from "@/app/assets/avatars/six.jpg";
+import ten from "@/app/assets/avatars/ten.jpg";
 import BluetoothSpeaker from "@/app/assets/products/Bluetooth Speaker.png";
 import CeramicCoffeeMug from "@/app/assets/products/Ceramic Coffee Mug.png";
 import LeatherWallet from "@/app/assets/products/Leather Wallet.png";
@@ -8,16 +16,6 @@ import StainlessSteelWaterBottle from "@/app/assets/products/Stainless Steel Wat
 import WirelessBluetoothHeadphones from "@/app/assets/products/Wireless Bluetooth Headphones.png";
 import WirelessChargingPad from "@/app/assets/products/Wireless Charging Pad.png";
 import YogaMatPremium from "@/app/assets/products/Yoga Mat Premium.png";
-import one from "@/app/assets/avatars/one.jpg";
-import two from "@/app/assets/avatars/two.jpg";
-import three from "@/app/assets/avatars/three.jpg";
-import four from "@/app/assets/avatars/four.jpg";
-import five from "@/app/assets/avatars/five.jpg";
-import six from "@/app/assets/avatars/six.jpg";
-import seven from "@/app/assets/avatars/seven.jpg";
-import eight from "@/app/assets/avatars/eight.jpg";
-import nine from "@/app/assets/avatars/nine.jpg";
-import ten from "@/app/assets/avatars/ten.jpg";
 
 import {
   DollarSign,

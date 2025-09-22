@@ -7,9 +7,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Logo } from "./Logo";
-import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import React from "react";
 
 export function LogoTop() {
   const { toggleSidebar } = useSidebar();
@@ -20,6 +18,7 @@ export function LogoTop() {
         <SidebarMenuButton
           size="lg"
           className="group data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          onClick={toggleSidebar}
         >
           <Logo className="size-12" />
 
@@ -32,16 +31,9 @@ export function LogoTop() {
             </span>
           </div>
 
-          {/* Sidebar Trigger */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleSidebar}
-            className="h-8 w-8 flex lg:hidden"
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Toggle sidebar</span>
-          </Button>
+          {/* Sidebar Trigger Icon */}
+          <X className="h-4 w-4 flex lg:hidden ml-auto" />
+          <span className="sr-only">Toggle sidebar</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

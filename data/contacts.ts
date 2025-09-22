@@ -7,6 +7,7 @@ import { StaticImageData } from "next/image";
 export interface Contact {
   id: string;
   name: string;
+  email?: string;
   avatar?: string | StaticImageData;
   lastMessage: string;
   timestamp: string;
@@ -24,6 +25,7 @@ export const mockContacts: Contact[] = [
     timestamp: "2024-01-15T10:30:00Z",
     unreadCount: 2,
     isOnline: true,
+    email: "bob@johnson.com",
   },
   {
     id: "2",
@@ -33,6 +35,7 @@ export const mockContacts: Contact[] = [
     timestamp: "2024-01-15T09:15:00Z",
     unreadCount: 0,
     isOnline: true,
+    email: "bob@smith.com",
   },
   {
     id: "3",
@@ -41,6 +44,7 @@ export const mockContacts: Contact[] = [
     lastMessage: "See you tomorrow!",
     timestamp: "2024-01-14T16:45:00Z",
     unreadCount: 1,
+    email: "carol@davis.com",
     isOnline: false,
   },
   {
@@ -51,5 +55,6 @@ export const mockContacts: Contact[] = [
     timestamp: "2024-01-14T14:20:00Z",
     unreadCount: 0,
     isOnline: true,
+    email: "shania@wilson.com",
   },
 ];

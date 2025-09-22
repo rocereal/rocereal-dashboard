@@ -82,15 +82,15 @@ export default async function FileDetailsPage({
       />
 
       {/* File Header */}
-      <div className="bg-white border rounded-lg p-6">
+      <div className="bg-card border rounded-lg p-6">
         <div className="flex flex-col lg:flex-row gap-6 items-start justify-between">
-          <div className="flex items-start gap-4">
-            <FileText className={cn("h-16 w-16", file.color)} />
+          <div className="flex flex-wrap items-start gap-4">
+            <FileText className={cn("size-6 lg:size-12", file.color)} />
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex flex-wrap items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold">{file.name}</h1>
                 {file.starred && (
-                  <Star className="h-6 w-6 text-yellow-500 fill-current" />
+                  <Star className="size-6 text-yellow-500 fill-current" />
                 )}
               </div>
               {file.description && (
@@ -98,7 +98,7 @@ export default async function FileDetailsPage({
                   {file.description}
                 </p>
               )}
-              <div className="flex items-center gap-6 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500 dark:text-muted-background dark:text-muted-background">
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4" />
                   <span>{file.fileType}</span>
@@ -120,10 +120,7 @@ export default async function FileDetailsPage({
               <Eye className="h-4 w-4 mr-2" />
               Preview
             </Button>
-            <Button variant="outline">
-              <Download className="h-4 w-4 mr-2" />
-              Download
-            </Button>
+
             <Button variant="outline">
               <Share className="h-4 w-4 mr-2" />
               Share
@@ -131,13 +128,6 @@ export default async function FileDetailsPage({
             <Button variant="outline">
               <Edit className="h-4 w-4 mr-2" />
               Edit
-            </Button>
-            <Button
-              variant="outline"
-              className="text-red-600 hover:text-red-700"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
             </Button>
           </div>
         </div>

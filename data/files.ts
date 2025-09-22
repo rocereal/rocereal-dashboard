@@ -1,4 +1,10 @@
-import { type LucideIcon, FileText, Lock, Users, Shield } from "lucide-react";
+import one from "@/app/assets/avatars/one.jpg";
+import two from "@/app/assets/avatars/two.jpg";
+import three from "@/app/assets/avatars/three.jpg";
+import four from "@/app/assets/avatars/four.jpg";
+import five from "@/app/assets/avatars/five.jpg";
+import eight from "@/app/assets/avatars/eight.jpg";
+import { StaticImageData } from "next/image";
 
 export interface FileDetails {
   id: string;
@@ -11,7 +17,7 @@ export interface FileDetails {
   owner: {
     name: string;
     email: string;
-    avatar: string;
+    avatar?: string | StaticImageData;
   };
   permissions: "private" | "shared" | "public";
   starred: boolean;
@@ -27,7 +33,7 @@ export interface VersionHistory {
   modifiedBy: {
     name: string;
     email: string;
-    avatar: string;
+    avatar?: string | StaticImageData;
   };
   modifiedDate: string;
   size: string;
@@ -39,7 +45,7 @@ export interface AccessEntry {
   user: {
     name: string;
     email: string;
-    avatar: string;
+    avatar?: string | StaticImageData;
   };
   role: "owner" | "editor" | "viewer";
   grantedDate: string;
@@ -59,7 +65,7 @@ export const mockFilesData: FileDetails[] = [
     owner: {
       name: "Sarah Johnson",
       email: "sarah.johnson@company.com",
-      avatar: "/avatars/sarah.jpg",
+      avatar: two,
     },
     permissions: "private",
     starred: false,
@@ -80,7 +86,7 @@ export const mockFilesData: FileDetails[] = [
     owner: {
       name: "Mike Chen",
       email: "mike.chen@company.com",
-      avatar: "/avatars/mike.jpg",
+      avatar: one,
     },
     permissions: "shared",
     starred: true,
@@ -101,7 +107,7 @@ export const mockFilesData: FileDetails[] = [
     owner: {
       name: "Emma Wilson",
       email: "emma.wilson@company.com",
-      avatar: "/avatars/emma.jpg",
+      avatar: three,
     },
     permissions: "shared",
     starred: false,
@@ -122,7 +128,7 @@ export const mockFilesData: FileDetails[] = [
     owner: {
       name: "John Doe",
       email: "john.doe@company.com",
-      avatar: "/avatars/john.jpg",
+      avatar: four,
     },
     permissions: "shared",
     starred: true,
@@ -143,7 +149,7 @@ export const mockFilesData: FileDetails[] = [
     owner: {
       name: "David Brown",
       email: "david.brown@company.com",
-      avatar: "/avatars/david.jpg",
+      avatar: five,
     },
     permissions: "public",
     starred: false,
@@ -164,7 +170,7 @@ export const mockVersionHistory: VersionHistory[] = [
     modifiedBy: {
       name: "John Doe",
       email: "john.doe@company.com",
-      avatar: "/avatars/john.jpg",
+      avatar: one,
     },
     modifiedDate: "2024-01-15T14:20:00Z",
     size: "2.4 MB",
@@ -176,7 +182,7 @@ export const mockVersionHistory: VersionHistory[] = [
     modifiedBy: {
       name: "Jane Smith",
       email: "jane.smith@company.com",
-      avatar: "/avatars/jane.jpg",
+      avatar: two,
     },
     modifiedDate: "2024-01-14T11:45:00Z",
     size: "2.2 MB",
@@ -188,7 +194,7 @@ export const mockVersionHistory: VersionHistory[] = [
     modifiedBy: {
       name: "John Doe",
       email: "john.doe@company.com",
-      avatar: "/avatars/john.jpg",
+      avatar: five,
     },
     modifiedDate: "2024-01-12T16:30:00Z",
     size: "1.8 MB",
@@ -202,7 +208,7 @@ export const mockAccessList: AccessEntry[] = [
     user: {
       name: "John Doe",
       email: "john.doe@company.com",
-      avatar: "/avatars/john.jpg",
+      avatar: two,
     },
     role: "owner",
     grantedDate: "2024-01-10T09:30:00Z",
@@ -213,7 +219,7 @@ export const mockAccessList: AccessEntry[] = [
     user: {
       name: "Jane Smith",
       email: "jane.smith@company.com",
-      avatar: "/avatars/jane.jpg",
+      avatar: eight,
     },
     role: "editor",
     grantedDate: "2024-01-11T10:15:00Z",
@@ -224,7 +230,7 @@ export const mockAccessList: AccessEntry[] = [
     user: {
       name: "Bob Johnson",
       email: "bob.johnson@company.com",
-      avatar: "/avatars/bob.jpg",
+      avatar: two,
     },
     role: "viewer",
     grantedDate: "2024-01-12T13:20:00Z",

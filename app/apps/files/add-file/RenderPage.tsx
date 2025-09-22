@@ -86,7 +86,7 @@ export default function AddFileRenderPage() {
         {/* Header */}
         <div className="border-b px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4">
               <Link href="/apps/files">
                 <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
@@ -104,8 +104,8 @@ export default function AddFileRenderPage() {
         </div>
 
         {/* Form Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="max-w-4xl mx-auto p-6">
+        <div className="flex-1 ">
+          <div className=" mx-auto p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* File Upload Section */}
               <FileUploadSection
@@ -135,7 +135,7 @@ export default function AddFileRenderPage() {
               />
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-6">
+              <div className="flex flex-wrap items-center justify-between pt-6">
                 <Link href="/apps/files">
                   <Button type="button" variant="outline">
                     <ArrowLeft className="h-4 w-4 mr-2" />

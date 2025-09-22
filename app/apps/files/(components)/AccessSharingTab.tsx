@@ -4,16 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Settings, Users } from "lucide-react";
+import { DataTable } from "@/components/ui/data-table";
 import { AccessEntry, getRoleColor } from "@/data/files";
+import { ColumnDef } from "@tanstack/react-table";
+import { Settings, Users } from "lucide-react";
 
 interface AccessSharingTabProps {
   accessList: AccessEntry[];
@@ -24,6 +18,76 @@ export default function AccessSharingTab({
   accessList,
   formatDateShort,
 }: AccessSharingTabProps) {
+  const columns: ColumnDef<AccessEntry>[] = [
+    {
+      accessorKey: "user",
+      header: "User",
+      cell: ({ row }) => {
+        const user = row.getValue("user") as AccessEntry["user"];
+        return (
+          <div className="flex items-center gap-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={
+                  (typeof user.avatar === "string"
+                    ? user.avatar
+                    : user.avatar?.src) ||
+                  `/avatars/${user.name.toLowerCase().replace(" ", "-")}.jpg`
+                }
+                alt={user.name}
+              />
+              <AvatarFallback>
+                {user.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-sm font-medium">{user.name}</p>
+              <p className="text-xs text-muted-foreground">{user.email}</p>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "role",
+      header: "Role",
+      cell: ({ row }) => {
+        const role = row.getValue("role") as string;
+        return (
+          <Badge className={`text-xs ${getRoleColor(role)}`}>{role}</Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "grantedDate",
+      header: "Granted",
+      cell: ({ row }) => {
+        const dateString = row.getValue("grantedDate") as string;
+        return <div className="text-sm">{formatDateShort(dateString)}</div>;
+      },
+    },
+    {
+      accessorKey: "lastAccess",
+      header: "Last Access",
+      cell: ({ row }) => {
+        const dateString = row.getValue("lastAccess") as string;
+        return <div className="text-sm">{formatDateShort(dateString)}</div>;
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <Button variant="ghost" size="sm">
+          <Settings className="h-4 w-4" />
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -33,58 +97,7 @@ export default function AccessSharingTab({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Granted</TableHead>
-              <TableHead>Last Access</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {accessList.map((access) => (
-              <TableRow key={access.id}>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={access.user.avatar} />
-                      <AvatarFallback>
-                        {access.user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">{access.user.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {access.user.email}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge className={`text-xs ${getRoleColor(access.role)}`}>
-                    {access.role}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-sm">
-                  {formatDateShort(access.grantedDate)}
-                </TableCell>
-                <TableCell className="text-sm">
-                  {formatDateShort(access.lastAccess)}
-                </TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <DataTable columns={columns} data={accessList} />
 
         <div className="mt-6 pt-6 border-t">
           <Button>

@@ -3,7 +3,17 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { createSortableColumn, DataTable } from "@/components/ui/data-table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { ColumnDef } from "@tanstack/react-table";
 import {
   Archive,
   Download,
@@ -200,180 +210,287 @@ export default function FilesContent({
     );
   };
 
-  // Grid View
-  if (viewMode === "grid") {
-    return (
-      <div className="flex-1 p-6">
-        {/* Selection Controls */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Checkbox
-              checked={selectedFiles.length === files.length}
-              onCheckedChange={handleSelectAll}
-            />
-            <span className="text-sm text-gray-600">
-              {selectedFiles.length > 0
-                ? `${selectedFiles.length} of ${files.length} selected`
-                : `${files.length} items`}
-            </span>
-          </div>
-        </div>
-
-        {/* Grid Layout */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {files.map((file) => (
+  const columns: ColumnDef<FileItem>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => {
+        const file = row.original;
+        return (
+          <div className="flex items-center gap-3">
+            <file.icon className={cn("h-5 w-5 flex-shrink-0", file.color)} />
             <div
-              key={file.id}
-              className={cn(
-                "group relative bg-secondary border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer",
-                selectedFiles.includes(file.id) &&
-                  "ring-2 ring-primary bg-primary/5"
-              )}
+              className="cursor-pointer hover:text-primary font-medium truncate"
               onClick={() => handleFileClick(file)}
             >
-              {/* Selection Checkbox */}
-              <div className="absolute top-2 left-2">
-                <Checkbox
-                  checked={selectedFiles.includes(file.id)}
-                  onCheckedChange={(checked) =>
-                    handleFileSelect(file.id, checked as boolean)
-                  }
-                  onClick={(e) => e.stopPropagation()}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                />
-              </div>
-
-              {/* File Icon */}
-              <div className="flex justify-center mb-3">
-                <file.icon className={cn("h-12 w-12 ", file.color)} />
-              </div>
-
-              {/* File Name */}
-              <div className="text-center">
-                <h3 className="text-sm font-medium text-gray-900  dark:text-muted-foreground truncate mb-1">
-                  {file.name}
-                </h3>
-
-                {/* File Details */}
-                <div className="text-xs text-gray-500 space-y-1">
-                  {file.type === "file" && file.size && <div>{file.size}</div>}
-                  <div>{formatDate(file.modifiedDate)}</div>
-                  {file.fileType && (
-                    <div>{getFileTypeBadge(file.fileType)}</div>
-                  )}
-                </div>
-              </div>
-
-              {/* Actions Menu */}
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </div>
+              {file.name}
             </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // List View
-  return (
-    <div className="flex-1">
-      {/* List Header */}
-      <div className="border-b  px-6 py-3">
-        <div className="flex items-center gap-4">
-          <Checkbox
-            checked={selectedFiles.length === files.length}
-            onCheckedChange={handleSelectAll}
-          />
-          <div className="grid grid-cols-12 gap-4 flex-1 text-sm font-medium text-gray-700  dark:text-muted-foreground">
-            <div className="col-span-6">Name</div>
-            <div className="col-span-2">Type</div>
-            <div className="col-span-2">Size</div>
-            <div className="col-span-2">Modified</div>
-          </div>
-        </div>
-      </div>
-
-      {/* List Items */}
-      <div className="divide-y">
-        {files.map((file) => (
-          <div
-            key={file.id}
-            className={cn(
-              "hover:bg-secondary transition-colors",
-              selectedFiles.includes(file.id) && "bg-primary/5"
+            {file.starred && (
+              <Star className="h-4 w-4 text-yellow-500 fill-current flex-shrink-0" />
             )}
-          >
-            <div className="px-6 py-4">
-              <div className="flex items-center gap-4">
-                <Checkbox
-                  checked={selectedFiles.includes(file.id)}
-                  onCheckedChange={(checked) =>
-                    handleFileSelect(file.id, checked as boolean)
-                  }
-                />
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "type",
+      header: "Type",
+      cell: ({ row }) => {
+        const file = row.original;
+        return file.type === "folder" ? (
+          <Badge variant="outline" className="text-xs">
+            Folder
+          </Badge>
+        ) : (
+          getFileTypeBadge(file.fileType)
+        );
+      },
+    },
+    createSortableColumn("size", "Size"),
+    {
+      accessorKey: "modifiedDate",
+      header: "Modified",
+      cell: ({ row }) => {
+        const dateString = row.getValue("modifiedDate") as string;
+        return (
+          <div className="text-sm text-muted-foreground">
+            {formatDate(dateString)}
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const file = row.original;
 
-                <div className="grid grid-cols-12 gap-4 flex-1 items-center">
-                  {/* Name */}
-                  <div className="col-span-6 flex items-center gap-3">
-                    <file.icon
-                      className={cn("h-5 w-5 flex-shrink-0", file.color)}
-                    />
-                    <div
-                      className="cursor-pointer hover:text-primary font-medium truncate"
-                      onClick={() => handleFileClick(file)}
-                    >
-                      {file.name}
-                    </div>
-                    {file.starred && (
-                      <Star className="h-4 w-4 text-yellow-500 fill-current flex-shrink-0" />
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleFileClick(file)}>
+                <Eye className="mr-2 h-4 w-4" />
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Share className="mr-2 h-4 w-4" />
+                Share
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-600">
+                <Archive className="mr-2 h-4 w-4" />
+                Move to Archive
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
+  // Force grid view on mobile/tablet, allow list view only on desktop
+  const effectiveViewMode = viewMode === "list" ? "list" : "grid";
+
+  // Always show grid view on screens smaller than lg (desktop)
+  return (
+    <>
+      {/* Mobile/Tablet: Always Grid View */}
+      <div className="lg:hidden">
+        <div className="flex-1 p-6">
+          {/* Selection Controls */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <Checkbox
+                checked={selectedFiles.length === files.length}
+                onCheckedChange={handleSelectAll}
+              />
+              <span className="text-sm text-gray-600">
+                {selectedFiles.length > 0
+                  ? `${selectedFiles.length} of ${files.length} selected`
+                  : `${files.length} items`}
+              </span>
+            </div>
+          </div>
+
+          {/* Grid Layout */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {files.map((file) => (
+              <div
+                key={file.id}
+                className={cn(
+                  "group relative bg-secondary border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer",
+                  selectedFiles.includes(file.id) &&
+                    "ring-2 ring-primary bg-primary/5"
+                )}
+                onClick={() => handleFileClick(file)}
+              >
+                {/* Selection Checkbox */}
+                <div className="absolute top-2 left-2">
+                  <Checkbox
+                    checked={selectedFiles.includes(file.id)}
+                    onCheckedChange={(checked) =>
+                      handleFileSelect(file.id, checked as boolean)
+                    }
+                    onClick={(e) => e.stopPropagation()}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  />
+                </div>
+
+                {/* File Icon */}
+                <div className="flex justify-center mb-3">
+                  <file.icon className={cn("h-12 w-12 ", file.color)} />
+                </div>
+
+                {/* File Name */}
+                <div className="text-center">
+                  <h3 className="text-sm font-medium text-gray-900  dark:text-muted-foreground truncate mb-1">
+                    {file.name}
+                  </h3>
+
+                  {/* File Details */}
+                  <div className="text-xs text-gray-500 space-y-1">
+                    {file.type === "file" && file.size && (
+                      <div>{file.size}</div>
                     )}
-                  </div>
-
-                  {/* Type */}
-                  <div className="col-span-2">
-                    {file.type === "folder" ? (
-                      <Badge variant="outline" className="text-xs">
-                        Folder
-                      </Badge>
-                    ) : (
-                      getFileTypeBadge(file.fileType)
+                    <div>{formatDate(file.modifiedDate)}</div>
+                    {file.fileType && (
+                      <div>{getFileTypeBadge(file.fileType)}</div>
                     )}
-                  </div>
-
-                  {/* Size */}
-                  <div className="col-span-2 text-sm text-gray-600">
-                    {file.size || "--"}
-                  </div>
-
-                  {/* Modified Date */}
-                  <div className="col-span-2 text-sm text-gray-600">
-                    {formatDate(file.modifiedDate)}
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Download className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Share className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
+                {/* Actions Menu */}
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop: Grid or List View */}
+      <div className="hidden lg:block">
+        {effectiveViewMode === "grid" ? (
+          <div className="flex-1 p-6">
+            {/* Selection Controls */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <Checkbox
+                  checked={selectedFiles.length === files.length}
+                  onCheckedChange={handleSelectAll}
+                />
+                <span className="text-sm text-gray-600">
+                  {selectedFiles.length > 0
+                    ? `${selectedFiles.length} of ${files.length} selected`
+                    : `${files.length} items`}
+                </span>
+              </div>
+            </div>
+
+            {/* Grid Layout */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {files.map((file) => (
+                <div
+                  key={file.id}
+                  className={cn(
+                    "group relative bg-secondary border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer",
+                    selectedFiles.includes(file.id) &&
+                      "ring-2 ring-primary bg-primary/5"
+                  )}
+                  onClick={() => handleFileClick(file)}
+                >
+                  {/* Selection Checkbox */}
+                  <div className="absolute top-2 left-2">
+                    <Checkbox
+                      checked={selectedFiles.includes(file.id)}
+                      onCheckedChange={(checked) =>
+                        handleFileSelect(file.id, checked as boolean)
+                      }
+                      onClick={(e) => e.stopPropagation()}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+
+                  {/* File Icon */}
+                  <div className="flex justify-center mb-3">
+                    <file.icon className={cn("h-12 w-12 ", file.color)} />
+                  </div>
+
+                  {/* File Name */}
+                  <div className="text-center">
+                    <h3 className="text-sm font-medium text-gray-900  dark:text-muted-foreground truncate mb-1">
+                      {file.name}
+                    </h3>
+
+                    {/* File Details */}
+                    <div className="text-xs text-gray-500 space-y-1">
+                      {file.type === "file" && file.size && (
+                        <div>{file.size}</div>
+                      )}
+                      <div>{formatDate(file.modifiedDate)}</div>
+                      {file.fileType && (
+                        <div>{getFileTypeBadge(file.fileType)}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions Menu */}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
+        ) : (
+          <div className="flex-1 p-6">
+            <DataTable
+              columns={columns}
+              data={files}
+              searchKey="name"
+              searchPlaceholder="Search files..."
+            />
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 }
