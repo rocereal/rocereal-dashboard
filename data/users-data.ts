@@ -471,3 +471,47 @@ export const userActions: UserAction[] = [
     requiresConfirmation: true,
   },
 ];
+
+export interface ActivityItem {
+  id: string;
+  type: "login" | "logout" | "feature_used" | "profile_updated";
+  description: string;
+  timestamp: string;
+  device?: string;
+  location?: string;
+  ipAddress?: string;
+}
+
+// Mock activity data
+export const activities: ActivityItem[] = [
+  {
+    id: "1",
+    type: "login",
+    description: "Logged in to account",
+    timestamp: "2025-01-20T14:30:00Z",
+    device: "Chrome on Windows",
+    location: "New York, US",
+    ipAddress: "192.168.1.1",
+  },
+  {
+    id: "2",
+    type: "feature_used",
+    description: "Updated profile information",
+    timestamp: "2025-01-19T10:15:00Z",
+    device: "Safari on iPhone",
+  },
+  {
+    id: "3",
+    type: "feature_used",
+    description: "Viewed dashboard analytics",
+    timestamp: "2025-01-18T16:45:00Z",
+    device: "Chrome on MacBook",
+  },
+  {
+    id: "4",
+    type: "logout",
+    description: "Logged out of account",
+    timestamp: "2025-01-17T18:30:00Z",
+    device: "Firefox on Linux",
+  },
+];

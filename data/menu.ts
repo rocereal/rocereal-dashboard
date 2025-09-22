@@ -120,8 +120,8 @@ export const menudata = {
       icon: UserPlus,
       items: [
         { title: "Users", url: "/apps/users" },
-        { title: "File Details", url: "/apps/users/1" },
-        { title: "Add File", url: "/apps/users/add-user" },
+        { title: "User Details", url: "/apps/users/user_001" },
+        { title: "Add User", url: "/apps/users/add-user" },
       ],
     },
 
