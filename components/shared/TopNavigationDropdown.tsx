@@ -25,6 +25,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 const navigationGroups = [
@@ -205,15 +206,19 @@ export function TopNavigationDropdown() {
           ))}
 
           {/* Settings - Always visible */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleNavigation("/settings")}
-            className="flex items-center gap-2 h-8 px-3 ml-auto"
+          <Link
+            href={"/apps/pages/settings"}
+            className="text-primary hover:underline font-medium"
           >
-            <Settings className="h-4 w-4" />
-            <span className="hidden sm:inline">Settings</span>
-          </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2 h-8 px-3 ml-auto"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Settings</span>
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>

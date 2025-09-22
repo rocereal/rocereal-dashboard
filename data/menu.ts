@@ -289,7 +289,7 @@ export const menudata = {
     },
     {
       title: "System Settings",
-      url: "/settings",
+      url: "/pages/settings",
       icon: Settings2,
     },
   ],
