@@ -15,7 +15,7 @@ export const metadata: Metadata = createPageMetadata({
     "user onboarding",
     "profile creation",
   ],
-  url: "/apps/users/add",
+  url: "/apps/users/add-user",
 });
 
 export default function Page() {

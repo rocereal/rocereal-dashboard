@@ -7,6 +7,7 @@ import { User as UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { UserFilters, UserMetricsComponent, UsersTable } from "./(components)";
+import Link from "next/link";
 
 export default function UsersPage() {
   const router = useRouter();
@@ -120,10 +121,12 @@ export default function UsersPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Users ({filteredUsers.length})</h2>
-          <Button onClick={() => router.push("/apps/users/add")}>
-            <UserIcon className="w-4 h-4 mr-2" />
-            Add User
-          </Button>
+          <Link href="/apps/users/add-user">
+            <Button>
+              <UserIcon className="w-4 h-4 mr-2" />
+              Add User
+            </Button>
+          </Link>
         </div>
 
         {filteredUsers.length === 0 ? (
