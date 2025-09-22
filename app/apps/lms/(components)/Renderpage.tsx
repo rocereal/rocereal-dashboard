@@ -7,6 +7,13 @@ import { RecommendedCourses } from "./RecommendedCourses";
 import { EnrolledCourses } from "./EnrolledCourses";
 
 export default function RenderPage() {
+  // Mock user progress data - in a real app, this would come from user authentication/session
+  const mockUserProgress: { [courseId: string]: number } = {
+    "intro-data-science": 60,
+    "web-development-basics": 30,
+    "business-analytics": 80,
+  };
+
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
@@ -26,7 +33,10 @@ export default function RenderPage() {
         }}
       />
 
-      <EnrolledCourses courses={coursesData.slice(0, 3)} />
+      <EnrolledCourses
+        courses={coursesData.slice(0, 3)}
+        userProgress={mockUserProgress}
+      />
 
       <RecommendedCourses courses={recommendedCourses} />
     </div>
