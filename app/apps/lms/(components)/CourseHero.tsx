@@ -40,7 +40,7 @@ export function CourseHero({
 
           <div className="space-y-4">
             <h1 className="text-3xl font-bold">{course.title}</h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-base lg:text-lg text-muted-foreground">
               {course.description}
             </p>
           </div>
@@ -60,7 +60,7 @@ export function CourseHero({
             </div>
           )}
 
-          <div className="flex items-center gap-6 text-sm">
+          <div className="flex flex-wrap items-center gap-6 text-sm">
             <div className="flex items-center gap-2">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span className="font-medium">{course.avgRating}</span>
@@ -78,15 +78,22 @@ export function CourseHero({
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col lg:flex-row items-center gap-4">
             {isEnrolled ? (
               <>
-                <Button size="lg" className="px-8">
+                <Button size="lg" className="px-8 w-full lg:w-fit">
                   <Play className="h-4 w-4 mr-2" />
                   Continue Learning
                 </Button>
-                <Link href={`/apps/lms/${course.courseId}/curriculum`}>
-                  <Button variant="outline" size="lg">
+                <Link
+                  href={`/apps/lms/${course.courseId}/curriculum`}
+                  className=" w-full lg:w-fit"
+                >
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className=" w-full lg:w-fit"
+                  >
                     <BookOpen className="h-4 w-4 mr-2" />
                     View Curriculum
                   </Button>

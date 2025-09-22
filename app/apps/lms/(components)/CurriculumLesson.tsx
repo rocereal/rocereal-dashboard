@@ -70,7 +70,7 @@ export function CurriculumLesson({
 
   return (
     <div
-      className={`group flex items-center justify-between p-4 rounded-lg border transition-all duration-200 ${
+      className={`group flex flex-col lg:flex-row gap-4 lg:gap-0 items-start lg:items-center justify-between p-4 rounded-lg border transition-all duration-200 ${
         accessible
           ? isCompleted
             ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-secondary dark:border-secondary dark:hover:bg-secondary cursor-pointer"
@@ -81,23 +81,27 @@ export function CurriculumLesson({
       } ${className}`}
       onClick={handleClick}
     >
-      <div className="flex items-center gap-4 flex-1 min-w-0">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 flex-1 flex-wrap min-w-0">
         {/* Lesson Number/Icon */}
         <div
-          className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold flex-shrink-0 ${getStatusColor()}`}
+          className={`flex items-center justify-center w-6 h-6 lg:size-10 rounded-full text-sm font-semibold flex-shrink-0 ${getStatusColor()}`}
         >
-          {isCompleted ? <CheckCircle className="h-5 w-5" /> : index + 1}
+          {isCompleted ? (
+            <CheckCircle className="size-2 lg:size-5" />
+          ) : (
+            index + 1
+          )}
         </div>
 
         {/* Lesson Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-sm leading-tight mb-1 group-hover:text-primary transition-colors">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex flex-wrap min-w-0">
+              <h4 className="font-semibold w-full text-sm leading-tight mb-1 group-hover:text-primary transition-colors">
                 {lesson.title}
               </h4>
 
-              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   {getLessonIcon()}
                   {displayType}
@@ -139,7 +143,7 @@ export function CurriculumLesson({
       </div>
 
       {/* Action Button */}
-      <div className="flex-shrink-0 ml-4">
+      <div className="flex-shrink-0 ml-0 lg:ml-4">
         {accessible ? (
           <Button
             size="sm"

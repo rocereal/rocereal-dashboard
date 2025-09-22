@@ -38,12 +38,12 @@ export function CourseCurriculum({
   return (
     <Card>
       <CardHeader className="gap-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <BookOpen className="h-5 w-5" />
             Course Curriculum
           </CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {isEnrolled && (
               <div className="text-sm text-muted-foreground">
                 {getProgressText(progress)}

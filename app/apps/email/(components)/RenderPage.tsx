@@ -78,7 +78,7 @@ export default function RenderPage() {
   };
 
   return (
-    <div className="min-h-screen flex border-none lg:border rounded-md">
+    <div className="min-h-screen flex border rounded-md">
       <DesktopSidebar
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
