@@ -1,20 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 
-interface ProductSettingsProps {
-  settings: {
-    visibility: boolean;
-    seoOptimization: boolean;
-    inventoryTracking: boolean;
-    lowStockAlerts: boolean;
-    featuredProduct: boolean;
-    allowReviews: boolean;
-  };
-  onChange: (setting: string, value: boolean) => void;
-}
+export function ProductSettings() {
+  const [settings, setSettings] = useState({
+    visibility: true,
+    seoOptimization: false,
+    inventoryTracking: true,
+    lowStockAlerts: false,
+    featuredProduct: false,
+    allowReviews: true,
+  });
 
-export function ProductSettings({ settings, onChange }: ProductSettingsProps) {
+  const onChange = (setting: keyof typeof settings, value: boolean) => {
+    setSettings((prev) => ({
+      ...prev,
+      [setting]: value,
+    }));
+  };
+
   const settingItems = [
     {
       key: "visibility",
@@ -75,7 +80,9 @@ export function ProductSettings({ settings, onChange }: ProductSettingsProps) {
             </div>
             <Switch
               checked={settings[item.key as keyof typeof settings]}
-              onCheckedChange={(value) => onChange(item.key, value)}
+              onCheckedChange={(value) =>
+                onChange(item.key as keyof typeof settings, value)
+              }
             />
           </div>
         ))}

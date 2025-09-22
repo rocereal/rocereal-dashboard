@@ -7,20 +7,13 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Save, X } from "lucide-react";
 import { useState } from "react";
 import {
-  FormSection,
-  basicInfoFields,
-  descriptionFields,
-  pricingFields,
-  costTaxFields,
-  stockManagementFields,
-  seoFields,
-  ImageUpload,
-  ImagePreview,
-  PricingPreview,
-  InventorySettings,
-  InventoryStatus,
-  SEOPreview,
+  InformationTab,
+  ImagesTab,
+  PricingTab,
+  InventoryTab,
+  SEOTab,
 } from "./index";
+import { ProductSettings } from "./ProductSettings";
 
 interface ProductData {
   name: string;
@@ -163,7 +156,7 @@ export default function AddProductForm() {
 
       <TabsWithIcons
         tabs={tabs}
-        className="!w-full lg:!w-full border rounded-md p-8"
+        className="!w-full lg:!w-full border  bg-card rounded-md p-8"
         grid="!grid !grid-cols-5"
       >
         <TabsContent value="information" className="space-y-4 pt-4">
@@ -196,214 +189,9 @@ export default function AddProductForm() {
 
         <TabsContent value="seo" className="space-y-4 pt-4">
           <SEOTab productData={productData} setProductData={setProductData} />
+          <ProductSettings />
         </TabsContent>
       </TabsWithIcons>
-    </div>
-  );
-}
-
-// Information Tab Component
-interface TabProps {
-  productData: ProductData;
-  setProductData: React.Dispatch<React.SetStateAction<ProductData>>;
-}
-
-function InformationTab({ productData, setProductData }: TabProps) {
-  const handleInputChange = (field: string, value: string) => {
-    setProductData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormSection
-          title="Basic Information"
-          fields={basicInfoFields}
-          data={{
-            name: productData.name,
-            sku: productData.sku,
-            category: productData.category,
-          }}
-          onChange={handleInputChange}
-        />
-
-        <FormSection
-          title="Description"
-          fields={descriptionFields}
-          data={{
-            description: productData.description,
-          }}
-          onChange={handleInputChange}
-        />
-      </div>
-    </div>
-  );
-}
-
-// Images Tab Component
-function ImagesTab({ productData, setProductData }: TabProps) {
-  const handleImageUpload = (files: FileList) => {
-    const newImages = Array.from(files);
-    setProductData((prev) => ({
-      ...prev,
-      images: [...prev.images, ...newImages],
-    }));
-  };
-
-  const removeImage = (index: number) => {
-    setProductData((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }));
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h4 className="text-md font-semibold">Product Images</h4>
-        <p className="text-sm text-muted-foreground">
-          Upload high-quality images of your product. The first image will be
-          used as the main product image.
-        </p>
-
-        <ImageUpload onImageUpload={handleImageUpload} />
-
-        <ImagePreview images={productData.images} onRemoveImage={removeImage} />
-      </div>
-    </div>
-  );
-}
-
-// Pricing Tab Component
-function PricingTab({ productData, setProductData }: TabProps) {
-  const handleInputChange = (field: string, value: string) => {
-    setProductData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormSection
-          title="Pricing Information"
-          fields={pricingFields}
-          data={{
-            price: productData.price,
-            comparePrice: productData.comparePrice,
-          }}
-          onChange={handleInputChange}
-        />
-
-        <FormSection
-          title="Cost & Tax"
-          fields={costTaxFields}
-          data={{
-            costPrice: productData.costPrice,
-            taxRate: productData.taxRate,
-          }}
-          onChange={handleInputChange}
-        />
-      </div>
-
-      <PricingPreview
-        productData={{
-          price: productData.price,
-          comparePrice: productData.comparePrice,
-          costPrice: productData.costPrice,
-        }}
-      />
-    </div>
-  );
-}
-
-// Inventory Tab Component
-function InventoryTab({ productData, setProductData }: TabProps) {
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setProductData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormSection
-          title="Stock Management"
-          fields={stockManagementFields}
-          data={{
-            stock: productData.stock,
-            lowStockThreshold: productData.lowStockThreshold,
-          }}
-          onChange={handleInputChange}
-        />
-
-        <InventorySettings
-          productData={{
-            trackInventory: productData.trackInventory,
-            allowBackorders: productData.allowBackorders,
-          }}
-          onChange={handleInputChange}
-        />
-      </div>
-
-      <InventoryStatus
-        productData={{
-          stock: productData.stock,
-          lowStockThreshold: productData.lowStockThreshold,
-          trackInventory: productData.trackInventory,
-          allowBackorders: productData.allowBackorders,
-        }}
-      />
-    </div>
-  );
-}
-
-// SEO Tab Component
-function SEOTab({ productData, setProductData }: TabProps) {
-  const handleInputChange = (field: string, value: string) => {
-    setProductData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h4 className="text-md font-semibold flex items-center gap-2">
-          Search Engine Optimization
-        </h4>
-        <p className="text-sm text-muted-foreground">
-          Configure how your product appears in search engines and social media
-        </p>
-      </div>
-
-      <FormSection
-        title=""
-        fields={seoFields}
-        data={{
-          metaTitle: productData.metaTitle,
-          metaDescription: productData.metaDescription,
-          urlSlug: productData.urlSlug,
-        }}
-        onChange={handleInputChange}
-      />
-
-      <SEOPreview
-        productData={{
-          metaTitle: productData.metaTitle,
-          metaDescription: productData.metaDescription,
-          urlSlug: productData.urlSlug,
-          name: productData.name,
-          description: productData.description,
-        }}
-      />
     </div>
   );
 }
