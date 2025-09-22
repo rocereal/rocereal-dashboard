@@ -1,9 +1,20 @@
+import eight from "@/app/assets/avatars/eight.jpg";
+import five from "@/app/assets/avatars/five.jpg";
+import four from "@/app/assets/avatars/four.jpg";
+import nine from "@/app/assets/avatars/nine.jpg";
+import one from "@/app/assets/avatars/one.jpg";
+import two from "@/app/assets/avatars/two.jpg";
+import seven from "@/app/assets/avatars/seven.jpg";
+import six from "@/app/assets/avatars/six.jpg";
+import three from "@/app/assets/avatars/three.jpg";
+import { StaticImageData } from "next/image";
+
 export interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  avatar?: string;
+  avatar: string | StaticImageData;
   role: "admin" | "manager" | "user" | "viewer";
   status: "active" | "inactive" | "pending" | "suspended";
   plan: "free" | "starter" | "professional" | "enterprise";
@@ -78,7 +89,7 @@ export const users: User[] = [
     email: "john.smith@example.com",
     firstName: "John",
     lastName: "Smith",
-    avatar: "/avatars/john-smith.jpg",
+    avatar: one,
     role: "admin",
     status: "active",
     plan: "enterprise",
@@ -136,7 +147,7 @@ export const users: User[] = [
     email: "sarah.johnson@example.com",
     firstName: "Sarah",
     lastName: "Johnson",
-    avatar: "/avatars/sarah-johnson.jpg",
+    avatar: two,
     role: "manager",
     status: "active",
     plan: "professional",
@@ -191,6 +202,7 @@ export const users: User[] = [
     lastName: "Davis",
     role: "user",
     status: "inactive",
+    avatar: five,
     plan: "starter",
     lastLogin: "2024-12-15T16:45:00Z",
     createdAt: "2024-09-10T11:30:00Z",
@@ -241,7 +253,7 @@ export const users: User[] = [
     email: "emily.chen@example.com",
     firstName: "Emily",
     lastName: "Chen",
-    avatar: "/avatars/emily-chen.jpg",
+    avatar: three,
     role: "user",
     status: "pending",
     plan: "free",
@@ -288,6 +300,7 @@ export const users: User[] = [
     lastName: "Wilson",
     role: "viewer",
     status: "suspended",
+    avatar: five,
     plan: "free",
     lastLogin: "2024-11-30T12:20:00Z",
     createdAt: "2024-07-05T15:45:00Z",
@@ -334,7 +347,7 @@ export const users: User[] = [
     email: "lisa.brown@example.com",
     firstName: "Lisa",
     lastName: "Brown",
-    avatar: "/avatars/lisa-brown.jpg",
+    avatar: seven,
     role: "user",
     status: "active",
     plan: "starter",
@@ -430,18 +443,6 @@ export interface UserAction {
 }
 
 export const userActions: UserAction[] = [
-  {
-    id: "view",
-    label: "View Profile",
-    variant: "outline",
-    action: "view",
-  },
-  {
-    id: "edit",
-    label: "Edit User",
-    variant: "outline",
-    action: "edit",
-  },
   {
     id: "reset-password",
     label: "Reset Password",

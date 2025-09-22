@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserMetrics } from "@/data/users/users-data";
+import { SectionCards } from "./SectionCards";
+import { UserMetrics } from "@/data/users-data";
 import {
   Users,
   UserCheck,
@@ -16,86 +16,81 @@ interface UserMetricsProps {
 }
 
 export function UserMetricsComponent({ metrics }: UserMetricsProps) {
-  const metricCards = [
+  // Transform UserMetrics to UserMetric[] format expected by SectionCards
+  const userMetricsData = [
     {
+      id: "total-users",
       title: "Total Users",
-      value: metrics.totalUsers,
+      value: metrics.totalUsers.toString(),
       icon: Users,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100",
+      changeType: "positive" as const,
+      change: "+12%",
+      description: "Total registered users in the system",
     },
     {
+      id: "active-users",
       title: "Active Users",
-      value: metrics.activeUsers,
+      value: metrics.activeUsers.toString(),
       icon: UserCheck,
-      color: "text-green-600",
-      bgColor: "bg-green-100",
+      changeType: "positive" as const,
+      change: "+8%",
+      description: "Users active in the last 30 days",
     },
     {
+      id: "inactive-users",
       title: "Inactive Users",
-      value: metrics.inactiveUsers,
+      value: metrics.inactiveUsers.toString(),
       icon: UserX,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100",
+      changeType: "negative" as const,
+      change: "-3%",
+      description: "Users inactive for 30+ days",
     },
     {
+      id: "pending-users",
       title: "Pending Users",
-      value: metrics.pendingUsers,
+      value: metrics.pendingUsers.toString(),
       icon: Clock,
-      color: "text-yellow-600",
-      bgColor: "bg-yellow-100",
+      changeType: "neutral" as const,
+      change: "0%",
+      description: "Users awaiting activation",
     },
     {
+      id: "suspended-users",
       title: "Suspended Users",
-      value: metrics.suspendedUsers,
+      value: metrics.suspendedUsers.toString(),
       icon: AlertTriangle,
-      color: "text-red-600",
-      bgColor: "bg-red-100",
+      changeType: "negative" as const,
+      change: "+2%",
+      description: "Users currently suspended",
     },
     {
+      id: "new-users-month",
       title: "New This Month",
-      value: metrics.newUsersThisMonth,
+      value: metrics.newUsersThisMonth.toString(),
       icon: UserPlus,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100",
+      changeType: "positive" as const,
+      change: "+15%",
+      description: "New user registrations this month",
     },
     {
+      id: "avg-session",
       title: "Avg Session",
       value: `${metrics.averageSessionDuration}m`,
       icon: Activity,
-      color: "text-indigo-600",
-      bgColor: "bg-indigo-100",
+      changeType: "positive" as const,
+      change: "+5m",
+      description: "Average session duration",
     },
     {
+      id: "churn-rate",
       title: "Churn Rate",
       value: `${metrics.churnRate}%`,
       icon: TrendingUp,
-      color: "text-pink-600",
-      bgColor: "bg-pink-100",
+      changeType: "negative" as const,
+      change: "-0.5%",
+      description: "Monthly user churn rate",
     },
   ];
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      {metricCards.map((metric, index) => {
-        const IconComponent = metric.icon;
-
-        return (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {metric.title}
-              </CardTitle>
-              <div className={`p-2 rounded-lg ${metric.bgColor}`}>
-                <IconComponent className={`h-4 w-4 ${metric.color}`} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{metric.value}</div>
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
-  );
+  return <SectionCards metrics={userMetricsData} className="mb-8" />;
 }

@@ -2,22 +2,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { createSortableColumn, DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { User, UserAction } from "@/data/users/users-data";
-import { Activity, MoreHorizontal, Shield } from "lucide-react";
+import { showToast } from "@/components/ui/sonner";
+import { User, UserAction } from "@/data/users-data";
+import { ColumnDef } from "@tanstack/react-table";
+import { Activity, Eye, MoreHorizontal, Shield } from "lucide-react";
+import Link from "next/link";
 
 interface UsersTableProps {
   users: User[];
@@ -67,169 +65,200 @@ export function UsersTable({
     return "Never";
   };
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      onSelectionChange(users.map((user) => user.id));
-    } else {
-      onSelectionChange([]);
-    }
-  };
+  const columns: ColumnDef<User>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "firstName",
+      header: "User",
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <div className="flex items-center space-x-3">
+            <Avatar className="w-8 h-8">
+              <AvatarImage
+                src={
+                  (typeof user.avatar === "string"
+                    ? user.avatar
+                    : user.avatar?.src) ||
+                  `/avatars/${user.firstName
+                    .toLowerCase()
+                    .replace(" ", "-")}.jpg`
+                }
+                alt={user.firstName}
+              />
 
-  const handleSelectUser = (userId: string, checked: boolean) => {
-    if (checked) {
-      onSelectionChange([...selectedUsers, userId]);
-    } else {
-      onSelectionChange(selectedUsers.filter((id) => id !== userId));
-    }
-  };
-
-  const isAllSelected =
-    users.length > 0 && selectedUsers.length === users.length;
-  const isIndeterminate =
-    selectedUsers.length > 0 && selectedUsers.length < users.length;
+              <AvatarFallback className="text-xs">
+                {getInitials(user.firstName, user.lastName)}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="font-medium">
+                {user.firstName} {user.lastName}
+              </div>
+              <div className="text-sm text-muted-foreground">{user.email}</div>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "role",
+      header: "Role",
+      cell: ({ row }) => {
+        const role = row.getValue("role") as keyof typeof roleColors;
+        return (
+          <Badge className={roleColors[role]}>
+            {role.charAt(0).toUpperCase() + role.slice(1)}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status") as keyof typeof statusColors;
+        return (
+          <Badge className={statusColors[status]}>
+            {status.replace("_", " ").toUpperCase()}
+          </Badge>
+        );
+      },
+    },
+    createSortableColumn("plan", "Plan"),
+    {
+      accessorKey: "lastLogin",
+      header: "Last Active",
+      cell: ({ row }) => {
+        const user = row.original;
+        return <div className="text-sm">{getLastActive(user)}</div>;
+      },
+    },
+    {
+      accessorKey: "metadata.totalLogins",
+      header: "Login Count",
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <div className="flex items-center space-x-1">
+            <Activity className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm">{user.metadata.totalLogins}</span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "metadata.twoFactorEnabled",
+      header: "2FA",
+      cell: ({ row }) => {
+        const user = row.original;
+        return user.metadata.twoFactorEnabled ? (
+          <Badge variant="secondary" className="bg-green-100 text-green-800">
+            <Shield className="w-3 h-3 mr-1" />
+            Enabled
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="text-muted-foreground">
+            Disabled
+          </Badge>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(user.id);
+                  showToast({
+                    title: `Copied ${user.id}`,
+                    description: "User ID copied to clipboard",
+                    button: {
+                      label: "Close",
+                      onClick: () => console.log("Undo clicked"),
+                    },
+                  });
+                }}
+              >
+                Copy ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <Link
+                shallow={true}
+                href="/apps/users/[id]"
+                as={`/apps/users/${user?.id}`}
+                passHref
+                style={{ textDecoration: "none" }}
+                className="cursor-pointer"
+              >
+                <DropdownMenuItem>
+                  <Eye className="h-3 w-3 mr-1" />
+                  View User
+                </DropdownMenuItem>
+              </Link>
+              {actions.map((action) => (
+                <DropdownMenuItem
+                  key={action.id}
+                  onClick={() => onAction(user.id, action.action)}
+                  className={
+                    action.variant === "destructive"
+                      ? "text-red-600 focus:text-red-600"
+                      : ""
+                  }
+                >
+                  {action.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-12">
-              <Checkbox
-                checked={isAllSelected}
-                onCheckedChange={handleSelectAll}
-                aria-label="Select all users"
-                className={
-                  isIndeterminate ? "data-[state=checked]:bg-orange-500" : ""
-                }
-              />
-            </TableHead>
-            <TableHead className="w-[250px]">User</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Plan</TableHead>
-            <TableHead>Last Active</TableHead>
-            <TableHead>Login Count</TableHead>
-            <TableHead>2FA</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              {/* Checkbox */}
-              <TableCell>
-                <Checkbox
-                  checked={selectedUsers.includes(user.id)}
-                  onCheckedChange={(checked) =>
-                    handleSelectUser(user.id, !!checked)
-                  }
-                  aria-label={`Select ${user.firstName} ${user.lastName}`}
-                />
-              </TableCell>
-              {/* User Info */}
-              <TableCell className="font-medium">
-                <div className="flex items-center space-x-3">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage
-                      src={user.avatar}
-                      alt={`${user.firstName} ${user.lastName}`}
-                    />
-                    <AvatarFallback className="text-xs">
-                      {getInitials(user.firstName, user.lastName)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">
-                      {user.firstName} {user.lastName}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {user.email}
-                    </div>
-                  </div>
-                </div>
-              </TableCell>
-
-              {/* Role */}
-              <TableCell>
-                <Badge className={roleColors[user.role]}>
-                  {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                </Badge>
-              </TableCell>
-
-              {/* Status */}
-              <TableCell>
-                <Badge className={statusColors[user.status]}>
-                  {user.status.replace("_", " ").toUpperCase()}
-                </Badge>
-              </TableCell>
-
-              {/* Plan */}
-              <TableCell>
-                <Badge variant="outline">
-                  {user.plan.charAt(0).toUpperCase() + user.plan.slice(1)}
-                </Badge>
-              </TableCell>
-
-              {/* Last Active */}
-              <TableCell>
-                <div className="text-sm">{getLastActive(user)}</div>
-              </TableCell>
-
-              {/* Login Count */}
-              <TableCell>
-                <div className="flex items-center space-x-1">
-                  <Activity className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm">{user.metadata.totalLogins}</span>
-                </div>
-              </TableCell>
-
-              {/* 2FA Status */}
-              <TableCell>
-                {user.metadata.twoFactorEnabled ? (
-                  <Badge
-                    variant="secondary"
-                    className="bg-green-100 text-green-800"
-                  >
-                    <Shield className="w-3 h-3 mr-1" />
-                    Enabled
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-muted-foreground">
-                    Disabled
-                  </Badge>
-                )}
-              </TableCell>
-
-              {/* Actions */}
-              <TableCell className="text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {actions.map((action) => (
-                      <DropdownMenuItem
-                        key={action.id}
-                        onClick={() => onAction(user.id, action.action)}
-                        className={
-                          action.variant === "destructive"
-                            ? "text-red-600 focus:text-red-600"
-                            : ""
-                        }
-                      >
-                        {action.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="bg-card rounded-lg border">
+      <div className="p-6">
+        <DataTable
+          columns={columns}
+          data={users}
+          searchKey="firstName"
+          searchPlaceholder="Search users..."
+        />
+      </div>
     </div>
   );
 }

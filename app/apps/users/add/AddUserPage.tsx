@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { User } from "@/data/users/users-data";
+import { User } from "@/data/users-data";
 import {
   Bell,
   Briefcase,

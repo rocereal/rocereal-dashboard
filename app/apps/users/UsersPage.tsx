@@ -2,7 +2,7 @@
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
-import { userActions, userMetrics, users } from "@/data/users/users-data";
+import { userActions, userMetrics, users } from "@/data/users-data";
 import { User as UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
