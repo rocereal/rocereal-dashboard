@@ -15,6 +15,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { EcommerceMetric, ordersData } from "@/data/ecommerce";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -23,6 +30,7 @@ import {
   DollarSign,
   Download,
   Eye,
+  Filter,
   Mail,
   MoreHorizontal,
   Package,
@@ -32,40 +40,13 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
-import { OrdersBulkActions, OrdersFilters, OrderStatusBadge } from "./index";
+import { OrdersBulkActions, OrderStatusBadge } from "./index";
+import { showToast } from "@/components/ui/sonner";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState(ordersData);
-  const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("date");
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
-
-  // Filter orders based on search and status
-  const filteredOrders = orders.filter((order) => {
-    const matchesSearch =
-      order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.id.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "all" || order.status === statusFilter;
-
-    return matchesSearch && matchesStatus;
-  });
-
-  // Sort orders
-  const sortedOrders = [...filteredOrders].sort((a, b) => {
-    switch (sortBy) {
-      case "date":
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      case "value":
-        return b.orderValue - a.orderValue;
-      case "customer":
-        return a.customer.localeCompare(b.customer);
-      default:
-        return 0;
-    }
-  });
 
   const handleDeleteOrder = (orderId: string) => {
     setOrderToDelete(orderId);
@@ -140,11 +121,16 @@ export default function OrdersPage() {
         return (
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={`/avatars/${order.customer
-                  .toLowerCase()
-                  .replace(" ", "-")}.jpg`}
-              />
+              {order.avatar && (
+                <AvatarImage
+                  src={
+                    typeof order.avatar === "string"
+                      ? order.avatar
+                      : order.avatar.src
+                  }
+                  alt={order.customer}
+                />
+              )}
               <AvatarFallback>
                 {order.customer
                   .split(" ")
@@ -217,6 +203,9 @@ export default function OrdersPage() {
         const order = row.original;
         return <OrderStatusBadge status={order.status} />;
       },
+      filterFn: (row, id, value) => {
+        return value === "all" || row.getValue(id) === value;
+      },
     },
     {
       accessorKey: "date",
@@ -256,15 +245,34 @@ export default function OrdersPage() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(order.id)}
+                onClick={() => {
+                  navigator.clipboard.writeText(order.id);
+                  showToast({
+                    title: `Copied ${order.id}`,
+                    description: "Order ID copied to clipboard",
+                    button: {
+                      label: "Close",
+                      onClick: () => console.log("Undo clicked"),
+                    },
+                  });
+                }}
               >
                 Copy order ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Eye className="mr-2 h-4 w-4" />
-                View order details
-              </DropdownMenuItem>
+              <Link
+                shallow={true}
+                href="/apps/ecommerce/orders/[id]"
+                as={`/apps/ecommerce/orders/${order?.id}`}
+                passHref
+                style={{ textDecoration: "none" }}
+                className="cursor-pointer"
+              >
+                <DropdownMenuItem className="cursor-pointer">
+                  <Eye className="mr-2 h-4 w-4" />
+                  View details
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem>
                 <Mail className="mr-2 h-4 w-4" />
                 Contact customer
@@ -285,11 +293,39 @@ export default function OrdersPage() {
     },
   ];
 
+  // Additional filters for DataTable
+  const additionalFilters = (table: any) => (
+    <Select
+      value={statusFilter}
+      onValueChange={(value) => {
+        setStatusFilter(value);
+        if (value === "all") {
+          table.getColumn("status")?.setFilterValue(undefined);
+        } else {
+          table.getColumn("status")?.setFilterValue(value);
+        }
+      }}
+    >
+      <SelectTrigger className="w-full lg:w-40">
+        <Filter className="h-4 w-4 mr-2" />
+        <SelectValue placeholder="Filter by status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All Status</SelectItem>
+        <SelectItem value="pending">Pending</SelectItem>
+        <SelectItem value="processing">Processing</SelectItem>
+        <SelectItem value="shipped">Shipped</SelectItem>
+        <SelectItem value="delivered">Delivered</SelectItem>
+        <SelectItem value="cancelled">Cancelled</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+
   // Bulk actions function for DataTable
   const bulkActions = (selectedRows: typeof ordersData, table: any) => (
     <OrdersBulkActions
       selectedOrders={selectedRows.map((order) => order.id)}
-      totalOrders={sortedOrders.length}
+      totalOrders={orders.length}
       onSelectAll={(checked) => table.toggleAllPageRowsSelected(checked)}
       onBulkDelete={handleBulkDelete}
       onBulkExport={handleExportOrders}
@@ -372,27 +408,24 @@ export default function OrdersPage() {
       <div className="bg-card rounded-lg border">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">
-              Orders ({filteredOrders.length})
-            </h3>
+            <h3 className="text-lg font-semibold">Orders ({orders.length})</h3>
           </div>
 
           <DataTable
             columns={columns}
-            data={sortedOrders}
+            data={orders}
             searchKey="customer"
             searchPlaceholder="Search orders..."
+            additionalFilters={additionalFilters}
             bulkActions={bulkActions}
           />
 
-          {sortedOrders.length === 0 && (
+          {orders.length === 0 && (
             <div className="text-center py-12">
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">No orders found</h3>
               <p className="text-muted-foreground">
-                {searchTerm || statusFilter !== "all"
-                  ? "Try adjusting your search or filter criteria."
-                  : "No orders have been placed yet."}
+                No orders have been placed yet.
               </p>
             </div>
           )}

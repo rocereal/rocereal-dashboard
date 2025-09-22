@@ -8,6 +8,17 @@ import StainlessSteelWaterBottle from "@/app/assets/products/Stainless Steel Wat
 import WirelessBluetoothHeadphones from "@/app/assets/products/Wireless Bluetooth Headphones.png";
 import WirelessChargingPad from "@/app/assets/products/Wireless Charging Pad.png";
 import YogaMatPremium from "@/app/assets/products/Yoga Mat Premium.png";
+import one from "@/app/assets/avatars/one.jpg";
+import two from "@/app/assets/avatars/two.jpg";
+import three from "@/app/assets/avatars/three.jpg";
+import four from "@/app/assets/avatars/four.jpg";
+import five from "@/app/assets/avatars/five.jpg";
+import six from "@/app/assets/avatars/six.jpg";
+import seven from "@/app/assets/avatars/seven.jpg";
+import eight from "@/app/assets/avatars/eight.jpg";
+import nine from "@/app/assets/avatars/nine.jpg";
+import ten from "@/app/assets/avatars/ten.jpg";
+
 import {
   DollarSign,
   Package,
@@ -208,6 +219,7 @@ export interface OrderProduct {
 export interface OrderData {
   id: string;
   customer: string;
+  avatar?: string | StaticImageData;
   products: OrderProduct[];
   orderValue: number;
   status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
@@ -218,6 +230,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ord-001",
     customer: "John Smith",
+    avatar: five,
     products: [
       {
         name: "Wireless Bluetooth Headphones",
@@ -232,6 +245,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ord-002",
     customer: "Sarah Johnson",
+    avatar: eight,
     products: [
       { name: "LED Desk Lamp", image: LEDDeskLamp },
       { name: "Leather Wallet", image: LeatherWallet },
@@ -243,6 +257,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ord-003",
     customer: "Mike Davis",
+    avatar: four,
     products: [
       { name: "Smart Fitness Watch", image: SmartFitnessWatch },
       {
@@ -257,6 +272,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ord-004",
     customer: "Emily Chen",
+    avatar: nine,
     products: [{ name: "Bluetooth Speaker", image: BluetoothSpeaker }],
     orderValue: 79.99,
     status: "pending",
@@ -265,6 +281,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ord-005",
     customer: "David Wilson",
+    avatar: one,
     products: [
       { name: "Yoga Mat Premium", image: YogaMatPremium },
       { name: "Organic Cotton T-Shirt", image: OrganicCottonTShirt },
@@ -276,6 +293,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ord-006",
     customer: "Lisa Brown",
+    avatar: seven,
     products: [
       { name: "Leather Wallet", image: LeatherWallet },
       {
@@ -290,6 +308,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ord-007",
     customer: "Tom Anderson",
+    avatar: six,
     products: [{ name: "Wireless Charging Pad", image: WirelessChargingPad }],
     orderValue: 89.99,
     status: "cancelled",
@@ -298,6 +317,7 @@ export const ordersData: OrderData[] = [
   {
     id: "ord-008",
     customer: "Anna Martinez",
+    avatar: ten,
     products: [
       {
         name: "Wireless Bluetooth Headphones",

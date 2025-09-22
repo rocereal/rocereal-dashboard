@@ -38,6 +38,8 @@ interface DataTableProps<TData, TValue> {
   searchKey?: string;
   searchPlaceholder?: string;
   bulkActions?: (selectedRows: TData[], table: any) => React.ReactNode;
+  additionalFilters?: React.ReactNode | ((table: any) => React.ReactNode);
+  onFilterChange?: (table: any) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -46,6 +48,8 @@ export function DataTable<TData, TValue>({
   searchKey,
   searchPlaceholder = "Filter...",
   bulkActions,
+  additionalFilters,
+  onFilterChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -95,6 +99,9 @@ export function DataTable<TData, TValue>({
             className="max-w-sm"
           />
         )}
+        {typeof additionalFilters === "function"
+          ? additionalFilters(table)
+          : additionalFilters}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

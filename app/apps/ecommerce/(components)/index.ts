@@ -6,7 +6,6 @@ export { InventoryTab } from "./InventoryTab";
 export { SEOTab } from "./SEOTab";
 export { OrderDeleteDialog } from "./OrderDeleteDialog";
 export { OrdersBulkActions } from "./OrdersBulkActions";
-export { OrdersFilters } from "./OrdersFilters";
 export { default as OrdersPage } from "./OrdersPage";
 export { OrdersTable } from "./OrdersTable";
 export { OrderStatusBadge } from "./OrderStatusBadge";
