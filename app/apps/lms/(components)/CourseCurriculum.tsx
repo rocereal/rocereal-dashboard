@@ -1,16 +1,14 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { CourseData } from "@/data/education";
-import { BookOpen, ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { CurriculumLesson } from "./CurriculumLesson";
+import { BookOpen } from "lucide-react";
 import {
   calculateCurriculumProgress,
   getNextLesson,
   getProgressText,
 } from "../utils/curriculum-utils";
+import { CurriculumLesson } from "./CurriculumLesson";
 
 interface CourseCurriculumProps {
   course: CourseData;
@@ -23,17 +21,26 @@ export function CourseCurriculum({
   isEnrolled = false,
   userProgress = {},
 }: CourseCurriculumProps) {
+  console.log("CourseCurriculum rendering:", {
+    isEnrolled,
+    courseTitle: course.title,
+  });
+
   if (!course.curriculum || course.curriculum.length === 0) {
     return null;
   }
 
-  // For non-enrolled users, show only first 3 lessons as preview
-  const lessonsToShow = isEnrolled
-    ? course.curriculum
-    : course.curriculum.slice(0, 3);
+  // Show full curriculum for all users
+  const lessonsToShow = course.curriculum;
 
   const progress = calculateCurriculumProgress(course.curriculum, userProgress);
   const nextLesson = getNextLesson(course.curriculum, userProgress);
+
+  const handleLessonClick = (lesson: any) => {
+    // Handle lesson clicks - for now, just log
+    console.log("Lesson clicked:", lesson.title);
+    // In a real app, this would navigate to lesson content or show preview
+  };
 
   return (
     <Card>
@@ -49,12 +56,6 @@ export function CourseCurriculum({
                 {getProgressText(progress)}
               </div>
             )}
-            <Link href={`/apps/lms/${course.courseId}/curriculum`}>
-              <Button variant="outline" size="sm">
-                <ExternalLink className="h-3 w-3 mr-1" />
-                {isEnrolled ? "View Full Curriculum" : "Preview Curriculum"}
-              </Button>
-            </Link>
           </div>
         </div>
         {isEnrolled && (
@@ -85,24 +86,10 @@ export function CourseCurriculum({
                 isCompleted={isCompleted}
                 isNextLesson={isNext}
                 showPreviewBadge={!isEnrolled}
-                onLessonClick={(lesson) => {
-                  console.log("Lesson clicked:", lesson.title);
-                  // Handle lesson navigation here
-                }}
+                onLessonClick={handleLessonClick}
               />
             );
           })}
-
-          {!isEnrolled && course.curriculum.length > 3 && (
-            <div className="text-center py-4 border-t">
-              <div className="text-sm text-muted-foreground mb-2">
-                +{course.curriculum.length - 3} more lessons available
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Enroll to access the full curriculum
-              </div>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

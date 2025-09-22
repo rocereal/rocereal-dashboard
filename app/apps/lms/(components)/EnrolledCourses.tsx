@@ -1,3 +1,5 @@
+"use client";
+
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,36 +9,58 @@ import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   Book,
+  BookOpen,
   CheckCircle,
+  GraduationCap,
   Star,
   TrendingDown,
   TrendingUp,
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { CurriculumLesson } from "./CurriculumLesson";
 
-interface SectionCardsProps {
+interface EnrolledCoursesProps {
   metrics?: EducationMetric[];
   courses?: CourseData[];
   className?: string;
+  userProgress?: { [courseId: string]: number }; // Progress percentage for each course
 }
 
-export function SectionCards({
+export function EnrolledCourses({
   metrics,
   courses,
   className,
-}: SectionCardsProps) {
+  userProgress = {},
+}: EnrolledCoursesProps) {
+  const [expandedCourses] = useState<Set<string>>(new Set());
+
+  // Icon mapping function
+  const getIconComponent = (iconName: string) => {
+    switch (iconName) {
+      case "graduation-cap":
+        return GraduationCap;
+      default:
+        return GraduationCap; // fallback
+    }
+  };
+
   // If courses are provided, show course cards
   if (courses && courses.length > 0) {
     return (
       <div
         className={cn(
-          "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4",
+          "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3",
           className
         )}
       >
         {courses.map((course) => {
-          const IconComponent = course.icon;
+          const IconComponent = getIconComponent(course.icon);
+          const isExpanded = expandedCourses.has(course.courseId);
+
+          // In EnrolledCourses, all courses are continuing
+          const userCourseProgress = userProgress[course.courseId] || 0;
 
           return (
             <Card
@@ -58,11 +82,21 @@ export function SectionCards({
                   )}
                 </div>
 
+                {/* Show user progress with green bar for enrolled courses */}
                 <div className="absolute bottom-0 w-full bg-muted rounded-none h-1">
                   <div
-                    className="bg-primary h-1 rounded-r-full transition-all duration-300"
-                    style={{ width: `${course.completionRate}%` }}
+                    className="h-1 rounded-r-full transition-all duration-300 bg-green-500"
+                    style={{
+                      width: `${userCourseProgress}%`,
+                    }}
                   />
+                </div>
+
+                {/* Show continuing badge for all enrolled courses */}
+                <div className="absolute top-2 left-2">
+                  <Badge className="bg-green-500 text-white text-xs">
+                    Continuing
+                  </Badge>
                 </div>
               </div>
               <CardHeader className="pb-3">
@@ -84,12 +118,10 @@ export function SectionCards({
                       <div className="flex items-center gap-1">
                         <CheckCircle className="h-4 w-4 text-muted-foreground" />
                         <span className="text-muted-foreground">
-                          Completion
+                          Your Progress
                         </span>
                       </div>
-                      <span className="font-medium">
-                        {course.completionRate}%
-                      </span>
+                      <span className="font-medium">{userCourseProgress}%</span>
                     </div>
                   </div>
 
@@ -110,22 +142,25 @@ export function SectionCards({
                     </div>
                   </div>
 
-                  <Link
-                    shallow={true}
-                    href="/apps/lms/[courseId]"
-                    as={`/apps/lms/${course?.courseId}`}
-                    passHref
-                    style={{ textDecoration: "none" }}
-                    className="cursor-pointer"
-                  >
-                    <Button
-                      variant="outline"
-                      className="flex w-full lg:w-fit items-center space-x-2"
+                  <div className="flex gap-2">
+                    <Link
+                      shallow={true}
+                      href="/apps/lms/[courseId]"
+                      as={`/apps/lms/${course?.courseId}`}
+                      passHref
+                      style={{ textDecoration: "none" }}
+                      className="cursor-pointer"
                     >
-                      Continue
-                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center space-x-1"
+                      >
+                        Continue Course
+                        <ArrowRight className="h-3 w-3" />
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </CardContent>
             </Card>

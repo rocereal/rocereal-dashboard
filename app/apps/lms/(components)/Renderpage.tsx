@@ -4,7 +4,7 @@ import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { coursesData, recommendedCourses } from "@/data/education";
 import { BookOpen, ChartBar } from "lucide-react";
 import { RecommendedCourses } from "./RecommendedCourses";
-import { SectionCards } from "./SectionCards";
+import { EnrolledCourses } from "./EnrolledCourses";
 
 export default function RenderPage() {
   return (
@@ -26,7 +26,7 @@ export default function RenderPage() {
         }}
       />
 
-      <SectionCards courses={coursesData} />
+      <EnrolledCourses courses={coursesData.slice(0, 3)} />
 
       <RecommendedCourses courses={recommendedCourses} />
     </div>

@@ -12,7 +12,6 @@ import {
 import {
   formatLessonDuration,
   getLessonTypeDisplayName,
-  isLessonAccessible,
 } from "../utils/curriculum-utils";
 
 interface CurriculumLessonProps {
@@ -36,7 +35,8 @@ export function CurriculumLesson({
   onLessonClick,
   className = "",
 }: CurriculumLessonProps) {
-  const accessible = isLessonAccessible(index, isEnrolled);
+  // Make all lessons accessible for preview
+  const accessible = true; // Changed from: isLessonAccessible(index, isEnrolled);
   const displayType = getLessonTypeDisplayName(lesson.type);
   const formattedDuration = formatLessonDuration(lesson.duration);
 
@@ -56,28 +56,29 @@ export function CurriculumLesson({
   };
 
   const getStatusColor = () => {
-    if (isCompleted) return "bg-green-500 text-white";
-    if (isNextLesson) return "bg-blue-500 text-white";
-    if (!accessible) return "bg-muted text-muted-foreground";
+    if (showAsCompleted) return "bg-green-500 text-white";
+    if (isNextLesson && isEnrolled) return "bg-blue-500 text-white";
+    if (!isEnrolled) return "bg-muted text-muted-foreground"; // Changed condition
     return "bg-primary text-primary-foreground";
   };
 
   const handleClick = () => {
-    if (accessible && onLessonClick) {
+    if (onLessonClick) {
       onLessonClick(lesson);
     }
   };
 
+  // For non-enrolled users, don't show completed status
+  const showAsCompleted = isEnrolled && isCompleted;
+
   return (
     <div
       className={`group flex flex-col lg:flex-row gap-4 lg:gap-0 items-start lg:items-center justify-between p-4 rounded-lg border transition-all duration-200 ${
-        accessible
-          ? isCompleted
-            ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-secondary dark:border-secondary dark:hover:bg-secondary cursor-pointer"
-            : isNextLesson
-            ? "bg-primary/20 border-primary hover:bg-primary/20 cursor-pointer ring-2 ring-primary/20"
-            : "hover:bg-muted/50 cursor-pointer"
-          : "opacity-60 cursor-not-allowed bg-muted/30"
+        showAsCompleted
+          ? "bg-green-50 border-green-200 hover:bg-green-100 dark:bg-secondary dark:border-secondary dark:hover:bg-secondary cursor-pointer"
+          : isNextLesson && isEnrolled
+          ? "bg-primary/20 border-primary hover:bg-primary/20 cursor-pointer ring-2 ring-primary/20"
+          : "hover:bg-muted/50 cursor-pointer"
       } ${className}`}
       onClick={handleClick}
     >
@@ -86,7 +87,7 @@ export function CurriculumLesson({
         <div
           className={`flex items-center justify-center w-6 h-6 lg:size-10 rounded-full text-sm font-semibold flex-shrink-0 ${getStatusColor()}`}
         >
-          {isCompleted ? (
+          {showAsCompleted ? (
             <CheckCircle className="size-2 lg:size-5" />
           ) : (
             index + 1
@@ -112,7 +113,7 @@ export function CurriculumLesson({
                   {formattedDuration}
                 </span>
 
-                {isCompleted && (
+                {showAsCompleted && (
                   <Badge
                     variant="secondary"
                     className="bg-green-100 text-green-700 text-xs px-2 py-0"
@@ -122,7 +123,7 @@ export function CurriculumLesson({
                   </Badge>
                 )}
 
-                {isNextLesson && (
+                {isNextLesson && isEnrolled && (
                   <Badge
                     variant="secondary"
                     className="bg-blue-100 text-blue-700 text-xs px-2 py-0"
@@ -131,7 +132,7 @@ export function CurriculumLesson({
                   </Badge>
                 )}
 
-                {showPreviewBadge && (
+                {showPreviewBadge && isEnrolled && (
                   <Badge variant="outline" className="text-xs px-2 py-0">
                     Preview
                   </Badge>
@@ -144,21 +145,27 @@ export function CurriculumLesson({
 
       {/* Action Button */}
       <div className="flex-shrink-0 ml-0 lg:ml-4">
-        {accessible ? (
-          <Button
-            size="sm"
-            variant={
-              isCompleted ? "outline" : isNextLesson ? "default" : "ghost"
-            }
-            className="text-xs"
-          >
-            {isCompleted ? "Review" : isNextLesson ? "Continue" : "Start"}
-          </Button>
-        ) : (
-          <div className="text-xs text-muted-foreground px-3 py-1">
-            🔒 Enroll to unlock
-          </div>
-        )}
+        <Button
+          size="sm"
+          variant={
+            showAsCompleted
+              ? "outline"
+              : isNextLesson && isEnrolled
+              ? "default"
+              : isEnrolled
+              ? "ghost"
+              : "outline" // Changed from showing locked message
+          }
+          className="text-xs"
+        >
+          {showAsCompleted
+            ? "Review"
+            : isNextLesson && isEnrolled
+            ? "Continue"
+            : isEnrolled
+            ? "Start"
+            : "Preview"}
+        </Button>
       </div>
     </div>
   );

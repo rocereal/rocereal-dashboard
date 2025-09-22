@@ -112,11 +112,10 @@ export function getLessonTypeDisplayName(type: string): string {
  */
 export function isLessonAccessible(
   lessonIndex: number,
-  isEnrolled: boolean,
-  previewCount: number = 3
+  isEnrolled: boolean
 ): boolean {
-  if (isEnrolled) return true;
-  return lessonIndex < previewCount;
+  // All lessons are now accessible to all users
+  return true;
 }
 
 /**

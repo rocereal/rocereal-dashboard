@@ -28,7 +28,7 @@ export interface CourseData {
   avgRating: number;
   courses: string;
   image: any;
-  icon: any;
+  icon: string;
   description?: string;
   instructor?: string;
   duration?: string;
@@ -53,8 +53,7 @@ export interface CourseLesson {
   completed?: boolean;
 }
 
-// Original courses data (without export)
-const originalCoursesData: CourseData[] = [
+export const coursesData: CourseData[] = [
   {
     courseId: "intro-data-science",
     title: "Intro to Data Science",
@@ -470,31 +469,6 @@ const originalCoursesData: CourseData[] = [
       },
     ],
   },
-];
-
-export interface EducationMetric {
-  id: string;
-  title: string;
-  value: string | number;
-  change: string;
-  changeType: "positive" | "negative" | "neutral";
-  icon: any;
-  description?: string;
-}
-
-export interface RecommendedCourse {
-  id: string;
-  title: string;
-  courses: string;
-  authors: string[];
-  rating: number;
-  time: string;
-  price: number;
-  image: any;
-}
-
-// Convert recommended courses to full CourseData format and merge with main courses
-const recommendedCoursesData: CourseData[] = [
   {
     courseId: "advanced-python",
     title: "Advanced Python Programming",
@@ -523,6 +497,68 @@ const recommendedCoursesData: CourseData[] = [
     certificate: true,
     reviews: 234,
     tags: ["Python", "Advanced", "Programming", "Backend"],
+    curriculum: [
+      {
+        id: "1",
+        title: "Advanced Functions and Closures",
+        duration: "1h 30min",
+        type: "video",
+      },
+      {
+        id: "2",
+        title: "Decorators and Function Wrappers",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "3",
+        title: "Generators and Iterators",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "4",
+        title: "Context Managers",
+        duration: "1h 30min",
+        type: "video",
+      },
+      {
+        id: "5",
+        title: "Metaclasses and Class Creation",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "6",
+        title: "Performance Optimization Techniques",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "7",
+        title: "Memory Management",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "8",
+        title: "Advanced Project: Custom Framework",
+        duration: "4h 30min",
+        type: "assignment",
+      },
+      {
+        id: "9",
+        title: "Code Review and Best Practices",
+        duration: "1h 30min",
+        type: "video",
+      },
+      {
+        id: "10",
+        title: "Final Assessment",
+        duration: "1h 15min",
+        type: "quiz",
+      },
+    ],
   },
   {
     courseId: "machine-learning-fundamentals",
@@ -547,6 +583,74 @@ const recommendedCoursesData: CourseData[] = [
     certificate: true,
     reviews: 456,
     tags: ["Machine Learning", "AI", "Python", "Data Science"],
+    curriculum: [
+      {
+        id: "1",
+        title: "Introduction to Machine Learning",
+        duration: "1h 30min",
+        type: "video",
+      },
+      {
+        id: "2",
+        title: "Data Preprocessing",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "3",
+        title: "Linear Regression",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "4",
+        title: "Logistic Regression",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "5",
+        title: "Decision Trees and Random Forests",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "6",
+        title: "Support Vector Machines",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "7",
+        title: "Unsupervised Learning: K-Means",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "8",
+        title: "Model Evaluation and Validation",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "9",
+        title: "ML Project: Predictive Modeling",
+        duration: "5h 30min",
+        type: "assignment",
+      },
+      {
+        id: "10",
+        title: "Advanced Topics Overview",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "11",
+        title: "Final Assessment",
+        duration: "1h 45min",
+        type: "quiz",
+      },
+    ],
   },
   {
     courseId: "data-visualization-excel",
@@ -571,6 +675,80 @@ const recommendedCoursesData: CourseData[] = [
     certificate: true,
     reviews: 189,
     tags: ["Excel", "Data Visualization", "Business Intelligence"],
+    curriculum: [
+      {
+        id: "1",
+        title: "Excel Basics for Data Visualization",
+        duration: "1h 15min",
+        type: "video",
+      },
+      {
+        id: "2",
+        title: "Data Preparation and Cleaning",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "3",
+        title: "Creating Basic Charts",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "4",
+        title: "Advanced Chart Types",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "5",
+        title: "Pivot Tables and Pivot Charts",
+        duration: "3h 45min",
+        type: "video",
+      },
+      {
+        id: "6",
+        title: "Conditional Formatting",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "7",
+        title: "Sparklines and Data Bars",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "8",
+        title: "Dashboard Design Principles",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "9",
+        title: "Building Interactive Dashboards",
+        duration: "3h 30min",
+        type: "video",
+      },
+      {
+        id: "10",
+        title: "Project: Sales Dashboard",
+        duration: "4h 30min",
+        type: "assignment",
+      },
+      {
+        id: "11",
+        title: "Advanced Techniques and Tips",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "12",
+        title: "Final Assessment",
+        duration: "1h 30min",
+        type: "quiz",
+      },
+    ],
   },
   {
     courseId: "cloud-computing-aws",
@@ -580,7 +758,7 @@ const recommendedCoursesData: CourseData[] = [
     avgRating: 4.7,
     courses: "13 lessons",
     image: backgroundEight,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Comprehensive guide to Amazon Web Services. Learn EC2, S3, Lambda, and other AWS services with hands-on projects and real-world scenarios.",
     instructor: "Dr. Robert Kim",
@@ -595,6 +773,86 @@ const recommendedCoursesData: CourseData[] = [
     certificate: true,
     reviews: 312,
     tags: ["AWS", "Cloud Computing", "DevOps", "Infrastructure"],
+    curriculum: [
+      {
+        id: "1",
+        title: "Introduction to Cloud Computing",
+        duration: "1h 30min",
+        type: "video",
+      },
+      {
+        id: "2",
+        title: "AWS Fundamentals and Account Setup",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "3",
+        title: "Amazon EC2: Virtual Servers",
+        duration: "3h 45min",
+        type: "video",
+      },
+      {
+        id: "4",
+        title: "Amazon S3: Object Storage",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "5",
+        title: "AWS Lambda: Serverless Computing",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "6",
+        title: "Amazon RDS: Database Services",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "7",
+        title: "AWS Security Best Practices",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "8",
+        title: "Load Balancing and Auto Scaling",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "9",
+        title: "Monitoring with CloudWatch",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "10",
+        title: "Project: Deploying a Web Application",
+        duration: "6h 30min",
+        type: "assignment",
+      },
+      {
+        id: "11",
+        title: "Cost Optimization Strategies",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "12",
+        title: "AWS Certification Path",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "13",
+        title: "Final Assessment",
+        duration: "2h 30min",
+        type: "quiz",
+      },
+    ],
   },
   {
     courseId: "react-masterclass",
@@ -604,7 +862,7 @@ const recommendedCoursesData: CourseData[] = [
     avgRating: 4.8,
     courses: "14 lessons",
     image: backgroundOne,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Become a React expert with advanced concepts including hooks, context, performance optimization, and modern React patterns.",
     instructor: "Alex Johnson",
@@ -619,6 +877,92 @@ const recommendedCoursesData: CourseData[] = [
     certificate: true,
     reviews: 567,
     tags: ["React", "JavaScript", "Frontend", "Web Development"],
+    curriculum: [
+      {
+        id: "1",
+        title: "React Fundamentals Review",
+        duration: "1h 30min",
+        type: "video",
+      },
+      {
+        id: "2",
+        title: "Advanced Hooks: useEffect and useLayoutEffect",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "3",
+        title: "Custom Hooks Development",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "4",
+        title: "Context API and State Management",
+        duration: "3h 30min",
+        type: "video",
+      },
+      {
+        id: "5",
+        title: "React Router Advanced Patterns",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "6",
+        title: "Performance Optimization Techniques",
+        duration: "3h 45min",
+        type: "video",
+      },
+      {
+        id: "7",
+        title: "React.memo and useMemo",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "8",
+        title: "Error Boundaries and Error Handling",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "9",
+        title: "Testing React Applications",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "10",
+        title: "Advanced Patterns: Render Props and HOCs",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "11",
+        title: "Project: Advanced React Application",
+        duration: "6h 30min",
+        type: "assignment",
+      },
+      {
+        id: "12",
+        title: "React Ecosystem and Tools",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "13",
+        title: "Deployment and Production Best Practices",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "14",
+        title: "Final Assessment",
+        duration: "2h 30min",
+        type: "quiz",
+      },
+    ],
   },
   {
     courseId: "digital-marketing-strategy",
@@ -628,7 +972,7 @@ const recommendedCoursesData: CourseData[] = [
     avgRating: 4.5,
     courses: "15 lessons",
     image: backgroundTwo,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Master digital marketing strategies including SEO, SEM, social media marketing, content marketing, and analytics-driven decision making.",
     instructor: "Prof. David Brown",
@@ -643,6 +987,98 @@ const recommendedCoursesData: CourseData[] = [
     certificate: true,
     reviews: 234,
     tags: ["Digital Marketing", "SEO", "Social Media", "Marketing"],
+    curriculum: [
+      {
+        id: "1",
+        title: "Digital Marketing Overview",
+        duration: "1h 30min",
+        type: "video",
+      },
+      {
+        id: "2",
+        title: "Understanding Your Target Audience",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "3",
+        title: "Search Engine Optimization (SEO)",
+        duration: "3h 45min",
+        type: "video",
+      },
+      {
+        id: "4",
+        title: "Search Engine Marketing (SEM)",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "5",
+        title: "Social Media Marketing Strategies",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "6",
+        title: "Content Marketing Fundamentals",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "7",
+        title: "Email Marketing Campaigns",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "8",
+        title: "Analytics and Data-Driven Decisions",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "9",
+        title: "Conversion Rate Optimization",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "10",
+        title: "Mobile Marketing",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "11",
+        title: "Marketing Automation",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "12",
+        title: "Project: Complete Marketing Campaign",
+        duration: "5h 30min",
+        type: "assignment",
+      },
+      {
+        id: "13",
+        title: "Measuring ROI and Campaign Success",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "14",
+        title: "Future Trends in Digital Marketing",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "15",
+        title: "Final Assessment",
+        duration: "2h 30min",
+        type: "quiz",
+      },
+    ],
   },
   {
     courseId: "cybersecurity-essentials",
@@ -652,7 +1088,7 @@ const recommendedCoursesData: CourseData[] = [
     avgRating: 4.7,
     courses: "16 lessons",
     image: backgroundThree,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Learn essential cybersecurity concepts including threat detection, encryption, network security, and best practices for protecting digital assets.",
     instructor: "Dr. Emily White",
@@ -672,6 +1108,104 @@ const recommendedCoursesData: CourseData[] = [
     certificate: true,
     reviews: 378,
     tags: ["Cybersecurity", "Security", "IT", "Network Security"],
+    curriculum: [
+      {
+        id: "1",
+        title: "Introduction to Cybersecurity",
+        duration: "1h 30min",
+        type: "video",
+      },
+      {
+        id: "2",
+        title: "Understanding Cyber Threats",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "3",
+        title: "Network Security Fundamentals",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "4",
+        title: "Encryption and Cryptography",
+        duration: "3h 30min",
+        type: "video",
+      },
+      {
+        id: "5",
+        title: "Access Control and Authentication",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "6",
+        title: "Firewalls and Intrusion Detection",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "7",
+        title: "Malware Analysis and Prevention",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "8",
+        title: "Secure Coding Practices",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "9",
+        title: "Incident Response and Recovery",
+        duration: "3h 45min",
+        type: "video",
+      },
+      {
+        id: "10",
+        title: "Cloud Security",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "11",
+        title: "Legal and Ethical Considerations",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "12",
+        title: "Security Auditing and Compliance",
+        duration: "3h 30min",
+        type: "video",
+      },
+      {
+        id: "13",
+        title: "Project: Security Assessment",
+        duration: "5h 15min",
+        type: "assignment",
+      },
+      {
+        id: "14",
+        title: "Emerging Threats and Trends",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "15",
+        title: "Career Paths in Cybersecurity",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "16",
+        title: "Final Assessment",
+        duration: "2h 15min",
+        type: "quiz",
+      },
+    ],
   },
   {
     courseId: "blockchain-technology",
@@ -681,7 +1215,7 @@ const recommendedCoursesData: CourseData[] = [
     avgRating: 4.6,
     courses: "17 lessons",
     image: backgroundFour,
-    icon: GraduationCap,
+    icon: "graduation-cap",
     description:
       "Understanding blockchain technology from basics to advanced concepts including smart contracts, decentralized applications, and cryptocurrency.",
     instructor: "Dr. Kevin Park",
@@ -701,19 +1235,123 @@ const recommendedCoursesData: CourseData[] = [
     certificate: true,
     reviews: 267,
     tags: ["Blockchain", "Cryptocurrency", "Web3", "Decentralized"],
+    curriculum: [
+      {
+        id: "1",
+        title: "Introduction to Blockchain",
+        duration: "1h 30min",
+        type: "video",
+      },
+      {
+        id: "2",
+        title: "Cryptography Fundamentals",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "3",
+        title: "Distributed Ledger Technology",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "4",
+        title: "Bitcoin and Cryptocurrency Basics",
+        duration: "3h 30min",
+        type: "video",
+      },
+      {
+        id: "5",
+        title: "Ethereum and Smart Contracts",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "6",
+        title: "Consensus Mechanisms",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "7",
+        title: "Decentralized Applications (dApps)",
+        duration: "3h 30min",
+        type: "video",
+      },
+      {
+        id: "8",
+        title: "Blockchain Security",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "9",
+        title: "Tokenomics and ICOs",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "10",
+        title: "Blockchain in Business",
+        duration: "3h 15min",
+        type: "video",
+      },
+      {
+        id: "11",
+        title: "Developing Smart Contracts",
+        duration: "4h 30min",
+        type: "video",
+      },
+      {
+        id: "12",
+        title: "Blockchain Platforms and Tools",
+        duration: "2h 45min",
+        type: "video",
+      },
+      {
+        id: "13",
+        title: "Project: Build a Simple dApp",
+        duration: "6h 15min",
+        type: "assignment",
+      },
+      {
+        id: "14",
+        title: "Regulatory Landscape",
+        duration: "2h 30min",
+        type: "video",
+      },
+      {
+        id: "15",
+        title: "Future of Blockchain Technology",
+        duration: "2h 15min",
+        type: "video",
+      },
+      {
+        id: "16",
+        title: "Blockchain Career Opportunities",
+        duration: "1h 45min",
+        type: "video",
+      },
+      {
+        id: "17",
+        title: "Final Assessment",
+        duration: "2h 30min",
+        type: "quiz",
+      },
+    ],
   },
 ];
 
-// Merge all courses into a single comprehensive array
-const allCoursesData: CourseData[] = [
-  ...originalCoursesData,
-  ...recommendedCoursesData,
-];
+export interface EducationMetric {
+  id: string;
+  title: string;
+  value: string | number;
+  change: string;
+  changeType: "positive" | "negative" | "neutral";
+  icon: any;
+  description?: string;
+}
 
-// Re-export the merged data as coursesData
-export { allCoursesData as coursesData };
-
-// Keep the old interface for backward compatibility (can be removed later)
 export interface RecommendedCourse {
   id: string;
   title: string;
@@ -725,9 +1363,10 @@ export interface RecommendedCourse {
   image: any;
 }
 
-// Create a computed recommended courses array from the merged data
-export const recommendedCourses: RecommendedCourse[] =
-  recommendedCoursesData.map((course) => ({
+// Create a computed recommended courses array from the main courses data
+export const recommendedCourses: RecommendedCourse[] = coursesData
+  .slice(4)
+  .map((course) => ({
     id: course.courseId,
     title: course.title,
     courses: course.courses,

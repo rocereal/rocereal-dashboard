@@ -63,7 +63,6 @@ export function RecommendedCourses({
           >
             <div className="relative overflow-hidden aspect-video w-full flex flex-col">
               <ImageComponentOptimized
-                unoptimized={true}
                 src={course.image}
                 alt={course.title}
                 fill

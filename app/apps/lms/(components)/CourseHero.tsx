@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CourseData } from "@/data/education";
@@ -5,6 +7,7 @@ import { Award, BookOpen, Clock, Play, Star, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { EnrollmentPreview } from "./EnrollmentPreview";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 interface CourseHeroProps {
   course: CourseData;
@@ -115,7 +118,7 @@ export function CourseHero({
 
         <div className="relative">
           <div className="aspect-video rounded-lg overflow-hidden">
-            <Image
+            <ImageComponentOptimized
               src={course.image}
               alt={course.title}
               fill

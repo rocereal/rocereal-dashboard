@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CourseData } from "@/data/education";
 import { Star } from "lucide-react";
