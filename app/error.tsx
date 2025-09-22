@@ -14,7 +14,7 @@ import Link from "next/link"; // Next.js Link component (imported but not used i
 
 // Import React utilities
 import { useEffect } from "react"; // React hook for side effects
-import Header from "./contact/(components)/ContactHeader";
+import Header from "./pages/contact/(components)/ContactHeader";
 
 /**
  * Error Component

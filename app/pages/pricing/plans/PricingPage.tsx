@@ -6,7 +6,7 @@ import {
   pricingPlans,
   pricingFAQs,
   pricingFeatures,
-} from "@/data/pricing/pricing-plans";
+} from "@/data/pricing-plans";
 import {
   PricingCard,
   BillingToggle,

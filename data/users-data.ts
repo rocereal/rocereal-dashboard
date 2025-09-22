@@ -1,12 +1,8 @@
-import eight from "@/app/assets/avatars/eight.jpg";
 import five from "@/app/assets/avatars/five.jpg";
-import four from "@/app/assets/avatars/four.jpg";
-import nine from "@/app/assets/avatars/nine.jpg";
 import one from "@/app/assets/avatars/one.jpg";
-import two from "@/app/assets/avatars/two.jpg";
 import seven from "@/app/assets/avatars/seven.jpg";
-import six from "@/app/assets/avatars/six.jpg";
 import three from "@/app/assets/avatars/three.jpg";
+import two from "@/app/assets/avatars/two.jpg";
 import { StaticImageData } from "next/image";
 
 export interface User {

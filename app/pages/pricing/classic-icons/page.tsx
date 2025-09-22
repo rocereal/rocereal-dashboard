@@ -1,6 +1,6 @@
 import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
-import PricingDesign2Page from "./PricingDesign2Page";
+import RenderPage from "./RenderPage";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
   "Pricing Plans - Alternative Design",
@@ -8,5 +8,5 @@ export const metadata: Metadata = metadataTemplates.dashboard(
 );
 
 export default function Page() {
-  return <PricingDesign2Page />;
+  return <RenderPage />;
 }

@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
-import { Testimonial } from "@/data/pricing/design2/pricing-design2";
+import { Testimonial } from "@/data/pricing-design2";
 
 interface TestimonialsSectionProps {
   testimonials: Testimonial[];
@@ -47,7 +47,14 @@ export function TestimonialsSection({
                 <div className="flex items-center space-x-4">
                   <Avatar className="w-12 h-12">
                     <AvatarImage
-                      src={testimonial.avatar}
+                      src={
+                        (typeof testimonial.avatar === "string"
+                          ? testimonial.avatar
+                          : testimonial.avatar?.src) ||
+                        `/avatars/${testimonial.name
+                          .toLowerCase()
+                          .replace(" ", "-")}.jpg`
+                      }
                       alt={testimonial.name}
                     />
                     <AvatarFallback>

@@ -1,7 +1,8 @@
 "use client";
 
-import Header from "@/app/contact/(components)/ContactHeader";
-import { Fourfour } from "@/components/svg/Icons";
+import CountdownTimer from "@/app/pages/coming-soon/(components)/CountdownTimer";
+import Header from "@/app/pages/contact/(components)/ContactHeader";
+import { Maintenance } from "@/components/svg/Icons";
 
 export default function MaintenancePage() {
   return (
@@ -10,12 +11,15 @@ export default function MaintenancePage() {
         {/* Main Content */}
         <div className="space-y-6 mb-12">
           {/* Maintenance Icon */}
-          <Fourfour className="size-32 lg:size-64 mx-auto" />
+          <Maintenance className="size-32 lg:size-64 mx-auto" />
 
           <Header
-            title="Error 404"
-            subtitle="We're currently experiencing some difficulties. We'll be back online shortly."
+            title="Under Maintenance"
+            subtitle="We're currently performing some scheduled maintenance to improve
+            your experience. We'll be back online shortly."
           />
+
+          <CountdownTimer className={"!justify-center"} />
         </div>
 
         {/* Additional Info */}

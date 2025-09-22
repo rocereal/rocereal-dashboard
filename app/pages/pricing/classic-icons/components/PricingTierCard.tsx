@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, Star, Sparkles, Zap, Building } from "lucide-react";
-import { PricingTier } from "@/data/pricing/design2/pricing-design2";
+import { PricingTier } from "@/data/pricing-design2";
 
 interface PricingTierCardProps {
   tier: PricingTier;
@@ -32,23 +32,21 @@ export function PricingTierCard({
 
   return (
     <Card
-      className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl ${
+      className={`relative transition-all duration-300 hover:shadow-xl ${
         tier.popular
-          ? "ring-2 ring-primary shadow-lg scale-105"
+          ? "ring ring-primary shadow-lg scale-105"
           : "hover:scale-102"
       }`}
     >
       {/* Background Gradient */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-br ${tier.gradient} opacity-50`}
-      />
+      {/* <div className={`absolute inset-0 bg-card opacity-50`} /> */}
 
       {/* Popular Badge */}
       {tier.popular && (
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
           <Badge className="bg-primary text-primary-foreground px-4 py-1 shadow-lg">
             <Star className="w-3 h-3 mr-1" />
-            Most Popular
+            Popular
           </Badge>
         </div>
       )}
@@ -103,7 +101,7 @@ export function PricingTierCard({
       <CardContent className="relative z-10 space-y-6">
         {/* Limits */}
         {tier.limits && (
-          <div className="grid grid-cols-3 gap-4 p-4 bg-white/10 backdrop-blur-sm rounded-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4  backdrop-blur-sm rounded-lg">
             <div className="text-center">
               <p className="text-xs text-muted-foreground">Users</p>
               <p className="text-sm font-semibold">{tier.limits.users}</p>
@@ -161,10 +159,10 @@ export function PricingTierCard({
         <Button
           className={`w-full mt-6 ${
             tier.cta.variant === "primary"
-              ? "bg-primary hover:bg-primary/90"
+              ? "bg-primary "
               : tier.cta.variant === "secondary"
-              ? "bg-secondary hover:bg-secondary/90"
-              : "border-white/20 hover:bg-white/10"
+              ? "bg-card"
+              : "bg-card"
           }`}
           variant={tier.cta.variant === "outline" ? "outline" : "default"}
           onClick={() => onSelectTier(tier.id)}

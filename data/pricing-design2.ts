@@ -1,3 +1,10 @@
+import five from "@/app/assets/avatars/five.jpg";
+import one from "@/app/assets/avatars/one.jpg";
+import seven from "@/app/assets/avatars/seven.jpg";
+import three from "@/app/assets/avatars/three.jpg";
+import two from "@/app/assets/avatars/two.jpg";
+import { StaticImageData } from "next/image";
+
 export interface PricingTier {
   id: string;
   name: string;
@@ -54,7 +61,7 @@ export const pricingTiers: PricingTier[] = [
     },
     cta: {
       text: "Get Started Free",
-      href: "/signup",
+      href: "",
       variant: "outline",
     },
     gradient: "from-gray-50 to-gray-100",
@@ -96,7 +103,7 @@ export const pricingTiers: PricingTier[] = [
     },
     cta: {
       text: "Start Pro Trial",
-      href: "/signup?plan=pro",
+      href: "",
       variant: "primary",
     },
     gradient: "from-blue-50 to-indigo-100",
@@ -139,8 +146,8 @@ export const pricingTiers: PricingTier[] = [
     },
     cta: {
       text: "Contact Sales",
-      href: "/contact?plan=enterprise",
-      variant: "secondary",
+      href: "",
+      variant: "outline",
     },
     gradient: "from-purple-50 to-pink-100",
     icon: "Building",
@@ -222,7 +229,7 @@ export interface Testimonial {
   name: string;
   role: string;
   company: string;
-  avatar: string;
+  avatar: string | StaticImageData;
   content: string;
   plan: string;
 }
@@ -233,7 +240,7 @@ export const testimonials: Testimonial[] = [
     name: "Sarah Chen",
     role: "Product Manager",
     company: "TechStart Inc.",
-    avatar: "/avatars/sarah.jpg",
+    avatar: two,
     content:
       "The Professional plan transformed how our team collaborates. The analytics and integrations are game-changers.",
     plan: "Professional",
@@ -243,7 +250,7 @@ export const testimonials: Testimonial[] = [
     name: "Marcus Johnson",
     role: "CTO",
     company: "Global Solutions",
-    avatar: "/avatars/marcus.jpg",
+    avatar: one,
     content:
       "Enterprise support and custom development helped us scale globally. Worth every penny.",
     plan: "Enterprise",
@@ -253,7 +260,7 @@ export const testimonials: Testimonial[] = [
     name: "Emily Rodriguez",
     role: "Freelancer",
     company: "Self-employed",
-    avatar: "/avatars/emily.jpg",
+    avatar: three,
     content:
       "Started with Free, upgraded to Pro. The templates and storage made my workflow so much smoother.",
     plan: "Professional",

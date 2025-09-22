@@ -7,7 +7,7 @@ import {
   Smartphone,
   RefreshCw,
 } from "lucide-react";
-import { PricingFeature } from "@/data/pricing/pricing-plans";
+import { PricingFeature } from "@/data/pricing-plans";
 
 interface PricingFeaturesProps {
   features: PricingFeature[];

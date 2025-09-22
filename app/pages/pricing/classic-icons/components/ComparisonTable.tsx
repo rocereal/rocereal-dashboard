@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, X } from "lucide-react";
-import { PricingComparison } from "@/data/pricing/design2/pricing-design2";
+import { PricingComparison } from "@/data/pricing-design2";
 
 interface ComparisonTableProps {
   comparisons: PricingComparison[];

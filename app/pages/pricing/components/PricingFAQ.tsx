@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { PricingFAQ } from "@/data/pricing/pricing-plans";
+import { PricingFAQ } from "@/data/pricing-plans";
 
 interface PricingFAQProps {
   faqs: PricingFAQ[];

@@ -153,79 +153,79 @@ export const menudata = {
         { title: "Centered Login", url: "/authentication/centered/login" },
         {
           title: "Centered Register",
-          url: "/authentication/centered/register",
+          url: "/pages/authentication/centered/register",
         },
         {
           title: "Centered Forgot Password",
-          url: "/authentication/centered/forgot-password",
+          url: "/pages/authentication/centered/forgot-password",
         },
         {
           title: "Centered Reset Password",
-          url: "/authentication/centered/reset-password",
+          url: "/pages/authentication/centered/reset-password",
         },
         {
           title: "Minimal Login",
-          url: "/authentication/minimal/login",
+          url: "/pages/authentication/minimal/login",
         },
         {
           title: "Minimal Register",
-          url: "/authentication/minimal/register",
+          url: "/pages/authentication/minimal/register",
         },
         {
           title: "Minimal Forgot Password",
-          url: "/authentication/minimal/forgot-password",
+          url: "/pages/authentication/minimal/forgot-password",
         },
         {
           title: "Minimal Reset Password",
-          url: "/authentication/minimal/reset-password",
+          url: "/pages/authentication/minimal/reset-password",
         },
         {
           title: "Split-Left Login",
-          url: "/authentication/split-left/login",
+          url: "/pages/authentication/split-left/login",
         },
         {
           title: "Split-Left Register",
-          url: "/authentication/split-left/register",
+          url: "/pages/authentication/split-left/register",
         },
         {
           title: "Split-Left Forgot Password",
-          url: "/authentication/split-left/forgot-password",
+          url: "/pages/authentication/split-left/forgot-password",
         },
         {
           title: "Split-Left Reset Password",
-          url: "/authentication/split-left/reset-password",
+          url: "/pages/authentication/split-left/reset-password",
         },
         {
           title: "Split-Left Login",
-          url: "/authentication/split-left/login",
+          url: "/pages/authentication/split-left/login",
         },
         {
           title: "Split-Left Register",
-          url: "/authentication/split-left/register",
+          url: "/pages/authentication/split-left/register",
         },
         {
           title: "Split-Left Forgot Password",
-          url: "/authentication/split-left/forgot-password",
+          url: "/pages/authentication/split-left/forgot-password",
         },
         {
           title: "Split-Left Reset Password",
-          url: "/authentication/split-left/reset-password",
+          url: "/pages/authentication/split-left/reset-password",
         },
         {
           title: "Split-Right Login",
-          url: "/authentication/split-right/login",
+          url: "/pages/authentication/split-right/login",
         },
         {
           title: "Split-Right Register",
-          url: "/authentication/split-right/register",
+          url: "/pages/authentication/split-right/register",
         },
         {
           title: "Split-Right Forgot Password",
-          url: "/authentication/split-right/forgot-password",
+          url: "/pages/authentication/split-right/forgot-password",
         },
         {
           title: "Split-Right Reset Password",
-          url: "/authentication/split-right/reset-password",
+          url: "/pages/authentication/split-right/reset-password",
         },
       ],
     },
@@ -237,8 +237,8 @@ export const menudata = {
       url: "#",
       icon: UserPlus,
       items: [
-        { title: "Split-Left", url: "/onboarding/split-left/step-one" },
-        { title: "Split-Right", url: "/onboarding/split-right/step-one" },
+        { title: "Split-Left", url: "/pages/onboarding/split-left/step-one" },
+        { title: "Split-Right", url: "/pages/onboarding/split-right/step-one" },
       ],
     },
     {
@@ -246,10 +246,10 @@ export const menudata = {
       url: "#",
       icon: SquareTerminal,
       items: [
-        { title: "Centered", url: "/coming-soon/centered" },
-        { title: "Minimal", url: "/coming-soon/minimal" },
-        { title: "Split-Left", url: "/coming-soon/split-left" },
-        { title: "Split-Right", url: "/coming-soon/split-right" },
+        { title: "Centered", url: "/pages/coming-soon/centered" },
+        { title: "Minimal", url: "/pages/coming-soon/minimal" },
+        { title: "Split-Left", url: "/pages/coming-soon/split-left" },
+        { title: "Split-Right", url: "/pages/coming-soon/split-right" },
       ],
     },
     {
@@ -257,8 +257,8 @@ export const menudata = {
       url: "#",
       icon: LifeBuoy,
       items: [
-        { title: "Contact Form", url: "/contact/contact-form" },
-        { title: "FAQ", url: "/contact/faq" },
+        { title: "Contact Form", url: "/pages/contact/contact-form" },
+        { title: "FAQ", url: "/pages/contact/faq" },
       ],
     },
     {
@@ -266,8 +266,8 @@ export const menudata = {
       url: "#",
       icon: User,
       items: [
-        { title: "404 Not Found", url: "/errors/404" },
-        { title: "Maintenance", url: "/errors/maintenance" },
+        { title: "404 Not Found", url: "/pages/errors/404" },
+        { title: "Maintenance", url: "/pages/errors/maintenance" },
       ],
     },
     {
@@ -275,22 +275,9 @@ export const menudata = {
       url: "#",
       icon: ShoppingCart,
       items: [
-        { title: "Classic", url: "/pricing/plans" },
-        { title: "Classic Icons", url: "/pricing/design2" },
+        { title: "Classic", url: "/pages/pricing/plans" },
+        { title: "Classic Icons", url: "/pages/pricing/classic-icons" },
       ],
-    },
-
-    // ======================
-    // Documentation
-    // ======================
-    {
-      title: "Documentation",
-      isSection: true,
-    },
-    {
-      title: "Docs",
-      url: "/docs",
-      icon: BookOpen,
     },
 
     // ======================
