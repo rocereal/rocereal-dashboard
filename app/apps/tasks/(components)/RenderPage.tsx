@@ -38,7 +38,10 @@ export default function RenderPage() {
       />
 
       <div className="flex-1 flex flex-col">
-        <TasksHeader onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} />
+        <TasksHeader
+          onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
+          sidebarOpen={sidebarOpen}
+        />
 
         <TasksList onTaskSelect={handleTaskSelect} />
       </div>

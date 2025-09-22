@@ -8,16 +8,21 @@ import {
   Filter,
   Grid3X3,
   List,
-  MoreVertical,
+  Menu,
   Search,
   SortAsc,
+  X,
 } from "lucide-react";
 
 interface TasksHeaderProps {
   onSidebarToggle: () => void;
+  sidebarOpen?: boolean;
 }
 
-export default function TasksHeader({ onSidebarToggle }: TasksHeaderProps) {
+export default function TasksHeader({
+  onSidebarToggle,
+  sidebarOpen,
+}: TasksHeaderProps) {
   return (
     <div className="border-b  px-6 py-4">
       <div className="flex flex-col gap-4 lg:flex-row items-start lg:items-center justify-between">
@@ -25,7 +30,11 @@ export default function TasksHeader({ onSidebarToggle }: TasksHeaderProps) {
           {/* Mobile Menu Toggle */}
           <div className="lg:hidden">
             <Button variant="ghost" size="sm" onClick={onSidebarToggle}>
-              <MoreVertical className="h-4 w-4" />
+              {sidebarOpen ? (
+                <X className="h-4 w-4" />
+              ) : (
+                <Menu className="h-4 w-4" />
+              )}
             </Button>
           </div>
 
@@ -40,24 +49,6 @@ export default function TasksHeader({ onSidebarToggle }: TasksHeaderProps) {
 
         {/* Action Buttons */}
         <div className="flex flex-col lg:flex-row w-full lg:w-fit items-start lg:items-center gap-3">
-          {/* View Toggle */}
-          <div className="flex w-fit items-start lg:items-center gap-1 bg-secondary rounded-lg p-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0 data-[state=on]:bg-white"
-            >
-              <Grid3X3 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0 data-[state=on]:bg-white"
-            >
-              <List className="h-4 w-4" />
-            </Button>
-          </div>
-
           {/* Search */}
           <div className="relative w-full hidden md:block">
             <div className="relative">

@@ -4,14 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { createSortableColumn, DataTable } from "@/components/ui/data-table";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Task,
@@ -19,9 +20,20 @@ import {
   getPriorityIcon,
   mockTasks,
 } from "@/data/tasks";
+import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
-import { Calendar, Grid3X3, List, User } from "lucide-react";
+import {
+  Calendar,
+  Edit,
+  Eye,
+  Grid3X3,
+  List,
+  MoreHorizontal,
+  Trash2,
+  User,
+} from "lucide-react";
 import { useState } from "react";
+import { showToast } from "@/components/ui/sonner";
 
 interface TasksListProps {
   onTaskSelect: (taskId: string) => void;
@@ -37,6 +49,176 @@ export default function TasksList({ onTaskSelect }: TasksListProps) {
       )
     );
   };
+
+  const columns: ColumnDef<Task>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "title",
+      header: "Task",
+      cell: ({ row }) => {
+        const task = row.original;
+        return (
+          <div className="cursor-pointer" onClick={() => onTaskSelect(task.id)}>
+            <div
+              className={cn(
+                "font-medium",
+                task.completed && "line-through text-muted-foreground"
+              )}
+            >
+              {task.title}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "priority",
+      header: "Priority",
+      cell: ({ row }) => {
+        const priority = row.getValue("priority") as string;
+        return (
+          <Badge className={cn("text-xs", getPriorityColor(priority))}>
+            {getPriorityIcon(priority)}
+            <span className="ml-1 capitalize">{priority}</span>
+          </Badge>
+        );
+      },
+    },
+    createSortableColumn("assignee", "Assignee"),
+    {
+      accessorKey: "dueDate",
+      header: "Due Date",
+      cell: ({ row }) => {
+        const dueDate = row.getValue("dueDate") as string;
+        return dueDate ? (
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm">
+              {new Date(dueDate).toLocaleDateString()}
+            </span>
+          </div>
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        );
+      },
+    },
+    {
+      accessorKey: "checklist",
+      header: "Progress",
+      cell: ({ row }) => {
+        const checklist = row.getValue("checklist") as Task["checklist"];
+        if (checklist.length === 0) {
+          return <span className="text-muted-foreground">-</span>;
+        }
+        const completed = checklist.filter((item) => item.completed).length;
+        return (
+          <div className="space-y-1">
+            <div className="text-xs text-muted-foreground">
+              {completed} / {checklist.length}
+            </div>
+            <div className="w-16 bg-muted rounded-full h-2">
+              <div
+                className="bg-primary h-2 rounded-full transition-all"
+                style={{ width: `${(completed / checklist.length) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "tags",
+      header: "Tags",
+      cell: ({ row }) => {
+        const tags = row.getValue("tags") as string[];
+        return (
+          <div className="flex gap-1 flex-wrap">
+            {tags.slice(0, 2).map((tag) => (
+              <Badge key={tag} variant="outline" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+            {tags.length > 2 && (
+              <Badge variant="outline" className="text-xs">
+                +{tags.length - 2}
+              </Badge>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const task = row.original;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(task.id);
+                  showToast({
+                    title: `Copied ${task.id}`,
+                    description: "Customer ID copied to clipboard",
+                    button: {
+                      label: "Close",
+                      onClick: () => console.log("Undo clicked"),
+                    },
+                  });
+                }}
+              >
+                Copy Task ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => onTaskSelect(task.id)}>
+                <Eye className="mr-2 h-4 w-4" />
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit Task
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-600">
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Task
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="flex-1 p-6">
@@ -178,133 +360,12 @@ export default function TasksList({ onTaskSelect }: TasksListProps) {
 
         {/* Table View */}
         <TabsContent value="table" className="mt-0">
-          <div className="border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12"></TableHead>
-                  <TableHead>Task</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Assignee</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead>Progress</TableHead>
-                  <TableHead>Tags</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {tasks.map((task) => (
-                  <TableRow
-                    key={task.id}
-                    className={cn(
-                      "cursor-pointer hover:bg-muted/50",
-                      task.completed && "opacity-75"
-                    )}
-                    onClick={() => onTaskSelect(task.id)}
-                  >
-                    <TableCell>
-                      <Checkbox
-                        checked={task.completed}
-                        onCheckedChange={() => handleTaskToggle(task.id)}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div
-                          className={cn(
-                            "font-medium",
-                            task.completed &&
-                              "line-through text-muted-foreground"
-                          )}
-                        >
-                          {task.title}
-                        </div>
-                        <div className="text-sm text-muted-foreground line-clamp-1">
-                          {task.description}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={cn(
-                          "text-xs",
-                          getPriorityColor(task.priority)
-                        )}
-                      >
-                        {getPriorityIcon(task.priority)}
-                        <span className="ml-1 capitalize">{task.priority}</span>
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{task.assignee}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {task.dueDate ? (
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">
-                            {new Date(task.dueDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {task.checklist.length > 0 ? (
-                        <div className="space-y-1">
-                          <div className="text-xs text-muted-foreground">
-                            {
-                              task.checklist.filter((item) => item.completed)
-                                .length
-                            }{" "}
-                            / {task.checklist.length}
-                          </div>
-                          <div className="w-full bg-muted rounded-full h-2">
-                            <div
-                              className="bg-primary h-2 rounded-full transition-all"
-                              style={{
-                                width: `${
-                                  (task.checklist.filter(
-                                    (item) => item.completed
-                                  ).length /
-                                    task.checklist.length) *
-                                  100
-                                }%`,
-                              }}
-                            ></div>
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-1 flex-wrap">
-                        {task.tags.slice(0, 2).map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                        {task.tags.length > 2 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{task.tags.length - 2}
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <DataTable
+            columns={columns}
+            data={tasks}
+            searchKey="title"
+            searchPlaceholder="Search tasks..."
+          />
         </TabsContent>
       </Tabs>
     </div>

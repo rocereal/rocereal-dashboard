@@ -94,7 +94,7 @@ export default function TaskDetailsDrawer({
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:w-[600px] lg:w-[700px]">
+      <SheetContent side="right" className="w-full lg:w-1/4">
         <SheetHeader className="border-b pb-4">
           <div className="flex items-center justify-between">
             <SheetTitle className="text-xl">Task Details</SheetTitle>
@@ -121,7 +121,7 @@ export default function TaskDetailsDrawer({
         ) : (
           <div className="flex flex-col h-full overflow-hidden">
             {/* Task Header */}
-            <div className="p-6 border-b">
+            <div className="p-2  lg:p-6 border-b">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3 flex-1">
                   <Checkbox
