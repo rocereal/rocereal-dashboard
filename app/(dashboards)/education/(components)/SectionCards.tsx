@@ -5,6 +5,7 @@ import { CourseData, EducationMetric } from "@/data/education";
 import { cn } from "@/lib/utils";
 import {
   CheckCircle,
+  GraduationCap,
   Star,
   TrendingDown,
   TrendingUp,
@@ -22,6 +23,16 @@ export function SectionCards({
   courses,
   className,
 }: SectionCardsProps) {
+  // Icon mapping function
+  const getIconComponent = (iconName: string) => {
+    switch (iconName) {
+      case "graduation-cap":
+        return GraduationCap;
+      default:
+        return GraduationCap; // fallback
+    }
+  };
+
   // If courses are provided, show course cards
   if (courses && courses.length > 0) {
     return (
@@ -32,7 +43,7 @@ export function SectionCards({
         )}
       >
         {courses.map((course) => {
-          const IconComponent = course.icon;
+          const IconComponent = getIconComponent(course.icon);
 
           return (
             <Card
