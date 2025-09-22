@@ -39,15 +39,6 @@ export default function MobileSidebar({
             {/* Sidebar Header */}
             <div className="p-4 border-b">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-lg font-semibold">Menu</h2>
-                  <SheetClose asChild>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <X className="h-4 w-4" />
-                      <span className="sr-only">Close menu</span>
-                    </Button>
-                  </SheetClose>
-                </div>
                 <Button size="sm">
                   <Plus className="h-4 w-4 mr-2" />
                   Compose
