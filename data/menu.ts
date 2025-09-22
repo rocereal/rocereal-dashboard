@@ -124,6 +124,19 @@ export const menudata = {
         { title: "Add User", url: "/apps/users/add-user" },
       ],
     },
+    {
+      title: "Invoice",
+      url: "#",
+      icon: Receipt,
+      items: [
+        { title: "Invoices", url: "/invoice" },
+        {
+          title: "View Invoice",
+          url: "/invoice/INV-2025-001",
+        },
+        { title: "Add Invoice", url: "/invoice/add-invoice" },
+      ],
+    },
 
     // ======================
     // Pages
@@ -255,16 +268,6 @@ export const menudata = {
       items: [
         { title: "404 Not Found", url: "/errors/404" },
         { title: "Maintenance", url: "/errors/maintenance" },
-      ],
-    },
-    {
-      title: "Invoice",
-      url: "#",
-      icon: Receipt,
-      items: [
-        { title: "Invoices", url: "/invoice" },
-        { title: "View Invoice", url: "/invoice/modern" },
-        { title: "Add Invoice", url: "/invoice/add-invoice" },
       ],
     },
     {

@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import RenderPage from "./RenderPage";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
-  "Tasks Dashboard",
-  "Manage your tasks, track progress, and collaborate with your team efficiently."
+  "Page Not Found",
+  "The page you’re looking for isn’t here. Return to Fisio’s homepage to keep exploring."
 );
 
-export default function ContactFormPage() {
+export default function FourPage() {
   return <RenderPage />;
 }

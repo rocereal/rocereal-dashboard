@@ -41,7 +41,7 @@ export default function StepFourPage() {
             onSubmit={handleForm}
             isLoading={isLoading}
             onboardingHref="/dashboard"
-            skipHref="/dashboard"
+            skipHref="/onboarding/split-left/step-three"
           />
         </div>
       </div>

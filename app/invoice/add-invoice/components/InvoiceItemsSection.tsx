@@ -36,9 +36,14 @@ export function InvoiceItemsSection({
 }: InvoiceItemsSectionProps) {
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Invoice Items</h3>
-        <Button type="button" onClick={onAddItem} size="sm">
+      <div className="flex flex-col lg:flex-row gap-4 items-center justify-between py-4">
+        <h3 className="text-lg font-semibold w-full lg:w-fit">Invoice Items</h3>
+        <Button
+          type="button"
+          onClick={onAddItem}
+          size="sm"
+          className="w-full lg:w-fit"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Item
         </Button>
@@ -53,7 +58,7 @@ export function InvoiceItemsSection({
           {items.map((item, index) => (
             <div
               key={index}
-              className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end p-4 border rounded-lg"
+              className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end border-0 lg:border rounded-lg p-0 lg:p-4"
             >
               <div className="md:col-span-2">
                 <Label>Description</Label>
@@ -111,7 +116,7 @@ export function InvoiceItemsSection({
                   className="bg-muted"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <div className="flex-1">
                   <Label>Amount</Label>
                   <Input
@@ -144,7 +149,7 @@ export function InvoiceItemsSection({
                 <span className="font-medium">Tax:</span>
                 <span>${tax.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between py-2 text-lg font-bold border-t pt-2">
+              <div className="flex justify-between py-2 text-lg font-bold border-0  pt-2">
                 <span>Total:</span>
                 <span>${total.toFixed(2)}</span>
               </div>

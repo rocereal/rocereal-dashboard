@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import RenderPage from "./RenderPage";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
-  "Tasks Dashboard",
-  "Manage your tasks, track progress, and collaborate with your team efficiently."
+  "Maintenance Mode",
+  "We’re working on improvements. Fisio will be back online shortly."
 );
 
 export default function ContactFormPage() {

@@ -10,7 +10,7 @@ interface OnboardingWizardProps {
 
 export function OnboardingWizard({ currentStep }: OnboardingWizardProps) {
   return (
-    <div className="bg-neutral-100 dark:bg-slate-900 p-8 space-y-8 rounded-md w-full lg:w-1/3">
+    <div className="dark:bg-secondary p-8 space-y-8 rounded-md w-full lg:w-1/3">
       <div className="text-center">
         <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
           <Logo />
@@ -31,7 +31,7 @@ export function OnboardingWizard({ currentStep }: OnboardingWizardProps) {
           >
             {/* Connecting line */}
             {index < onboardingSteps.length - 1 && (
-              <div className="absolute top-4 left-13 w-8 h-0.5 lg:left-4 lg:top-12 lg:w-0.5 lg:h-16 bg-gray-300"></div>
+              <div className="absolute top-4 left-13 w-8 h-0.5 lg:left-4 lg:top-12 lg:w-0.5 lg:h-16 bg-gray-300 dark:bg-gray-700"></div>
             )}
 
             <div
@@ -40,7 +40,7 @@ export function OnboardingWizard({ currentStep }: OnboardingWizardProps) {
                   ? "bg-primary text-white"
                   : index + 1 < currentStep
                   ? "bg-primary text-white"
-                  : "bg-white text-primary"
+                  : "bg-gray-300 dark:bg-stone-900 text-primary"
               }`}
             >
               {index + 1 < currentStep ? (

@@ -214,11 +214,6 @@ export default function AddInvoiceForm() {
           { label: "Invoices", href: "/invoice" },
           { label: "Create Invoice" },
         ]}
-        primaryAction={{
-          label: "Back to Invoices",
-          icon: <ArrowLeft className="h-4 w-4" />,
-          onClick: handleBack,
-        }}
       />
 
       <form onSubmit={handleSubmit} className="space-y-6">

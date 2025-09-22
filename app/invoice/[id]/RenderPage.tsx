@@ -100,7 +100,7 @@ export default function RenderPage({ id }: RenderPageProps) {
               </p>
             </div>
             <div className="text-right">
-              <div className="border-b w-48 mb-2"></div>
+              <div className="border-b  border-gray-200 w-48 mb-2"></div>
               <p className="text-sm text-gray-700">Authorized Signature</p>
             </div>
           </div>
