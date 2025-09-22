@@ -128,10 +128,7 @@ export function CreateEventForm({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="w-[400px] sm:w-[540px] flex flex-col"
-      >
+      <SheetContent side="right" className="w-[400px] sm:w-full flex flex-col">
         <SheetHeader className="flex-shrink-0">
           <SheetTitle>Create New Event</SheetTitle>
           <SheetDescription>Add a new event to your calendar</SheetDescription>

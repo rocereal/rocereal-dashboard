@@ -4,12 +4,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { CourseData } from "@/data/education";
 import {
@@ -41,18 +41,18 @@ export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>{trigger || defaultTrigger}</SheetTrigger>
+      <SheetContent className="w-[400px] sm:w-full overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle className="text-2xl font-bold">
             {course.title} - Course Preview
-          </DialogTitle>
-        </DialogHeader>
+          </SheetTitle>
+        </SheetHeader>
 
         <div className="space-y-6">
           {/* Course Overview */}
-          <Card>
+          <Card className="rounded-none">
             <CardHeader>
               <CardTitle>Course Overview</CardTitle>
             </CardHeader>
@@ -61,7 +61,7 @@ export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
                 {course.description}
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   <div>
@@ -92,7 +92,7 @@ export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="secondary">{course.level}</Badge>
                 {course.certificate && (
                   <Badge variant="outline">
@@ -112,7 +112,7 @@ export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
 
           {/* What You'll Learn */}
           {course.skills && course.skills.length > 0 && (
-            <Card>
+            <Card className="rounded-none">
               <CardHeader>
                 <CardTitle>What You&apos;ll Learn</CardTitle>
               </CardHeader>
@@ -131,7 +131,7 @@ export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
 
           {/* Prerequisites */}
           {course.prerequisites && course.prerequisites.length > 0 && (
-            <Card>
+            <Card className="rounded-none">
               <CardHeader>
                 <CardTitle>Prerequisites</CardTitle>
               </CardHeader>
@@ -148,7 +148,7 @@ export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
           )}
 
           {/* Curriculum Preview */}
-          <Card>
+          <Card className="rounded-none">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Curriculum Preview</span>
@@ -187,7 +187,7 @@ export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
           </Card>
 
           {/* Pricing and Enrollment */}
-          <Card className="border-primary/20 bg-primary/5">
+          <Card className="rounded-none border-primary/20 bg-primary/5">
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
                 <div>
@@ -233,7 +233,7 @@ export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
             </CardContent>
           </Card>
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

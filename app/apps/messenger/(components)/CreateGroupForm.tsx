@@ -123,10 +123,7 @@ export function CreateGroupForm({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="w-[400px] sm:w-[540px] flex flex-col"
-      >
+      <SheetContent side="right" className="w-[400px] sm:w-full flex flex-col">
         <SheetHeader className="flex-shrink-0">
           <SheetTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
