@@ -56,7 +56,11 @@ export function UserCard({ user, actions, onAction }: UserCardProps) {
           <div className="flex items-center space-x-4">
             <Avatar className="w-12 h-12">
               <AvatarImage
-                src={user.avatar}
+                src={
+                  typeof user.avatar === "object"
+                    ? user.avatar.src
+                    : user.avatar
+                }
                 alt={`${user.firstName} ${user.lastName}`}
               />
               <AvatarFallback>

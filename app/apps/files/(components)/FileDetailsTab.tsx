@@ -85,7 +85,13 @@ export default function FileDetailsTab({
           <CardContent>
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10">
-                <AvatarImage src={file.owner.avatar} />
+                <AvatarImage
+                  src={
+                    typeof file.owner.avatar === "object"
+                      ? file.owner.avatar.src
+                      : file.owner.avatar
+                  }
+                />
                 <AvatarFallback>
                   {file.owner.name
                     .split(" ")
