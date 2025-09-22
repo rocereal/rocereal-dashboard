@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -161,7 +161,10 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
     },
   ];
 
-  const bulkActions = (selectedRows: CRMCustomer[], table: any) => (
+  const bulkActions = (
+    selectedRows: CRMCustomer[],
+    table: Table<CRMCustomer>
+  ) => (
     <BulkActions
       selectedItems={selectedRows}
       isAllSelected={table.getIsAllPageRowsSelected()}

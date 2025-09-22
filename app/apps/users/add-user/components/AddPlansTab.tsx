@@ -98,7 +98,13 @@ export function AddPlansTab({ formData, onFormDataChange }: AddPlansTabProps) {
             <Select
               value={formData.plan}
               onValueChange={(value) =>
-                onFormDataChange({ plan: value as any })
+                onFormDataChange({
+                  plan: value as
+                    | "free"
+                    | "starter"
+                    | "professional"
+                    | "enterprise",
+                })
               }
             >
               <SelectTrigger>

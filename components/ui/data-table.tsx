@@ -4,6 +4,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
+  Table as ReactTable,
   VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -37,9 +38,13 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   searchKey?: string;
   searchPlaceholder?: string;
-  bulkActions?: (selectedRows: TData[], table: any) => React.ReactNode;
-  additionalFilters?: React.ReactNode | ((table: any) => React.ReactNode);
-  onFilterChange?: (table: any) => void;
+  bulkActions?: (
+    selectedRows: TData[],
+    table: ReactTable<TData>
+  ) => React.ReactNode;
+  additionalFilters?:
+    | React.ReactNode
+    | ((table: ReactTable<TData>) => React.ReactNode);
 }
 
 export function DataTable<TData, TValue>({
@@ -49,7 +54,6 @@ export function DataTable<TData, TValue>({
   searchPlaceholder = "Filter...",
   bulkActions,
   additionalFilters,
-  onFilterChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

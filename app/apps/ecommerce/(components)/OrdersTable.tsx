@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BulkActions } from "@/components/tables/BulkActions";
 import { ordersData, Product } from "@/data/ecommerce";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -214,7 +214,7 @@ export function OrdersTable({ products }: ProductsTableProps) {
     },
   ];
 
-  const bulkActions = (selectedRows: Product[], table: any) => (
+  const bulkActions = (selectedRows: Product[], table: Table<Product>) => (
     <BulkActions
       selectedItems={selectedRows}
       isAllSelected={table.getIsAllPageRowsSelected()}

@@ -110,10 +110,7 @@ export function getLessonTypeDisplayName(type: string): string {
 /**
  * Check if lesson is accessible to user
  */
-export function isLessonAccessible(
-  lessonIndex: number,
-  isEnrolled: boolean
-): boolean {
+export function isLessonAccessible(): boolean {
   // All lessons are now accessible to all users
   return true;
 }

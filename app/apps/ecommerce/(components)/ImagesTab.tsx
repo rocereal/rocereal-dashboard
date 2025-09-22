@@ -1,5 +1,6 @@
 "use client";
 
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { useState } from "react";
 
 interface ProductData {
@@ -136,7 +137,7 @@ export function ImagesTab({ productData, setProductData }: ImagesTabProps) {
               {productData.images.map((image, index) => (
                 <div key={index} className="relative group">
                   <div className="aspect-square rounded-lg overflow-hidden border bg-muted">
-                    <img
+                    <ImageComponentOptimized
                       src={URL.createObjectURL(image)}
                       alt={`Upload ${index + 1}`}
                       className="w-full h-full object-cover"

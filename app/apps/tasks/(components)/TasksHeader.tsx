@@ -3,16 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  CheckSquare,
-  Filter,
-  Grid3X3,
-  List,
-  Menu,
-  Search,
-  SortAsc,
-  X,
-} from "lucide-react";
+import { CheckSquare, Filter, Menu, Search, SortAsc, X } from "lucide-react";
 
 interface TasksHeaderProps {
   onSidebarToggle: () => void;

@@ -62,7 +62,7 @@ export function Privacy() {
             <div className="space-y-0.5">
               <Label>Activity status</Label>
               <p className="text-sm text-muted-foreground">
-                Show when you're online and active.
+                Show when you&apos;re online and active.
               </p>
             </div>
             <Switch defaultChecked />

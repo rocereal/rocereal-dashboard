@@ -39,13 +39,7 @@ const roleColors = {
   viewer: "bg-gray-100 text-gray-800",
 };
 
-export function UsersTable({
-  users,
-  actions,
-  onAction,
-  selectedUsers,
-  onSelectionChange,
-}: UsersTableProps) {
+export function UsersTable({ users, actions, onAction }: UsersTableProps) {
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };

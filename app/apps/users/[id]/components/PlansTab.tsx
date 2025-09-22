@@ -29,7 +29,7 @@ interface Plan {
   isPopular?: boolean;
 }
 
-export function PlansTab({ user, formatDate }: PlansTabProps) {
+export function PlansTab({ user }: PlansTabProps) {
   const plans: Plan[] = [
     {
       id: "free",

@@ -1,10 +1,10 @@
 import { ConfigPanel } from "@/components/config-panel";
-import { LayoutConfigProvider } from "@/lib/layout-config";
-import { ThemeProvider, useTheme } from "@/lib/theme-provider";
-import type { Metadata } from "next";
-import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "@/components/ui/sonner";
+import { LayoutConfigProvider } from "@/lib/layout-config";
+import { ThemeProvider } from "@/lib/theme-provider";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 const geistSans = Geist({

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { showToast } from "@/components/ui/sonner";
 import { RecentStudent } from "@/data/education";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import { Eye, Mail, MoreHorizontal } from "lucide-react";
 
 interface RecentStudentsTableProps {
@@ -207,7 +207,10 @@ export function RecentStudentsTable({ students }: RecentStudentsTableProps) {
     },
   ];
 
-  const bulkActions = (selectedRows: RecentStudent[], table: any) => (
+  const bulkActions = (
+    selectedRows: RecentStudent[],
+    table: Table<RecentStudent>
+  ) => (
     <BulkActions
       selectedItems={selectedRows}
       isAllSelected={table.getIsAllPageRowsSelected()}

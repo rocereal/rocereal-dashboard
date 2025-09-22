@@ -21,11 +21,7 @@ interface ActivityTabProps {
   formatDateTime: (dateString: string) => string;
 }
 
-export function ActivityTab({
-  user,
-  formatDate,
-  formatDateTime,
-}: ActivityTabProps) {
+export function ActivityTab({ user, formatDateTime }: ActivityTabProps) {
   const getActivityIcon = (type: ActivityItem["type"]) => {
     switch (type) {
       case "login":
@@ -152,7 +148,7 @@ export function ActivityTab({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {user.metadata.featuresUsed.map((feature, index) => (
+            {user.metadata.featuresUsed.map((feature) => (
               <div key={feature} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium capitalize">

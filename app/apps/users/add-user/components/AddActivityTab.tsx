@@ -1,18 +1,15 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Activity, Clock } from "lucide-react";
 import { UserFormData } from "../AddUserTabs";
-import { Activity, Clock, Monitor } from "lucide-react";
 
 interface AddActivityTabProps {
   formData: UserFormData;
   onFormDataChange: (data: Partial<UserFormData>) => void;
 }
 
-export function AddActivityTab({
-  formData,
-  onFormDataChange,
-}: AddActivityTabProps) {
+export function AddActivityTab({}: AddActivityTabProps) {
   return (
     <div className="space-y-6">
       {/* Activity Settings */}

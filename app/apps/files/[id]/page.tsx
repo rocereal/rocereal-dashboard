@@ -15,7 +15,6 @@ import {
   FileText,
   Share,
   Star,
-  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import FileTabs from "../(components)/FileTabs";

@@ -6,17 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
 import { User } from "@/data/users-data";
-import {
-  Calendar,
-  MapPin,
-  Phone,
-  Plus,
-  User as UserIcon,
-  X,
-} from "lucide-react";
+import { MapPin, Phone, Plus, User as UserIcon, X } from "lucide-react";
 import { useState } from "react";
 
 interface PersonalInformationTabProps {
@@ -43,10 +34,7 @@ interface Address {
   isPrimary: boolean;
 }
 
-export function PersonalInformationTab({
-  user,
-  formatDate,
-}: PersonalInformationTabProps) {
+export function PersonalInformationTab({ user }: PersonalInformationTabProps) {
   const [emergencyContacts, setEmergencyContacts] = useState<
     EmergencyContact[]
   >([
@@ -72,9 +60,6 @@ export function PersonalInformationTab({
     },
   ]);
 
-  const [showEmergencyForm, setShowEmergencyForm] = useState(false);
-  const [showAddressForm, setShowAddressForm] = useState(false);
-
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
@@ -88,7 +73,6 @@ export function PersonalInformationTab({
       email: "",
     };
     setEmergencyContacts([...emergencyContacts, newContact]);
-    setShowEmergencyForm(true);
   };
 
   const removeEmergencyContact = (id: string) => {
@@ -109,7 +93,6 @@ export function PersonalInformationTab({
       isPrimary: false,
     };
     setAddresses([...addresses, newAddress]);
-    setShowAddressForm(true);
   };
 
   const removeAddress = (id: string) => {

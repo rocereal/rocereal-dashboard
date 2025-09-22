@@ -17,7 +17,7 @@ import {
   businessCustomers,
   type BusinessCustomer,
 } from "@/data/business-customers";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { showToast } from "@/components/ui/sonner";
 
@@ -163,7 +163,10 @@ export const businessColumns: ColumnDef<BusinessCustomer>[] = [
 ];
 
 export function BusinessCustomersTable() {
-  const bulkActions = (selectedRows: BusinessCustomer[], table: any) => (
+  const bulkActions = (
+    selectedRows: BusinessCustomer[],
+    table: Table<BusinessCustomer>
+  ) => (
     <BulkActions
       selectedItems={selectedRows}
       isAllSelected={table.getIsAllPageRowsSelected()}

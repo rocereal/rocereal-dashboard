@@ -36,7 +36,6 @@ export function CurriculumLesson({
   className = "",
 }: CurriculumLessonProps) {
   // Make all lessons accessible for preview
-  const accessible = true; // Changed from: isLessonAccessible(index, isEnrolled);
   const displayType = getLessonTypeDisplayName(lesson.type);
   const formattedDuration = formatLessonDuration(lesson.duration);
 

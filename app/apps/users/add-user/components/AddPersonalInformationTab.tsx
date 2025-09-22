@@ -175,7 +175,13 @@ export function AddPersonalInformationTab({
                   <Select
                     value={formData.gender}
                     onValueChange={(value) =>
-                      onFormDataChange({ gender: value as any })
+                      onFormDataChange({
+                        gender: value as
+                          | "male"
+                          | "female"
+                          | "other"
+                          | "prefer_not_to_say",
+                      })
                     }
                   >
                     <SelectTrigger>

@@ -1,13 +1,11 @@
 import { ConfigPanel } from "@/components/config-panel";
+import { Fourfour } from "@/components/svg/Icons";
 import { LayoutConfigProvider } from "@/lib/layout-config";
-import { ThemeProvider, useTheme } from "@/lib/theme-provider";
+import { metadataTemplates } from "@/lib/metadata";
+import { ThemeProvider } from "@/lib/theme-provider";
 import type { Metadata } from "next";
-import NextTopLoader from "nextjs-toploader";
-import { Toaster } from "@/components/ui/sonner";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { metadataTemplates } from "@/lib/metadata";
-import { Fourfour } from "@/components/svg/Icons";
 import Header from "./pages/contact/(components)/ContactHeader";
 
 const geistSans = Geist({

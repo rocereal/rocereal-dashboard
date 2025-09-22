@@ -6,7 +6,7 @@ import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTable, createSortableColumn } from "@/components/ui/data-table";
+import { DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,8 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { showToast } from "@/components/ui/sonner";
 import { EcommerceMetric, ordersData } from "@/data/ecommerce";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import {
   ArrowUpDown,
   Calendar,
@@ -41,7 +42,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
 import { OrdersBulkActions, OrderStatusBadge } from "./index";
-import { showToast } from "@/components/ui/sonner";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState(ordersData);
@@ -294,7 +294,7 @@ export default function OrdersPage() {
   ];
 
   // Additional filters for DataTable
-  const additionalFilters = (table: any) => (
+  const additionalFilters = (table: Table<(typeof ordersData)[0]>) => (
     <Select
       value={statusFilter}
       onValueChange={(value) => {
@@ -322,7 +322,10 @@ export default function OrdersPage() {
   );
 
   // Bulk actions function for DataTable
-  const bulkActions = (selectedRows: typeof ordersData, table: any) => (
+  const bulkActions = (
+    selectedRows: typeof ordersData,
+    table: Table<(typeof ordersData)[0]>
+  ) => (
     <OrdersBulkActions
       selectedOrders={selectedRows.map((order) => order.id)}
       totalOrders={orders.length}

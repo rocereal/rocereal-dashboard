@@ -80,7 +80,7 @@ export default function AccessSharingTab({
     {
       id: "actions",
       header: "Actions",
-      cell: ({ row }) => (
+      cell: () => (
         <Button variant="ghost" size="sm">
           <Settings className="h-4 w-4" />
         </Button>

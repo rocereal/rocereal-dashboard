@@ -1,14 +1,8 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Message,
-  MessengerChatProps,
-  mockContacts,
-  mockMessages,
-} from "@/data/chats";
+import { Message, MessengerChatProps, mockMessages } from "@/data/chats";
 import { Mic, Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
 
@@ -17,7 +11,6 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
   const [messages, setMessages] =
     useState<Record<string, Message[]>>(mockMessages);
 
-  const contact = mockContacts.find((c) => c.id === selectedContact);
   const chatMessages = selectedContact ? messages[selectedContact] || [] : [];
 
   const handleSendMessage = () => {

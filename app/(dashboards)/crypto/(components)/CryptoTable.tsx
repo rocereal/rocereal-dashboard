@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BulkActions } from "@/components/tables/BulkActions";
 import { cryptoTableData, type CryptoTableData } from "@/data/crypto-prices";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import {
   ArrowUpDown,
   MoreHorizontal,
@@ -242,7 +242,10 @@ export const columns: ColumnDef<CryptoTableData>[] = [
 ];
 
 export function CryptoTable() {
-  const bulkActions = (selectedRows: CryptoTableData[], table: any) => (
+  const bulkActions = (
+    selectedRows: CryptoTableData[],
+    table: Table<CryptoTableData>
+  ) => (
     <BulkActions
       selectedItems={selectedRows}
       isAllSelected={table.getIsAllPageRowsSelected()}

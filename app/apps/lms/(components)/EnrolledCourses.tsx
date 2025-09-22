@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   Book,
-  BookOpen,
   CheckCircle,
   GraduationCap,
   Star,
@@ -18,8 +17,6 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { CurriculumLesson } from "./CurriculumLesson";
 
 interface EnrolledCoursesProps {
   metrics?: EducationMetric[];
@@ -34,8 +31,6 @@ export function EnrolledCourses({
   className,
   userProgress = {},
 }: EnrolledCoursesProps) {
-  const [expandedCourses] = useState<Set<string>>(new Set());
-
   // Icon mapping function
   const getIconComponent = (iconName: string) => {
     switch (iconName) {

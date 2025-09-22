@@ -1,19 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
 import { InvoiceDetail } from "@/data/invoices";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
-  InvoiceBasicInfo,
-  CompanyInfo,
   ClientInfo,
-  ProjectInfo,
+  CompanyInfo,
+  InvoiceBasicInfo,
   InvoiceItemsSection,
   PaymentInfo,
+  ProjectInfo,
 } from "./components";
 
 interface InvoiceItem {
@@ -66,10 +65,6 @@ export default function AddInvoiceForm() {
     // Tax rate
     taxRate: 8,
   });
-
-  const handleBack = () => {
-    router.push("/invoice");
-  };
 
   const handleInputChange = (field: string, value: string | number) => {
     setFormData((prev) => ({

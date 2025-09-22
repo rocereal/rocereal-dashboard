@@ -1,10 +1,9 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -12,13 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Users, Lock, Globe } from "lucide-react";
-import {
-  mockUsersForSharing,
-  permissionOptions,
-  getRoleColor,
-} from "@/data/files";
 import { mockContacts } from "@/data/contacts";
+import { permissionOptions } from "@/data/files";
+import { Globe, Lock, Users } from "lucide-react";
 
 interface AccessSharingSectionProps {
   permissions: "private" | "shared" | "public";

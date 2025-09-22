@@ -10,7 +10,6 @@
 
 import { Fourfour } from "@/components/svg/Icons";
 // Import Next.js components and utilities
-import Link from "next/link"; // Next.js Link component (imported but not used in this component)
 
 // Import React utilities
 import { useEffect } from "react"; // React hook for side effects
@@ -26,7 +25,6 @@ import Header from "./pages/contact/(components)/ContactHeader";
  */
 export default function Error({
   error,
-  reset,
 }: {
   error?: Error & { digest?: string };
   reset?: () => void;

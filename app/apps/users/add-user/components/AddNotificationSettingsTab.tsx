@@ -119,7 +119,9 @@ export function AddNotificationSettingsTab({
             <Select
               value={formData.profileVisibility}
               onValueChange={(value) =>
-                onFormDataChange({ profileVisibility: value as any })
+                onFormDataChange({
+                  profileVisibility: value as "public" | "private" | "team",
+                })
               }
             >
               <SelectTrigger>

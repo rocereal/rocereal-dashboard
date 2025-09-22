@@ -1,19 +1,11 @@
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { productsData } from "@/data/ecommerce";
-import {
-  ArrowLeft,
-  Edit,
-  FileText,
-  Download,
-  Eye,
-  Share,
-  Trash2,
-} from "lucide-react";
+import { metadataTemplates } from "@/lib/metadata";
+import { ArrowLeft, Download, Eye, Share, Trash2 } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductTabs } from "../../(components)/ProductTabs";
-import { metadataTemplates } from "@/lib/metadata";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
   "Products Details",

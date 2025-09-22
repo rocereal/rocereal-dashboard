@@ -2,8 +2,8 @@ import { Download, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
-interface BulkActionsProps {
-  selectedItems: any[];
+interface BulkActionsProps<T> {
+  selectedItems: T[];
   isAllSelected: boolean;
   onSelectAll: (checked: boolean) => void;
   onBulkDelete: () => void;
@@ -11,14 +11,14 @@ interface BulkActionsProps {
   itemName: string;
 }
 
-export function BulkActions({
+export function BulkActions<T>({
   selectedItems,
   isAllSelected,
   onSelectAll,
   onBulkDelete,
   onExport,
   itemName,
-}: BulkActionsProps) {
+}: BulkActionsProps<T>) {
   return (
     <>
       {/* Bulk Actions */}

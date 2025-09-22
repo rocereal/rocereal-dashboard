@@ -1,11 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { UserFormData } from "../AddUserTabs";
 import { Shield, ShieldCheck } from "lucide-react";
+import { UserFormData } from "../AddUserTabs";
 
 interface AddSecurityTabProps {
   formData: UserFormData;

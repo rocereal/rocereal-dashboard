@@ -27,7 +27,6 @@ interface NotificationSetting {
 
 export function NotificationSettingsTab({
   user,
-  formatDate,
 }: NotificationSettingsTabProps) {
   const [notificationSettings, setNotificationSettings] = useState<
     NotificationSetting[]
@@ -303,7 +302,7 @@ export function NotificationSettingsTab({
           <div className="space-y-2">
             <Label>Quiet Hours</Label>
             <p className="text-sm text-muted-foreground">
-              Configure when you don't want to receive notifications
+              Configure when you don&apos;t want to receive notifications
             </p>
             <div className="flex items-center space-x-4">
               <div className="space-y-1">

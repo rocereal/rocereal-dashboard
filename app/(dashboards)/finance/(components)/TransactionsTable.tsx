@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BulkActions } from "@/components/tables/BulkActions";
 import { transactionsData, type TransactionData } from "@/data/finance";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import {
   ArrowUpDown,
   Download,
@@ -248,7 +248,10 @@ export const columns: ColumnDef<TransactionData>[] = [
 ];
 
 export function TransactionsTable() {
-  const bulkActions = (selectedRows: TransactionData[], table: any) => (
+  const bulkActions = (
+    selectedRows: TransactionData[],
+    table: Table<TransactionData>
+  ) => (
     <BulkActions
       selectedItems={selectedRows}
       isAllSelected={table.getIsAllPageRowsSelected()}

@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CourseData } from "@/data/education";
+import { CourseData, CourseLesson } from "@/data/education";
 import { BookOpen } from "lucide-react";
 import {
   calculateCurriculumProgress,
@@ -36,7 +36,7 @@ export function CourseCurriculum({
   const progress = calculateCurriculumProgress(course.curriculum, userProgress);
   const nextLesson = getNextLesson(course.curriculum, userProgress);
 
-  const handleLessonClick = (lesson: any) => {
+  const handleLessonClick = (lesson: CourseLesson) => {
     // Handle lesson clicks - for now, just log
     console.log("Lesson clicked:", lesson.title);
     // In a real app, this would navigate to lesson content or show preview
