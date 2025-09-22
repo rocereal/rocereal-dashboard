@@ -52,15 +52,32 @@ export default async function CourseDetailsPage({
     );
   }
 
-  // Mock enrollment status - in a real app, this would come from user authentication/session
-  // For demo purposes, let's assume the first course is enrolled and others are not
-  const isEnrolled = course.courseId === "intro-data-science";
-
   // Mock user progress - in a real app, this would come from the database
+  // For demo purposes, simulate progress for courses that would appear in EnrolledCourses
   const mockUserProgress: { [lessonId: string]: boolean } = {};
+  let userProgressPercentage = 0;
+
+  // Simulate enrollment and progress for courses that would be in EnrolledCourses
+  // In a real app, this would check if the user has progress on this course
+  const enrolledCourseIds = [
+    "intro-data-science",
+    "web-development-basics",
+    "business-analytics",
+  ]; // Mock enrolled courses
+  const isEnrolled = enrolledCourseIds.includes(course.courseId);
+
   if (isEnrolled && course.curriculum) {
-    // Simulate 60% completion for enrolled users
-    const completedCount = Math.floor(course.curriculum.length * 0.6);
+    // Simulate varying completion levels for enrolled courses
+    const progressLevels = {
+      "intro-data-science": 0.6,
+      "web-development-basics": 0.3,
+      "business-analytics": 0.8,
+    };
+    const progress =
+      progressLevels[course.courseId as keyof typeof progressLevels] || 0.5;
+    userProgressPercentage = Math.round(progress * 100);
+
+    const completedCount = Math.floor(course.curriculum.length * progress);
     course.curriculum.slice(0, completedCount).forEach((lesson) => {
       mockUserProgress[lesson.id] = true;
     });
@@ -96,7 +113,7 @@ export default async function CourseDetailsPage({
       <CourseHero
         course={course}
         isEnrolled={isEnrolled}
-        progress={isEnrolled ? 60 : 0}
+        progress={isEnrolled ? userProgressPercentage : 0}
       />
 
       {/* Course Details Grid */}

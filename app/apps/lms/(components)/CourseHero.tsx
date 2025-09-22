@@ -24,7 +24,7 @@ export function CourseHero({
     <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
         <div className="space-y-6">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="text-sm">
               {course.level}
             </Badge>

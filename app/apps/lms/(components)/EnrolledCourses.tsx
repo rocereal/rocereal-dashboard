@@ -62,6 +62,7 @@ export function EnrolledCourses({
           // In EnrolledCourses, all courses are continuing
           const userCourseProgress = userProgress[course.courseId] || 0;
 
+          console.log(course);
           return (
             <Card
               key={course.courseId}
@@ -85,7 +86,7 @@ export function EnrolledCourses({
                 {/* Show user progress with green bar for enrolled courses */}
                 <div className="absolute bottom-0 w-full bg-muted rounded-none h-1">
                   <div
-                    className="h-1 rounded-r-full transition-all duration-300 bg-green-500"
+                    className="h-1 rounded-r-full transition-all duration-300 bg-primary"
                     style={{
                       width: `${userCourseProgress}%`,
                     }}
@@ -94,7 +95,7 @@ export function EnrolledCourses({
 
                 {/* Show continuing badge for all enrolled courses */}
                 <div className="absolute top-2 left-2">
-                  <Badge className="bg-green-500 text-white text-xs">
+                  <Badge className="bg-primary text-white text-xs">
                     Continuing
                   </Badge>
                 </div>
