@@ -81,7 +81,7 @@ export default function OrderDetailsPage({ orderId }: OrderDetailsPageProps) {
   }
 
   const handlePrintOrder = () => {
-    window.print();
+    // Implement invoice print
   };
 
   const handleDownloadInvoice = () => {

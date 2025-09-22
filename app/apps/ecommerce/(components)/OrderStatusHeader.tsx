@@ -75,11 +75,15 @@ export function OrderStatusHeader({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-2 w-full lg:w-fit">
-        <Button variant="outline" onClick={onPrintOrder}>
+        <Button variant="outline" onClick={onPrintOrder} className="bg-card">
           <Printer className="h-4 w-4 mr-2" />
           Print
         </Button>
-        <Button variant="outline" onClick={onDownloadInvoice}>
+        <Button
+          variant="outline"
+          onClick={onDownloadInvoice}
+          className="bg-card"
+        >
           <Download className="h-4 w-4 mr-2" />
           Invoice
         </Button>

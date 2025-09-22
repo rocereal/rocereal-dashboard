@@ -1,6 +1,6 @@
 import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
-import OrderDetailsPage from "./(components)/OrderDetailsPage";
+import OrderDetailsPage from "../../(components)/OrderDetailsPage";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
   "Order Details",
