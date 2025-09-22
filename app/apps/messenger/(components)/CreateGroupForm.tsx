@@ -13,15 +13,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import { Contact, mockContacts } from "@/data/contacts";
 import { Plus, Search, Users, X } from "lucide-react";
 import { useState } from "react";
-
-interface GroupMember {
-  id: string;
-  name: string;
-  avatar: string;
-  isOnline: boolean;
-}
 
 interface CreateGroupFormProps {
   open: boolean;
@@ -29,39 +23,9 @@ interface CreateGroupFormProps {
   onSubmit?: (group: {
     name: string;
     description: string;
-    members: GroupMember[];
+    members: Contact[];
   }) => void;
 }
-
-// Mock contacts data
-const mockContacts: GroupMember[] = [
-  {
-    id: "1",
-    name: "Alice Johnson",
-    avatar: "/avatars/alice.jpg",
-    isOnline: true,
-  },
-  { id: "2", name: "Bob Smith", avatar: "/avatars/bob.jpg", isOnline: true },
-  {
-    id: "3",
-    name: "Carol Davis",
-    avatar: "/avatars/carol.jpg",
-    isOnline: false,
-  },
-  {
-    id: "4",
-    name: "David Wilson",
-    avatar: "/avatars/david.jpg",
-    isOnline: true,
-  },
-  { id: "5", name: "Emma Brown", avatar: "/avatars/emma.jpg", isOnline: false },
-  {
-    id: "6",
-    name: "Frank Miller",
-    avatar: "/avatars/frank.jpg",
-    isOnline: true,
-  },
-];
 
 export function CreateGroupForm({
   open,
@@ -71,13 +35,13 @@ export function CreateGroupForm({
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMembers, setSelectedMembers] = useState<GroupMember[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<Contact[]>([]);
 
   const filteredContacts = mockContacts.filter((contact) =>
     contact.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAddMember = (contact: GroupMember) => {
+  const handleAddMember = (contact: Contact) => {
     if (!selectedMembers.find((member) => member.id === contact.id)) {
       setSelectedMembers([...selectedMembers, contact]);
     }
@@ -171,7 +135,17 @@ export function CreateGroupForm({
                     className="flex items-center gap-2 pr-1"
                   >
                     <Avatar className="h-4 w-4">
-                      <AvatarImage src={member.avatar} />
+                      <AvatarImage
+                        src={
+                          (typeof member.avatar === "string"
+                            ? member.avatar
+                            : member.avatar?.src) ||
+                          `/avatars/${member.name
+                            .toLowerCase()
+                            .replace(" ", "-")}.jpg`
+                        }
+                        alt={member.name}
+                      />
                       <AvatarFallback className="text-xs">
                         {member.name
                           .split(" ")
@@ -223,7 +197,17 @@ export function CreateGroupForm({
                     <div className="flex items-center gap-3">
                       <div className="relative">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={contact.avatar} />
+                          <AvatarImage
+                            src={
+                              (typeof contact.avatar === "string"
+                                ? contact.avatar
+                                : contact.avatar?.src) ||
+                              `/avatars/${contact.name
+                                .toLowerCase()
+                                .replace(" ", "-")}.jpg`
+                            }
+                            alt={contact.name}
+                          />
                           <AvatarFallback>
                             {contact.name
                               .split(" ")

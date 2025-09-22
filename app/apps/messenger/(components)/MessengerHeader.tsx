@@ -2,35 +2,8 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { mockContacts } from "@/data/contacts";
 import { MessageCircle, MoreVertical, Phone, Video } from "lucide-react";
-
-// Mock contacts data (same as sidebar for consistency)
-const mockContacts = [
-  {
-    id: "1",
-    name: "Alice Johnson",
-    avatar: "/avatars/alice.jpg",
-    isOnline: true,
-  },
-  {
-    id: "2",
-    name: "Bob Smith",
-    avatar: "/avatars/bob.jpg",
-    isOnline: true,
-  },
-  {
-    id: "3",
-    name: "Carol Davis",
-    avatar: "/avatars/carol.jpg",
-    isOnline: false,
-  },
-  {
-    id: "4",
-    name: "David Wilson",
-    avatar: "/avatars/david.jpg",
-    isOnline: true,
-  },
-];
 
 interface MessengerHeaderProps {
   selectedContact: string | null;
@@ -48,9 +21,11 @@ export default function MessengerHeader({
       <div className="border-b px-6 py-4">
         <div className="flex items-center justify-center">
           <div className="text-center">
-            <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-            <h1 className="text-lg font-semibold text-gray-700">Messenger</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-400 dark:text-white" />
+            <h1 className="text-lg font-semibold text-gray-700 dark:text-white">
+              Messenger
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-muted-background mt-1">
               Select a chat, group, or contact to start messaging
             </p>
           </div>
@@ -66,7 +41,17 @@ export default function MessengerHeader({
           <div className="flex items-center gap-3">
             <div className="relative">
               <Avatar className="h-10 w-10">
-                <AvatarImage src={contact.avatar} />
+                <AvatarImage
+                  src={
+                    (typeof contact.avatar === "string"
+                      ? contact.avatar
+                      : contact.avatar?.src) ||
+                    `/avatars/${contact.name
+                      .toLowerCase()
+                      .replace(" ", "-")}.jpg`
+                  }
+                  alt={contact.name}
+                />
                 <AvatarFallback>
                   {contact.name
                     .split(" ")
@@ -74,9 +59,6 @@ export default function MessengerHeader({
                     .join("")}
                 </AvatarFallback>
               </Avatar>
-              {contact.isOnline && (
-                <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></div>
-              )}
             </div>
 
             <div>

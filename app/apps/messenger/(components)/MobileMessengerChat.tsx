@@ -3,60 +3,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Message, MessengerChatProps, mockMessages } from "@/data/chats";
+import { mockContacts } from "@/data/contacts";
 import { Mic, Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
-
-interface Contact {
-  id: string;
-  name: string;
-  avatar: string;
-  lastMessage: string;
-  timestamp: string;
-  unreadCount: number;
-  isOnline: boolean;
-}
-
-// Mock contacts data (same as sidebar)
-const mockContacts: Contact[] = [
-  {
-    id: "1",
-    name: "Alice Johnson",
-    avatar: "/avatars/alice.jpg",
-    lastMessage: "Hey, how are you doing?",
-    timestamp: "2024-01-15T10:30:00Z",
-    unreadCount: 2,
-    isOnline: true,
-  },
-  {
-    id: "2",
-    name: "Bob Smith",
-    avatar: "/avatars/bob.jpg",
-    lastMessage: "Thanks for the help!",
-    timestamp: "2024-01-15T09:15:00Z",
-    unreadCount: 0,
-    isOnline: true,
-  },
-  {
-    id: "3",
-    name: "Carol Davis",
-    avatar: "/avatars/carol.jpg",
-    lastMessage: "See you tomorrow!",
-    timestamp: "2024-01-14T16:45:00Z",
-    unreadCount: 1,
-    isOnline: false,
-  },
-  {
-    id: "4",
-    name: "David Wilson",
-    avatar: "/avatars/david.jpg",
-    lastMessage: "The project is coming along nicely",
-    timestamp: "2024-01-14T14:20:00Z",
-    unreadCount: 0,
-    isOnline: true,
-  },
-];
 
 interface MobileMessengerChatProps extends MessengerChatProps {
   isOpen: boolean;
@@ -117,13 +73,26 @@ export default function MobileMessengerChat({
         side="bottom"
         className="h-[90vh] w-full max-w-full p-0 overflow-hidden"
       >
+        <SheetHeader className="sr-only">
+          <SheetTitle>Chat with {contact.name}</SheetTitle>
+        </SheetHeader>
         {/* Chat Header */}
         <div className="p-4 border-b bg-background/95 backdrop-blur">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={contact.avatar} />
+                  <AvatarImage
+                    src={
+                      (typeof contact.avatar === "string"
+                        ? contact.avatar
+                        : contact.avatar?.src) ||
+                      `/avatars/${contact.name
+                        .toLowerCase()
+                        .replace(" ", "-")}.jpg`
+                    }
+                    alt={contact.name}
+                  />
                   <AvatarFallback>
                     {contact.name
                       .split(" ")
@@ -162,20 +131,8 @@ export default function MobileMessengerChat({
                   message.isMine ? "justify-end" : "justify-start"
                 }`}
               >
-                {!message.isMine && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={contact.avatar} />
-                    <AvatarFallback>
-                      {contact.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-
                 <div
-                  className={`max-w-xs px-4 py-2 rounded-lg ${
+                  className={`max-w-xs w-3/4 px-4 py-2 rounded-lg ${
                     message.isMine
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"
@@ -192,13 +149,6 @@ export default function MobileMessengerChat({
                     {formatTime(message.timestamp)}
                   </p>
                 </div>
-
-                {message.isMine && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="/avatars/me.jpg" />
-                    <AvatarFallback>ME</AvatarFallback>
-                  </Avatar>
-                )}
               </div>
             ))}
           </div>
@@ -206,7 +156,7 @@ export default function MobileMessengerChat({
 
         {/* Chat Input */}
         <div className="border-t bg-background/95 backdrop-blur p-4">
-          <div className="flex items-center gap-2 border rounded-full px-3 py-2">
+          <div className="flex items-center gap-2 py-2">
             {/* Attachment Button */}
             <Button
               variant="ghost"

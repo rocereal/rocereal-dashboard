@@ -12,7 +12,7 @@ export default function RenderPage() {
   const [mobileChatOpen, setMobileChatOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex border rounded-md">
+    <div className="min-h-screen flex border bg-card rounded-md">
       <MessengerSidebar
         selectedContact={selectedContact}
         onContactSelect={setSelectedContact}

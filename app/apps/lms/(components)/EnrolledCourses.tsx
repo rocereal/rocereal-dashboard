@@ -57,12 +57,10 @@ export function EnrolledCourses({
       >
         {courses.map((course) => {
           const IconComponent = getIconComponent(course.icon);
-          const isExpanded = expandedCourses.has(course.courseId);
 
           // In EnrolledCourses, all courses are continuing
           const userCourseProgress = userProgress[course.courseId] || 0;
 
-          console.log(course);
           return (
             <Card
               key={course.courseId}

@@ -80,23 +80,11 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
                 message.isMine ? "justify-end" : "justify-start"
               }`}
             >
-              {!message.isMine && (
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={contact?.avatar} />
-                  <AvatarFallback>
-                    {contact?.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-              )}
-
               <div
                 className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                   message.isMine
                     ? "bg-primary text-primary-foreground"
-                    : "bg-card text-muted-foreground"
+                    : "bg-secondary text-muted-foreground"
                 }`}
               >
                 <p className="text-sm">{message.content}</p>
@@ -110,13 +98,6 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
                   {formatTime(message.timestamp)}
                 </p>
               </div>
-
-              {message.isMine && (
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="/avatars/me.jpg" />
-                  <AvatarFallback>ME</AvatarFallback>
-                </Avatar>
-              )}
             </div>
           ))}
         </div>
