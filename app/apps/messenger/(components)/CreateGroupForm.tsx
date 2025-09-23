@@ -1,3 +1,10 @@
+/**
+ * CreateGroupForm Component
+ * Form component for creating new group chats in the messenger application
+ * Allows setting group name, description, and selecting members from contacts
+ * Provides search functionality and member management with visual feedback
+ * @returns The create group form component
+ */
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,6 +34,15 @@ interface CreateGroupFormProps {
   }) => void;
 }
 
+/**
+ * CreateGroupForm function component
+ * Renders a form for creating new groups with member selection and validation
+ * Manages group creation state and provides search functionality for contacts
+ * @param open - Whether the form sheet is open
+ * @param onOpenChange - Callback to control sheet visibility
+ * @param onSubmit - Optional callback when form is submitted with group data
+ * @returns JSX element for the create group form
+ */
 export function CreateGroupForm({
   open,
   onOpenChange,
@@ -41,18 +57,32 @@ export function CreateGroupForm({
     contact.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  /**
+   * Handles adding a member to the selected members list
+   * Prevents duplicate additions by checking existing members
+   * @param contact - The contact to add as a group member
+   */
   const handleAddMember = (contact: Contact) => {
     if (!selectedMembers.find((member) => member.id === contact.id)) {
       setSelectedMembers([...selectedMembers, contact]);
     }
   };
 
+  /**
+   * Handles removing a member from the selected members list
+   * Filters out the member with the specified contact ID
+   * @param contactId - The ID of the contact to remove from the group
+   */
   const handleRemoveMember = (contactId: string) => {
     setSelectedMembers(
       selectedMembers.filter((member) => member.id !== contactId)
     );
   };
 
+  /**
+   * Handles form submission
+   * Validates required fields, calls onSubmit callback, resets form, and closes sheet
+   */
   const handleSubmit = () => {
     if (!groupName.trim() || selectedMembers.length === 0) {
       return; // Basic validation
@@ -75,6 +105,10 @@ export function CreateGroupForm({
     onOpenChange(false);
   };
 
+  /**
+   * Handles form cancellation
+   * Resets all form fields and closes the sheet without saving
+   */
   const handleCancel = () => {
     // Reset form
     setGroupName("");

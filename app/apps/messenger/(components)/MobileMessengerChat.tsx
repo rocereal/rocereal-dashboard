@@ -1,3 +1,10 @@
+/**
+ * MobileMessengerChat Component
+ * Mobile-optimized chat component that renders as a bottom sheet for mobile devices
+ * Provides a full-screen chat experience with contact header and message interface
+ * Handles message sending and display with mobile-specific layout and interactions
+ * @returns The mobile messenger chat component
+ */
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,6 +26,15 @@ interface MobileMessengerChatProps extends MessengerChatProps {
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * MobileMessengerChat function component
+ * Renders a mobile chat interface as a bottom sheet with contact info and messaging
+ * Manages message state and provides mobile-optimized input and display
+ * @param selectedContact - The ID of the selected contact to chat with
+ * @param isOpen - Whether the mobile chat sheet is open
+ * @param onOpenChange - Callback to control sheet visibility
+ * @returns JSX element for the mobile messenger chat
+ */
 export default function MobileMessengerChat({
   selectedContact,
   isOpen,
@@ -31,6 +47,11 @@ export default function MobileMessengerChat({
   const contact = mockContacts.find((c) => c.id === selectedContact);
   const chatMessages = selectedContact ? messages[selectedContact] || [] : [];
 
+  /**
+   * Handles sending a new message
+   * Creates a new message object and adds it to the messages state
+   * Clears the input field after sending
+   */
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedContact) return;
 
@@ -50,6 +71,11 @@ export default function MobileMessengerChat({
     setNewMessage("");
   };
 
+  /**
+   * Handles key press events in the message input field
+   * Sends message on Enter key press without Shift modifier
+   * @param e - The keyboard event from the input field
+   */
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -57,6 +83,11 @@ export default function MobileMessengerChat({
     }
   };
 
+  /**
+   * Formats a timestamp into a readable time string
+   * @param timestamp - The timestamp string to format
+   * @returns Formatted time string (HH:MM)
+   */
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], {

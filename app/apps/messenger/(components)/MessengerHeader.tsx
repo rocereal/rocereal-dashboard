@@ -1,3 +1,10 @@
+/**
+ * MessengerHeader Component
+ * Header component for the messenger chat area that displays contact information
+ * Shows contact avatar, name, online status, and provides call/video action buttons
+ * Renders a placeholder message when no contact is selected
+ * @returns The messenger header component
+ */
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,6 +18,15 @@ interface MessengerHeaderProps {
   onSidebarToggle: () => void;
 }
 
+/**
+ * MessengerHeader function component
+ * Displays the header for the selected contact or a placeholder if none selected
+ * Includes contact info and action buttons for calls and video
+ * @param selectedContact - The currently selected contact ID
+ * @param sidebarOpen - Whether the sidebar is open (unused in this component)
+ * @param onSidebarToggle - Callback to toggle sidebar (unused in this component)
+ * @returns JSX element for the messenger header
+ */
 export default function MessengerHeader({
   selectedContact,
 }: MessengerHeaderProps) {

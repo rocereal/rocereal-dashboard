@@ -1,3 +1,10 @@
+/**
+ * MessengerChat Component
+ * Chat component for the messenger that displays messages and handles message sending
+ * Manages message state, input handling, and renders chat interface with timestamps
+ * Shows a placeholder when no contact is selected for chatting
+ * @returns The messenger chat component
+ */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -6,6 +13,13 @@ import { Message, MessengerChatProps, mockMessages } from "@/data/chats";
 import { Mic, Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
 
+/**
+ * MessengerChat function component
+ * Renders the chat interface for the selected contact
+ * Handles message input, sending, and display with proper styling
+ * @param selectedContact - The ID of the selected contact to chat with
+ * @returns JSX element for the messenger chat
+ */
 export default function MessengerChat({ selectedContact }: MessengerChatProps) {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] =
@@ -13,6 +27,11 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
 
   const chatMessages = selectedContact ? messages[selectedContact] || [] : [];
 
+  /**
+   * Handles sending a new message
+   * Creates a new message object and adds it to the messages state
+   * Clears the input field after sending
+   */
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedContact) return;
 
@@ -32,6 +51,11 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
     setNewMessage("");
   };
 
+  /**
+   * Handles key press events in the message input field
+   * Sends message on Enter key press without Shift modifier
+   * @param e - The keyboard event from the input field
+   */
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -39,6 +63,11 @@ export default function MessengerChat({ selectedContact }: MessengerChatProps) {
     }
   };
 
+  /**
+   * Formats a timestamp into a readable time string
+   * @param timestamp - The timestamp string to format
+   * @returns Formatted time string (HH:MM)
+   */
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], {

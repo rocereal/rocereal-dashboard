@@ -1,3 +1,10 @@
+/**
+ * MessengerSidebar Component
+ * Sidebar component for the messenger application that displays chats, groups, and contacts
+ * Handles contact selection, group creation, contact addition, and responsive layout
+ * Supports expanded view with tabs and compact view for space efficiency
+ * @returns The messenger sidebar component
+ */
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +27,17 @@ interface MessengerSidebarProps {
   onMobileChatOpen?: () => void;
 }
 
+/**
+ * MessengerSidebar function component
+ * Renders the sidebar with tabs for chats, groups, and contacts
+ * Manages state for form dialogs and handles user interactions
+ * @param selectedContact - The currently selected contact ID
+ * @param onContactSelect - Callback function when a contact is selected
+ * @param sidebarOpen - Whether the sidebar is expanded or collapsed
+ * @param onSidebarToggle - Callback to toggle sidebar visibility
+ * @param onMobileChatOpen - Optional callback to open mobile chat
+ * @returns JSX element for the messenger sidebar
+ */
 export default function MessengerSidebar({
   selectedContact,
   onContactSelect,
@@ -30,6 +48,12 @@ export default function MessengerSidebar({
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [isAddContactOpen, setIsAddContactOpen] = useState(false);
 
+  /**
+   * Formats a timestamp into a readable time or date string
+   * Shows time if within 24 hours, otherwise shows date
+   * @param timestamp - The timestamp string to format
+   * @returns Formatted time string (HH:MM or MMM DD)
+   */
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -45,6 +69,11 @@ export default function MessengerSidebar({
     }
   };
 
+  /**
+   * Handles the creation of a new group
+   * Processes group data and logs it (placeholder for actual implementation)
+   * @param groupData - The group data including name, description, and members
+   */
   const handleCreateGroup = (groupData: {
     name: string;
     description: string;
@@ -55,6 +84,11 @@ export default function MessengerSidebar({
     // For now, we'll just log it
   };
 
+  /**
+   * Handles the addition of a new contact
+   * Processes contact data and logs it (placeholder for actual implementation)
+   * @param contactData - The contact data including name, email, phone, and notes
+   */
   const handleAddContact = (contactData: {
     name: string;
     email: string;

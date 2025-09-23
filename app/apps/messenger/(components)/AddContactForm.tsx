@@ -1,3 +1,10 @@
+/**
+ * AddContactForm Component
+ * Form component for adding new contacts to the messenger application
+ * Provides input fields for contact information and quick actions for invitations
+ * Renders as a slide-out sheet with validation and form management
+ * @returns The add contact form component
+ */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -25,6 +32,15 @@ interface AddContactFormProps {
   }) => void;
 }
 
+/**
+ * AddContactForm function component
+ * Renders a form for adding new contacts with validation and submission handling
+ * Manages form state and provides quick actions for sending invitations
+ * @param open - Whether the form sheet is open
+ * @param onOpenChange - Callback to control sheet visibility
+ * @param onSubmit - Optional callback when form is submitted with contact data
+ * @returns JSX element for the add contact form
+ */
 export function AddContactForm({
   open,
   onOpenChange,
@@ -37,6 +53,12 @@ export function AddContactForm({
     notes: "",
   });
 
+  /**
+   * Handles input field changes
+   * Updates the form data state for the specified field
+   * @param field - The field name to update (name, email, phone, notes)
+   * @param value - The new value for the field
+   */
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -44,6 +66,10 @@ export function AddContactForm({
     }));
   };
 
+  /**
+   * Handles form submission
+   * Validates required fields, calls onSubmit callback, resets form, and closes sheet
+   */
   const handleSubmit = () => {
     if (!formData.name.trim() || !formData.email.trim()) {
       return; // Basic validation
@@ -69,6 +95,10 @@ export function AddContactForm({
     onOpenChange(false);
   };
 
+  /**
+   * Handles form cancellation
+   * Resets form data and closes the sheet without saving
+   */
   const handleCancel = () => {
     // Reset form
     setFormData({
