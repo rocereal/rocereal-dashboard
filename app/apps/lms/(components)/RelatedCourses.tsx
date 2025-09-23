@@ -1,3 +1,12 @@
+/**
+ * Related Courses Component
+ * Displays a list of related courses in a card layout
+ * Shows course titles, ratings, and lesson counts with clickable links
+ * Used to suggest additional courses to users based on current course
+ * Renders in a responsive grid format
+ * @param courses - Array of related course objects to display
+ * @returns The JSX element representing the related courses card
+ */
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +18,13 @@ interface RelatedCoursesProps {
   courses: CourseData[];
 }
 
+/**
+ * Related Courses Component
+ * Main component for displaying related courses with ratings and links
+ * Renders course suggestions in a card with hover effects
+ * @param courses - Array of related courses
+ * @returns The rendered related courses component
+ */
 export function RelatedCourses({ courses }: RelatedCoursesProps) {
   if (!courses || courses.length === 0) {
     return null;

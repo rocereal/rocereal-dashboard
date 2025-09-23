@@ -1,3 +1,11 @@
+/**
+ * LMS Render Page Component
+ * Main dashboard page component for the Learning Management System
+ * Displays enrolled courses with progress and recommended courses
+ * Includes dashboard header with breadcrumbs and action buttons
+ * Serves as the primary landing page for the LMS application
+ * @returns The JSX element representing the LMS dashboard page
+ */
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
@@ -6,6 +14,12 @@ import { BookOpen, ChartBar } from "lucide-react";
 import { RecommendedCourses } from "./RecommendedCourses";
 import { EnrolledCourses } from "./EnrolledCourses";
 
+/**
+ * Render Page Component
+ * Main component for rendering the LMS dashboard with enrolled and recommended courses
+ * Includes mock user progress data and dashboard header with actions
+ * @returns The rendered LMS dashboard page
+ */
 export default function RenderPage() {
   // Mock user progress data - in a real app, this would come from user authentication/session
   const mockUserProgress: { [courseId: string]: number } = {

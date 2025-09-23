@@ -1,3 +1,11 @@
+/**
+ * Course Overview Component
+ * Displays detailed course information including description, skills to be learned, and prerequisites
+ * Presents course overview in a card layout with structured sections for better readability
+ * Shows skills as badges and prerequisites as a bulleted list
+ * @param course - The course data object containing overview information
+ * @returns The JSX element representing the course overview
+ */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +17,13 @@ interface CourseOverviewProps {
   course: CourseData;
 }
 
+/**
+ * Course Overview Component
+ * Main component for displaying course overview with description, skills, and prerequisites
+ * Renders course details in an organized card format
+ * @param course - The course data object
+ * @returns The rendered overview component
+ */
 export function CourseOverview({ course }: CourseOverviewProps) {
   return (
     <Card>

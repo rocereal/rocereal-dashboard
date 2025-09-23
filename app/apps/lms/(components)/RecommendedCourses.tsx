@@ -1,3 +1,13 @@
+/**
+ * Recommended Courses Component
+ * Displays a grid of recommended courses with search functionality
+ * Shows course cards with ratings, authors, duration, price, and enrollment buttons
+ * Includes search filter to find courses by title or author
+ * Used for course discovery and recommendations in the LMS
+ * @param courses - Array of recommended course objects to display
+ * @param className - Additional CSS classes for styling
+ * @returns The JSX element representing the recommended courses grid
+ */
 "use client";
 
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
@@ -16,6 +26,14 @@ interface RecommendedCoursesProps {
   className?: string;
 }
 
+/**
+ * Recommended Courses Component
+ * Main component for displaying recommended courses with search and filtering
+ * Renders course cards in a responsive grid with enrollment options
+ * @param courses - Array of recommended courses
+ * @param className - CSS classes
+ * @returns The rendered courses grid component
+ */
 export function RecommendedCourses({
   courses,
   className,

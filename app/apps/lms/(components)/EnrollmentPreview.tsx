@@ -1,3 +1,13 @@
+/**
+ * Enrollment Preview Component
+ * Displays a modal sheet with course preview information before enrollment
+ * Shows course overview, skills, prerequisites, curriculum preview, and pricing
+ * Allows users to preview course content and make enrollment decisions
+ * Uses a slide-out sheet for mobile-friendly preview experience
+ * @param course - The course data object containing all course information
+ * @param trigger - Custom trigger element for opening the preview (optional)
+ * @returns The JSX element representing the enrollment preview sheet
+ */
 "use client";
 
 import { useState } from "react";
@@ -30,6 +40,14 @@ interface EnrollmentPreviewProps {
   trigger?: React.ReactNode;
 }
 
+/**
+ * Enrollment Preview Component
+ * Main component for displaying course preview in a modal sheet
+ * Shows comprehensive course information to help users decide on enrollment
+ * @param course - The course data object
+ * @param trigger - Custom trigger element
+ * @returns The rendered preview sheet component
+ */
 export function EnrollmentPreview({ course, trigger }: EnrollmentPreviewProps) {
   const [isOpen, setIsOpen] = useState(false);
 

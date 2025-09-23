@@ -1,3 +1,12 @@
+/**
+ * Course Details Page Component
+ * Dynamic page component for displaying individual course details
+ * Renders course hero, overview, curriculum, sidebar, and related courses
+ * Handles course lookup by slug and enrollment status simulation
+ * Includes mock user progress data for demonstration purposes
+ * @param params - Route parameters containing the courseId slug
+ * @returns The JSX element representing the course details page
+ */
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { coursesData } from "@/data/education";
@@ -15,6 +24,13 @@ export const metadata = {
   description: "Learn and track your progress through interactive courses",
 };
 
+/**
+ * Course Details Page Component
+ * Main page component for displaying individual course information
+ * Handles course lookup, enrollment status, and renders all course components
+ * @param params - Promise resolving to route parameters with courseId
+ * @returns The rendered course details page or not found page
+ */
 export default async function CourseDetailsPage({
   params,
 }: {

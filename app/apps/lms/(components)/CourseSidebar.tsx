@@ -1,3 +1,13 @@
+/**
+ * Course Sidebar Component
+ * Displays course sidebar with progress statistics, course details, and enrollment options
+ * Shows different content based on enrollment status - progress for enrolled users, stats for others
+ * Includes instructor info, duration, level, language, price, and tags
+ * @param course - The course data object containing all course information
+ * @param isEnrolled - Boolean indicating if the user is enrolled in the course
+ * @param userProgress - Object mapping lesson IDs to completion status
+ * @returns The JSX element representing the course sidebar
+ */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +35,15 @@ interface CourseSidebarProps {
   userProgress?: { [lessonId: string]: boolean };
 }
 
+/**
+ * Course Sidebar Component
+ * Main component for displaying course sidebar with progress, details, and enrollment
+ * Calculates user progress and displays appropriate content based on enrollment status
+ * @param course - The course data object
+ * @param isEnrolled - Whether the user is enrolled
+ * @param userProgress - User's progress on lessons
+ * @returns The rendered sidebar component
+ */
 export function CourseSidebar({
   course,
   isEnrolled = false,

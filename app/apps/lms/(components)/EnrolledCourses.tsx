@@ -1,3 +1,15 @@
+/**
+ * Enrolled Courses Component
+ * Displays enrolled courses or education metrics in a grid layout
+ * Shows course cards with progress bars, ratings, and continue buttons for enrolled courses
+ * Alternatively displays metric cards with trends and statistics
+ * Supports both course view and metrics dashboard view
+ * @param metrics - Array of education metrics to display
+ * @param courses - Array of enrolled courses to display
+ * @param className - Additional CSS classes
+ * @param userProgress - Object mapping course IDs to progress percentages
+ * @returns The JSX element representing enrolled courses or metrics
+ */
 "use client";
 
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
@@ -25,13 +37,28 @@ interface EnrolledCoursesProps {
   userProgress?: { [courseId: string]: number }; // Progress percentage for each course
 }
 
+/**
+ * Enrolled Courses Component
+ * Main component for displaying enrolled courses or education metrics
+ * Renders either course cards with progress or metric cards with trends
+ * @param metrics - Education metrics array
+ * @param courses - Enrolled courses array
+ * @param className - CSS classes
+ * @param userProgress - User progress object
+ * @returns The rendered component
+ */
 export function EnrolledCourses({
   metrics,
   courses,
   className,
   userProgress = {},
 }: EnrolledCoursesProps) {
-  // Icon mapping function
+  /**
+   * Get the appropriate icon component based on icon name
+   * Maps string icon names to Lucide React icon components
+   * @param iconName - The name of the icon to retrieve
+   * @returns The corresponding Lucide icon component
+   */
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
       case "graduation-cap":

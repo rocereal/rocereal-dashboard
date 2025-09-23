@@ -1,3 +1,18 @@
+/**
+ * Curriculum Lesson Component
+ * Displays individual lesson items in the course curriculum with status indicators and actions
+ * Shows lesson number, title, type, duration, and completion status with appropriate styling
+ * Handles different states for enrolled vs non-enrolled users and various lesson statuses
+ * @param lesson - The lesson data object containing lesson information
+ * @param index - The lesson's position in the curriculum (0-based)
+ * @param isEnrolled - Whether the user is enrolled in the course
+ * @param isCompleted - Whether the lesson is completed
+ * @param isNextLesson - Whether this is the next lesson to be taken
+ * @param showPreviewBadge - Whether to show preview badge
+ * @param onLessonClick - Callback function when lesson is clicked
+ * @param className - Additional CSS classes
+ * @returns The JSX element representing a curriculum lesson
+ */
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CourseLesson } from "@/data/education";
@@ -25,6 +40,20 @@ interface CurriculumLessonProps {
   className?: string;
 }
 
+/**
+ * Curriculum Lesson Component
+ * Main component for displaying individual curriculum lessons with interactive features
+ * Renders lesson details, status indicators, and action buttons based on enrollment and progress
+ * @param lesson - The lesson data object
+ * @param index - Lesson index in curriculum
+ * @param isEnrolled - User enrollment status
+ * @param isCompleted - Lesson completion status
+ * @param isNextLesson - Next lesson indicator
+ * @param showPreviewBadge - Show preview badge
+ * @param onLessonClick - Click handler
+ * @param className - CSS classes
+ * @returns The rendered lesson component
+ */
 export function CurriculumLesson({
   lesson,
   index,
@@ -39,6 +68,11 @@ export function CurriculumLesson({
   const displayType = getLessonTypeDisplayName(lesson.type);
   const formattedDuration = formatLessonDuration(lesson.duration);
 
+  /**
+   * Get the appropriate icon for the lesson type
+   * Returns different icons based on lesson content type (video, quiz, assignment, reading)
+   * @returns The JSX element for the lesson type icon
+   */
   const getLessonIcon = () => {
     switch (lesson.type) {
       case "video":
@@ -54,6 +88,11 @@ export function CurriculumLesson({
     }
   };
 
+  /**
+   * Get the CSS classes for the lesson status indicator
+   * Determines color scheme based on completion status, enrollment, and next lesson status
+   * @returns CSS class string for the status indicator
+   */
   const getStatusColor = () => {
     if (showAsCompleted) return "bg-green-500 text-white";
     if (isNextLesson && isEnrolled) return "bg-blue-500 text-white";
@@ -61,6 +100,10 @@ export function CurriculumLesson({
     return "bg-primary text-primary-foreground";
   };
 
+  /**
+   * Handle lesson click events
+   * Calls the onLessonClick callback with the current lesson data
+   */
   const handleClick = () => {
     if (onLessonClick) {
       onLessonClick(lesson);

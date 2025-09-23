@@ -1,3 +1,13 @@
+/**
+ * Course Hero Component
+ * Displays the main hero section for a course with title, description, ratings, and enrollment options
+ * Shows course image, progress bar for enrolled users, and action buttons for enrollment or continuation
+ * Adapts UI based on enrollment status with different badges and buttons
+ * @param course - The course data object containing all course information
+ * @param isEnrolled - Boolean indicating if the user is enrolled in the course
+ * @param progress - User's progress percentage in the course
+ * @returns The JSX element representing the course hero section
+ */
 "use client";
 
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
@@ -14,6 +24,15 @@ interface CourseHeroProps {
   progress?: number;
 }
 
+/**
+ * Course Hero Component
+ * Main component for displaying course hero section with enrollment and progress information
+ * Renders course details, ratings, duration, and appropriate action buttons based on enrollment status
+ * @param course - The course data object
+ * @param isEnrolled - Whether the user is enrolled
+ * @param progress - User's progress percentage
+ * @returns The rendered hero component
+ */
 export function CourseHero({
   course,
   isEnrolled = false,

@@ -1,3 +1,13 @@
+/**
+ * Course Curriculum Component
+ * Displays the course curriculum with lessons, progress tracking, and enrollment status
+ * Renders a card-based layout showing course lessons with completion status and next lesson indicators
+ * Supports both enrolled and non-enrolled users with appropriate UI variations
+ * @param course - The course data object containing curriculum information
+ * @param isEnrolled - Boolean indicating if the user is enrolled in the course
+ * @param userProgress - Object mapping lesson IDs to completion status
+ * @returns The JSX element representing the course curriculum
+ */
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +26,15 @@ interface CourseCurriculumProps {
   userProgress?: { [lessonId: string]: boolean };
 }
 
+/**
+ * Course Curriculum Component
+ * Main component for displaying course curriculum with progress tracking
+ * Calculates and displays curriculum progress, next lesson, and handles lesson interactions
+ * @param course - The course data object
+ * @param isEnrolled - Whether the user is enrolled
+ * @param userProgress - User's progress on lessons
+ * @returns The rendered curriculum component
+ */
 export function CourseCurriculum({
   course,
   isEnrolled = false,
@@ -36,6 +55,12 @@ export function CourseCurriculum({
   const progress = calculateCurriculumProgress(course.curriculum, userProgress);
   const nextLesson = getNextLesson(course.curriculum, userProgress);
 
+  /**
+   * Handle lesson click events
+   * Processes lesson selection and navigation logic
+   * Currently logs the lesson click for debugging purposes
+   * @param lesson - The lesson object that was clicked
+   */
   const handleLessonClick = (lesson: CourseLesson) => {
     // Handle lesson clicks - for now, just log
     console.log("Lesson clicked:", lesson.title);
