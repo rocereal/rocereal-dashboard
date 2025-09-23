@@ -1,3 +1,10 @@
+/**
+ * Task Details Render Page Component
+ * Displays detailed view of a specific task with full information, checklist, and actions
+ * Handles task state management, checklist toggling, and navigation
+ * Used for individual task detail pages accessed via dynamic routing
+ */
+
 "use client";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -23,6 +30,11 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+/**
+ * TaskDetailsPage component for displaying individual task details
+ * Fetches and displays task information, handles checklist interactions, and provides navigation
+ * @returns JSX element representing the full task details page
+ */
 export default function TaskDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -38,11 +50,19 @@ export default function TaskDetailsPage() {
     setLoading(false);
   }, [taskId]);
 
+  /**
+   * Toggles the completion status of the current task
+   * Updates the task state to mark it as completed or incomplete
+   */
   const handleTaskToggle = () => {
     if (!task) return;
     setTask({ ...task, completed: !task.completed });
   };
 
+  /**
+   * Toggles the completion status of a specific checklist item
+   * @param checklistId - The ID of the checklist item to toggle
+   */
   const handleChecklistToggle = (checklistId: string) => {
     if (!task) return;
     setTask({
@@ -53,6 +73,11 @@ export default function TaskDetailsPage() {
     });
   };
 
+  /**
+   * Returns the CSS classes for priority badge styling based on priority level
+   * @param priority - The priority level ("high", "medium", "low")
+   * @returns CSS class string for the priority badge background and text color
+   */
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
@@ -66,6 +91,11 @@ export default function TaskDetailsPage() {
     }
   };
 
+  /**
+   * Returns the appropriate icon component for the priority level
+   * @param priority - The priority level ("high", "medium", "low")
+   * @returns JSX element representing the priority icon
+   */
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case "high":

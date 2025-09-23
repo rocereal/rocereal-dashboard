@@ -1,3 +1,10 @@
+/**
+ * TasksHeader Component
+ * Header component for the tasks page that displays the title, search functionality, and task statistics
+ * Provides controls for sidebar toggle, search, filtering, sorting, and shows completion metrics
+ * Includes responsive design for mobile and desktop layouts
+ * @returns The tasks header component
+ */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +17,14 @@ interface TasksHeaderProps {
   sidebarOpen?: boolean;
 }
 
+/**
+ * TasksHeader function component
+ * Renders the header with title, search, filters, and task statistics
+ * Handles responsive layout and provides user interaction controls
+ * @param onSidebarToggle - Callback function to toggle sidebar visibility
+ * @param sidebarOpen - Optional boolean indicating if sidebar is open
+ * @returns JSX element for the tasks header
+ */
 export default function TasksHeader({
   onSidebarToggle,
   sidebarOpen,

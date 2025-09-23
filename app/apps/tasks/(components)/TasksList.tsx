@@ -1,3 +1,10 @@
+/**
+ * TasksList Component
+ * Main component for displaying tasks in both grid and table views with interactive features
+ * Handles task selection, completion toggling, and provides action menus for task management
+ * Supports switching between grid and table layouts with filtering and searching capabilities
+ * @returns The tasks list component
+ */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -39,9 +46,21 @@ interface TasksListProps {
   onTaskSelect: (taskId: string) => void;
 }
 
+/**
+ * TasksList function component
+ * Renders tasks in grid or table view with interactive features
+ * Manages task state and handles user interactions like selection and completion
+ * @param onTaskSelect - Callback function when a task is selected
+ * @returns JSX element for the tasks list
+ */
 export default function TasksList({ onTaskSelect }: TasksListProps) {
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
 
+  /**
+   * Handles toggling the completion status of a task
+   * Updates the task's completed state in the local state
+   * @param taskId - The ID of the task to toggle
+   */
   const handleTaskToggle = (taskId: string) => {
     setTasks(
       tasks.map((task) =>

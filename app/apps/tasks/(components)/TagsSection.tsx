@@ -1,3 +1,10 @@
+/**
+ * TagsSection Component
+ * Form section component for managing task tags with add/remove functionality
+ * Displays current tags as removable badges and provides input for adding new tags
+ * Shows tag count and handles tag management interactions
+ * @returns The tags section component
+ */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +21,17 @@ interface TagsSectionProps {
   onRemoveTag: (tagToRemove: string) => void;
 }
 
+/**
+ * TagsSection function component
+ * Renders a form section for managing task tags
+ * Handles adding new tags and removing existing ones
+ * @param tags - Array of current tag strings
+ * @param newTag - The current value of the new tag input
+ * @param onNewTagChange - Callback when new tag input changes
+ * @param onAddTag - Callback to add the new tag to the list
+ * @param onRemoveTag - Callback to remove a tag by value
+ * @returns JSX element for the tags section
+ */
 export default function TagsSection({
   tags,
   newTag,

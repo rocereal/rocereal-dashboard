@@ -1,3 +1,10 @@
+/**
+ * Create Task Render Page Component
+ * Provides a comprehensive form interface for creating new tasks
+ * Manages task data state, form validation, and submission with multiple sections
+ * Includes basic info, checklist, settings, tags, and preview functionality
+ */
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +19,12 @@ import TagsSection from "../(components)/TagsSection";
 import TaskPreviewSection from "../(components)/TaskPreviewSection";
 import FormActionsSection from "../(components)/FormActionsSection";
 
+/**
+ * CreateTaskPage component for creating new tasks
+ * Manages form state for task creation including title, description, priority, due date, assignee, tags, and checklist
+ * Handles form submission, validation, and navigation
+ * @returns JSX element representing the create task form page
+ */
 export default function CreateTaskPage() {
   const router = useRouter();
   const [taskData, setTaskData] = useState({
@@ -26,6 +39,11 @@ export default function CreateTaskPage() {
   const [checklistItems, setChecklistItems] = useState<string[]>([]);
   const [newChecklistItem, setNewChecklistItem] = useState("");
 
+  /**
+   * Updates a specific field in the task data state
+   * @param field - The field name to update (title, description, priority, etc.)
+   * @param value - The new value for the field
+   */
   const handleInputChange = (field: string, value: string) => {
     setTaskData((prev) => ({
       ...prev,
@@ -33,6 +51,10 @@ export default function CreateTaskPage() {
     }));
   };
 
+  /**
+   * Adds a new tag to the task if it's not already present and not empty
+   * Clears the new tag input after adding
+   */
   const handleAddTag = () => {
     if (newTag.trim() && !taskData.tags.includes(newTag.trim())) {
       setTaskData((prev) => ({
@@ -43,6 +65,10 @@ export default function CreateTaskPage() {
     }
   };
 
+  /**
+   * Removes a specific tag from the task's tags array
+   * @param tagToRemove - The tag string to remove from the task
+   */
   const handleRemoveTag = (tagToRemove: string) => {
     setTaskData((prev) => ({
       ...prev,
@@ -50,6 +76,10 @@ export default function CreateTaskPage() {
     }));
   };
 
+  /**
+   * Adds a new checklist item to the task if it's not empty
+   * Clears the new checklist item input after adding
+   */
   const handleAddChecklistItem = () => {
     if (newChecklistItem.trim()) {
       setChecklistItems((prev) => [...prev, newChecklistItem.trim()]);
@@ -57,10 +87,18 @@ export default function CreateTaskPage() {
     }
   };
 
+  /**
+   * Removes a checklist item from the task by its index
+   * @param index - The index of the checklist item to remove
+   */
   const handleRemoveChecklistItem = (index: number) => {
     setChecklistItems((prev) => prev.filter((_, i) => i !== index));
   };
 
+  /**
+   * Handles form submission for creating a new task
+   * Validates required fields, creates a new Task object, logs it, resets the form, and navigates back
+   */
   const handleSubmit = () => {
     if (!taskData.title.trim()) {
       return; // Basic validation
@@ -103,6 +141,9 @@ export default function CreateTaskPage() {
     router.push("/apps/tasks");
   };
 
+  /**
+   * Handles form cancellation by navigating back to the tasks list
+   */
   const handleCancel = () => {
     router.push("/apps/tasks");
   };

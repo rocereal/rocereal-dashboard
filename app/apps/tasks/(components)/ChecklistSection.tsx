@@ -1,3 +1,10 @@
+/**
+ * ChecklistSection Component
+ * Form section component for managing task checklist items with add/remove functionality
+ * Allows users to create and manage checklist items for tasks with visual feedback
+ * Displays the count of checklist items and provides interactive controls
+ * @returns The checklist section component
+ */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +21,17 @@ interface ChecklistSectionProps {
   onRemoveChecklistItem: (index: number) => void;
 }
 
+/**
+ * ChecklistSection function component
+ * Renders a form section for managing task checklist items
+ * Handles adding new items and removing existing ones
+ * @param checklistItems - Array of current checklist item strings
+ * @param newChecklistItem - The current value of the new item input
+ * @param onNewChecklistItemChange - Callback when new item input changes
+ * @param onAddChecklistItem - Callback to add the new item to the list
+ * @param onRemoveChecklistItem - Callback to remove an item by index
+ * @returns JSX element for the checklist section
+ */
 export default function ChecklistSection({
   checklistItems,
   newChecklistItem,

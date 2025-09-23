@@ -1,3 +1,10 @@
+/**
+ * TaskDetailsDrawer Component
+ * Drawer component for displaying comprehensive task details and allowing interactions
+ * Shows task information, checklist with progress, assignee details, and provides edit/delete actions
+ * Handles task completion toggling and checklist item management
+ * @returns The task details drawer component
+ */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +38,15 @@ interface TaskDetailsDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * TaskDetailsDrawer function component
+ * Renders a detailed view of a task in a slide-out drawer
+ * Manages task state and handles user interactions like completion toggling
+ * @param taskId - The ID of the task to display
+ * @param isOpen - Whether the drawer is open
+ * @param onOpenChange - Callback to control drawer visibility
+ * @returns JSX element for the task details drawer
+ */
 export default function TaskDetailsDrawer({
   taskId,
   isOpen,
@@ -49,11 +65,20 @@ export default function TaskDetailsDrawer({
     }
   }, [taskId, isOpen]);
 
+  /**
+   * Handles toggling the overall task completion status
+   * Updates the task's completed state
+   */
   const handleTaskToggle = () => {
     if (!task) return;
     setTask({ ...task, completed: !task.completed });
   };
 
+  /**
+   * Handles toggling the completion status of a checklist item
+   * Updates the specific checklist item's completed state
+   * @param checklistId - The ID of the checklist item to toggle
+   */
   const handleChecklistToggle = (checklistId: string) => {
     if (!task) return;
     setTask({
@@ -64,6 +89,11 @@ export default function TaskDetailsDrawer({
     });
   };
 
+  /**
+   * Returns the appropriate color classes for a given priority level
+   * @param priority - The priority level (high, medium, low)
+   * @returns CSS classes for priority styling
+   */
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
@@ -77,6 +107,11 @@ export default function TaskDetailsDrawer({
     }
   };
 
+  /**
+   * Returns the appropriate icon component for a given priority level
+   * @param priority - The priority level (high, medium, low)
+   * @returns JSX element for the priority icon
+   */
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case "high":

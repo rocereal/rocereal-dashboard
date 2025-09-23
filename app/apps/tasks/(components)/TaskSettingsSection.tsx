@@ -1,3 +1,9 @@
+/**
+ * Task Settings Section Component
+ * Provides form controls for configuring task settings including priority, due date, and assignee
+ * Used in task creation or editing forms to allow users to set task parameters
+ */
+
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -12,6 +18,15 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, Clock, CheckSquare } from "lucide-react";
 
+/**
+ * Props for the TaskSettingsSection component
+ * @param priority - The current priority level of the task
+ * @param dueDate - The due date of the task as a string
+ * @param assignee - The name of the person assigned to the task
+ * @param onPriorityChange - Callback function when priority changes
+ * @param onDueDateChange - Callback function when due date changes
+ * @param onAssigneeChange - Callback function when assignee changes
+ */
 interface TaskSettingsSectionProps {
   priority: "low" | "medium" | "high";
   dueDate: string;
@@ -21,6 +36,17 @@ interface TaskSettingsSectionProps {
   onAssigneeChange: (value: string) => void;
 }
 
+/**
+ * TaskSettingsSection component for configuring task parameters
+ * Renders form controls for setting task priority, due date, and assignee with appropriate UI components
+ * @param priority - Current priority value
+ * @param dueDate - Current due date value
+ * @param assignee - Current assignee value
+ * @param onPriorityChange - Function to call when priority changes
+ * @param onDueDateChange - Function to call when due date changes
+ * @param onAssigneeChange - Function to call when assignee changes
+ * @returns JSX element representing the task settings form section
+ */
 export default function TaskSettingsSection({
   priority,
   dueDate,

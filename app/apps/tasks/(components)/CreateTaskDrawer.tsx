@@ -1,3 +1,10 @@
+/**
+ * CreateTaskDrawer Component
+ * Drawer component for creating new tasks with comprehensive form sections and validation
+ * Manages task creation state including basic info, checklist, settings, and tags
+ * Provides a multi-section form with preview and handles task creation submission
+ * @returns The create task drawer component
+ */
 "use client";
 
 import {
@@ -22,6 +29,15 @@ interface CreateTaskDrawerProps {
   onTaskCreated?: (task: Task) => void;
 }
 
+/**
+ * CreateTaskDrawer function component
+ * Renders a comprehensive task creation form in a slide-out drawer
+ * Manages form state and handles task creation with validation
+ * @param isOpen - Whether the drawer is open
+ * @param onOpenChange - Callback to control drawer visibility
+ * @param onTaskCreated - Optional callback when a task is successfully created
+ * @returns JSX element for the create task drawer
+ */
 export default function CreateTaskDrawer({
   isOpen,
   onOpenChange,
@@ -39,6 +55,12 @@ export default function CreateTaskDrawer({
   const [checklistItems, setChecklistItems] = useState<string[]>([]);
   const [newChecklistItem, setNewChecklistItem] = useState("");
 
+  /**
+   * Handles input field changes for task data
+   * Updates the task data state for the specified field
+   * @param field - The field name to update
+   * @param value - The new value for the field
+   */
   const handleInputChange = (field: string, value: string) => {
     setTaskData((prev) => ({
       ...prev,
@@ -46,6 +68,10 @@ export default function CreateTaskDrawer({
     }));
   };
 
+  /**
+   * Handles adding a new tag to the task
+   * Adds the tag if it's not empty and not already in the list
+   */
   const handleAddTag = () => {
     if (newTag.trim() && !taskData.tags.includes(newTag.trim())) {
       setTaskData((prev) => ({
@@ -56,6 +82,11 @@ export default function CreateTaskDrawer({
     }
   };
 
+  /**
+   * Handles removing a tag from the task
+   * Filters out the specified tag from the tags array
+   * @param tagToRemove - The tag to remove
+   */
   const handleRemoveTag = (tagToRemove: string) => {
     setTaskData((prev) => ({
       ...prev,
@@ -63,6 +94,10 @@ export default function CreateTaskDrawer({
     }));
   };
 
+  /**
+   * Handles adding a new checklist item
+   * Adds the item if it's not empty
+   */
   const handleAddChecklistItem = () => {
     if (newChecklistItem.trim()) {
       setChecklistItems((prev) => [...prev, newChecklistItem.trim()]);
@@ -70,10 +105,19 @@ export default function CreateTaskDrawer({
     }
   };
 
+  /**
+   * Handles removing a checklist item by index
+   * Filters out the item at the specified index
+   * @param index - The index of the item to remove
+   */
   const handleRemoveChecklistItem = (index: number) => {
     setChecklistItems((prev) => prev.filter((_, i) => i !== index));
   };
 
+  /**
+   * Handles form submission and task creation
+   * Validates required fields, creates the task object, and calls the callback
+   */
   const handleSubmit = () => {
     if (!taskData.title.trim()) {
       return; // Basic validation

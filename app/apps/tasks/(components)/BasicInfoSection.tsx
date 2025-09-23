@@ -1,3 +1,10 @@
+/**
+ * BasicInfoSection Component
+ * Form section component for editing basic task information including title and description
+ * Provides input fields for task title and description with proper labeling and validation
+ * Used in task creation and editing forms to collect essential task details
+ * @returns The basic info section component
+ */
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -12,6 +19,16 @@ interface BasicInfoSectionProps {
   onDescriptionChange: (value: string) => void;
 }
 
+/**
+ * BasicInfoSection function component
+ * Renders form inputs for task title and description
+ * Handles input changes and passes them to parent component
+ * @param title - The current task title value
+ * @param description - The current task description value
+ * @param onTitleChange - Callback when title input changes
+ * @param onDescriptionChange - Callback when description input changes
+ * @returns JSX element for the basic info section
+ */
 export default function BasicInfoSection({
   title,
   description,

@@ -1,3 +1,10 @@
+/**
+ * TasksSidebar Component
+ * Sidebar component for the tasks page that displays navigation menu, task statistics, and filters
+ * Supports expanded and collapsed views with responsive design for mobile and desktop
+ * Shows task counts by category and provides filtering options for task management
+ * @returns The tasks sidebar component
+ */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +40,15 @@ const taskStats = {
   overdue: 4,
 };
 
+/**
+ * TasksSidebar function component
+ * Renders the sidebar with navigation menu, statistics, and filters
+ * Handles responsive layout with mobile overlay and desktop fixed sidebar
+ * @param sidebarOpen - Whether the sidebar is expanded or collapsed
+ * @param onSidebarToggle - Callback to toggle sidebar visibility
+ * @param onCreateTask - Callback to open the create task drawer
+ * @returns JSX element for the tasks sidebar
+ */
 export default function TasksSidebar({
   sidebarOpen,
   onSidebarToggle,
