@@ -5,6 +5,14 @@ import FilesContent from "./FilesContent";
 import FilesHeader from "./FilesHeader";
 import FilesSidebar from "./FilesSidebar";
 
+/**
+ * Files Application Render Page Component
+ * Main layout component for the files application with responsive design
+ * Manages file system state including sidebar visibility, current path, view mode, and file selection
+ * Combines sidebar, header, and content components into a cohesive file management interface
+ * Provides state management for file navigation and selection across all child components
+ * @returns The JSX element representing the complete files application layout
+ */
 export default function RenderPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentPath, setCurrentPath] = useState("/");

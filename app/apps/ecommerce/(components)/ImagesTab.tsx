@@ -3,6 +3,10 @@
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { useState } from "react";
 
+/**
+ * Product data structure for form management
+ * Contains all fields required for product creation and editing
+ */
 interface ProductData {
   name: string;
   sku: string;
@@ -22,14 +26,33 @@ interface ProductData {
   images: File[];
 }
 
+/**
+ * Props for ImagesTab component
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ */
 interface ImagesTabProps {
   productData: ProductData;
   setProductData: React.Dispatch<React.SetStateAction<ProductData>>;
 }
 
+/**
+ * Images Tab Component
+ * Handles product image upload and management within the add product form
+ * Supports drag-and-drop and file browser upload with image preview
+ * Allows removal of uploaded images and marks the first image as main
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ * @returns The JSX element representing the images tab interface
+ */
 export function ImagesTab({ productData, setProductData }: ImagesTabProps) {
   const [dragActive, setDragActive] = useState(false);
 
+  /**
+   * Handle Image Upload
+   * Processes uploaded files and adds them to the product images array
+   * @param files - The FileList from file input or drag-and-drop
+   */
   const handleImageUpload = (files: FileList) => {
     const newImages = Array.from(files);
     setProductData((prev) => ({
@@ -38,6 +61,11 @@ export function ImagesTab({ productData, setProductData }: ImagesTabProps) {
     }));
   };
 
+  /**
+   * Remove Image
+   * Removes a specific image from the product images array by index
+   * @param index - The index of the image to remove
+   */
   const removeImage = (index: number) => {
     setProductData((prev) => ({
       ...prev,
@@ -45,6 +73,11 @@ export function ImagesTab({ productData, setProductData }: ImagesTabProps) {
     }));
   };
 
+  /**
+   * Handle Drag Events
+   * Manages drag enter/leave/over events to provide visual feedback
+   * @param e - The drag event
+   */
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -55,6 +88,11 @@ export function ImagesTab({ productData, setProductData }: ImagesTabProps) {
     }
   };
 
+  /**
+   * Handle Drop Event
+   * Processes files dropped onto the upload area
+   * @param e - The drop event containing the transferred files
+   */
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -65,6 +103,11 @@ export function ImagesTab({ productData, setProductData }: ImagesTabProps) {
     }
   };
 
+  /**
+   * Handle File Input Change
+   * Processes files selected through the file input browser
+   * @param e - The change event from the file input
+   */
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       handleImageUpload(e.target.files);

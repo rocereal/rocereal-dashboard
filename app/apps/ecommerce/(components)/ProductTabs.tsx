@@ -15,10 +15,18 @@ import {
 import { Product } from "@/data/ecommerce";
 import { ProductSettings } from "./ProductSettings";
 
+/**
+ * Props for ProductTabs component
+ * @param product - The product object to edit
+ */
 interface productProps {
   product: Product;
 }
 
+/**
+ * Product data structure for form management
+ * Contains all fields required for product creation and editing
+ */
 interface ProductData {
   name: string;
   sku: string;
@@ -38,6 +46,15 @@ interface ProductData {
   images: File[];
 }
 
+/**
+ * Product Tabs Component
+ * Provides a tabbed interface for editing product information with multiple sections
+ * Organizes product editing into logical tabs: Information, Images, Pricing, Inventory, and SEO
+ * Manages complex product data state and provides save/cancel functionality
+ * Pre-populates form fields with existing product data for editing
+ * @param product - The product object to edit
+ * @returns The JSX element representing the complete product editing interface
+ */
 export const ProductTabs: React.FC<productProps> = ({ product }) => {
   const [productData, setProductData] = useState<ProductData>({
     // Information tab
@@ -116,11 +133,22 @@ export const ProductTabs: React.FC<productProps> = ({ product }) => {
     },
   ];
 
+  /**
+   * Handle Save
+   * Processes the form submission to save the updated product
+   * Currently logs the product data and is a placeholder for backend integration
+   * In a real implementation, this would send the data to an API endpoint
+   */
   const handleSave = () => {
     console.log("Saving product:", productData);
     // Here you would typically save the data to your backend
   };
 
+  /**
+   * Handle Cancel
+   * Resets the form data back to the original product values
+   * Cancels any unsaved changes and restores the initial state
+   */
   const handleCancel = () => {
     setProductData({
       // Information tab

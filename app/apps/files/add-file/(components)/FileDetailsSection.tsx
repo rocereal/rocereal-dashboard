@@ -14,6 +14,15 @@ import {
 import { FileText, Folder } from "lucide-react";
 import { mockFoldersForUpload } from "@/data/files";
 
+/**
+ * Props for FileDetailsSection component
+ * @param fileName - The current file name value
+ * @param onFileNameChange - Callback function when file name changes
+ * @param description - The current description value
+ * @param onDescriptionChange - Callback function when description changes
+ * @param selectedFolder - The currently selected folder ID
+ * @param onFolderChange - Callback function when folder selection changes
+ */
 interface FileDetailsSectionProps {
   fileName: string;
   onFileNameChange: (value: string) => void;
@@ -23,6 +32,21 @@ interface FileDetailsSectionProps {
   onFolderChange: (value: string) => void;
 }
 
+/**
+ * File Details Section Component
+ * Form section for configuring file metadata during upload process
+ * Allows users to set custom file name, select destination folder, and add description
+ * Includes responsive grid layout that adapts between single and dual column display
+ * Uses form controls with proper labels and validation requirements
+ * Integrates with mock folder data for destination selection
+ * @param fileName - The current file name value
+ * @param onFileNameChange - Callback function when file name changes
+ * @param description - The current description value
+ * @param onDescriptionChange - Callback function when description changes
+ * @param selectedFolder - The currently selected folder ID
+ * @param onFolderChange - Callback function when folder selection changes
+ * @returns The JSX element representing the file details configuration form
+ */
 export default function FileDetailsSection({
   fileName,
   onFileNameChange,

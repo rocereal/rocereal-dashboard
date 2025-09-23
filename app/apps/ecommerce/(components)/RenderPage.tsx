@@ -7,14 +7,34 @@ import { useState } from "react";
 import { ProductsTable } from "./ProductsTable";
 import { SectionCards } from "./SectionCards";
 
+/**
+ * Render Page Component
+ * This is the main rendering component for the products management page
+ * Displays product statistics cards, dashboard header with actions, and the products table
+ * Manages product state and provides handlers for edit, delete, and view operations
+ * Calculates and displays key metrics like total products, active products, low stock, and out of stock items
+ * @returns The JSX element representing the complete products management page
+ */
 export default function RenderPage() {
   const [products, setProducts] = useState(productsData);
 
+  /**
+   * Handle Edit
+   * Handles the edit action for a product
+   * Currently logs the product and is a placeholder for edit functionality implementation
+   * @param product - The product object to edit
+   */
   const handleEdit = (product: Product) => {
     console.log("Edit product:", product);
     // Implement edit functionality
   };
 
+  /**
+   * Handle Delete
+   * Handles the delete action for a product with confirmation dialog
+   * Shows a browser confirm dialog and removes the product from state if confirmed
+   * @param product - The product object to delete
+   */
   const handleDelete = (product: Product) => {
     console.log("Delete product:", product);
     // Implement delete functionality with confirmation
@@ -23,6 +43,12 @@ export default function RenderPage() {
     }
   };
 
+  /**
+   * Handle View
+   * Handles the view action for a product
+   * Currently logs the product and is a placeholder for view details functionality
+   * @param product - The product object to view
+   */
   const handleView = (product: Product) => {
     console.log("View product:", product);
     // Implement view details functionality

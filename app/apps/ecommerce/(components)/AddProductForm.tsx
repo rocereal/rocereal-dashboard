@@ -34,6 +34,14 @@ interface ProductData {
   images: File[];
 }
 
+/**
+ * Add Product Form Component
+ * Comprehensive form component for creating new products with tabbed interface
+ * Organizes product creation into logical sections: Information, Images, Pricing, Inventory, and SEO
+ * Manages complex product data state and provides save/cancel functionality
+ * Uses tabbed navigation to break down the complex form into manageable sections
+ * @returns The JSX element representing the complete add product form
+ */
 export default function AddProductForm() {
   const [productData, setProductData] = useState<ProductData>({
     // Information tab
@@ -112,11 +120,23 @@ export default function AddProductForm() {
     },
   ];
 
+  /**
+   * Handle Save
+   * Processes the form submission to save the new product
+   * Currently logs the product data and is a placeholder for backend integration
+   * In a real implementation, this would send the data to an API endpoint
+   */
   const handleSave = () => {
     console.log("Saving product:", productData);
     // Here you would typically save the data to your backend
   };
 
+  /**
+   * Handle Cancel
+   * Handles the cancellation of product creation
+   * Currently logs the cancellation and is a placeholder for form reset or navigation
+   * In a real implementation, this might reset the form or navigate back to the products list
+   */
   const handleCancel = () => {
     // Reset form or navigate back
     console.log("Cancelling product creation");

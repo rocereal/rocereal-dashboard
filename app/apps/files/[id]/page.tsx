@@ -24,6 +24,17 @@ export const metadata = {
   description: "View and manage file details, permissions, and version history",
 };
 
+/**
+ * File Details Page Component
+ * Dynamic route page for displaying individual file information and management options
+ * Shows comprehensive file details including metadata, permissions, version history, and activity
+ * Uses dashboard header with breadcrumbs and action buttons for navigation
+ * Includes file preview section with icon, name, description, and quick actions
+ * Integrates tabbed interface for organized file information display
+ * Handles file not found scenarios with appropriate error messaging
+ * @param params - Route parameters containing the file ID
+ * @returns The JSX element representing the file details page or not found message
+ */
 export default async function FileDetailsPage({
   params,
 }: {

@@ -4,6 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DollarSign } from "lucide-react";
 
+/**
+ * Product data structure for form management
+ * Contains all fields required for product creation and editing
+ */
 interface ProductData {
   name: string;
   sku: string;
@@ -23,12 +27,32 @@ interface ProductData {
   images: File[];
 }
 
+/**
+ * Props for PricingTab component
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ */
 interface PricingTabProps {
   productData: ProductData;
   setProductData: React.Dispatch<React.SetStateAction<ProductData>>;
 }
 
+/**
+ * Pricing Tab Component
+ * Handles product pricing configuration within the add product form including selling price, compare price, cost price, and tax rate
+ * Calculates and displays real-time profit margins, tax amounts, and pricing preview
+ * Manages form state updates for pricing-related product data
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ * @returns The JSX element representing the pricing tab interface
+ */
 export function PricingTab({ productData, setProductData }: PricingTabProps) {
+  /**
+   * Handle Input Change
+   * Updates the product data state when form inputs change
+   * @param field - The field name to update
+   * @param value - The new value for the field
+   */
   const handleInputChange = (field: string, value: string) => {
     setProductData((prev) => ({
       ...prev,

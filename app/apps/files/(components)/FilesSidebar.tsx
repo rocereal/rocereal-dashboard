@@ -20,6 +20,13 @@ import {
   Video,
 } from "lucide-react";
 
+/**
+ * Props for FilesSidebar component
+ * @param sidebarOpen - Whether the sidebar is currently expanded or collapsed
+ * @param onSidebarToggle - Callback function to toggle sidebar visibility
+ * @param currentPath - Current directory path being displayed
+ * @param onPathChange - Callback function when navigating to a different path
+ */
 interface FilesSidebarProps {
   sidebarOpen: boolean;
   onSidebarToggle: () => void;
@@ -27,7 +34,19 @@ interface FilesSidebarProps {
   onPathChange: (path: string) => void;
 }
 
-// Mock storage data
+/**
+ * Files Sidebar Component
+ * Collapsible sidebar for the files application with storage overview and navigation
+ * Shows storage usage, quick access items, file type statistics, and settings
+ * Responsive design that collapses to icon-only view when closed
+ * Includes upload button, storage progress bar, and categorized file access
+ * Provides navigation between different file views and management options
+ * @param sidebarOpen - Whether the sidebar is currently expanded or collapsed
+ * @param onSidebarToggle - Callback function to toggle sidebar visibility
+ * @param currentPath - Current directory path being displayed
+ * @param onPathChange - Callback function when navigating to a different path
+ * @returns The JSX element representing the files application sidebar
+ */
 const storageData = {
   used: 2.4,
   total: 15,

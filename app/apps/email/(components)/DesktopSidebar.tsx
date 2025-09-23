@@ -6,6 +6,13 @@ import { sidebarItems } from "@/data/email";
 import { cn } from "@/lib/utils";
 import { Menu, Plus } from "lucide-react";
 
+/**
+ * Props for DesktopSidebar component
+ * @param selectedCategory - The currently selected email category
+ * @param onCategoryChange - Callback function when category selection changes
+ * @param sidebarOpen - Whether the sidebar is expanded or collapsed
+ * @param onSidebarToggle - Callback function to toggle sidebar visibility
+ */
 interface DesktopSidebarProps {
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
@@ -13,6 +20,18 @@ interface DesktopSidebarProps {
   onSidebarToggle: () => void;
 }
 
+/**
+ * Desktop Sidebar Component
+ * Navigation sidebar for email application on desktop devices
+ * Displays email categories with icons, labels, and unread counts
+ * Supports collapsible/expandable state with smooth transitions
+ * Includes compose button and category selection functionality
+ * @param selectedCategory - The currently selected email category
+ * @param onCategoryChange - Callback function when category selection changes
+ * @param sidebarOpen - Whether the sidebar is expanded or collapsed
+ * @param onSidebarToggle - Callback function to toggle sidebar visibility
+ * @returns The JSX element representing the desktop email sidebar
+ */
 export default function DesktopSidebar({
   selectedCategory,
   onCategoryChange,

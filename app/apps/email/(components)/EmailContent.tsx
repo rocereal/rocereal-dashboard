@@ -5,10 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Email } from "@/data/email";
 import { Inbox, MoreVertical, Paperclip, Reply, Star } from "lucide-react";
 
+/**
+ * Props for EmailContent component
+ * @param selectedEmail - The currently selected email to display, or null if none selected
+ */
 interface EmailContentProps {
   selectedEmail: Email | null;
 }
 
+/**
+ * Email Content Component
+ * Displays the content of a selected email with full details
+ * Shows email header with sender info, subject, and action buttons
+ * Displays email body with proper formatting and attachments indicator
+ * Provides reply, reply all, and forward action buttons
+ * Shows empty state when no email is selected
+ * @param selectedEmail - The currently selected email to display, or null if none selected
+ * @returns The JSX element representing the email content view
+ */
 export default function EmailContent({ selectedEmail }: EmailContentProps) {
   if (!selectedEmail) {
     return (

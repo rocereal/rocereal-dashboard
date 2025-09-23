@@ -43,15 +43,34 @@ import { useState } from "react";
 import { SectionCards } from "./SectionCards";
 import { OrdersBulkActions, OrderStatusBadge } from "./index";
 
+/**
+ * Orders Page Component
+ * Comprehensive orders management page displaying order metrics, filtering, and data table
+ * Provides bulk actions, status filtering, and detailed order information
+ * Includes order statistics cards, searchable/filterable table, and delete confirmations
+ * Manages order state and provides handlers for various order operations
+ * @returns The JSX element representing the complete orders management page
+ */
 export default function OrdersPage() {
   const [orders, setOrders] = useState(ordersData);
   const [statusFilter, setStatusFilter] = useState("all");
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
 
+  /**
+   * Handle Delete Order
+   * Initiates the delete process for a specific order by setting the order ID to delete
+   * This triggers the confirmation dialog to appear
+   * @param orderId - The ID of the order to delete
+   */
   const handleDeleteOrder = (orderId: string) => {
     setOrderToDelete(orderId);
   };
 
+  /**
+   * Confirm Delete Order
+   * Confirms and executes the deletion of the selected order
+   * Removes the order from the orders state and clears the delete state
+   */
   const confirmDeleteOrder = () => {
     if (orderToDelete) {
       setOrders(orders.filter((order) => order.id !== orderToDelete));
@@ -59,15 +78,31 @@ export default function OrdersPage() {
     }
   };
 
+  /**
+   * Cancel Delete Order
+   * Cancels the delete operation and hides the confirmation dialog
+   * Clears the orderToDelete state without making any changes
+   */
   const cancelDeleteOrder = () => {
     setOrderToDelete(null);
   };
 
+  /**
+   * Handle Export Orders
+   * Handles the export functionality for orders
+   * Currently logs the action and is a placeholder for export implementation
+   */
   const handleExportOrders = () => {
     console.log("Exporting orders...");
     // Implement export functionality
   };
 
+  /**
+   * Handle Bulk Delete
+   * Handles bulk deletion of multiple selected orders
+   * Sets the order IDs to delete, triggering the confirmation dialog
+   * @param selectedOrderIds - Array of order IDs to delete
+   */
   const handleBulkDelete = (selectedOrderIds: string[]) => {
     if (selectedOrderIds.length > 0) {
       setOrderToDelete(selectedOrderIds.join(", ")); // Show selected order IDs

@@ -3,6 +3,13 @@
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 
+/**
+ * Product Settings Component
+ * Provides configuration options for product behavior and visibility
+ * Includes settings for visibility, SEO, inventory tracking, alerts, featured status, and reviews
+ * Manages product settings state and provides toggle switches for each option
+ * @returns The JSX element representing the product settings configuration panel
+ */
 export function ProductSettings() {
   const [settings, setSettings] = useState({
     visibility: true,
@@ -13,6 +20,12 @@ export function ProductSettings() {
     allowReviews: true,
   });
 
+  /**
+   * Handle Setting Change
+   * Updates the settings state when a toggle switch is changed
+   * @param setting - The setting key to update
+   * @param value - The new boolean value for the setting
+   */
   const onChange = (setting: keyof typeof settings, value: boolean) => {
     setSettings((prev) => ({
       ...prev,

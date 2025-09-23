@@ -15,6 +15,15 @@ import { mockContacts } from "@/data/contacts";
 import { permissionOptions } from "@/data/files";
 import { Globe, Lock, Users } from "lucide-react";
 
+/**
+ * Props for AccessSharingSection component
+ * @param permissions - Current permission level (private, shared, or public)
+ * @param onPermissionsChange - Callback function when permission level changes
+ * @param selectedUsers - Array of selected user IDs for sharing
+ * @param onUserToggle - Callback function when user selection toggles
+ * @param userRoles - Record mapping user IDs to their assigned roles
+ * @param onRoleChange - Callback function when user role changes
+ */
 interface AccessSharingSectionProps {
   permissions: "private" | "shared" | "public";
   onPermissionsChange: (permissions: "private" | "shared" | "public") => void;
@@ -24,6 +33,22 @@ interface AccessSharingSectionProps {
   onRoleChange: (userId: string, role: "viewer" | "editor") => void;
 }
 
+/**
+ * Access Sharing Section Component
+ * Form section for configuring file access permissions and user sharing during upload
+ * Allows selection between private, shared, and public permission levels
+ * When shared permissions are selected, displays user selection interface with role assignment
+ * Shows visual permission cards with icons and descriptions for easy selection
+ * Includes user avatars, checkboxes for selection, and role dropdowns for shared access
+ * Provides summary of selected users and their assigned permissions
+ * @param permissions - Current permission level (private, shared, or public)
+ * @param onPermissionsChange - Callback function when permission level changes
+ * @param selectedUsers - Array of selected user IDs for sharing
+ * @param onUserToggle - Callback function when user selection toggles
+ * @param userRoles - Record mapping user IDs to their assigned roles
+ * @param onRoleChange - Callback function when user role changes
+ * @returns The JSX element representing the access and sharing configuration form
+ */
 export default function AccessSharingSection({
   permissions,
   onPermissionsChange,

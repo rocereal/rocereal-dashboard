@@ -22,6 +22,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { showToast } from "@/components/ui/sonner";
 
+/**
+ * Props for OrdersTable component
+ * @param products - Array of products to display in the table
+ * @param onEdit - Optional callback when edit action is triggered
+ * @param onDelete - Optional callback when delete action is triggered
+ * @param onView - Optional callback when view action is triggered
+ */
 interface ProductsTableProps {
   products: Product[];
   onEdit?: (product: Product) => void;
@@ -29,14 +36,32 @@ interface ProductsTableProps {
   onView?: (product: Product) => void;
 }
 
+/**
+ * Orders Table Component
+ * Displays products in a data table with sorting, filtering, and bulk actions
+ * Includes product images, details, status badges, and action menus
+ * Supports selection, deletion, and export operations
+ * @param products - Array of products to display in the table
+ * @returns The JSX element representing the products table with actions
+ */
 export function OrdersTable({ products }: ProductsTableProps) {
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
   const [orders, setOrders] = useState(ordersData);
 
+  /**
+   * Handle Delete Order
+   * Sets the order ID to delete, triggering the confirmation dialog
+   * @param orderId - The ID of the order to delete
+   */
   const handleDeleteOrder = (orderId: string) => {
     setOrderToDelete(orderId);
   };
 
+  /**
+   * Confirm Delete Order
+   * Confirms and executes the deletion of the selected order
+   * Removes the order from the orders state and clears the delete state
+   */
   const confirmDeleteOrder = () => {
     if (orderToDelete) {
       setOrders(orders.filter((order) => order.id !== orderToDelete));
@@ -44,6 +69,11 @@ export function OrdersTable({ products }: ProductsTableProps) {
     }
   };
 
+  /**
+   * Cancel Delete Order
+   * Cancels the delete operation and hides the confirmation dialog
+   * Clears the orderToDelete state without making any changes
+   */
   const cancelDeleteOrder = () => {
     setOrderToDelete(null);
   };

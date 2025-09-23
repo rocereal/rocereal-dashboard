@@ -11,6 +11,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+/**
+ * Product data structure for form management
+ * Contains all fields required for product creation and editing
+ */
 interface ProductData {
   name: string;
   sku: string;
@@ -30,15 +34,35 @@ interface ProductData {
   images: File[];
 }
 
+/**
+ * Props for InformationTab component
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ */
 interface InformationTabProps {
   productData: ProductData;
   setProductData: React.Dispatch<React.SetStateAction<ProductData>>;
 }
 
+/**
+ * Information Tab Component
+ * Handles basic product information input within the add product form
+ * Includes product name, SKU, category selection, and description fields
+ * Manages form state updates for information-related product data
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ * @returns The JSX element representing the information tab interface
+ */
 export function InformationTab({
   productData,
   setProductData,
 }: InformationTabProps) {
+  /**
+   * Handle Input Change
+   * Updates the product data state when form inputs change
+   * @param field - The field name to update
+   * @param value - The new value for the field
+   */
   const handleInputChange = (field: string, value: string) => {
     setProductData((prev) => ({
       ...prev,

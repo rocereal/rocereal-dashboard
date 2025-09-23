@@ -2,10 +2,22 @@
 
 import { Product } from "@/data/ecommerce";
 
+/**
+ * Props for ProductMetadata component
+ * @param product - The product object to display metadata for
+ */
 interface ProductMetadataProps {
   product: Product;
 }
 
+/**
+ * Product Metadata Component
+ * Displays product creation and last update timestamps in a formatted layout
+ * Shows metadata information including created date and last updated date
+ * Formats dates for better readability with full month names and numeric dates
+ * @param product - The product object to display metadata for
+ * @returns The JSX element representing the product metadata section
+ */
 export function ProductMetadata({ product }: ProductMetadataProps) {
   const metadata = [
     {

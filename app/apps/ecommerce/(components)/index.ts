@@ -1,3 +1,9 @@
+/**
+ * Ecommerce Components Index
+ * This file serves as a barrel export for all ecommerce-related components
+ * It re-exports all product management, order management, and related UI components
+ * Includes forms, tables, tabs, cards, and other components for the ecommerce dashboard
+ */
 export { default as AddProductForm } from "./AddProductForm";
 export { InformationTab } from "./InformationTab";
 export { ImagesTab } from "./ImagesTab";

@@ -2,6 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+/**
+ * Props for OrderTimeline component
+ * @param order - The order object containing date and current status
+ */
 interface OrderTimelineProps {
   order: {
     date: string;
@@ -9,6 +13,15 @@ interface OrderTimelineProps {
   };
 }
 
+/**
+ * Order Timeline Component
+ * Displays a visual timeline of order progress with status-based styling
+ * Shows four main stages: Order Placed, Order Confirmed, Order Shipped, Order Delivered
+ * Uses color-coded dots and connecting lines to indicate current progress
+ * Dynamically updates appearance based on current order status
+ * @param order - The order object containing date and current status
+ * @returns The JSX element representing the order timeline visualization
+ */
 export function OrderTimeline({ order }: OrderTimelineProps) {
   return (
     <Card>

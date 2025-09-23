@@ -5,6 +5,15 @@ import { Input } from "@/components/ui/input";
 import { MoreVertical, Search } from "lucide-react";
 import MobileSidebar from "./MobileSidebar";
 
+/**
+ * Props for EmailHeader component
+ * @param searchQuery - The current search query string
+ * @param onSearchChange - Callback function when search query changes
+ * @param selectedCategory - The currently selected email category
+ * @param onCategoryChange - Callback function when category selection changes
+ * @param mobileSidebarOpen - Whether the mobile sidebar is open
+ * @param onMobileSidebarChange - Callback function to toggle mobile sidebar
+ */
 interface EmailHeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
@@ -14,6 +23,19 @@ interface EmailHeaderProps {
   onMobileSidebarChange: (open: boolean) => void;
 }
 
+/**
+ * Email Header Component
+ * Top navigation bar for the email application with search functionality
+ * Includes mobile sidebar toggle, search input, and additional actions
+ * Responsive design that adapts to different screen sizes
+ * @param searchQuery - The current search query string
+ * @param onSearchChange - Callback function when search query changes
+ * @param selectedCategory - The currently selected email category
+ * @param onCategoryChange - Callback function when category selection changes
+ * @param mobileSidebarOpen - Whether the mobile sidebar is open
+ * @param onMobileSidebarChange - Callback function to toggle mobile sidebar
+ * @returns The JSX element representing the email header bar
+ */
 export default function EmailHeader({
   searchQuery,
   onSearchChange,

@@ -4,6 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
+/**
+ * Product data structure for form management
+ * Contains all fields required for product creation and editing
+ */
 interface ProductData {
   name: string;
   sku: string;
@@ -23,15 +27,35 @@ interface ProductData {
   images: File[];
 }
 
+/**
+ * Props for InventoryTab component
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ */
 interface InventoryTabProps {
   productData: ProductData;
   setProductData: React.Dispatch<React.SetStateAction<ProductData>>;
 }
 
+/**
+ * Inventory Tab Component
+ * Manages product inventory settings and stock levels within the add product form
+ * Includes stock quantity, low stock alerts, inventory tracking, and backorder settings
+ * Displays real-time inventory status with color-coded indicators
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ * @returns The JSX element representing the inventory tab interface
+ */
 export function InventoryTab({
   productData,
   setProductData,
 }: InventoryTabProps) {
+  /**
+   * Handle Input Change
+   * Updates the product data state when form inputs change
+   * @param field - The field name to update
+   * @param value - The new value for the field
+   */
   const handleInputChange = (field: string, value: string | boolean) => {
     setProductData((prev) => ({
       ...prev,
@@ -42,6 +66,11 @@ export function InventoryTab({
   const stock = parseInt(productData.stock) || 0;
   const lowStockThreshold = parseInt(productData.lowStockThreshold) || 10;
 
+  /**
+   * Get Stock Status
+   * Determines the current stock status based on quantity and threshold
+   * @returns Object with status text and color class
+   */
   const getStockStatus = () => {
     if (stock === 0) return { status: "Out of Stock", color: "text-red-600" };
     if (stock <= lowStockThreshold)

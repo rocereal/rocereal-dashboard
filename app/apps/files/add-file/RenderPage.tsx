@@ -8,6 +8,16 @@ import FileUploadSection from "./(components)/FileUploadSection";
 import FileDetailsSection from "./(components)/FileDetailsSection";
 import AccessSharingSection from "./(components)/AccessSharingSection";
 
+/**
+ * Add File Render Page Component
+ * Main form component for file upload with comprehensive file management and sharing options
+ * Manages file selection, metadata input, folder organization, and access permissions
+ * Handles multi-step file upload process with validation and progress indication
+ * Integrates file upload, details configuration, and sharing settings in a unified interface
+ * Provides form state management for file data, permissions, and user access controls
+ * Includes loading states and navigation controls for seamless user experience
+ * @returns The JSX element representing the complete file upload form interface
+ */
 export default function AddFileRenderPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");

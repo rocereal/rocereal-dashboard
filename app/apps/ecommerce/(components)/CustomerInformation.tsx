@@ -4,10 +4,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Phone, User } from "lucide-react";
 
+/**
+ * Props for CustomerInformation component
+ * @param customer - The name of the customer to display information for
+ */
 interface CustomerInformationProps {
   customer: string;
 }
 
+/**
+ * Customer Information Component
+ * Displays customer details including avatar, name, email, and phone number
+ * Generates avatar fallback from customer name initials
+ * Shows contact information in a card layout with icons
+ * @param customer - The name of the customer to display information for
+ * @returns The JSX element representing the customer information card
+ */
 export function CustomerInformation({ customer }: CustomerInformationProps) {
   return (
     <Card>

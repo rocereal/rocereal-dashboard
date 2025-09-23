@@ -5,6 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Info } from "lucide-react";
 
+/**
+ * Product data structure for form management
+ * Contains all fields required for product creation and editing
+ */
 interface ProductData {
   name: string;
   sku: string;
@@ -24,12 +28,33 @@ interface ProductData {
   images: File[];
 }
 
+/**
+ * Props for SEOTab component
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ */
 interface SEOTabProps {
   productData: ProductData;
   setProductData: React.Dispatch<React.SetStateAction<ProductData>>;
 }
 
+/**
+ * SEO Tab Component
+ * Handles search engine optimization settings within the add product form
+ * Includes meta title, meta description, and URL slug configuration
+ * Provides real-time preview of how the product will appear in search results and social media
+ * Shows character counts and best practices for SEO optimization
+ * @param productData - The current product data state
+ * @param setProductData - Function to update the product data state
+ * @returns The JSX element representing the SEO tab interface
+ */
 export function SEOTab({ productData, setProductData }: SEOTabProps) {
+  /**
+   * Handle Input Change
+   * Updates the product data state when form inputs change
+   * @param field - The field name to update
+   * @param value - The new value for the field
+   */
   const handleInputChange = (field: string, value: string) => {
     setProductData((prev) => ({
       ...prev,

@@ -9,6 +9,15 @@ import EmailList from "./EmailList";
 import EmailTabs from "./EmailTabs";
 import MobileEmailContent from "./MobileEmailContent";
 
+/**
+ * Email Application Render Page Component
+ * Main layout component for the email application with responsive design
+ * Manages email state including selection, filtering, search, and mobile interactions
+ * Combines desktop and mobile layouts with sidebar navigation and content areas
+ * Handles email categorization, tab filtering, and bulk selection operations
+ * Provides responsive behavior that adapts between desktop and mobile interfaces
+ * @returns The JSX element representing the complete email application layout
+ */
 export default function RenderPage() {
   const [selectedCategory, setSelectedCategory] = useState("inbox");
   const [selectedTab, setSelectedTab] = useState("primary");

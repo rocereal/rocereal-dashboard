@@ -27,10 +27,27 @@ interface ProductsTableProps {
   onView?: (product: Product) => void;
 }
 
+/**
+ * Products Table Component
+ * Renders a comprehensive data table for managing products with selection, sorting, and bulk actions
+ * Includes product images, details, status badges, and action dropdown menus
+ * Supports bulk selection and operations like export and delete
+ * Provides search functionality and responsive design
+ * @param products - Array of product objects to display in the table
+ * @param onEdit - Optional callback function when edit action is triggered
+ * @param onDelete - Optional callback function when delete action is triggered
+ * @param onView - Optional callback function when view action is triggered
+ * @returns The JSX element representing the products data table
+ */
 export function ProductsTable({ products, onDelete }: ProductsTableProps) {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
-  // Checkbox handlers
+  /**
+   * Handle Select All
+   * Handles the select all checkbox functionality
+   * Either selects all products or clears all selections based on the checked state
+   * @param checked - Boolean indicating whether to select all or clear selection
+   */
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedProducts(products.map((product) => product.id));
@@ -39,6 +56,13 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
     }
   };
 
+  /**
+   * Handle Select Product
+   * Handles individual product selection/deselection
+   * Adds or removes the product ID from the selected products array
+   * @param productId - The ID of the product to select/deselect
+   * @param checked - Boolean indicating whether to select or deselect the product
+   */
   const handleSelectProduct = (productId: string, checked: boolean) => {
     if (checked) {
       setSelectedProducts((prev) => [...prev, productId]);
@@ -47,6 +71,11 @@ export function ProductsTable({ products, onDelete }: ProductsTableProps) {
     }
   };
 
+  /**
+   * Handle Bulk Delete
+   * Processes bulk deletion of selected products
+   * Calls the onDelete callback for each selected product and clears the selection
+   */
   const handleBulkDelete = () => {
     selectedProducts.forEach((productId) => {
       const product = products.find((p) => p.id === productId);

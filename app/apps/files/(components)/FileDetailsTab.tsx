@@ -7,12 +7,30 @@ import { Label } from "@/components/ui/label";
 import { FileText, User } from "lucide-react";
 import { FileDetails } from "@/data/files";
 
+/**
+ * Props for FileDetailsTab component
+ * @param file - The file details object containing metadata and information
+ * @param formatDate - Function to format date strings for display
+ * @param getPermissionIcon - Function to get permission icon based on permission level
+ */
 interface FileDetailsTabProps {
   file: FileDetails;
   formatDate: (dateString: string) => string;
   getPermissionIcon: (permissions: string) => React.ReactElement;
 }
 
+/**
+ * File Details Tab Component
+ * Displays comprehensive file information including metadata, owner details, and tags
+ * Shows file properties like name, type, size, permissions, and creation/modification dates
+ * Includes owner information with avatar and contact details
+ * Conditionally displays tags section if file has associated tags
+ * Uses responsive grid layout for optimal display across devices
+ * @param file - The file details object containing metadata and information
+ * @param formatDate - Function to format date strings for display
+ * @param getPermissionIcon - Function to get permission icon based on permission level
+ * @returns The JSX element representing the file details information panel
+ */
 export default function FileDetailsTab({
   file,
   formatDate,

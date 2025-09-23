@@ -12,6 +12,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AlertTriangle } from "lucide-react";
 
+/**
+ * Props for OrderDeleteDialog component
+ * @param isOpen - Whether the dialog is open
+ * @param orderToDelete - The ID or name of the order to delete
+ * @param onCancel - Callback function when cancel is clicked
+ * @param onConfirm - Callback function when delete is confirmed
+ */
 interface OrderDeleteDialogProps {
   isOpen: boolean;
   orderToDelete: string | null;
@@ -19,6 +26,17 @@ interface OrderDeleteDialogProps {
   onConfirm: () => void;
 }
 
+/**
+ * Order Delete Dialog Component
+ * Confirmation dialog for deleting orders with warning message
+ * Uses AlertDialog to prevent accidental deletions
+ * Shows order ID and irreversible action warning
+ * @param isOpen - Whether the dialog is open
+ * @param orderToDelete - The ID or name of the order to delete
+ * @param onCancel - Callback function when cancel is clicked
+ * @param onConfirm - Callback function when delete is confirmed
+ * @returns The JSX element representing the delete confirmation dialog
+ */
 export function OrderDeleteDialog({
   isOpen,
   orderToDelete,

@@ -12,6 +12,15 @@ export const metadata: Metadata = metadataTemplates.dashboard(
   "Manage your product catalog, inventory, and pricing."
 );
 
+/**
+ * Product Details Page Component
+ * This is the dynamic page component for viewing and editing individual product details
+ * It extracts the product ID from URL parameters, finds the product in the data, and renders the product management interface
+ * Includes product information display, action buttons for preview/download/share/delete, and tabbed interface for editing
+ * Handles the case where the product is not found by showing an appropriate error message
+ * @param params - Promise containing the route parameters, specifically the product ID
+ * @returns The JSX element representing the product details page or not found message
+ */
 export default async function ProductDetailsPage({
   params,
 }: {

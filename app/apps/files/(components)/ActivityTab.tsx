@@ -4,6 +4,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity } from "lucide-react";
 
+/**
+ * Activity item structure for file activity tracking
+ * @param action - The action performed (e.g., "viewed", "edited", "shared")
+ * @param user - The name of the user who performed the action
+ * @param time - The timestamp when the action occurred
+ * @param avatar - The avatar URL of the user
+ */
 interface ActivityItem {
   action: string;
   user: string;
@@ -11,10 +18,23 @@ interface ActivityItem {
   avatar: string;
 }
 
+/**
+ * Props for ActivityTab component
+ * @param activities - Array of activity items to display
+ */
 interface ActivityTabProps {
   activities: ActivityItem[];
 }
 
+/**
+ * Activity Tab Component
+ * Displays recent file activity in a chronological list format
+ * Shows user avatars, actions performed, and timestamps for each activity
+ * Provides a timeline view of file interactions and modifications
+ * Uses avatar fallbacks and formatted timestamps for better readability
+ * @param activities - Array of activity items to display
+ * @returns The JSX element representing the file activity timeline
+ */
 export default function ActivityTab({ activities }: ActivityTabProps) {
   return (
     <Card>

@@ -4,10 +4,22 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreditCard } from "lucide-react";
 
+/**
+ * Props for PaymentInformation component
+ * @param orderId - The unique identifier for the order
+ */
 interface PaymentInformationProps {
   orderId: string;
 }
 
+/**
+ * Payment Information Component
+ * Displays payment details for an order including method, status, and transaction ID
+ * Shows payment information in a clean card layout with status badges
+ * Generates transaction ID based on the order ID for display purposes
+ * @param orderId - The unique identifier for the order
+ * @returns The JSX element representing the payment information card
+ */
 export function PaymentInformation({ orderId }: PaymentInformationProps) {
   return (
     <Card>

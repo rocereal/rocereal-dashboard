@@ -12,6 +12,13 @@ import {
   Truck,
 } from "lucide-react";
 
+/**
+ * Props for OrderStatusHeader component
+ * @param order - The order object with id and status
+ * @param onPrintOrder - Callback function to print the order
+ * @param onDownloadInvoice - Callback function to download the invoice
+ * @param onUpdateStatus - Callback function to update the order status
+ */
 interface OrderStatusHeaderProps {
   order: {
     id: string;
@@ -22,12 +29,29 @@ interface OrderStatusHeaderProps {
   onUpdateStatus: (status: string) => void;
 }
 
+/**
+ * Order Status Header Component
+ * Displays order status with icon and badge, along with action buttons for printing, downloading invoice, and updating status
+ * Shows status-specific icons and colors for different order states
+ * Provides quick action buttons for common order management tasks
+ * @param order - The order object with id and status
+ * @param onPrintOrder - Callback function to print the order
+ * @param onDownloadInvoice - Callback function to download the invoice
+ * @param onUpdateStatus - Callback function to update the order status
+ * @returns The JSX element representing the order status header with actions
+ */
 export function OrderStatusHeader({
   order,
   onPrintOrder,
   onDownloadInvoice,
   onUpdateStatus,
 }: OrderStatusHeaderProps) {
+  /**
+   * Get Status Icon
+   * Returns appropriate icon component based on order status
+   * @param status - The order status string
+   * @returns React element representing the status icon
+   */
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "delivered":
@@ -43,6 +67,12 @@ export function OrderStatusHeader({
     }
   };
 
+  /**
+   * Get Status Color
+   * Returns appropriate Tailwind CSS classes for the status badge based on order status
+   * @param status - The order status string
+   * @returns Tailwind CSS class string for styling the badge
+   */
   const getStatusColor = (status: string) => {
     switch (status) {
       case "delivered":

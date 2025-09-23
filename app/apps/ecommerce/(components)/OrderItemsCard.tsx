@@ -5,6 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Package } from "lucide-react";
 
+/**
+ * Order item structure for display in order details
+ * @param name - The name of the product
+ * @param image - The image URL of the product
+ * @param product - Optional product details including SKU
+ * @param quantity - The quantity ordered
+ * @param price - The unit price of the item
+ */
 interface OrderItem {
   name: string;
   image: string;
@@ -15,11 +23,25 @@ interface OrderItem {
   price: number;
 }
 
+/**
+ * Props for OrderItemsCard component
+ * @param items - Array of order items to display
+ * @param orderValue - The total value of the order
+ */
 interface OrderItemsCardProps {
   items: OrderItem[];
   orderValue: number;
 }
 
+/**
+ * Order Items Card Component
+ * Displays detailed information about items in an order including product images, quantities, and pricing
+ * Shows individual item details in bordered cards and provides order summary with subtotal, shipping, tax, and total
+ * Calculates and displays line item totals and overall order value
+ * @param items - Array of order items to display
+ * @param orderValue - The total value of the order
+ * @returns The JSX element representing the order items card with summary
+ */
 export function OrderItemsCard({ items, orderValue }: OrderItemsCardProps) {
   return (
     <Card>

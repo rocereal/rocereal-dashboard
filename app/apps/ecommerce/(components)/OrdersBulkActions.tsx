@@ -4,6 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Download, Trash2 } from "lucide-react";
 
+/**
+ * Props for OrdersBulkActions component
+ * @param selectedOrders - Array of selected order IDs
+ * @param totalOrders - Total number of orders available
+ * @param onSelectAll - Callback to select/deselect all orders
+ * @param onBulkDelete - Callback to delete selected orders
+ * @param onBulkExport - Callback to export selected orders
+ */
 interface OrdersBulkActionsProps {
   selectedOrders: string[];
   totalOrders: number;
@@ -12,6 +20,18 @@ interface OrdersBulkActionsProps {
   onBulkExport: () => void;
 }
 
+/**
+ * Orders Bulk Actions Component
+ * Provides bulk operations for selected orders including export and delete
+ * Shows selection count and select all checkbox when orders are selected
+ * Only renders when there are selected orders
+ * @param selectedOrders - Array of selected order IDs
+ * @param totalOrders - Total number of orders available
+ * @param onSelectAll - Callback to select/deselect all orders
+ * @param onBulkDelete - Callback to delete selected orders
+ * @param onBulkExport - Callback to export selected orders
+ * @returns The JSX element representing the bulk actions bar or null if no selection
+ */
 export function OrdersBulkActions({
   selectedOrders,
   totalOrders,

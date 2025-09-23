@@ -20,6 +20,17 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * Props for FilesHeader component
+ * @param sidebarOpen - Whether the sidebar is currently open
+ * @param onSidebarToggle - Callback function to toggle sidebar visibility
+ * @param currentPath - Current directory path being displayed
+ * @param onPathChange - Callback function when navigating to a different path
+ * @param viewMode - Current view mode (grid or list)
+ * @param onViewModeChange - Callback function when view mode changes
+ * @param selectedFiles - Array of selected file IDs
+ * @param onSelectionChange - Callback when file selection changes
+ */
 interface FilesHeaderProps {
   sidebarOpen: boolean;
   onSidebarToggle: () => void;
@@ -31,6 +42,23 @@ interface FilesHeaderProps {
   onSelectionChange: (files: string[]) => void;
 }
 
+/**
+ * Files Header Component
+ * Navigation header for the files application with breadcrumbs, search, and action buttons
+ * Provides file management controls including view toggles, selection actions, and navigation
+ * Responsive design that adapts between mobile and desktop layouts
+ * Includes breadcrumb navigation, search functionality, and bulk file operations
+ * Shows current directory information and last update status
+ * @param sidebarOpen - Whether the sidebar is currently open
+ * @param onSidebarToggle - Callback function to toggle sidebar visibility
+ * @param currentPath - Current directory path being displayed
+ * @param onPathChange - Callback function when navigating to a different path
+ * @param viewMode - Current view mode (grid or list)
+ * @param onViewModeChange - Callback function when view mode changes
+ * @param selectedFiles - Array of selected file IDs
+ * @param onSelectionChange - Callback when file selection changes
+ * @returns The JSX element representing the files application header
+ */
 export default function FilesHeader({
   onSidebarToggle,
   currentPath,

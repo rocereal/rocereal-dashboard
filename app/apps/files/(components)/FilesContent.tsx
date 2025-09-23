@@ -31,6 +31,18 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+/**
+ * File item structure for file system display
+ * @param id - Unique identifier for the file/folder
+ * @param name - Display name of the file/folder
+ * @param type - Whether this is a folder or file
+ * @param fileType - File extension/type (for files only)
+ * @param size - File size in human-readable format (for files only)
+ * @param modifiedDate - Last modification date as string
+ * @param icon - Lucide icon component for display
+ * @param color - Tailwind CSS color class for the icon
+ * @param starred - Whether the file is starred/favorited
+ */
 interface FileItem {
   id: string;
   name: string;
@@ -43,6 +55,14 @@ interface FileItem {
   starred?: boolean;
 }
 
+/**
+ * Props for FilesContent component
+ * @param currentPath - Current directory path being displayed
+ * @param onPathChange - Callback function when navigating to a different path
+ * @param viewMode - Current view mode (grid or list)
+ * @param selectedFiles - Array of selected file IDs
+ * @param onSelectionChange - Callback when file selection changes
+ */
 interface FilesContentProps {
   currentPath: string;
   onPathChange: (path: string) => void;
@@ -51,7 +71,21 @@ interface FilesContentProps {
   onSelectionChange: (files: string[]) => void;
 }
 
-// Mock file data
+/**
+ * Files Content Component
+ * Main file browser component with responsive grid/list views and file management
+ * Handles file/folder navigation, selection, and display across different screen sizes
+ * Supports both grid and list view modes with adaptive mobile behavior
+ * Includes file type badges, selection controls, and action menus
+ * Provides navigation between folders and file detail pages
+ * Uses mock data for demonstration with proper file type icons and colors
+ * @param currentPath - Current directory path being displayed
+ * @param onPathChange - Callback function when navigating to a different path
+ * @param viewMode - Current view mode (grid or list)
+ * @param selectedFiles - Array of selected file IDs
+ * @param onSelectionChange - Callback when file selection changes
+ * @returns The JSX element representing the file browser interface
+ */
 const mockFiles: FileItem[] = [
   {
     id: "1",

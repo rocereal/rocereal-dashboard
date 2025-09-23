@@ -4,6 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderProduct } from "@/data/ecommerce";
 import { DollarSign } from "lucide-react";
 
+/**
+ * Props for OrderSummaryCard component
+ * @param order - The order object containing date, products array, and order value
+ */
 interface OrderSummaryCardProps {
   order: {
     date: string;
@@ -12,6 +16,13 @@ interface OrderSummaryCardProps {
   };
 }
 
+/**
+ * Order Summary Card Component
+ * Displays a summary of order details including order date, number of items, and total order value
+ * Presents order information in a clean card layout with formatted currency display
+ * @param order - The order object containing date, products array, and order value
+ * @returns The JSX element representing the order summary card
+ */
 export function OrderSummaryCard({ order }: OrderSummaryCardProps) {
   return (
     <Card>

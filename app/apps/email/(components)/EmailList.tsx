@@ -7,6 +7,19 @@ import { Email } from "@/data/email";
 import { cn } from "@/lib/utils";
 import { Archive, Paperclip, Star, Trash2 } from "lucide-react";
 
+/**
+ * Props for EmailList component
+ * @param selectedCategory - The currently selected email category
+ * @param filteredEmails - Array of emails filtered by category and search
+ * @param selectedEmail - The currently selected email for viewing
+ * @param onEmailSelect - Callback function when an email is selected
+ * @param selectedEmails - Set of selected email IDs for bulk operations
+ * @param onEmailSelectionChange - Callback when individual email selection changes
+ * @param selectAll - Whether all emails are selected
+ * @param onSelectAllChange - Callback when select all checkbox changes
+ * @param isMobile - Whether the component is in mobile view
+ * @param onMobileEmailSelect - Callback for mobile email selection
+ */
 interface EmailListProps {
   selectedCategory: string;
   filteredEmails: Email[];
@@ -20,6 +33,24 @@ interface EmailListProps {
   onMobileEmailSelect?: (email: Email) => void;
 }
 
+/**
+ * Email List Component
+ * Displays a scrollable list of emails with selection, filtering, and bulk actions
+ * Shows email previews with sender, subject, timestamp, and status indicators
+ * Supports individual and bulk selection with archive/delete actions
+ * Responsive design with proper email formatting and visual indicators
+ * @param selectedCategory - The currently selected email category
+ * @param filteredEmails - Array of emails filtered by category and search
+ * @param selectedEmail - The currently selected email for viewing
+ * @param onEmailSelect - Callback function when an email is selected
+ * @param selectedEmails - Set of selected email IDs for bulk operations
+ * @param onEmailSelectionChange - Callback when individual email selection changes
+ * @param selectAll - Whether all emails are selected
+ * @param onSelectAllChange - Callback when select all checkbox changes
+ * @param isMobile - Whether the component is in mobile view
+ * @param onMobileEmailSelect - Callback for mobile email selection
+ * @returns The JSX element representing the email list with selection capabilities
+ */
 export default function EmailList({
   selectedCategory,
   filteredEmails,

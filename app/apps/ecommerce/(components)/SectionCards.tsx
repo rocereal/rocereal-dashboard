@@ -9,6 +9,16 @@ interface SectionCardsProps {
   className?: string;
 }
 
+/**
+ * Section Cards Component
+ * Renders a responsive grid of metric cards displaying key performance indicators for ecommerce
+ * Each card shows a title, value, icon, change indicator with trend arrows, and description
+ * Supports positive/negative change types with color-coded badges and trend icons
+ * Used for displaying ecommerce metrics like sales, orders, customers, etc.
+ * @param metrics - Optional array of CRM metric data objects to display in the cards
+ * @param className - Optional CSS class name for additional styling of the grid container
+ * @returns The JSX element representing the grid of metric cards
+ */
 export function SectionCards({ metrics, className }: SectionCardsProps) {
   // Use provided metrics or default empty array
   const displayMetrics = metrics || [];

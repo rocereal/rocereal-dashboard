@@ -3,10 +3,22 @@
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/data/ecommerce";
 
+/**
+ * Props for ProductDetails component
+ * @param product - The product object to display details for
+ */
 interface ProductDetailsProps {
   product: Product;
 }
 
+/**
+ * Product Details Component
+ * Displays key product information in a structured format including name, SKU, category, price, stock, and status
+ * Shows product details with appropriate styling and status badges
+ * Formats price and stock information for better readability
+ * @param product - The product object to display details for
+ * @returns The JSX element representing the product details section
+ */
 export function ProductDetails({ product }: ProductDetailsProps) {
   const details = [
     { label: "Name", value: product.name },

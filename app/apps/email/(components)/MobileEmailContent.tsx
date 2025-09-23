@@ -6,12 +6,29 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Email } from "@/data/email";
 import { MoreVertical, Paperclip, Reply, Star } from "lucide-react";
 
+/**
+ * Props for MobileEmailContent component
+ * @param selectedEmail - The currently selected email to display, or null if none selected
+ * @param isOpen - Whether the mobile email content sheet is open
+ * @param onOpenChange - Callback function to control sheet open/close state
+ */
 interface MobileEmailContentProps {
   selectedEmail: Email | null;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Mobile Email Content Component
+ * Displays email content in a bottom sheet modal for mobile devices
+ * Shows full email details including header, body, attachments, and action buttons
+ * Uses Sheet component for slide-up modal behavior on mobile screens
+ * Provides reply, reply all, and forward actions with mobile-optimized layout
+ * @param selectedEmail - The currently selected email to display, or null if none selected
+ * @param isOpen - Whether the mobile email content sheet is open
+ * @param onOpenChange - Callback function to control sheet open/close state
+ * @returns The JSX element representing the mobile email content sheet
+ */
 export default function MobileEmailContent({
   selectedEmail,
   isOpen,

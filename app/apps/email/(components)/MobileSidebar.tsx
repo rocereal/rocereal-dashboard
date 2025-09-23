@@ -12,6 +12,13 @@ import { sidebarItems } from "@/data/email";
 import { cn } from "@/lib/utils";
 import { Menu, Plus, X } from "lucide-react";
 
+/**
+ * Props for MobileSidebar component
+ * @param selectedCategory - The currently selected email category
+ * @param onCategoryChange - Callback function when category selection changes
+ * @param mobileSidebarOpen - Whether the mobile sidebar sheet is open
+ * @param onMobileSidebarChange - Callback function to control sidebar open/close state
+ */
 interface MobileSidebarProps {
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
@@ -19,6 +26,19 @@ interface MobileSidebarProps {
   onMobileSidebarChange: (open: boolean) => void;
 }
 
+/**
+ * Mobile Sidebar Component
+ * Navigation sidebar for email application on mobile devices
+ * Uses Sheet component for slide-out drawer behavior on small screens
+ * Displays email categories with icons, labels, and unread counts
+ * Includes compose button and close menu functionality
+ * Responsive design that only shows on mobile/tablet devices
+ * @param selectedCategory - The currently selected email category
+ * @param onCategoryChange - Callback function when category selection changes
+ * @param mobileSidebarOpen - Whether the mobile sidebar sheet is open
+ * @param onMobileSidebarChange - Callback function to control sidebar open/close state
+ * @returns The JSX element representing the mobile email sidebar sheet
+ */
 export default function MobileSidebar({
   selectedCategory,
   onCategoryChange,

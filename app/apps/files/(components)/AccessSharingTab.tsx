@@ -9,11 +9,26 @@ import { AccessEntry, getRoleColor } from "@/data/files";
 import { ColumnDef } from "@tanstack/react-table";
 import { Settings, Users } from "lucide-react";
 
+/**
+ * Props for AccessSharingTab component
+ * @param accessList - Array of access entries showing users with file access permissions
+ * @param formatDateShort - Function to format date strings for display
+ */
 interface AccessSharingTabProps {
   accessList: AccessEntry[];
   formatDateShort: (dateString: string) => string;
 }
 
+/**
+ * Access Sharing Tab Component
+ * Displays file access permissions and sharing information in a data table format
+ * Shows user avatars, roles, access dates, and provides sharing management options
+ * Includes functionality to view current access entries and share with additional users
+ * Uses color-coded role badges and formatted date display
+ * @param accessList - Array of access entries showing users with file access permissions
+ * @param formatDateShort - Function to format date strings for display
+ * @returns The JSX element representing the access and sharing management interface
+ */
 export default function AccessSharingTab({
   accessList,
   formatDateShort,

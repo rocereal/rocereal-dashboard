@@ -4,12 +4,30 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, FileText, X } from "lucide-react";
 
+/**
+ * Props for FileUploadSection component
+ * @param selectedFile - The currently selected file object or null if no file is selected
+ * @param onFileSelect - Callback function triggered when a file is selected via input
+ * @param onFileRemove - Callback function to remove the currently selected file
+ */
 interface FileUploadSectionProps {
   selectedFile: File | null;
   onFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFileRemove: () => void;
 }
 
+/**
+ * File Upload Section Component
+ * Interactive file upload interface with drag-and-drop and click-to-upload functionality
+ * Displays upload area with visual indicators and handles file selection via input
+ * Shows selected file information including name, size, and type with remove option
+ * Provides responsive design that adapts to different screen sizes
+ * Includes accessibility features with proper labels and hidden file inputs
+ * @param selectedFile - The currently selected file object or null if no file is selected
+ * @param onFileSelect - Callback function triggered when a file is selected via input
+ * @param onFileRemove - Callback function to remove the currently selected file
+ * @returns The JSX element representing the file upload interface
+ */
 export default function FileUploadSection({
   selectedFile,
   onFileSelect,

@@ -3,12 +3,28 @@
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
 import { emailTabs } from "@/data/email";
 
+/**
+ * Props for EmailTabs component
+ * @param selectedTab - The currently selected tab ID
+ * @param onTabChange - Callback function when tab selection changes
+ * @param tabCounts - Object containing email counts for each tab
+ */
 interface EmailTabsProps {
   selectedTab: string;
   onTabChange: (tab: string) => void;
   tabCounts: Record<string, number>;
 }
 
+/**
+ * Email Tabs Component
+ * Displays navigation tabs for different email views with dynamic counts
+ * Uses TabsWithIcons component to show inbox, sent, drafts, etc. with email counts
+ * Responsive design that adapts to different screen sizes
+ * @param selectedTab - The currently selected tab ID
+ * @param onTabChange - Callback function when tab selection changes
+ * @param tabCounts - Object containing email counts for each tab
+ * @returns The JSX element representing the email navigation tabs
+ */
 export default function EmailTabs({
   selectedTab,
   onTabChange,

@@ -15,12 +15,30 @@ import ActivityTab from "./ActivityTab";
 import FileDetailsTab from "./FileDetailsTab";
 import VersionHistoryTab from "./VersionHistoryTab";
 
+/**
+ * Props for FileTabs component
+ * @param file - The file details object containing metadata and information
+ * @param versionHistory - Array of version history entries for the file
+ * @param accessList - Array of access entries showing users with file access permissions
+ */
 interface FileTabsProps {
   file: FileDetails;
   versionHistory: VersionHistory[];
   accessList: AccessEntry[];
 }
 
+/**
+ * File Tabs Component
+ * Tabbed interface for displaying comprehensive file information and management options
+ * Organizes file details into logical sections: details, version history, access/sharing, and activity
+ * Uses custom tabs with icons component for consistent navigation experience
+ * Includes utility functions for permission icons and integrates multiple file-related components
+ * Provides centralized view for all file metadata, permissions, and interaction history
+ * @param file - The file details object containing metadata and information
+ * @param versionHistory - Array of version history entries for the file
+ * @param accessList - Array of access entries showing users with file access permissions
+ * @returns The JSX element representing the tabbed file information interface
+ */
 const fileTabs = [
   {
     id: "details",

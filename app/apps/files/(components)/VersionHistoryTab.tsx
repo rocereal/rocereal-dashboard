@@ -8,11 +8,27 @@ import { Download, History } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { VersionHistory } from "@/data/files";
 
+/**
+ * Props for VersionHistoryTab component
+ * @param versionHistory - Array of version history entries for the file
+ * @param formatDate - Function to format date strings for display
+ */
 interface VersionHistoryTabProps {
   versionHistory: VersionHistory[];
   formatDate: (dateString: string) => string;
 }
 
+/**
+ * Version History Tab Component
+ * Displays file version history in a data table format with user avatars and modification details
+ * Shows version numbers, modification dates, file sizes, and change descriptions
+ * Includes user information with avatars and contact details for each version
+ * Provides download actions for previous versions and searchable version history
+ * Uses data table component with sortable columns and search functionality
+ * @param versionHistory - Array of version history entries for the file
+ * @param formatDate - Function to format date strings for display
+ * @returns The JSX element representing the file version history interface
+ */
 export default function VersionHistoryTab({
   versionHistory,
   formatDate,
