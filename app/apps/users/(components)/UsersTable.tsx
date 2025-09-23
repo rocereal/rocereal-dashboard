@@ -1,3 +1,10 @@
+/**
+ * Users Table Component
+ * Displays users in a sortable, filterable data table with selection and actions
+ * Shows user information including avatar, name, role, status, plan, activity, and security settings
+ * Provides dropdown actions for user management operations
+ */
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +24,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Activity, Eye, MoreHorizontal, Shield } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * Props for the UsersTable component
+ * @param users - Array of user objects to display
+ * @param actions - Array of available actions for users
+ * @param onAction - Callback function when an action is performed on a user
+ * @param selectedUsers - Array of selected user IDs
+ * @param onSelectionChange - Callback when user selection changes
+ */
 interface UsersTableProps {
   users: User[];
   actions: UserAction[];
@@ -25,6 +40,9 @@ interface UsersTableProps {
   onSelectionChange: (userIds: string[]) => void;
 }
 
+/**
+ * Color mappings for user status badges
+ */
 const statusColors = {
   active: "bg-green-100 text-green-800",
   inactive: "bg-gray-100 text-gray-800",
@@ -32,6 +50,9 @@ const statusColors = {
   suspended: "bg-red-100 text-red-800",
 };
 
+/**
+ * Color mappings for user role badges
+ */
 const roleColors = {
   admin: "bg-purple-100 text-purple-800",
   manager: "bg-blue-100 text-blue-800",
@@ -40,10 +61,21 @@ const roleColors = {
 };
 
 export function UsersTable({ users, actions, onAction }: UsersTableProps) {
+  /**
+   * Generates user initials from first and last name
+   * @param firstName - User's first name
+   * @param lastName - User's last name
+   * @returns Uppercase initials string
+   */
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
+  /**
+   * Calculates and formats the time since user's last login
+   * @param user - User object containing lastLogin date
+   * @returns Formatted string showing time since last activity
+   */
   const getLastActive = (user: User) => {
     if (user.lastLogin) {
       const lastLogin = new Date(user.lastLogin);
@@ -243,6 +275,15 @@ export function UsersTable({ users, actions, onAction }: UsersTableProps) {
     },
   ];
 
+  /**
+   * UsersTable component for displaying users in a data table
+   * Renders a comprehensive table with user information, selection checkboxes, and action dropdowns
+   * Uses DataTable component with custom column definitions for user display
+   * @param users - Array of user objects to display in the table
+   * @param actions - Array of available actions for dropdown menus
+   * @param onAction - Callback function when an action is selected from dropdown
+   * @returns JSX element representing the users data table
+   */
   return (
     <div className="bg-card rounded-lg border">
       <div className="p-6">

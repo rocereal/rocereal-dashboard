@@ -1,3 +1,10 @@
+/**
+ * Security Tab Component
+ * Provides password management, two-factor authentication setup, and security settings
+ * Allows users to change passwords, enable 2FA, and view security-related information
+ * Used within the user details tabs interface for account security management
+ */
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +24,11 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+/**
+ * Props for the SecurityTab component
+ * @param user - User object containing all user information
+ * @param formatDate - Function to format dates for display
+ */
 interface SecurityTabProps {
   user: User;
   formatDate: (dateString: string) => string;
@@ -30,6 +42,14 @@ export function SecurityTab({ user, formatDate }: SecurityTabProps) {
     user.metadata.twoFactorEnabled
   );
 
+  /**
+   * SecurityTab component for managing account security settings
+   * Renders password change form, two-factor authentication setup, and security information display
+   * Provides comprehensive security management interface for user accounts
+   * @param user - User object containing all user information
+   * @param formatDate - Function to format dates for display
+   * @returns JSX element representing the security settings interface
+   */
   return (
     <div className="space-y-6">
       {/* Change Password */}

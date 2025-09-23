@@ -1,3 +1,10 @@
+/**
+ * User Metrics Component
+ * Displays key user statistics and metrics in card format
+ * Transforms raw user metrics data into visual metric cards
+ * Shows total users, active users, inactive users, and other key metrics
+ */
+
 import { SectionCards } from "./SectionCards";
 import { UserMetrics } from "@/data/users-data";
 import {
@@ -11,10 +18,21 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+/**
+ * Props for the UserMetricsComponent
+ * @param metrics - User metrics data object containing various user statistics
+ */
 interface UserMetricsProps {
   metrics: UserMetrics;
 }
 
+/**
+ * UserMetricsComponent for displaying user statistics
+ * Transforms raw user metrics data into formatted metric cards for display
+ * Shows various user-related statistics with icons, changes, and descriptions
+ * @param metrics - Raw user metrics data from the data layer
+ * @returns JSX element representing the user metrics cards
+ */
 export function UserMetricsComponent({ metrics }: UserMetricsProps) {
   // Transform UserMetrics to UserMetric[] format expected by SectionCards
   const userMetricsData = [

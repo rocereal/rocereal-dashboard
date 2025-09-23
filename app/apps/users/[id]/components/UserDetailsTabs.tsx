@@ -1,3 +1,10 @@
+/**
+ * User Details Tabs Component
+ * Provides tabbed interface for displaying different aspects of user information
+ * Includes tabs for personal info, security settings, activity, plans, and notifications
+ * Organizes user details into logical sections for better navigation
+ */
+
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,12 +22,27 @@ import {
   Bell,
 } from "lucide-react";
 
+/**
+ * Props for the UserDetailsTabs component
+ * @param user - User object containing all user information
+ * @param formatDate - Function to format dates for display
+ * @param formatDateTime - Function to format date and time for display
+ */
 interface UserDetailsTabsProps {
   user: User;
   formatDate: (dateString: string) => string;
   formatDateTime: (dateString: string) => string;
 }
 
+/**
+ * UserDetailsTabs component for organizing user information into tabs
+ * Renders a tabbed interface with personal, security, activity, plans, and notifications sections
+ * Each tab contains specific user information and settings
+ * @param user - User object containing all user information
+ * @param formatDate - Function to format dates for display
+ * @param formatDateTime - Function to format date and time for display
+ * @returns JSX element representing the tabbed user details interface
+ */
 export function UserDetailsTabs({
   user,
   formatDate,

@@ -1,3 +1,10 @@
+/**
+ * Add User Tabs Component
+ * Provides tabbed interface for creating new user accounts with comprehensive form sections
+ * Organizes user creation into logical tabs: personal info, security, activity, plans, and notifications
+ * Manages form data state across all tabs and coordinates data updates
+ */
+
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,6 +21,11 @@ import { AddPersonalInformationTab } from "./components/AddPersonalInformationTa
 import { AddPlansTab } from "./components/AddPlansTab";
 import { AddSecurityTab } from "./components/AddSecurityTab";
 
+/**
+ * Interface for user form data used in the add user workflow
+ * Contains all fields required to create a new user account
+ * Organized into logical sections for form management
+ */
 export interface UserFormData {
   // Basic Information
   firstName: string;
@@ -75,11 +87,24 @@ export interface UserFormData {
   }>;
 }
 
+/**
+ * Props for the AddUserTabs component
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ */
 interface AddUserTabsProps {
   formData: UserFormData;
   onFormDataChange: (data: Partial<UserFormData>) => void;
 }
 
+/**
+ * AddUserTabs component for organizing user creation form into tabbed sections
+ * Renders tab navigation and content areas for personal, security, activity, plans, and notifications
+ * Coordinates form data updates across all tab components
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ * @returns JSX element representing the tabbed user creation interface
+ */
 export function AddUserTabs({ formData, onFormDataChange }: AddUserTabsProps) {
   return (
     <Tabs defaultValue="personal" className="w-full">

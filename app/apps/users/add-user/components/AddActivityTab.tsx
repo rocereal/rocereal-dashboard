@@ -1,14 +1,34 @@
+/**
+ * Add Activity Tab Component
+ * Displays default activity settings and initial metrics for new user accounts
+ * Shows information about activity tracking configuration and starting values
+ * Used within the add user tabs interface for activity-related settings
+ */
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Clock } from "lucide-react";
 import { UserFormData } from "../AddUserTabs";
 
+/**
+ * Props for the AddActivityTab component
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ */
 interface AddActivityTabProps {
   formData: UserFormData;
   onFormDataChange: (data: Partial<UserFormData>) => void;
 }
 
+/**
+ * AddActivityTab component for displaying activity settings during user creation
+ * Shows default activity tracking configuration and initial metrics for new accounts
+ * Provides informational content about activity monitoring without form inputs
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ * @returns JSX element representing the activity settings information section
+ */
 export function AddActivityTab({}: AddActivityTabProps) {
   return (
     <div className="space-y-6">

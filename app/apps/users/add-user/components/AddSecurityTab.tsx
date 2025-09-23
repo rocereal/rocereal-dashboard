@@ -1,3 +1,10 @@
+/**
+ * Add Security Tab Component
+ * Provides security settings configuration during user creation
+ * Allows enabling two-factor authentication and security questions setup
+ * Used within the add user tabs interface for initial security configuration
+ */
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,11 +13,24 @@ import { Label } from "@/components/ui/label";
 import { Shield, ShieldCheck } from "lucide-react";
 import { UserFormData } from "../AddUserTabs";
 
+/**
+ * Props for the AddSecurityTab component
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ */
 interface AddSecurityTabProps {
   formData: UserFormData;
   onFormDataChange: (data: Partial<UserFormData>) => void;
 }
 
+/**
+ * AddSecurityTab component for configuring security settings during user creation
+ * Renders checkboxes for two-factor authentication and security questions setup
+ * Displays information about post-creation security setup process
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ * @returns JSX element representing the security settings configuration interface
+ */
 export function AddSecurityTab({
   formData,
   onFormDataChange,

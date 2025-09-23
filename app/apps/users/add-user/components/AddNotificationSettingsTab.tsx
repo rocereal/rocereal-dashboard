@@ -1,3 +1,10 @@
+/**
+ * Add Notification Settings Tab Component
+ * Provides form inputs for configuring notification preferences and privacy settings during user creation
+ * Allows setting default notification channels and privacy options for new accounts
+ * Used within the add user tabs interface for notification and privacy configuration
+ */
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,11 +20,24 @@ import {
 import { UserFormData } from "../AddUserTabs";
 import { Bell, Mail, MessageSquare, Smartphone } from "lucide-react";
 
+/**
+ * Props for the AddNotificationSettingsTab component
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ */
 interface AddNotificationSettingsTabProps {
   formData: UserFormData;
   onFormDataChange: (data: Partial<UserFormData>) => void;
 }
 
+/**
+ * AddNotificationSettingsTab component for configuring notification and privacy settings during user creation
+ * Renders checkboxes for notification channels, privacy options, and displays default configuration summary
+ * Handles form state updates for notification preferences and privacy settings
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ * @returns JSX element representing the notification and privacy settings form section
+ */
 export function AddNotificationSettingsTab({
   formData,
   onFormDataChange,

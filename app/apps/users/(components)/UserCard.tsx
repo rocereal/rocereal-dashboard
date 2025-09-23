@@ -1,3 +1,10 @@
+/**
+ * User Card Component
+ * Displays detailed user information in a card format
+ * Shows user avatar, name, email, status, role, professional info, activity data, and action buttons
+ * Used for displaying individual user profiles in card layouts
+ */
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -5,12 +12,21 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { User, UserAction } from "@/data/users-data";
 import { Activity, Calendar, Clock, Phone, Shield, Users } from "lucide-react";
 
+/**
+ * Props for the UserCard component
+ * @param user - User object containing all user information
+ * @param actions - Array of available actions for the user
+ * @param onAction - Callback function when an action is performed on the user
+ */
 interface UserCardProps {
   user: User;
   actions: UserAction[];
   onAction: (userId: string, action: string) => void;
 }
 
+/**
+ * Color mappings for user status badges
+ */
 const statusColors = {
   active: "bg-green-100 text-green-800",
   inactive: "bg-gray-100 text-gray-800",
@@ -18,6 +34,9 @@ const statusColors = {
   suspended: "bg-red-100 text-red-800",
 };
 
+/**
+ * Color mappings for user role badges
+ */
 const roleColors = {
   admin: "bg-purple-100 text-purple-800",
   manager: "bg-blue-100 text-blue-800",
@@ -26,14 +45,29 @@ const roleColors = {
 };
 
 export function UserCard({ user, actions, onAction }: UserCardProps) {
+  /**
+   * Formats a date string to a localized date format
+   * @param dateString - ISO date string to format
+   * @returns Formatted date string
+   */
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  /**
+   * Generates user initials from first and last name
+   * @param firstName - User's first name
+   * @param lastName - User's last name
+   * @returns Uppercase initials string
+   */
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
+  /**
+   * Calculates and formats the time since user's last login
+   * @returns Formatted string showing time since last activity
+   */
   const getLastActive = () => {
     if (user.lastLogin) {
       const lastLogin = new Date(user.lastLogin);
@@ -49,6 +83,15 @@ export function UserCard({ user, actions, onAction }: UserCardProps) {
     return "Never";
   };
 
+  /**
+   * UserCard component for displaying detailed user information
+   * Renders a comprehensive user card with avatar, personal info, professional details, activity data, and action buttons
+   * Shows user status, role, contact info, login history, plan details, and security settings
+   * @param user - User object containing all user information
+   * @param actions - Array of available actions for the user
+   * @param onAction - Callback function when an action is performed on the user
+   * @returns JSX element representing the user information card
+   */
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardHeader className="pb-4">

@@ -1,3 +1,10 @@
+/**
+ * Add User Page Component
+ * Provides a comprehensive form interface for creating new user accounts
+ * Includes user preview, tabbed form sections, and submission handling
+ * Manages form state and user creation workflow with validation and navigation
+ */
+
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
@@ -47,6 +54,10 @@ export default function AddUserPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /**
+   * Updates the form data state with partial changes
+   * @param data - Partial UserFormData object containing fields to update
+   */
   const handleFormDataChange = (data: Partial<UserFormData>) => {
     setFormData((prev) => ({
       ...prev,
@@ -54,6 +65,11 @@ export default function AddUserPage() {
     }));
   };
 
+  /**
+   * Handles form submission to create a new user
+   * Validates form data, creates user object, and handles API call simulation
+   * @param e - Form submit event
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -130,14 +146,29 @@ export default function AddUserPage() {
     }
   };
 
+  /**
+   * Handles cancel action to navigate back to users list
+   */
   const handleCancel = () => {
     router.push("/apps/users");
   };
 
+  /**
+   * Generates user initials from first and last name
+   * @param firstName - User's first name
+   * @param lastName - User's last name
+   * @returns Uppercase initials string
+   */
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
+  /**
+   * AddUserPage component for creating new user accounts
+   * Renders a comprehensive form with user preview, tabbed sections, and action buttons
+   * Handles form state management, validation, and user creation workflow
+   * @returns JSX element representing the add user page interface
+   */
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader

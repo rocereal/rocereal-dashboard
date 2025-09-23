@@ -1,3 +1,10 @@
+/**
+ * Add Plans Tab Component
+ * Provides plan selection interface for assigning subscription plans during user creation
+ * Shows available plans with features and pricing, allows plan selection and displays billing information
+ * Used within the add user tabs interface for plan assignment
+ */
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +19,11 @@ import {
 import { UserFormData } from "../AddUserTabs";
 import { Check, CreditCard, Crown, Star, TrendingUp, Zap } from "lucide-react";
 
+/**
+ * Props for the AddPlansTab component
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ */
 interface AddPlansTabProps {
   formData: UserFormData;
   onFormDataChange: (data: Partial<UserFormData>) => void;
@@ -65,6 +77,11 @@ export function AddPlansTab({ formData, onFormDataChange }: AddPlansTabProps) {
     },
   ];
 
+  /**
+   * Returns the appropriate icon component for a subscription plan
+   * @param planId - The ID of the plan (free, starter, professional, enterprise)
+   * @returns JSX element representing the plan icon
+   */
   const getPlanIcon = (planId: string) => {
     switch (planId) {
       case "free":
@@ -80,6 +97,14 @@ export function AddPlansTab({ formData, onFormDataChange }: AddPlansTabProps) {
     }
   };
 
+  /**
+   * AddPlansTab component for selecting subscription plans during user creation
+   * Renders plan selection dropdown, displays selected plan details, and shows billing information
+   * Handles plan selection updates and provides information about post-creation billing setup
+   * @param formData - Complete user form data object
+   * @param onFormDataChange - Callback function to update form data
+   * @returns JSX element representing the plan selection interface
+   */
   return (
     <div className="space-y-6">
       {/* Plan Selection */}

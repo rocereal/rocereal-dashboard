@@ -1,3 +1,10 @@
+/**
+ * User Filters Component
+ * Provides search and filter controls for the users table
+ * Includes search by name/email and filters by status, role, and plan
+ * Allows clearing all active filters
+ */
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +17,18 @@ import {
 } from "@/components/ui/select";
 import { Search, Filter, X } from "lucide-react";
 
+/**
+ * Props for the UserFilters component
+ * @param searchTerm - Current search term for filtering users
+ * @param statusFilter - Current status filter value
+ * @param roleFilter - Current role filter value
+ * @param planFilter - Current plan filter value
+ * @param onSearchChange - Callback when search term changes
+ * @param onStatusFilterChange - Callback when status filter changes
+ * @param onRoleFilterChange - Callback when role filter changes
+ * @param onPlanFilterChange - Callback when plan filter changes
+ * @param onClearFilters - Callback to clear all filters
+ */
 interface UserFiltersProps {
   searchTerm: string;
   statusFilter: string;
@@ -22,6 +41,21 @@ interface UserFiltersProps {
   onClearFilters: () => void;
 }
 
+/**
+ * UserFilters component for filtering and searching users
+ * Renders search input and select dropdowns for status, role, and plan filters
+ * Shows clear filters button when any filters are active
+ * @param searchTerm - Current search term
+ * @param statusFilter - Current status filter
+ * @param roleFilter - Current role filter
+ * @param planFilter - Current plan filter
+ * @param onSearchChange - Function to call when search changes
+ * @param onStatusFilterChange - Function to call when status filter changes
+ * @param onRoleFilterChange - Function to call when role filter changes
+ * @param onPlanFilterChange - Function to call when plan filter changes
+ * @param onClearFilters - Function to call when clearing filters
+ * @returns JSX element representing the user filters interface
+ */
 export function UserFilters({
   searchTerm,
   statusFilter,

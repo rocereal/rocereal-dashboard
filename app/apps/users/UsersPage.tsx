@@ -1,3 +1,10 @@
+/**
+ * Users Page Component
+ * Main users management interface with filtering, metrics, and user actions
+ * Displays user metrics, provides search and filter functionality, and manages user operations
+ * Includes user table with selection and action capabilities
+ */
+
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
@@ -9,6 +16,12 @@ import { useMemo, useState } from "react";
 import { UserFilters, UserMetricsComponent, UsersTable } from "./(components)";
 import Link from "next/link";
 
+/**
+ * UsersPage component for managing users
+ * Provides comprehensive user management interface with filtering, metrics display, and user actions
+ * Handles user search, filtering by status/role/plan, and various user operations
+ * @returns JSX element representing the users management page
+ */
 export default function UsersPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,6 +30,10 @@ export default function UsersPage() {
   const [planFilter, setPlanFilter] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
+  /**
+   * Memoized filtered users list based on search term and filter criteria
+   * Filters users by name/email search and status/role/plan filters
+   */
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchesSearch =
@@ -35,6 +52,11 @@ export default function UsersPage() {
     });
   }, [searchTerm, statusFilter, roleFilter, planFilter]);
 
+  /**
+   * Handles user actions from the table (view, edit, reset-password, suspend, activate, delete)
+   * @param userId - The ID of the user to perform the action on
+   * @param action - The action to perform (view, edit, reset-password, suspend, activate, delete)
+   */
   const handleAction = (userId: string, action: string) => {
     const user = users.find((u) => u.id === userId);
 
@@ -85,6 +107,10 @@ export default function UsersPage() {
     }
   };
 
+  /**
+   * Clears all filters and resets the search term and selected users
+   * Resets the interface to show all users without any filtering
+   */
   const handleClearFilters = () => {
     setSearchTerm("");
     setStatusFilter("");

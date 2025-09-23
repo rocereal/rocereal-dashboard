@@ -1,3 +1,10 @@
+/**
+ * Users Page Component
+ * Main entry point for the users management application
+ * Sets up metadata for SEO and renders the UsersPage component
+ * @returns The users page component
+ */
+
 import { createPageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import UsersPage from "./UsersPage";
@@ -19,6 +26,11 @@ export const metadata: Metadata = createPageMetadata({
   url: "/apps/users",
 });
 
+/**
+ * Page function component
+ * Renders the users page by delegating to the UsersPage component
+ * @returns JSX element for the users page
+ */
 export default function Page() {
   return <UsersPage />;
 }

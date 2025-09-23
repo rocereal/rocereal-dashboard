@@ -1,3 +1,10 @@
+/**
+ * Notification Settings Tab Component
+ * Allows users to configure their notification preferences across different channels
+ * Provides granular control over email, push, SMS, and in-app notifications
+ * Organized by categories with overview statistics and scheduling options
+ */
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +16,19 @@ import { User } from "@/data/users-data";
 import { Bell, Mail, MessageSquare, Smartphone } from "lucide-react";
 import { useState } from "react";
 
+/**
+ * Props for the NotificationSettingsTab component
+ * @param user - User object containing all user information
+ * @param formatDate - Function to format dates for display
+ */
 interface NotificationSettingsTabProps {
   user: User;
   formatDate: (dateString: string) => string;
 }
 
+/**
+ * Interface for individual notification setting configuration
+ */
 interface NotificationSetting {
   id: string;
   label: string;
@@ -93,6 +108,12 @@ export function NotificationSettingsTab({
     },
   ]);
 
+  /**
+   * Updates a specific notification setting for a given notification type
+   * @param id - The ID of the notification setting to update
+   * @param type - The notification channel type (email, push, sms, inApp)
+   * @param value - The new boolean value for the setting
+   */
   const updateNotificationSetting = (
     id: string,
     type: "email" | "push" | "sms" | "inApp",
@@ -105,6 +126,11 @@ export function NotificationSettingsTab({
     );
   };
 
+  /**
+   * Returns the appropriate icon component for a notification category
+   * @param category - The notification category (account, security, marketing, social)
+   * @returns JSX element representing the category icon
+   */
   const getCategoryIcon = (category: NotificationSetting["category"]) => {
     switch (category) {
       case "account":
@@ -120,6 +146,11 @@ export function NotificationSettingsTab({
     }
   };
 
+  /**
+   * Returns the appropriate color classes for a notification category badge
+   * @param category - The notification category (account, security, marketing, social)
+   * @returns CSS class string for the category badge styling
+   */
   const getCategoryColor = (category: NotificationSetting["category"]) => {
     switch (category) {
       case "account":
@@ -137,6 +168,13 @@ export function NotificationSettingsTab({
 
   const categories = ["account", "security", "social", "marketing"] as const;
 
+  /**
+   * NotificationSettingsTab component for managing user notification preferences
+   * Renders overview statistics, categorized notification settings with toggles, and scheduling options
+   * Allows users to control email, push, SMS, and in-app notifications for different categories
+   * @param user - User object containing all user information
+   * @returns JSX element representing the notification settings interface
+   */
   return (
     <div className="space-y-6">
       {/* Notification Overview */}

@@ -1,3 +1,10 @@
+/**
+ * Personal Information Tab Component
+ * Displays and allows editing of user's personal information, emergency contacts, and addresses
+ * Provides form inputs for personal details and manages dynamic lists of contacts and addresses
+ * Used within the user details tabs interface for comprehensive profile management
+ */
+
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,11 +17,19 @@ import { User } from "@/data/users-data";
 import { MapPin, Phone, Plus, User as UserIcon, X } from "lucide-react";
 import { useState } from "react";
 
+/**
+ * Props for the PersonalInformationTab component
+ * @param user - User object containing all user information
+ * @param formatDate - Function to format dates for display
+ */
 interface PersonalInformationTabProps {
   user: User;
   formatDate: (dateString: string) => string;
 }
 
+/**
+ * Interface for emergency contact information
+ */
 interface EmergencyContact {
   id: string;
   name: string;
@@ -23,6 +38,9 @@ interface EmergencyContact {
   email: string;
 }
 
+/**
+ * Interface for address information
+ */
 interface Address {
   id: string;
   type: "home" | "work" | "other";
@@ -60,10 +78,19 @@ export function PersonalInformationTab({ user }: PersonalInformationTabProps) {
     },
   ]);
 
+  /**
+   * Generates user initials from first and last name
+   * @param firstName - User's first name
+   * @param lastName - User's last name
+   * @returns Uppercase initials string
+   */
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
+  /**
+   * Adds a new empty emergency contact to the list
+   */
   const addEmergencyContact = () => {
     const newContact: EmergencyContact = {
       id: Date.now().toString(),
@@ -75,12 +102,19 @@ export function PersonalInformationTab({ user }: PersonalInformationTabProps) {
     setEmergencyContacts([...emergencyContacts, newContact]);
   };
 
+  /**
+   * Removes an emergency contact by ID
+   * @param id - The ID of the emergency contact to remove
+   */
   const removeEmergencyContact = (id: string) => {
     setEmergencyContacts(
       emergencyContacts.filter((contact) => contact.id !== id)
     );
   };
 
+  /**
+   * Adds a new empty address to the list
+   */
   const addAddress = () => {
     const newAddress: Address = {
       id: Date.now().toString(),
@@ -95,10 +129,20 @@ export function PersonalInformationTab({ user }: PersonalInformationTabProps) {
     setAddresses([...addresses, newAddress]);
   };
 
+  /**
+   * Removes an address by ID
+   * @param id - The ID of the address to remove
+   */
   const removeAddress = (id: string) => {
     setAddresses(addresses.filter((address) => address.id !== id));
   };
 
+  /**
+   * PersonalInformationTab component for displaying and editing user personal information
+   * Renders forms for personal details, emergency contacts, and addresses with add/remove functionality
+   * @param user - User object containing all user information
+   * @returns JSX element representing the personal information tab content
+   */
   return (
     <div className="space-y-6">
       {/* Personal Information Card */}

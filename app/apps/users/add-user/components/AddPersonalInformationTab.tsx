@@ -1,3 +1,10 @@
+/**
+ * Add Personal Information Tab Component
+ * Provides form inputs for creating user personal information, emergency contacts, and addresses
+ * Handles dynamic addition and removal of emergency contacts and addresses
+ * Used within the add user tabs interface for comprehensive user profile creation
+ */
+
 "use client";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -16,6 +23,11 @@ import {
 import { MapPin, Phone, Plus, User as UserIcon, X } from "lucide-react";
 import { UserFormData } from "../AddUserTabs";
 
+/**
+ * Props for the AddPersonalInformationTab component
+ * @param formData - Complete user form data object
+ * @param onFormDataChange - Callback function to update form data
+ */
 interface AddPersonalInformationTabProps {
   formData: UserFormData;
   onFormDataChange: (data: Partial<UserFormData>) => void;
@@ -25,10 +37,19 @@ export function AddPersonalInformationTab({
   formData,
   onFormDataChange,
 }: AddPersonalInformationTabProps) {
+  /**
+   * Generates user initials from first and last name
+   * @param firstName - User's first name
+   * @param lastName - User's last name
+   * @returns Uppercase initials string
+   */
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
+  /**
+   * Adds a new empty emergency contact to the form data
+   */
   const addEmergencyContact = () => {
     const newContact = {
       id: Date.now().toString(),
@@ -42,6 +63,10 @@ export function AddPersonalInformationTab({
     });
   };
 
+  /**
+   * Removes an emergency contact by ID from the form data
+   * @param id - The ID of the emergency contact to remove
+   */
   const removeEmergencyContact = (id: string) => {
     onFormDataChange({
       emergencyContacts: formData.emergencyContacts.filter(
@@ -50,6 +75,12 @@ export function AddPersonalInformationTab({
     });
   };
 
+  /**
+   * Updates a specific field of an emergency contact
+   * @param id - The ID of the emergency contact to update
+   * @param field - The field name to update
+   * @param value - The new value for the field
+   */
   const updateEmergencyContact = (id: string, field: string, value: string) => {
     onFormDataChange({
       emergencyContacts: formData.emergencyContacts.map((contact) =>
@@ -58,6 +89,9 @@ export function AddPersonalInformationTab({
     });
   };
 
+  /**
+   * Adds a new empty address to the form data
+   */
   const addAddress = () => {
     const newAddress = {
       id: Date.now().toString(),
@@ -74,12 +108,22 @@ export function AddPersonalInformationTab({
     });
   };
 
+  /**
+   * Removes an address by ID from the form data
+   * @param id - The ID of the address to remove
+   */
   const removeAddress = (id: string) => {
     onFormDataChange({
       addresses: formData.addresses.filter((address) => address.id !== id),
     });
   };
 
+  /**
+   * Updates a specific field of an address
+   * @param id - The ID of the address to update
+   * @param field - The field name to update
+   * @param value - The new value for the field
+   */
   const updateAddress = (
     id: string,
     field: string,
@@ -92,6 +136,14 @@ export function AddPersonalInformationTab({
     });
   };
 
+  /**
+   * AddPersonalInformationTab component for collecting user personal details during creation
+   * Renders form inputs for basic info, emergency contacts, and addresses with dynamic management
+   * Handles form state updates and provides user avatar preview with initials
+   * @param formData - Complete user form data object
+   * @param onFormDataChange - Callback function to update form data
+   * @returns JSX element representing the personal information form section
+   */
   return (
     <div className="space-y-6">
       {/* Personal Information Card */}

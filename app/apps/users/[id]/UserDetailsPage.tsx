@@ -1,3 +1,10 @@
+/**
+ * User Details Page Component
+ * Displays comprehensive user profile information with header and tabbed content
+ * Shows user avatar, personal details, status, role, and contact information
+ * Includes tabbed interface for detailed user management sections
+ */
+
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
@@ -10,11 +17,18 @@ import { notFound } from "next/navigation";
 import { useMemo } from "react";
 import { UserDetailsTabs } from "./components/UserDetailsTabs";
 
+/**
+ * Props for the UserDetailsPage component
+ * @param userId - The ID of the user to display details for
+ */
 interface UserDetailsPageProps {
   userId: string;
 }
 
 export default function UserDetailsPage({ userId }: UserDetailsPageProps) {
+  /**
+   * Memoized user lookup to find user by ID
+   */
   const user = useMemo(() => {
     return users.find((u) => u.id === userId);
   }, [userId]);
@@ -23,10 +37,21 @@ export default function UserDetailsPage({ userId }: UserDetailsPageProps) {
     notFound();
   }
 
+  /**
+   * Generates user initials from first and last name
+   * @param firstName - User's first name
+   * @param lastName - User's last name
+   * @returns Uppercase initials string
+   */
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
+  /**
+   * Formats a date string to a localized date format
+   * @param dateString - ISO date string to format
+   * @returns Formatted date string
+   */
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -35,6 +60,11 @@ export default function UserDetailsPage({ userId }: UserDetailsPageProps) {
     });
   };
 
+  /**
+   * Formats a date string to include date and time
+   * @param dateString - ISO date string to format
+   * @returns Formatted date and time string
+   */
   const formatDateTime = (dateString: string) => {
     return new Date(dateString).toLocaleString("en-US", {
       year: "numeric",
@@ -45,6 +75,9 @@ export default function UserDetailsPage({ userId }: UserDetailsPageProps) {
     });
   };
 
+  /**
+   * Color mappings for user status badges
+   */
   const statusColors = {
     active: "bg-green-100 text-green-800",
     inactive: "bg-gray-100 text-gray-800",
@@ -52,6 +85,9 @@ export default function UserDetailsPage({ userId }: UserDetailsPageProps) {
     suspended: "bg-red-100 text-red-800",
   };
 
+  /**
+   * Color mappings for user role badges
+   */
   const roleColors = {
     admin: "bg-purple-100 text-purple-800",
     manager: "bg-blue-100 text-blue-800",
@@ -59,6 +95,13 @@ export default function UserDetailsPage({ userId }: UserDetailsPageProps) {
     viewer: "bg-gray-100 text-gray-800",
   };
 
+  /**
+   * UserDetailsPage component for displaying comprehensive user profile information
+   * Renders user header with avatar, personal details, status, and role badges
+   * Includes tabbed interface for detailed user management sections
+   * @param userId - The ID of the user to display
+   * @returns JSX element representing the user details page
+   */
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader

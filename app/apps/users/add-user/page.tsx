@@ -1,3 +1,10 @@
+/**
+ * Add User Page Component
+ * Page for creating new user accounts with comprehensive setup
+ * Sets up metadata for SEO and renders the add user interface
+ * @returns The add user page component
+ */
+
 import { createPageMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 import AddUserPage from "./AddUserPage";
@@ -18,6 +25,11 @@ export const metadata: Metadata = createPageMetadata({
   url: "/apps/users/add-user",
 });
 
+/**
+ * Page function component for adding users
+ * Renders the add user page by delegating to the AddUserPage component
+ * @returns JSX element for the add user page
+ */
 export default function Page() {
   return <AddUserPage />;
 }

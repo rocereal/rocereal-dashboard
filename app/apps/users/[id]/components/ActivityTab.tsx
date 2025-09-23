@@ -1,3 +1,10 @@
+/**
+ * Activity Tab Component
+ * Displays user activity information including login history, feature usage, and recent activities
+ * Shows metrics overview, activity timeline, feature usage progress, and login history
+ * Used within the user details tabs interface for activity monitoring
+ */
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +22,12 @@ import {
   Tablet,
 } from "lucide-react";
 
+/**
+ * Props for the ActivityTab component
+ * @param user - User object containing all user information
+ * @param formatDate - Function to format dates for display
+ * @param formatDateTime - Function to format date and time for display
+ */
 interface ActivityTabProps {
   user: User;
   formatDate: (dateString: string) => string;
@@ -22,6 +35,11 @@ interface ActivityTabProps {
 }
 
 export function ActivityTab({ user, formatDateTime }: ActivityTabProps) {
+  /**
+   * Returns the appropriate icon component for the activity type
+   * @param type - The type of activity (login, logout, feature_used, profile_updated)
+   * @returns JSX element representing the activity icon
+   */
   const getActivityIcon = (type: ActivityItem["type"]) => {
     switch (type) {
       case "login":
@@ -37,6 +55,11 @@ export function ActivityTab({ user, formatDateTime }: ActivityTabProps) {
     }
   };
 
+  /**
+   * Returns the appropriate device icon based on device type
+   * @param device - The device string to determine icon for
+   * @returns JSX element representing the device icon or null
+   */
   const getDeviceIcon = (device?: string) => {
     if (!device) return null;
 
@@ -49,6 +72,14 @@ export function ActivityTab({ user, formatDateTime }: ActivityTabProps) {
     }
   };
 
+  /**
+   * ActivityTab component for displaying user activity and usage information
+   * Renders activity overview cards, recent activity timeline, feature usage progress bars, and login history
+   * Provides comprehensive view of user engagement and system interaction
+   * @param user - User object containing all user information
+   * @param formatDateTime - Function to format date and time for display
+   * @returns JSX element representing the activity tab content
+   */
   return (
     <div className="space-y-6">
       {/* Activity Overview */}

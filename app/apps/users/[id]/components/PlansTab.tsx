@@ -1,3 +1,10 @@
+/**
+ * Plans Tab Component
+ * Displays user's current subscription plan, usage statistics, and available upgrade options
+ * Shows plan comparison, billing information, and subscription management controls
+ * Used within the user details tabs interface for plan management
+ */
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -8,17 +15,28 @@ import { Progress } from "@/components/ui/progress";
 import { User } from "@/data/users-data";
 import { Check, CreditCard, Crown, Star, TrendingUp, Zap } from "lucide-react";
 
+/**
+ * Props for the PlansTab component
+ * @param user - User object containing all user information
+ * @param formatDate - Function to format dates for display
+ */
 interface PlansTabProps {
   user: User;
   formatDate: (dateString: string) => string;
 }
 
+/**
+ * Interface for individual plan features
+ */
 interface PlanFeature {
   name: string;
   included: boolean;
   limit?: string;
 }
 
+/**
+ * Interface for subscription plan information
+ */
 interface Plan {
   id: string;
   name: string;
@@ -94,6 +112,11 @@ export function PlansTab({ user }: PlansTabProps) {
     },
   ];
 
+  /**
+   * Returns the appropriate icon component for a subscription plan
+   * @param planId - The ID of the plan (free, starter, professional, enterprise)
+   * @returns JSX element representing the plan icon
+   */
   const getPlanIcon = (planId: string) => {
     switch (planId) {
       case "free":
@@ -109,6 +132,13 @@ export function PlansTab({ user }: PlansTabProps) {
     }
   };
 
+  /**
+   * PlansTab component for displaying subscription plan information and management
+   * Renders current plan overview with usage statistics, available plans comparison, and billing details
+   * Provides upgrade/downgrade options and subscription management controls
+   * @param user - User object containing all user information
+   * @returns JSX element representing the plans and billing interface
+   */
   return (
     <div className="space-y-6">
       {/* Current Plan Overview */}
