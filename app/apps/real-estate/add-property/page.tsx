@@ -1,8 +1,6 @@
-import { DashboardHeader } from "@/components/headers/dashboard-header";
-import { PropertyTabs } from "../(components)/PropertyTabs";
 import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
-import { X } from "lucide-react";
+import { PropertyTabs } from "../(components)/PropertyTabs";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
   "Add New Property",

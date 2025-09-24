@@ -31,6 +31,7 @@ import { FloorPlansDrawer } from "./FloorPlansDrawer";
 import { MortgageCalculator } from "./MortgageCalculator";
 import { ColumnDef } from "@tanstack/react-table";
 import { DashboardHeader } from "@/components/headers/dashboard-header";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 /**
  * Property data structure for form management
@@ -290,8 +291,8 @@ export function PropertyTabs({ property }: { property: Property }) {
                     key={index}
                     className="relative group border rounded-lg overflow-hidden bg-muted/50"
                   >
-                    <div className="aspect-square">
-                      <img
+                    <div className="aspect-square relative">
+                      <ImageComponentOptimized
                         src={URL.createObjectURL(file)}
                         alt={file.name}
                         className="w-full h-full object-cover"
@@ -323,8 +324,8 @@ export function PropertyTabs({ property }: { property: Property }) {
                   No images uploaded yet
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Click here or use the "Upload Images" button to add property
-                  photos
+                  Click here or use the &quot;Upload Images&quot; button to add
+                  property photos
                 </p>
               </div>
             )}
@@ -519,7 +520,7 @@ export function PropertyTabs({ property }: { property: Property }) {
                   No nearby features added yet
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Click "Add Feature" to start adding schools, parks,
+                  Click &quot;Add Feature&quot; to start adding schools, parks,
                   restaurants, and other local amenities
                 </p>
               </div>
@@ -662,54 +663,6 @@ export function PropertyTabs({ property }: { property: Property }) {
     },
   ];
 
-  /**
-   * Handle Save
-   * Processes the form submission to save the updated property
-   * Currently logs the property data and is a placeholder for backend integration
-   * In a real implementation, this would send the data to an API endpoint
-   */
-  const handleSave = () => {
-    console.log("Saving property:", propertyData);
-    // Here you would typically save the data to your backend
-  };
-
-  /**
-   * Handle Cancel
-   * Resets the form data back to the original property values
-   * Cancels any unsaved changes and restores the initial state
-   */
-  const handleCancel = () => {
-    setPropertyData({
-      // Basic Information
-      title: property.title,
-      address: property.address,
-      city: property.city,
-      state: property.state,
-      zipCode: property.zipCode,
-
-      // Pricing & Status
-      price: property.price.toString(),
-      type: property.type,
-      status: property.status,
-
-      // Property Details
-      bedrooms: property.bedrooms.toString(),
-      bathrooms: property.bathrooms.toString(),
-      sqft: property.sqft.toString(),
-      lotSize: property.lotSize?.toString() || "",
-      yearBuilt: property.yearBuilt.toString(),
-
-      // Additional Info
-      description: property.description,
-      features: property.features,
-
-      // Agent Info
-      agent: property.agent,
-      agentEmail: property.agentEmail,
-      agentPhone: property.agentPhone,
-    });
-  };
-
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
@@ -841,8 +794,8 @@ export function PropertyTabs({ property }: { property: Property }) {
                       key={index}
                       className="relative group border rounded-lg overflow-hidden bg-muted/50"
                     >
-                      <div className="aspect-square">
-                        <img
+                      <div className="aspect-square relative">
+                        <ImageComponentOptimized
                           src={URL.createObjectURL(file)}
                           alt={file.name}
                           className="w-full h-full object-cover"

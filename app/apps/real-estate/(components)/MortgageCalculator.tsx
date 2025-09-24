@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,8 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Property } from "@/data/real-estate";
-import { Calculator, DollarSign } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Calculator } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 interface MortgageCalculatorProps {
   property: Property;
@@ -40,12 +39,7 @@ export function MortgageCalculator({
   const [totalPayment, setTotalPayment] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
 
-  // Calculate mortgage when inputs change
-  useEffect(() => {
-    calculateMortgage();
-  }, [downPaymentPercent, interestRate, loanTerm, property.price]);
-
-  const calculateMortgage = () => {
+  const calculateMortgage = useCallback(() => {
     const loanAmount = property.price * (1 - downPaymentPercent / 100);
     const monthlyRate = interestRate / 100 / 12;
     const numberOfPayments = loanTerm * 12;
@@ -71,7 +65,12 @@ export function MortgageCalculator({
     setMonthlyPayment(monthlyPaymentCalc);
     setTotalPayment(totalPaymentCalc);
     setTotalInterest(totalInterestCalc);
-  };
+  }, [downPaymentPercent, interestRate, loanTerm, property.price]);
+
+  // Calculate mortgage when inputs change
+  useEffect(() => {
+    calculateMortgage();
+  }, [calculateMortgage]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {

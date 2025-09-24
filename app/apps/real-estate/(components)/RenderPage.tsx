@@ -6,7 +6,7 @@ import {
   propertiesData,
   realEstateMetrics,
 } from "@/data/real-estate";
-import { FileText, Home, Plus } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 import { useState } from "react";
 import { RealEstateTable } from "./RealEstateTable";
 import { SectionCards } from "./SectionCards";

@@ -220,7 +220,7 @@ export function PropertyDetails({ property }: PropertyDetailsProps) {
             <div className="space-y-6">
               {property.floorPlans.map((floorPlan, index) => (
                 <div
-                  key={floorPlan.id}
+                  key={index}
                   className="border-0 lg:border rounded-lg p-0 lg:p-4"
                 >
                   <div className="flex items-center justify-between mb-4">

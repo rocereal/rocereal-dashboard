@@ -2,7 +2,7 @@ import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { propertiesData } from "@/data/real-estate";
 import { metadataTemplates } from "@/lib/metadata";
-import { ArrowLeft, Save, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PropertyTabs } from "../../(components)/PropertyTabs";
