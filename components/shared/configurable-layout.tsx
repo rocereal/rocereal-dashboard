@@ -4,6 +4,7 @@ import { useLayoutConfig } from "@/lib/layout-config";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ConfigurableLayoutProps {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export function ConfigurableLayout({
   className,
 }: ConfigurableLayoutProps) {
   const { config } = useLayoutConfig();
+  const isMobile = useIsMobile();
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -44,8 +46,8 @@ export function ConfigurableLayout({
 
   const isHeaderNav = config.layoutType === "header-nav";
 
-  // During hydration, always show sidebar to match server render
-  const shouldShowSidebar = isHydrated ? !isHeaderNav : true;
+  // On mobile, always show sidebar. On desktop, hide sidebar only in header-nav mode
+  const shouldShowSidebar = isHydrated ? isMobile || !isHeaderNav : true;
 
   if (shouldShowSidebar && sidebar) {
     // When sidebar is shown, use SidebarProvider structure

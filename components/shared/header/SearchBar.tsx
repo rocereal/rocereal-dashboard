@@ -14,7 +14,7 @@ export function SearchBar() {
         placeholder="Search..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="pl-9 h-9 bg-secondary dark:bg-secondary"
+        className="hidden lg:flex pl-9 h-9 bg-secondary dark:bg-secondary"
       />
     </div>
   );

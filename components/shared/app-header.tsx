@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutConfig } from "@/lib/layout-config";
-import { menudata, menumobiledata } from "@/data/menu";
+import { menudataMobile } from "@/data/menu";
 import {
   SidebarToggle,
   SearchBar,
@@ -12,6 +12,7 @@ import {
 } from "./header";
 import { HeaderNav } from "./header-nav";
 import { useEffect, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AppHeaderProps {
   className?: string;
@@ -19,6 +20,7 @@ interface AppHeaderProps {
 
 export function AppHeader({ className }: AppHeaderProps) {
   const { config } = useLayoutConfig();
+  const isMobile = useIsMobile();
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -26,6 +28,7 @@ export function AppHeader({ className }: AppHeaderProps) {
   }, []);
 
   const isHeaderNav = config.layoutType === "header-nav";
+  const showHeaderNav = isHeaderNav && !isMobile;
 
   // During hydration, render a consistent layout to avoid mismatches
   if (!isHydrated) {
@@ -56,8 +59,8 @@ export function AppHeader({ className }: AppHeaderProps) {
       <SidebarToggle />
       <SearchBar />
 
-      {/* Navigation - only show header nav when IN header-nav mode */}
-      {isHeaderNav && <HeaderNav items={menumobiledata.navMain} />}
+      {/* Navigation - only show header nav when IN header-nav mode and NOT mobile */}
+      {showHeaderNav && <HeaderNav items={menudataMobile.navMain} />}
 
       {/* Right Section */}
       <div className="ml-auto flex items-center gap-2">
