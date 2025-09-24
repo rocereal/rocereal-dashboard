@@ -1,3 +1,14 @@
+import one from "@/app/assets/properties/one.png";
+import two from "@/app/assets/properties/two.png";
+import three from "@/app/assets/properties/three.png";
+import four from "@/app/assets/properties/four.png";
+import five from "@/app/assets/properties/five.png";
+import six from "@/app/assets/properties/six.png";
+import seven from "@/app/assets/properties/seven.png";
+import eight from "@/app/assets/properties/eight.png";
+import nine from "@/app/assets/properties/nine.png";
+import ten from "@/app/assets/properties/ten.png";
+
 import {
   DollarSign,
   Home,
@@ -6,6 +17,7 @@ import {
   MapPin,
   Calendar,
 } from "lucide-react";
+import { StaticImageData } from "next/image";
 
 export interface RealEstateMetric {
   id: string;
@@ -135,7 +147,7 @@ export interface Property {
   yearBuilt: number;
   description: string;
   features: string[];
-  images: string[];
+  images: (string | StaticImageData)[];
   floorPlans: FloorPlan[];
   nearbyFeatures: NearbyFeature[];
   agent: string;
@@ -170,7 +182,7 @@ export const propertiesData: Property[] = [
       "In-unit Laundry",
       "City Views",
     ],
-    images: ["/assets/properties/loft1.jpg", "/assets/properties/loft2.jpg"],
+    images: [one, two, three],
     floorPlans: [
       {
         id: "fp-001-1",
@@ -293,7 +305,7 @@ export const propertiesData: Property[] = [
       "Fireplace",
       "Hardwood Floors",
     ],
-    images: ["/assets/properties/house1.jpg", "/assets/properties/house2.jpg"],
+    images: [four, five, six],
     floorPlans: [
       {
         id: "fp-002-1",
@@ -457,7 +469,7 @@ export const propertiesData: Property[] = [
       "Fitness Center",
       "Rooftop Deck",
     ],
-    images: ["/assets/properties/condo1.jpg", "/assets/properties/condo2.jpg"],
+    images: [seven, eight, nine],
     floorPlans: [
       {
         id: "fp-003-1",
@@ -587,10 +599,8 @@ export const propertiesData: Property[] = [
       "Original Hardwood",
       "Bay Windows",
     ],
-    images: [
-      "/assets/properties/townhouse1.jpg",
-      "/assets/properties/townhouse2.jpg",
-    ],
+
+    images: [ten, one, two],
     floorPlans: [
       {
         id: "fp-004-1",
@@ -736,10 +746,8 @@ export const propertiesData: Property[] = [
       "Close to Transit",
       "In-unit Laundry",
     ],
-    images: [
-      "/assets/properties/apartment1.jpg",
-      "/assets/properties/apartment2.jpg",
-    ],
+
+    images: [three, four, five],
     floorPlans: [
       {
         id: "fp-005-1",
@@ -846,10 +854,8 @@ export const propertiesData: Property[] = [
       "Wine Cellar",
       "Smart Home",
     ],
-    images: [
-      "/assets/properties/estate1.jpg",
-      "/assets/properties/estate2.jpg",
-    ],
+
+    images: [six, seven, eight],
     floorPlans: [
       {
         id: "fp-006-1",
@@ -1037,10 +1043,8 @@ export const propertiesData: Property[] = [
       "Quiet Street",
       "Close to Schools",
     ],
-    images: [
-      "/assets/properties/starter1.jpg",
-      "/assets/properties/starter2.jpg",
-    ],
+
+    images: [nine, ten, one],
     floorPlans: [
       {
         id: "fp-007-1",
@@ -1155,10 +1159,8 @@ export const propertiesData: Property[] = [
       "Concierge",
       "Valet Parking",
     ],
-    images: [
-      "/assets/properties/penthouse1.jpg",
-      "/assets/properties/penthouse2.jpg",
-    ],
+
+    images: [two, three, four],
     floorPlans: [
       {
         id: "fp-008-1",

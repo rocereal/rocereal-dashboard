@@ -103,7 +103,7 @@ export function PropertyDetails({ property }: PropertyDetailsProps) {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
+              <CardTitle className="flex flex-wrap gap-4 items-center justify-between">
                 <span className="flex items-center gap-2">
                   <DollarSign className="h-5 w-5" />
                   Price & Status
@@ -219,7 +219,10 @@ export function PropertyDetails({ property }: PropertyDetailsProps) {
           <CardContent>
             <div className="space-y-6">
               {property.floorPlans.map((floorPlan, index) => (
-                <div key={floorPlan.id} className="border rounded-lg p-4">
+                <div
+                  key={floorPlan.id}
+                  className="border-0 lg:border rounded-lg p-0 lg:p-4"
+                >
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h4 className="font-medium">{floorPlan.name}</h4>
@@ -291,9 +294,7 @@ export function PropertyDetails({ property }: PropertyDetailsProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-medium text-sm truncate">
-                        {feature.name}
-                      </h4>
+                      <h4 className="font-medium text-sm">{feature.name}</h4>
                       {feature.rating && (
                         <div className="flex items-center gap-1">
                           <span className="text-xs text-muted-foreground">

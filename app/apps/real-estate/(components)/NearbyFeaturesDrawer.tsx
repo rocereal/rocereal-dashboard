@@ -113,7 +113,7 @@ export function NearbyFeaturesDrawer({
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="h-full flex flex-col">
+      <SheetContent className="h-full flex flex-col  pb-4">
         <SheetHeader>
           <SheetTitle>Add Nearby Feature</SheetTitle>
           <SheetDescription>

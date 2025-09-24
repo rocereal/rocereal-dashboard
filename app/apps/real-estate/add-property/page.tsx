@@ -1,6 +1,13 @@
-"use client";
-
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { PropertyTabs } from "../(components)/PropertyTabs";
+import { metadataTemplates } from "@/lib/metadata";
+import type { Metadata } from "next";
+import { X } from "lucide-react";
+
+export const metadata: Metadata = metadataTemplates.dashboard(
+  "Add New Property",
+  "Create a new property listing with detailed information and images."
+);
 
 /**
  * Add Property Page
@@ -38,15 +45,7 @@ export default function AddPropertyPage() {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Add New Property</h1>
-        <p className="text-muted-foreground mt-2">
-          Fill in the details below to add a new property to your real estate
-          listings.
-        </p>
-      </div>
-
+    <div className="flex flex-col space-y-6">
       <PropertyTabs property={newPropertyTemplate} />
     </div>
   );

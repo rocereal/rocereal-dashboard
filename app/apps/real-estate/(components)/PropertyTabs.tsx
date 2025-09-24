@@ -30,6 +30,7 @@ import { NearbyFeaturesDrawer } from "./NearbyFeaturesDrawer";
 import { FloorPlansDrawer } from "./FloorPlansDrawer";
 import { MortgageCalculator } from "./MortgageCalculator";
 import { ColumnDef } from "@tanstack/react-table";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 
 /**
  * Property data structure for form management
@@ -252,10 +253,14 @@ export function PropertyTabs({ property }: { property: Property }) {
 
           {/* Property Images */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium border-b pb-2">
-                Property Images
-              </h3>
+            <div className="flex flex-wrap gap-2 items-center justify-between border-b pb-2">
+              <div className="flex flex-col gap-2">
+                <h3 className="text-lg font-medium">Property Images</h3>
+                <div className="text-sm text-muted-foreground">
+                  Upload high-quality images of the property. Supported formats:
+                  JPG, PNG, WebP.
+                </div>
+              </div>
               <Button
                 type="button"
                 variant="outline"
@@ -265,10 +270,6 @@ export function PropertyTabs({ property }: { property: Property }) {
                 <Upload className="h-4 w-4 mr-2" />
                 Upload Images
               </Button>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Upload high-quality images of the property. Supported formats:
-              JPG, PNG, WebP.
             </div>
 
             {/* Hidden file input */}
@@ -489,20 +490,20 @@ export function PropertyTabs({ property }: { property: Property }) {
 
           {/* Nearby Features */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium border-b pb-2">
-                Nearby Features
-              </h3>
+            <div className="flex flex-wrap gap-2 items-center justify-between border-b pb-2">
+              <div className="flex flex-col gap-2">
+                <h3 className="text-lg font-medium">Nearby Features</h3>
+                <div className="text-sm text-muted-foreground">
+                  Add and manage nearby amenities, schools, parks, shopping
+                  centers, and other points of interest.
+                </div>
+              </div>
               <NearbyFeaturesDrawer onAddFeature={handleAddFeature}>
                 <Button variant="default" size="sm">
                   <Plus className="h-4 w-4 mr-2" />
                   Add Feature
                 </Button>
               </NearbyFeaturesDrawer>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Add and manage nearby amenities, schools, parks, shopping centers,
-              and other points of interest.
             </div>
             {nearbyFeatures.length > 0 ? (
               <DataTable
@@ -711,32 +712,31 @@ export function PropertyTabs({ property }: { property: Property }) {
 
   return (
     <div className="flex flex-col space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">
-            {isNewProperty ? "Add New Property" : "Edit Property"}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {isNewProperty
-              ? "Fill in the property information below."
-              : "Update the property information below."}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleCancel}>
-            <X className="h-4 w-4 mr-2" />
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>
-            <Save className="h-4 w-4 mr-2" />
-            {isNewProperty ? "Create Property" : "Save Changes"}
-          </Button>
-        </div>
-      </div>
+      <DashboardHeader
+        title={isNewProperty ? "Add New Property" : "Edit Property"}
+        subtitle={
+          isNewProperty
+            ? "Fill in the property information below."
+            : "Update the property information below."
+        }
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "Real Estate", href: "/apps/real-estate" },
+          { label: "Add Property" },
+        ]}
+        primaryAction={{
+          label: isNewProperty ? "Create Property" : "Save Changes",
+          icon: <X className="h-4 w-4" />,
+        }}
+        secondaryAction={{
+          label: "Cancel",
+          icon: <X className="h-4 w-4" />,
+        }}
+      />
 
       <TabsWithIcons
         tabs={tabs}
-        className="!w-full lg:!w-full border bg-card rounded-md p-8"
+        className="!w-full lg:!w-full bg-card  border-0 lg:border rounded-md p-0 lg:p-4"
         grid="!grid !grid-cols-5"
       >
         <TabsContent value="property-info" className="space-y-4 pt-4">
@@ -804,10 +804,14 @@ export function PropertyTabs({ property }: { property: Property }) {
 
             {/* Property Images */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium border-b pb-2">
-                  Property Images
-                </h3>
+              <div className="flex flex-wrap gap-2 items-center justify-between border-b pb-2">
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-lg font-medium">Property Images</h3>
+                  <div className="text-sm text-muted-foreground">
+                    Upload high-quality images of the property. Supported
+                    formats: JPG, PNG, WebP.
+                  </div>
+                </div>
                 <Button
                   type="button"
                   variant="outline"
@@ -817,10 +821,6 @@ export function PropertyTabs({ property }: { property: Property }) {
                   <Upload className="h-4 w-4 mr-2" />
                   Upload Images
                 </Button>
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Upload high-quality images of the property. Supported formats:
-                JPG, PNG, WebP.
               </div>
 
               {/* Hidden file input */}
@@ -1043,20 +1043,20 @@ export function PropertyTabs({ property }: { property: Property }) {
 
             {/* Nearby Features */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium border-b pb-2">
-                  Nearby Features
-                </h3>
+              <div className="flex flex-wrap gap-2 items-center justify-between border-b pb-2">
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-lg font-medium">Nearby Features</h3>
+                  <div className="text-sm text-muted-foreground">
+                    Add and manage nearby amenities, schools, parks, shopping
+                    centers, and other points of interest.
+                  </div>
+                </div>
                 <NearbyFeaturesDrawer onAddFeature={handleAddFeature}>
                   <Button variant="default" size="sm">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Feature
                   </Button>
                 </NearbyFeaturesDrawer>
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Add and manage nearby amenities, schools, parks, shopping
-                centers, and other points of interest.
               </div>
               {nearbyFeatures.length > 0 ? (
                 <DataTable
@@ -1142,9 +1142,8 @@ export function PropertyTabs({ property }: { property: Property }) {
 
         <TabsContent value="floor-plans" className="space-y-4 pt-4">
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-medium">Floor Plans</h3>
+            <div className="flex flex-wrap gap-2 items-center justify-between border-b pb-2">
+              <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">
                   Define the layout and specifications of each floor and room in
                   the property.
@@ -1161,6 +1160,7 @@ export function PropertyTabs({ property }: { property: Property }) {
                 </Button>
               </FloorPlansDrawer>
             </div>
+
             <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
               <Home className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">Floor Plan Editor</p>
