@@ -42,6 +42,8 @@ export default function RootLayout({
             __html: `
               try {
                 const theme = localStorage.getItem('fisio-ui-theme') || 'dark';
+                const layoutConfig = JSON.parse(localStorage.getItem('fisio-layout-config') || '{}');
+                const colorTheme = layoutConfig.colorTheme || 'neutral';
                 const root = document.documentElement;
 
                 // Apply theme immediately
@@ -53,6 +55,9 @@ export default function RootLayout({
                   root.classList.add(theme);
                   root.setAttribute('data-theme', theme);
                 }
+
+                // Apply color theme immediately
+                root.classList.add('theme-' + colorTheme);
 
                 // Apply sidebar colors immediately using Tailwind 'stone' palette
                 const sidebarColors = {

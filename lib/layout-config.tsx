@@ -76,6 +76,13 @@ export function LayoutConfigProvider({
     if (typeof window !== "undefined") {
       const root = window.document.documentElement;
 
+      const currentThemeClass = `theme-${config.colorTheme}`;
+
+      // Check if the current theme class is already applied
+      if (root.classList.contains(currentThemeClass)) {
+        return;
+      }
+
       // Remove all existing theme classes
       root.classList.remove(
         "theme-teal",
@@ -86,7 +93,7 @@ export function LayoutConfigProvider({
       );
 
       // Add the current theme class
-      root.classList.add(`theme-${config.colorTheme}`);
+      root.classList.add(currentThemeClass);
     }
   }, [config.colorTheme]);
 

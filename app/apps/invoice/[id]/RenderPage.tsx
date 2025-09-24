@@ -17,7 +17,7 @@ import {
   InvoiceNotes,
   InvoicePaymentMethods,
   InvoiceTotals,
-} from "@/app/apps/invoice/(components)/invoice";
+} from "@/app/apps/invoice/(components)/index";
 import { Button } from "@/components/ui/button";
 import { InvoiceDetail, invoiceDetailsData } from "@/data/invoices";
 import { Download, Edit, Eye, Share, Trash2 } from "lucide-react";

@@ -37,21 +37,26 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove("light", "dark");
-
+    let correctTheme: string;
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
+      correctTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
+    } else {
+      correctTheme = theme;
+    }
 
-      root.classList.add(systemTheme);
-      root.setAttribute("data-theme", systemTheme);
+    // Check if the current class is already correct
+    if (root.classList.contains(correctTheme)) {
+      // Already correct, just ensure data-theme is set
+      root.setAttribute("data-theme", correctTheme);
       return;
     }
 
-    root.classList.add(theme);
-    root.setAttribute("data-theme", theme);
+    // Remove old classes and add correct one
+    root.classList.remove("light", "dark");
+    root.classList.add(correctTheme);
+    root.setAttribute("data-theme", correctTheme);
   }, [theme]);
 
   const value = {
