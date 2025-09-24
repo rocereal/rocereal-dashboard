@@ -14,8 +14,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Home, MapPin, Plus, Save, X, Trash2 } from "lucide-react";
-import { useState } from "react";
+import {
+  Home,
+  MapPin,
+  Plus,
+  Save,
+  X,
+  Trash2,
+  Upload,
+  Image as ImageIcon,
+} from "lucide-react";
+import { useState, useRef } from "react";
 import { Property } from "@/data/real-estate";
 import { NearbyFeaturesDrawer } from "./NearbyFeaturesDrawer";
 import { FloorPlansDrawer } from "./FloorPlansDrawer";
@@ -57,6 +66,8 @@ interface PropertyData {
  * @returns The JSX element representing the complete property editing interface
  */
 export function PropertyTabs({ property }: { property: Property }) {
+  // Determine if this is for adding a new property or editing existing
+  const isNewProperty = !property.title && !property.address;
   const [propertyData, setPropertyData] = useState<PropertyData>({
     // Basic Information
     title: property.title,
@@ -91,6 +102,9 @@ export function PropertyTabs({ property }: { property: Property }) {
     property.nearbyFeatures || []
   );
 
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleAddFeature = (
     feature: Omit<(typeof property.nearbyFeatures)[0], "id">
   ) => {
@@ -105,6 +119,22 @@ export function PropertyTabs({ property }: { property: Property }) {
     setNearbyFeatures(
       nearbyFeatures.filter((feature) => feature.id !== featureId)
     );
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newImages = Array.from(files);
+      setUploadedImages((prev) => [...prev, ...newImages]);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
   const nearbyFeaturesColumns: ColumnDef<(typeof nearbyFeatures)[0]>[] = [
@@ -218,6 +248,85 @@ export function PropertyTabs({ property }: { property: Property }) {
                 rows={4}
               />
             </div>
+          </div>
+
+          {/* Property Images */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium border-b pb-2">
+                Property Images
+              </h3>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={triggerFileInput}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Upload Images
+              </Button>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Upload high-quality images of the property. Supported formats:
+              JPG, PNG, WebP.
+            </div>
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+
+            {/* Image preview grid */}
+            {uploadedImages.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {uploadedImages.map((file, index) => (
+                  <div
+                    key={index}
+                    className="relative group border rounded-lg overflow-hidden bg-muted/50"
+                  >
+                    <div className="aspect-square">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={file.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleRemoveImage(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/75 text-white text-xs p-2 truncate">
+                      {file.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div
+                className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-muted-foreground/50 transition-colors"
+                onClick={triggerFileInput}
+              >
+                <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground font-medium">
+                  No images uploaded yet
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Click here or use the "Upload Images" button to add property
+                  photos
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Property Details */}
@@ -604,9 +713,13 @@ export function PropertyTabs({ property }: { property: Property }) {
     <div className="flex flex-col space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Edit Property</h2>
+          <h2 className="text-xl font-semibold">
+            {isNewProperty ? "Add New Property" : "Edit Property"}
+          </h2>
           <p className="text-sm text-muted-foreground">
-            Update the property information below.
+            {isNewProperty
+              ? "Fill in the property information below."
+              : "Update the property information below."}
           </p>
         </div>
         <div className="flex gap-2">
@@ -616,7 +729,7 @@ export function PropertyTabs({ property }: { property: Property }) {
           </Button>
           <Button onClick={handleSave}>
             <Save className="h-4 w-4 mr-2" />
-            Save Changes
+            {isNewProperty ? "Create Property" : "Save Changes"}
           </Button>
         </div>
       </div>
@@ -687,6 +800,85 @@ export function PropertyTabs({ property }: { property: Property }) {
                   rows={4}
                 />
               </div>
+            </div>
+
+            {/* Property Images */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium border-b pb-2">
+                  Property Images
+                </h3>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={triggerFileInput}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Images
+                </Button>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Upload high-quality images of the property. Supported formats:
+                JPG, PNG, WebP.
+              </div>
+
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+
+              {/* Image preview grid */}
+              {uploadedImages.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {uploadedImages.map((file, index) => (
+                    <div
+                      key={index}
+                      className="relative group border rounded-lg overflow-hidden bg-muted/50"
+                    >
+                      <div className="aspect-square">
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={file.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleRemoveImage(index)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/75 text-white text-xs p-2 truncate">
+                        {file.name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div
+                  className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-muted-foreground/50 transition-colors"
+                  onClick={triggerFileInput}
+                >
+                  <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground font-medium">
+                    No images uploaded yet
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Click here or use the "Upload Images" button to add property
+                    photos
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Property Details */}
