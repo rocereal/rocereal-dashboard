@@ -9,8 +9,8 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import ImageComponentOptimized from "../../shared/ImageComponentOptimized";
-import { Button } from "../../ui/button";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { Button } from "@/components/ui/button";
 import type { StaticImageData } from "next/image";
 
 export interface TestimonialSlide {

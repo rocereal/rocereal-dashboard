@@ -60,17 +60,6 @@ export default async function EditPropertyPage({
 
   return (
     <div className="flex flex-col space-y-6">
-      <DashboardHeader
-        title={`Edit ${property.title}`}
-        subtitle={`${property.address}, ${property.city}, ${property.state} • ${property.type}`}
-        breadcrumbs={[
-          { label: "Dashboard", href: "/" },
-          { label: "Real Estate", href: "/apps/real-estate" },
-          { label: "Edit", href: "/apps/real-estate/edit-estate" },
-          { label: property.title },
-        ]}
-      />
-
       <PropertyTabs property={property} />
     </div>
   );
