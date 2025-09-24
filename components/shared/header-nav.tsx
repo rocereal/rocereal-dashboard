@@ -1,19 +1,19 @@
 "use client";
-import { ChevronDown, ChevronRight, type LucideIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { ChevronDown, type LucideIcon } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 type MenuItem = {
   title: string;
@@ -29,14 +29,8 @@ interface HeaderNavProps {
 }
 
 function NavItem({ item, depth = 0 }: { item: MenuItem; depth?: number }) {
-  const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleNavigation = (url: string) => {
-    router.push(url);
-    setIsOpen(false);
-  };
 
   const hasItems = item.items && item.items.length > 0;
   const isItemActive = item.url
@@ -62,8 +56,9 @@ function NavItem({ item, depth = 0 }: { item: MenuItem; depth?: number }) {
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  "h-9 px-3 hover:bg-accent hover:text-accent-foreground",
-                  isItemActive && "bg-accent text-accent-foreground"
+                  "h-9 px-3 hover:bg-accent dark:hover:bg-secondary hover:text-accent-foreground focus:ring-0 focus:outline-none ring-0 outline-none focus-visible:ring-0 focus-visible:outline-none",
+                  isItemActive &&
+                    "bg-secondary dark:hover:bg-secondary hover:bg-secondary dark:text-white"
                 )}
               >
                 {item.icon && <item.icon className="mr-2 h-4 w-4" />}
@@ -83,7 +78,7 @@ function NavItem({ item, depth = 0 }: { item: MenuItem; depth?: number }) {
       // Nested submenu
       return (
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="flex items-center w-full px-2 py-2 text-sm cursor-pointer">
+          <DropdownMenuSubTrigger className="flex items-center w-full px-2 py-2 text-sm cursor-pointer focus:ring-0 focus:outline-none ring-0 outline-none focus-visible:ring-0 focus-visible:outline-none">
             {item.icon && <item.icon className="mr-2 h-4 w-4" />}
             <span className="flex-1">{item.title}</span>
           </DropdownMenuSubTrigger>
@@ -104,8 +99,9 @@ function NavItem({ item, depth = 0 }: { item: MenuItem; depth?: number }) {
             variant="ghost"
             size="sm"
             className={cn(
-              "h-9 px-3 hover:bg-accent hover:text-accent-foreground",
-              isItemActive && "bg-accent text-accent-foreground"
+              "h-9 px-3 hover:bg-accent dark:secondary dark:hover:bg-secondary hover:text-accent-foreground focus:ring-0 focus:outline-none ring-0 outline-none focus-visible:ring-0 focus-visible:outline-none",
+              isItemActive &&
+                "bg-secondary dark:hover:bg-secondary hover:bg-secondary dark:text-white"
             )}
           >
             {item.icon && <item.icon className="mr-2 h-4 w-4" />}
@@ -116,15 +112,19 @@ function NavItem({ item, depth = 0 }: { item: MenuItem; depth?: number }) {
     } else {
       // For nested items with URLs, render as DropdownMenuItem directly
       return (
-        <DropdownMenuItem asChild className="w-full cursor-pointer">
+        <DropdownMenuItem
+          asChild
+          className="w-full cursor-pointer focus:ring-0 focus:outline-none ring-0 outline-none focus-visible:ring-0 focus-visible:outline-none"
+        >
           <Link
             href={item.url!}
             className={cn(
-              "flex items-center w-full px-2 py-2 text-sm",
-              isItemActive && "bg-accent text-accent-foreground"
+              "flex items-center w-full px-2 py-2 text-sm focus:ring-0 focus:outline-none ring-0 outline-none focus-visible:ring-0 focus-visible:outline-none",
+              isItemActive &&
+                "bg-secondary dark:hover:bg-secondary hover:bg-secondary dark:text-white"
             )}
           >
-            {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+            {item.icon && <item.icon className="mr-2 h-4 w-4 " />}
             <span className="flex-1">{item.title}</span>
           </Link>
         </DropdownMenuItem>

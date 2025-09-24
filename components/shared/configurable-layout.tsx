@@ -47,7 +47,8 @@ export function ConfigurableLayout({
   const isHeaderNav = config.layoutType === "header-nav";
 
   // On mobile, always show sidebar. On desktop, hide sidebar only in header-nav mode
-  const shouldShowSidebar = isHydrated ? isMobile || !isHeaderNav : true;
+  // During hydration, be conservative and don't show sidebar to avoid flash
+  const shouldShowSidebar = isHydrated ? isMobile || !isHeaderNav : false;
 
   if (shouldShowSidebar && sidebar) {
     // When sidebar is shown, use SidebarProvider structure
