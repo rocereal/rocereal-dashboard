@@ -43,35 +43,58 @@ function NavItem({ item, depth = 0 }: { item: MenuItem; depth?: number }) {
     ? pathname === item.url || item.isActive
     : false;
 
+  const handleMouseEnter = () => {
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsOpen(false);
+  };
+
   if (hasItems) {
-    return (
-      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              "h-9 px-3 hover:bg-accent hover:text-accent-foreground",
-              isItemActive && "bg-accent text-accent-foreground"
-            )}
-          >
+    // Top-level dropdown
+    if (depth === 0) {
+      return (
+        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "h-9 px-3 hover:bg-accent hover:text-accent-foreground",
+                  isItemActive && "bg-accent text-accent-foreground"
+                )}
+              >
+                {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                {item.title}
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-72" sideOffset={4}>
+              {item.items!.map((subItem, subIndex) => (
+                <NavItem key={subIndex} item={subItem} depth={depth + 1} />
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      );
+    } else {
+      // Nested submenu
+      return (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="flex items-center w-full px-2 py-2 text-sm cursor-pointer">
             {item.icon && <item.icon className="mr-2 h-4 w-4" />}
-            {item.title}
-            <ChevronDown className="ml-auto h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className="w-72 flex flex-col"
-          sideOffset={depth > 0 ? 2 : 4}
-          alignOffset={depth > 0 ? -2 : 0}
-        >
-          {item.items!.map((subItem, subIndex) => (
-            <NavItem key={subIndex} item={subItem} depth={depth + 1} />
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
+            <span className="flex-1">{item.title}</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="w-72">
+            {item.items!.map((subItem, subIndex) => (
+              <NavItem key={subIndex} item={subItem} depth={depth + 1} />
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      );
+    }
   } else if (item.url) {
     // For top-level items with URLs, render as regular button
     if (depth === 0) {
