@@ -11,6 +11,14 @@ export function SidebarToggle() {
   const { config } = useLayoutConfig();
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Always call hooks in the same order
+  let sidebarState = null;
+  try {
+    sidebarState = useSidebar();
+  } catch {
+    // SidebarProvider not available
+  }
+
   useEffect(() => {
     setIsHydrated(true);
   }, []);
@@ -20,34 +28,29 @@ export function SidebarToggle() {
     return null;
   }
 
-  // Only render if we're in sidebar mode
-  if (config.layoutType !== "sidebar") {
+  // Only render if we're in sidebar mode and sidebar is available
+  if (config.layoutType !== "sidebar" || !sidebarState) {
     return null;
   }
 
-  try {
-    const { toggleSidebar, state } = useSidebar();
+  const { toggleSidebar, state } = sidebarState;
 
-    return (
-      <>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          className="h-8 w-8"
-        >
-          {state === "expanded" ? (
-            <Menu className="h-4 w-4" />
-          ) : (
-            <X className="h-4 w-4" />
-          )}
-          <span className="sr-only">Toggle sidebar</span>
-        </Button>
-        <Separator orientation="vertical" className="h-6" />
-      </>
-    );
-  } catch (error) {
-    // If useSidebar fails (no SidebarProvider), don't render anything
-    return null;
-  }
+  return (
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleSidebar}
+        className="h-8 w-8"
+      >
+        {state === "expanded" ? (
+          <Menu className="h-4 w-4" />
+        ) : (
+          <X className="h-4 w-4" />
+        )}
+        <span className="sr-only">Toggle sidebar</span>
+      </Button>
+      <Separator orientation="vertical" className="h-6" />
+    </>
+  );
 }
