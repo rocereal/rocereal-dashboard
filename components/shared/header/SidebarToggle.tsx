@@ -7,17 +7,19 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { useLayoutConfig } from "@/lib/layout-config";
 import { useEffect, useState } from "react";
 
+// Custom hook to safely use sidebar
+function useSafeSidebar() {
+  try {
+    return { data: useSidebar(), error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+}
+
 export function SidebarToggle() {
   const { config } = useLayoutConfig();
   const [isHydrated, setIsHydrated] = useState(false);
-
-  // Always call hooks in the same order
-  let sidebarState = null;
-  try {
-    sidebarState = useSidebar();
-  } catch {
-    // SidebarProvider not available
-  }
+  const { data: sidebarState } = useSafeSidebar();
 
   useEffect(() => {
     setIsHydrated(true);
