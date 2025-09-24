@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { OrderData, ordersData, Product, productsData } from "@/data/ecommerce";
 import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";

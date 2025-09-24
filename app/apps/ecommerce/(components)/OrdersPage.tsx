@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { DeleteConfirmationDialog } from "@/components/dialogs";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

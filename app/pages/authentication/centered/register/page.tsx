@@ -8,7 +8,7 @@
 
 "use client";
 
-import { RegisterForm } from "@/components/forms/auth/RegisterForm";
+import { RegisterForm } from "@/components/auth/RegisterForm";
 import { Logo } from "@/components/shared/Logo";
 import {
   Card,

@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { Product, productsData } from "@/data/ecommerce";
 import { FileText, Package, Plus } from "lucide-react";
 import { useState } from "react";

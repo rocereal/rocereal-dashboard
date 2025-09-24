@@ -8,7 +8,7 @@
 
 "use client";
 
-import { ForgotPasswordForm } from "@/components/forms/auth/ForgotPasswordForm";
+import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 import { Logo } from "@/components/shared/Logo";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";

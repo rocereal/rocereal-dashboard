@@ -6,6 +6,13 @@ interface InvoiceTotalsProps {
   };
 }
 
+/**
+ * Invoice Totals Component
+ * This component displays the subtotal, tax, and total amounts for the invoice
+ * Renders financial summary in a styled box
+ * @param totals - The invoice totals details
+ * @returns The JSX element for invoice totals
+ */
 export function InvoiceTotals({ totals }: InvoiceTotalsProps) {
   return (
     <div className="flex justify-end mb-6">

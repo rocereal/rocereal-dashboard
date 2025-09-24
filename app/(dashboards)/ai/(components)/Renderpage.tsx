@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 
 import { FileText, Plus } from "lucide-react";
 import { AITabs } from "./AITabs";

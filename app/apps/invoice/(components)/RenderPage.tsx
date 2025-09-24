@@ -8,7 +8,7 @@
 
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { Invoice, invoicesData } from "@/data/invoices";
 import {
   FileText,

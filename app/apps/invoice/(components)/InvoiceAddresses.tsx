@@ -16,6 +16,14 @@ interface InvoiceAddressesProps {
   };
 }
 
+/**
+ * Invoice Addresses Component
+ * This component displays the company and client addresses in the invoice
+ * Renders address information in a grid layout
+ * @param company - The company address details
+ * @param client - The client address details
+ * @returns The JSX element for invoice addresses
+ */
 export function InvoiceAddresses({ company, client }: InvoiceAddressesProps) {
   return (
     <div className="grid md:grid-cols-2 gap-6 mb-6">

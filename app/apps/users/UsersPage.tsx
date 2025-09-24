@@ -7,7 +7,7 @@
 
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { userActions, userMetrics, users } from "@/data/users-data";
 import { User as UserIcon } from "lucide-react";

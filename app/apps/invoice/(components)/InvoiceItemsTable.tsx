@@ -17,6 +17,13 @@ interface InvoiceItemsTableProps {
   }>;
 }
 
+/**
+ * Invoice Items Table Component
+ * This component displays the list of invoice items in a table format
+ * Renders item details including description, units, price, tax, and amount
+ * @param items - The array of invoice items
+ * @returns The JSX element for invoice items table
+ */
 export function InvoiceItemsTable({ items }: InvoiceItemsTableProps) {
   return (
     <div className="mb-6">

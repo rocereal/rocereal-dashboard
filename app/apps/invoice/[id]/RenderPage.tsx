@@ -8,7 +8,7 @@
 
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import {
   InvoiceAddresses,
   InvoiceDetails,
@@ -17,7 +17,7 @@ import {
   InvoiceNotes,
   InvoicePaymentMethods,
   InvoiceTotals,
-} from "@/components/invoice";
+} from "@/app/apps/invoice/(components)/invoice";
 import { Button } from "@/components/ui/button";
 import { InvoiceDetail, invoiceDetailsData } from "@/data/invoices";
 import { Download, Edit, Eye, Share, Trash2 } from "lucide-react";

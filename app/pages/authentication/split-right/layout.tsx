@@ -7,7 +7,7 @@
  * @returns The complete layout structure for split-right authentication pages
  */
 
-import AuthCarousel from "@/components/forms/auth/AuthCarousel";
+import AuthCarousel from "@/components/auth/AuthCarousel";
 import { sliders } from "@/data/sliders";
 
 /**

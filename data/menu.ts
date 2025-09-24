@@ -129,12 +129,12 @@ export const menudata = {
       url: "#",
       icon: Receipt,
       items: [
-        { title: "Invoices", url: "/invoice" },
+        { title: "Invoices", url: "/apps/invoice" },
         {
           title: "View Invoice",
-          url: "/invoice/INV-2025-001",
+          url: "/apps/invoice/INV-2025-001",
         },
-        { title: "Add Invoice", url: "/invoice/add-invoice" },
+        { title: "Add Invoice", url: "/apps/invoice/add-invoice" },
       ],
     },
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
-import { CoinConverter } from "@/components/crypto/coin-converter";
+import { CoinConverter } from "@/app/(dashboards)/crypto/(components)/CoinConverter";
 import { CryptoTable } from "@/app/(dashboards)/crypto/(components)/CryptoTable";
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { cryptoMetrics } from "@/data/crypto-metrics";

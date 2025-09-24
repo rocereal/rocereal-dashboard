@@ -10,6 +10,13 @@ interface InvoicePaymentMethodsProps {
   };
 }
 
+/**
+ * Invoice Payment Methods Component
+ * This component displays available payment methods for the invoice
+ * Renders bank transfer, PayPal, and credit card options
+ * @param paymentMethod - The payment method details
+ * @returns The JSX element for invoice payment methods
+ */
 export function InvoicePaymentMethods({
   paymentMethod,
 }: InvoicePaymentMethodsProps) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { CRMCustomerTable } from "@/app/(dashboards)/crm/(components)/CrmCustomerTable";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";

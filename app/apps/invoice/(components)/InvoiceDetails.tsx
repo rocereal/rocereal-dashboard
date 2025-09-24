@@ -8,6 +8,14 @@ interface InvoiceDetailsProps {
   };
 }
 
+/**
+ * Invoice Details Component
+ * This component displays the project name and invoice dates
+ * Renders project and date information in a grid layout
+ * @param project - The project details
+ * @param invoice - The invoice date details
+ * @returns The JSX element for invoice details
+ */
 export function InvoiceDetails({ project, invoice }: InvoiceDetailsProps) {
   return (
     <div className="mb-6">

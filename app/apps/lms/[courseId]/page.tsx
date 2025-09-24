@@ -7,7 +7,7 @@
  * @param params - Route parameters containing the courseId slug
  * @returns The JSX element representing the course details page
  */
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { coursesData } from "@/data/education";
 import { ArrowLeft, Award, BookOpen } from "lucide-react";

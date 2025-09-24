@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import {
   educationMetrics,

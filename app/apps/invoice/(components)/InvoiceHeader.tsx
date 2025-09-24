@@ -1,4 +1,4 @@
-import { Logo } from "../shared/Logo";
+import { Logo } from "@/components/shared/Logo";
 
 interface InvoiceHeaderProps {
   company: {
@@ -10,6 +10,13 @@ interface InvoiceHeaderProps {
   };
 }
 
+/**
+ * Invoice Header Component
+ * This component displays the invoice title, number, and company logo
+ * Renders the header section of the invoice
+ * @param invoice - The invoice number details
+ * @returns The JSX element for invoice header
+ */
 export function InvoiceHeader({ invoice }: InvoiceHeaderProps) {
   return (
     <div className="flex justify-between items-start mb-6 pb-4 border-b-1 border-gray-300">

@@ -8,7 +8,7 @@
  */
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { coursesData, recommendedCourses } from "@/data/education";
 import { BookOpen, ChartBar } from "lucide-react";
 import { RecommendedCourses } from "./RecommendedCourses";

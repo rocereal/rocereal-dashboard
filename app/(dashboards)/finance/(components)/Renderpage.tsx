@@ -2,7 +2,7 @@
 
 import { PieChart } from "@/components/charts/PieChart";
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { financeCharts, financeMetrics, profitLossData } from "@/data/finance";

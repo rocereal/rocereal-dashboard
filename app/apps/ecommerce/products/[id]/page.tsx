@@ -1,4 +1,4 @@
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { productsData } from "@/data/ecommerce";
 import { metadataTemplates } from "@/lib/metadata";

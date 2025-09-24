@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
 import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";

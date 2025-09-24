@@ -1,6 +1,6 @@
 "use client";
 
-import { LoginForm } from "@/components/forms/auth/LoginForm";
+import { LoginForm } from "@/components/auth/LoginForm";
 import { Logo } from "@/components/shared/Logo";
 import {
   Card,

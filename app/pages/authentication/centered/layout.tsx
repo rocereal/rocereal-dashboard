@@ -7,7 +7,7 @@
  * @returns The complete layout structure for centered authentication pages
  */
 
-import { BackgroundBeamsWithCollision } from "@/components/custom/backgrounds/background-with-beams";
+import { BackgroundBeamsWithCollision } from "@/components/backgrounds/background-with-beams";
 import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
 

@@ -15,7 +15,7 @@ import { Profile } from "./(components)/Profile";
 import { Security } from "./(components)/Security";
 import { Notifications } from "./(components)/Notifications";
 import { Privacy } from "./(components)/Privacy";
-import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 
 /**
  * RenderPage component for displaying the complete settings interface
