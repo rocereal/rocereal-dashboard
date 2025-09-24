@@ -16,6 +16,7 @@ import {
   UserPlus,
   File,
   FolderKanban,
+  MapPinHouse,
 } from "lucide-react";
 import { addScaleCorrector } from "motion/react";
 
@@ -73,6 +74,23 @@ export const menudata = {
         { title: "Add Product", url: "/apps/ecommerce/add-product" },
         { title: "Orders", url: "/apps/ecommerce/orders" },
         { title: "Order Details", url: "/apps/ecommerce/orders/ord-001" },
+      ],
+    },
+    {
+      title: "Real Estate",
+      url: "#",
+      icon: BookOpen,
+      items: [
+        { title: "Properties", url: "/apps/real-estate" },
+        {
+          title: "Property Details",
+          url: "/apps/real-estate/prop-001",
+        },
+        { title: "Add Property", url: "/apps/real-estate/add-property" },
+        {
+          title: "Edit Property",
+          url: "/apps/real-estate/edit-estate/prop-001",
+        },
       ],
     },
     {
