@@ -1,8 +1,9 @@
 "use client";
 
 import { TabsWithIcons } from "@/components/custom/tabs-with-icons";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Button } from "@/components/ui/button";
-import { TabsContent } from "@/components/ui/tabs";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,25 +14,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Property } from "@/data/real-estate";
+import { ColumnDef } from "@tanstack/react-table";
 import {
   Home,
+  Image as ImageIcon,
   MapPin,
   Plus,
-  Save,
-  X,
   Trash2,
   Upload,
-  Image as ImageIcon,
+  X,
 } from "lucide-react";
-import { useState, useRef } from "react";
-import { Property } from "@/data/real-estate";
-import { NearbyFeaturesDrawer } from "./NearbyFeaturesDrawer";
+import { useRef, useState } from "react";
 import { FloorPlansDrawer } from "./FloorPlansDrawer";
 import { MortgageCalculator } from "./MortgageCalculator";
-import { ColumnDef } from "@tanstack/react-table";
-import { DashboardHeader } from "@/components/headers/dashboard-header";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { NearbyFeaturesDrawer } from "./NearbyFeaturesDrawer";
 
 /**
  * Property data structure for form management
@@ -827,8 +826,8 @@ export function PropertyTabs({ property }: { property: Property }) {
                     No images uploaded yet
                   </p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Click here or use the "Upload Images" button to add property
-                    photos
+                    Click here or use the &quot;Upload Images&quot; button to
+                    add property photos
                   </p>
                 </div>
               )}
@@ -1025,8 +1024,8 @@ export function PropertyTabs({ property }: { property: Property }) {
                     No nearby features added yet
                   </p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Click "Add Feature" to start adding schools, parks,
-                    restaurants, and other local amenities
+                    Click &quot;Add Feature&quot; to start adding schools,
+                    parks, restaurants, and other local amenities
                   </p>
                 </div>
               )}
