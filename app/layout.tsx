@@ -1,4 +1,5 @@
 import { ConfigPanel } from "@/components/config-panel";
+import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
 import { LayoutConfigProvider } from "@/lib/layout-config";
 import { ThemeProvider } from "@/lib/theme-provider";
@@ -113,7 +114,10 @@ export default function RootLayout({
         />
         <ThemeProvider defaultTheme="dark" storageKey="fisio-ui-theme">
           <LayoutConfigProvider storageKey="fisio-layout-config">
-            {children}
+            <div className="min-h-screen flex flex-col">
+              <div className="flex-1">{children}</div>
+              <Footer />
+            </div>
             <ConfigPanel />
             <Toaster />
           </LayoutConfigProvider>
