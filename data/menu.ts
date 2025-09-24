@@ -302,3 +302,116 @@ export const menudata = {
     },
   ],
 };
+
+export const menumobiledata = {
+  user: {
+    name: "Fisio",
+    email: "info@obare27.com",
+    avatar: "/android-chrome-192x192.png",
+  },
+
+  navMain: [
+    // ======================
+    // Dashboards
+    // ======================
+    {
+      title: "Dashboards",
+      url: "#",
+      icon: LayoutDashboard,
+      items: [
+        { title: "AI", url: "/ai" },
+        { title: "CRM", url: "/crm" },
+        { title: "Crypto", url: "/crypto" },
+        { title: "E-Commerce", url: "/ecommerce" },
+        { title: "Education", url: "/education" },
+        { title: "Finance", url: "/finance" },
+      ],
+    },
+
+    // ======================
+    // Apps
+    // ======================
+    {
+      title: "Apps",
+      url: "#",
+      icon: SquareTerminal,
+      items: [
+        { title: "Calendar", url: "/apps/calendar" },
+        { title: "Email", url: "/apps/email" },
+        { title: "E-Commerce", url: "/apps/ecommerce/products" },
+        { title: "File Manager", url: "/apps/files" },
+        { title: "Invoice", url: "/apps/invoice" },
+        { title: "LMS", url: "/apps/lms" },
+        { title: "Messenger", url: "/apps/messenger" },
+        { title: "Real Estate", url: "/apps/real-estate" },
+        { title: "Tasks", url: "/apps/tasks" },
+        { title: "Users", url: "/apps/users" },
+      ],
+    },
+
+    // ======================
+    // Pages
+    // ======================
+    {
+      title: "Pages",
+      url: "#",
+      icon: FileText,
+      items: [
+        // --- Authentication ---
+        { title: "Centered Login", url: "/authentication/centered/login" },
+        { title: "Minimal Login", url: "/pages/authentication/minimal/login" },
+        {
+          title: "Split-Left Login",
+          url: "/pages/authentication/split-left/login",
+        },
+        {
+          title: "Split-Right Login",
+          url: "/pages/authentication/split-right/login",
+        },
+
+        // --- Onboarding ---
+        {
+          title: "Onboarding Split-Left",
+          url: "/pages/onboarding/split-left/step-one",
+        },
+        {
+          title: "Onboarding Split-Right",
+          url: "/pages/onboarding/split-right/step-one",
+        },
+
+        // --- Coming Soon ---
+        { title: "Coming Soon Centered", url: "/pages/coming-soon/centered" },
+        { title: "Coming Soon Minimal", url: "/pages/coming-soon/minimal" },
+        {
+          title: "Coming Soon Split-Left",
+          url: "/pages/coming-soon/split-left",
+        },
+        {
+          title: "Coming Soon Split-Right",
+          url: "/pages/coming-soon/split-right",
+        },
+
+        // --- Contact ---
+        { title: "Contact Form", url: "/pages/contact/contact-form" },
+        { title: "FAQ", url: "/pages/contact/faq" },
+
+        // --- Errors ---
+        { title: "404 Not Found", url: "/pages/errors/404" },
+        { title: "Maintenance", url: "/pages/errors/maintenance" },
+
+        // --- Pricing ---
+        { title: "Pricing Classic", url: "/pages/pricing/plans" },
+        { title: "Pricing Classic Icons", url: "/pages/pricing/classic-icons" },
+      ],
+    },
+
+    // ======================
+    // Settings
+    // ======================
+    {
+      title: "Settings",
+      url: "/pages/settings",
+      icon: Settings2,
+    },
+  ],
+};

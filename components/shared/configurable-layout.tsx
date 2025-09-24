@@ -2,6 +2,8 @@
 
 import { useLayoutConfig } from "@/lib/layout-config";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
 interface ConfigurableLayoutProps {
   children: React.ReactNode;
@@ -19,6 +21,11 @@ export function ConfigurableLayout({
   className,
 }: ConfigurableLayoutProps) {
   const { config } = useLayoutConfig();
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const maxWidthClasses = {
     sm: "max-w-sm",
@@ -35,42 +42,92 @@ export function ConfigurableLayout({
     lg: "text-lg",
   };
 
-  return (
-    <div
-      className={cn(
-        "min-h-screen bg-background font-sans antialiased",
-        fontSizeClasses[config.fontSize],
-        className
-      )}
-    >
-      {/* Header */}
-      {config.headerVisible && header && (
-        <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  const isHeaderNav = config.layoutType === "header-nav";
+
+  // During hydration, always show sidebar to match server render
+  const shouldShowSidebar = isHydrated ? !isHeaderNav : true;
+
+  if (shouldShowSidebar && sidebar) {
+    // When sidebar is shown, use SidebarProvider structure
+    return (
+      <SidebarProvider>
+        {sidebar}
+        <SidebarInset>
           <div
             className={cn(
-              "mx-auto px-4 sm:px-6 lg:px-8",
-              maxWidthClasses[config.maxWidth]
+              "min-h-screen bg-background font-sans antialiased",
+              fontSizeClasses[config.fontSize],
+              className
             )}
           >
-            {header}
-          </div>
-        </header>
-      )}
+            {/* Header */}
+            {config.headerVisible && header && (
+              <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div
+                  className={cn(
+                    "mx-auto px-4 sm:px-6 lg:px-8",
+                    maxWidthClasses[config.maxWidth]
+                  )}
+                >
+                  {header}
+                </div>
+              </header>
+            )}
 
-      <div className="flex">
-        {/* Sidebar */}
-        {sidebar && (
-          <aside
-            className={cn(
-              "flex-shrink-0 border-r bg-muted/10 transition-all duration-300",
-              config.sidebarCollapsed ? "w-16" : "w-64"
+            {/* Main Content */}
+            <main className="flex-1">
+              <div
+                className={cn(
+                  "mx-auto px-4 py-8 sm:px-6 lg:px-8",
+                  maxWidthClasses[config.maxWidth]
+                )}
+              >
+                {children}
+              </div>
+            </main>
+
+            {/* Footer */}
+            {config.footerVisible && footer && (
+              <footer className="border-t bg-muted/10">
+                <div
+                  className={cn(
+                    "mx-auto px-4 py-8 sm:px-6 lg:px-8",
+                    maxWidthClasses[config.maxWidth]
+                  )}
+                >
+                  {footer}
+                </div>
+              </footer>
             )}
-          >
-            <div className="flex h-full flex-col">{sidebar}</div>
-          </aside>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    );
+  } else {
+    // When sidebar is hidden (header-nav mode), render without SidebarProvider
+    return (
+      <div
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSizeClasses[config.fontSize],
+          className
+        )}
+      >
+        {/* Header */}
+        {config.headerVisible && header && (
+          <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div
+              className={cn(
+                "mx-auto px-4 sm:px-6 lg:px-8",
+                maxWidthClasses[config.maxWidth]
+              )}
+            >
+              {header}
+            </div>
+          </header>
         )}
 
-        {/* Main Content */}
+        {/* Main Content - full width when no sidebar */}
         <main className="flex-1">
           <div
             className={cn(
@@ -81,21 +138,21 @@ export function ConfigurableLayout({
             {children}
           </div>
         </main>
-      </div>
 
-      {/* Footer */}
-      {config.footerVisible && footer && (
-        <footer className="border-t bg-muted/10">
-          <div
-            className={cn(
-              "mx-auto px-4 py-8 sm:px-6 lg:px-8",
-              maxWidthClasses[config.maxWidth]
-            )}
-          >
-            {footer}
-          </div>
-        </footer>
-      )}
-    </div>
-  );
+        {/* Footer */}
+        {config.footerVisible && footer && (
+          <footer className="border-t bg-muted/10">
+            <div
+              className={cn(
+                "mx-auto px-4 py-8 sm:px-6 lg:px-8",
+                maxWidthClasses[config.maxWidth]
+              )}
+            >
+              {footer}
+            </div>
+          </footer>
+        )}
+      </div>
+    );
+  }
 }

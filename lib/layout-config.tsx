@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 type LayoutConfig = {
+  layoutType: "sidebar" | "header-nav";
   sidebarCollapsed: boolean;
   headerVisible: boolean;
   footerVisible: boolean;
@@ -24,6 +25,7 @@ type LayoutConfigProviderState = {
 };
 
 const defaultLayoutConfig: LayoutConfig = {
+  layoutType: "sidebar",
   sidebarCollapsed: false,
   headerVisible: true,
   footerVisible: true,
@@ -96,6 +98,14 @@ export function LayoutConfigProvider({
       root.classList.add(currentThemeClass);
     }
   }, [config.colorTheme]);
+
+  // Close sidebar when switching to header-nav layout
+  useEffect(() => {
+    if (config.layoutType === "header-nav" && typeof window !== "undefined") {
+      // Close the sidebar by setting the cookie to false
+      document.cookie = "sidebar_state=false; path=/; max-age=604800";
+    }
+  }, [config.layoutType]);
 
   const resetConfig = () => {
     setConfig(defaultLayoutConfig);

@@ -143,6 +143,33 @@ export function ConfigPanel() {
 
           <Separator />
 
+          {/* Layout Type Section */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium">Layout Type</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant={
+                  config.layoutType === "sidebar" ? "default" : "outline"
+                }
+                size="sm"
+                onClick={() => handleLayoutChange("layoutType", "sidebar")}
+              >
+                Sidebar
+              </Button>
+              <Button
+                variant={
+                  config.layoutType === "header-nav" ? "default" : "outline"
+                }
+                size="sm"
+                onClick={() => handleLayoutChange("layoutType", "header-nav")}
+              >
+                Header Nav
+              </Button>
+            </div>
+          </div>
+
+          <Separator />
+
           {/* Reset Button */}
           <Button
             variant="outline"
