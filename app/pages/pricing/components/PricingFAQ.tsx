@@ -1,3 +1,13 @@
+/**
+ * Pricing FAQ Component
+ * Frequently asked questions section for pricing and plan information
+ * Displays expandable accordion interface with questions and answers
+ * Provides comprehensive information about pricing, billing, and plan features
+ * Used in pricing pages to address common customer concerns and objections
+ * @param faqs - Array of FAQ objects containing questions and answers
+ * @returns JSX element representing the pricing FAQ accordion section
+ */
+
 import {
   Accordion,
   AccordionContent,
@@ -10,6 +20,14 @@ interface PricingFAQProps {
   faqs: PricingFAQ[];
 }
 
+/**
+ * PricingFAQComponent for displaying frequently asked questions about pricing
+ * Renders expandable accordion with questions and detailed answers
+ * Provides comprehensive information to address customer concerns
+ * Uses accordion UI for space-efficient FAQ presentation
+ * @param faqs - Array of FAQ data with question and answer pairs
+ * @returns JSX element representing the FAQ accordion section
+ */
 export function PricingFAQComponent({ faqs }: PricingFAQProps) {
   return (
     <div className="max-w-3xl mx-auto">

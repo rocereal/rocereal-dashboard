@@ -1,6 +1,22 @@
+/**
+ * Split Left Coming Soon Layout Component
+ * Root layout for split-screen coming soon pages with form on left and carousel on right
+ * Wraps coming soon pages with two-column layout and gradient background
+ * Provides split layout for coming soon pages with visual carousel
+ * @param children - The coming soon page content to be rendered in the left column
+ * @returns The complete layout structure for split-left coming soon pages
+ */
+
 import AuthCarousel from "@/components/forms/auth/AuthCarousel";
 import { sliders } from "@/data/sliders";
 
+/**
+ * SplitLeftLayout component for coming soon pages
+ * Provides a two-column layout with form on the left and carousel on the right
+ * Uses responsive design that stacks on mobile devices
+ * @param children - The page content to be rendered in the left column
+ * @returns JSX element representing the split-left coming soon layout
+ */
 export default function SplitLeftLayout({
   children,
 }: {

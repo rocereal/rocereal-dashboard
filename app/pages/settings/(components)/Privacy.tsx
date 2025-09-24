@@ -1,3 +1,12 @@
+/**
+ * Privacy Settings Component
+ * User privacy preferences management interface for data sharing and privacy controls
+ * Provides toggle switches for analytics, personalized content, profile visibility, and activity status
+ * Includes data export and account deletion options for GDPR compliance
+ * Part of the settings section for user privacy and data management
+ * @returns JSX element representing the privacy settings interface
+ */
+
 "use client";
 
 import {
@@ -11,6 +20,12 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+/**
+ * Privacy component for managing user privacy and data preferences
+ * Renders toggle switches for data sharing and privacy settings
+ * Provides interface for data export and account deletion
+ * @returns JSX element representing the privacy settings form
+ */
 export function Privacy() {
   return (
     <div className="space-y-6">

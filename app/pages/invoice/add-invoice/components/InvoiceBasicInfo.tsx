@@ -1,3 +1,16 @@
+/**
+ * Invoice Basic Info Component
+ * Form section for collecting basic invoice information in invoice creation
+ * Provides input fields for invoice number, issue date, due date, and status
+ * Used in invoice creation workflow for invoice header details
+ * @param invoiceNumber - Invoice number (auto-generated if empty)
+ * @param date - Invoice issue date
+ * @param dueDate - Invoice payment due date
+ * @param status - Invoice status (Draft, Unpaid, Paid, Overdue)
+ * @param onInputChange - Callback function called when form fields change
+ * @returns JSX element representing the invoice basic information form section
+ */
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,6 +29,17 @@ interface InvoiceBasicInfoProps {
   onInputChange: (field: string, value: string | number) => void;
 }
 
+/**
+ * InvoiceBasicInfo component for collecting basic invoice details
+ * Renders form fields for invoice number, dates, and status selection
+ * Manages form state through parent component callbacks
+ * @param invoiceNumber - Current invoice number value
+ * @param date - Current issue date value
+ * @param dueDate - Current due date value
+ * @param status - Current invoice status value
+ * @param onInputChange - Function called when any field value changes
+ * @returns JSX element representing the invoice basic information form
+ */
 export function InvoiceBasicInfo({
   invoiceNumber,
   date,

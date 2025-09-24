@@ -1,9 +1,26 @@
+/**
+ * Social Proof Component
+ * Displays social proof elements to build trust and encourage sign-ups on coming soon pages
+ * Shows user avatars and subscriber count to demonstrate popularity
+ * Includes gradient avatar placeholders and subscriber statistics
+ * Used to increase conversion rates by showing community engagement
+ * @param className - Additional CSS classes for styling
+ * @returns JSX element representing the social proof display
+ */
+
 import { cn } from "@/lib/utils";
 
 interface SocialProofProps {
   className?: string;
 }
 
+/**
+ * SocialProof component for displaying community engagement metrics
+ * Renders avatar placeholders and subscriber count to build trust
+ * Shows visual indicators of existing user base and popularity
+ * @param className - Additional CSS classes for custom styling
+ * @returns JSX element representing the social proof section
+ */
 export default function SocialProof({ className }: SocialProofProps) {
   return (
     <div className={cn("flex flex-col gap-4", className)}>

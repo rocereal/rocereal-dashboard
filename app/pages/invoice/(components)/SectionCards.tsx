@@ -1,3 +1,13 @@
+/**
+ * Section Cards Component
+ * Displays metric cards in a responsive grid layout for invoice dashboard
+ * Shows key performance indicators with icons, values, and trend indicators
+ * Used to display invoice statistics like total invoices, revenue, and payment status
+ * @param metrics - Array of metric objects to display in cards
+ * @param className - Additional CSS classes for styling
+ * @returns JSX element representing the metrics cards grid
+ */
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CRMMetric } from "@/data/crm-metrics";
@@ -9,6 +19,14 @@ interface SectionCardsProps {
   className?: string;
 }
 
+/**
+ * SectionCards component for displaying invoice metrics in card format
+ * Renders responsive grid of metric cards with icons, values, and trend indicators
+ * Provides visual representation of key invoice statistics and performance data
+ * @param metrics - Optional array of metrics to display, defaults to empty array
+ * @param className - Additional CSS classes for custom styling
+ * @returns JSX element representing the metrics cards grid
+ */
 export function SectionCards({ metrics, className }: SectionCardsProps) {
   // Use provided metrics or default empty array
   const displayMetrics = metrics || [];

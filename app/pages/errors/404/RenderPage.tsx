@@ -1,9 +1,22 @@
+/**
+ * 404 Not Found Render Page Component
+ * Main render component for the 404 error page displaying error message and navigation
+ * Shows 404 icon, error title, and helpful messaging for missing pages
+ * Provides user guidance when pages cannot be found
+ */
+
 "use client";
 
 import Header from "@/app/pages/contact/(components)/ContactHeader";
 import { Fourfour } from "@/components/svg/Icons";
 
-export default function MaintenancePage() {
+/**
+ * NotFoundPage component for rendering the 404 error interface
+ * Displays 404 icon, error message, and helpful information
+ * Provides clear communication when users encounter broken links
+ * @returns JSX element representing the 404 error page layout
+ */
+export default function NotFoundPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl mx-auto justify-center align-center items-center">

@@ -1,3 +1,13 @@
+/**
+ * Pricing Features Component
+ * Feature showcase section highlighting key platform capabilities and benefits
+ * Displays feature cards with icons, titles, and descriptions in a grid layout
+ * Provides visual representation of platform value propositions and advantages
+ * Used in pricing pages to showcase competitive advantages and build trust
+ * @param features - Array of pricing feature objects with icon, title, and description
+ * @returns JSX element representing the pricing features showcase section
+ */
+
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Shield,
@@ -22,6 +32,14 @@ const iconMap = {
   RefreshCw,
 };
 
+/**
+ * PricingFeatures component for displaying key platform features and benefits
+ * Renders feature cards in a responsive grid with icons and descriptions
+ * Maps feature data to appropriate icons and handles icon rendering
+ * Provides visual showcase of platform capabilities and competitive advantages
+ * @param features - Array of feature data including icon type, title, and description
+ * @returns JSX element representing the features showcase section
+ */
 export function PricingFeatures({ features }: PricingFeaturesProps) {
   return (
     <div className="py-16 bg-muted/50">

@@ -1,9 +1,22 @@
+/**
+ * Maintenance Mode Render Page Component
+ * Main render component for the maintenance page displaying countdown and status
+ * Shows maintenance icon, countdown timer, and helpful messaging during downtime
+ * Provides user reassurance during scheduled maintenance periods
+ */
+
 "use client";
 
 import CountdownTimer from "@/app/pages/coming-soon/(components)/CountdownTimer";
 import Header from "@/app/pages/contact/(components)/ContactHeader";
 import { Maintenance } from "@/components/svg/Icons";
 
+/**
+ * MaintenancePage component for rendering the maintenance mode interface
+ * Displays maintenance icon, countdown timer, and status information
+ * Provides clear communication during system maintenance periods
+ * @returns JSX element representing the maintenance page layout
+ */
 export default function MaintenancePage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">

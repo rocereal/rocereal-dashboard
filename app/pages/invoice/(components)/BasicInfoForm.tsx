@@ -1,3 +1,13 @@
+/**
+ * Basic Info Form Component
+ * Form section for collecting basic product information in invoice creation
+ * Provides input fields for product name, SKU, and category selection
+ * Used in invoice creation workflow for product details entry
+ * @param formData - Object containing form field values (name, sku, category)
+ * @param onChange - Callback function called when form fields change
+ * @returns JSX element representing the basic information form section
+ */
+
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -19,6 +29,14 @@ interface BasicInfoFormProps {
   onChange: (field: string, value: string) => void;
 }
 
+/**
+ * BasicInfoForm component for collecting product basic information
+ * Renders form fields for product name, SKU, and category selection
+ * Manages form state through parent component callbacks
+ * @param formData - Current form data values for the fields
+ * @param onChange - Function called when any field value changes
+ * @returns JSX element representing the basic information form
+ */
 export function BasicInfoForm({ formData, onChange }: BasicInfoFormProps) {
   const categories = [
     "Electronics",

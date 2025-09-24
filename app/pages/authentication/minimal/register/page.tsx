@@ -1,3 +1,11 @@
+/**
+ * Minimal Register Page Component
+ * Authentication page for user registration with minimal layout and clean design
+ * Provides registration form with user details, password setup, and social login
+ * Includes link to login page for existing users
+ * Uses minimal authentication layout with subtle background pattern
+ */
+
 "use client";
 
 import { RegisterForm } from "@/components/forms/auth/RegisterForm";
@@ -14,6 +22,10 @@ import { useState } from "react";
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * Handles user registration attempt
+   * Simulates API call and manages loading state
+   */
   const handleRegister = async () => {
     setIsLoading(true);
 
@@ -23,6 +35,12 @@ export default function RegisterPage() {
     setIsLoading(false);
   };
 
+  /**
+   * RegisterPage component for user registration
+   * Renders registration form with logo, transparent card layout, and registration handlers
+   * Manages loading state during registration process and provides user feedback
+   * @returns JSX element representing the minimal registration page interface
+   */
   return (
     <div className="space-y-8 max-w-md w-full">
       {/* Header */}

@@ -1,3 +1,19 @@
+/**
+ * Minimal Coming Soon Layout Component
+ * Root layout for minimal coming soon pages providing clean, simple styling
+ * Wraps coming soon pages with subtle background pattern and centered content
+ * Provides minimal layout for coming soon pages with focused user experience
+ * @param children - The coming soon page content to be rendered within the layout
+ * @returns The complete layout structure for minimal coming soon pages
+ */
+
+/**
+ * MinimalLayout component for coming soon pages
+ * Provides a clean, minimal layout with subtle background pattern
+ * Centers content in a constrained width container for focused user experience
+ * @param children - The page content to be rendered within the layout
+ * @returns JSX element representing the minimal coming soon layout
+ */
 export default function MinimalLayout({
   children,
 }: {

@@ -1,3 +1,17 @@
+/**
+ * FAQ Contact Call-to-Action Component
+ * Call-to-action section for FAQ pages encouraging users to contact support
+ * Provides direct link to contact page for additional assistance
+ * Used when FAQ answers don't fully resolve user questions
+ * @returns JSX element representing the contact CTA section
+ */
+
+/**
+ * FAQContactCTA component for displaying contact call-to-action
+ * Renders centered CTA with link to contact page for additional support
+ * Provides clear path for users who need further assistance
+ * @returns JSX element representing the contact CTA
+ */
 export default function FAQContactCTA() {
   return (
     <div className="text-center mt-12">

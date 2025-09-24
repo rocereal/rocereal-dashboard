@@ -1,3 +1,18 @@
+/**
+ * Company Info Component
+ * Form section for collecting company information in invoice creation
+ * Provides input fields for company name, address, phone, email, website, and ABN
+ * Used in invoice creation workflow for company details entry
+ * @param companyName - Company's full name
+ * @param companyAddress - Company's complete address
+ * @param companyPhone - Company's phone number
+ * @param companyEmail - Company's email address
+ * @param companyWebsite - Company's website URL
+ * @param companyABN - Company's Australian Business Number
+ * @param onInputChange - Callback function called when form fields change
+ * @returns JSX element representing the company information form section
+ */
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +27,19 @@ interface CompanyInfoProps {
   onInputChange: (field: string, value: string | number) => void;
 }
 
+/**
+ * CompanyInfo component for collecting company details in invoice creation
+ * Renders form fields for company information including contact and business details
+ * Manages form state through parent component callbacks
+ * @param companyName - Current company name value
+ * @param companyAddress - Current company address value
+ * @param companyPhone - Current company phone value
+ * @param companyEmail - Current company email value
+ * @param companyWebsite - Current company website value
+ * @param companyABN - Current company ABN value
+ * @param onInputChange - Function called when any field value changes
+ * @returns JSX element representing the company information form
+ */
 export function CompanyInfo({
   companyName,
   companyAddress,

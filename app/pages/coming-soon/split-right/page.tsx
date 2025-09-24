@@ -1,3 +1,11 @@
+/**
+ * Split Right Coming Soon Page Component
+ * Coming soon page with split-screen layout displaying countdown timer and subscription form on right
+ * Combines countdown timer, social proof, and email subscription components
+ * Uses split-right layout with carousel on the left side for visual appeal
+ * Builds anticipation for product launch with engaging split-screen UI
+ */
+
 import {
   Card,
   CardContent,
@@ -9,6 +17,12 @@ import CountdownTimer from "../(components)/CountdownTimer";
 import Subscribe from "../(components)/Form";
 import SocialProof from "../(components)/SocialProof";
 
+/**
+ * SplitRightPage component for displaying launch countdown and subscription in split layout
+ * Renders countdown timer, social proof indicators, and email subscription form on right side
+ * Provides engaging split-screen user experience to build anticipation for product launch
+ * @returns JSX element representing the split-right coming soon page
+ */
 export default function SplitRightPage() {
   return (
     <div className="space-y-8 max-w-md w-full">

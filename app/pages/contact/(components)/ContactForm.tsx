@@ -1,3 +1,13 @@
+/**
+ * Contact Form Component
+ * Comprehensive contact form for user inquiries and support requests
+ * Provides form fields for name, email, phone, subject, and message with validation
+ * Handles form submission with loading states and error handling
+ * Used in contact pages to collect user feedback and support requests
+ * @param onSubmit - Optional callback function called with form data on submission
+ * @returns JSX element representing the contact form
+ */
+
 "use client";
 
 import { useState } from "react";
@@ -20,6 +30,13 @@ interface ContactFormProps {
   onSubmit?: (data: ContactFormData) => void;
 }
 
+/**
+ * ContactForm component for collecting user contact information and messages
+ * Renders comprehensive form with validation and submission handling
+ * Manages form state and provides user feedback during submission
+ * @param onSubmit - Optional callback function executed on successful form submission
+ * @returns JSX element representing the contact form interface
+ */
 export default function ContactForm({ onSubmit }: ContactFormProps) {
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",

@@ -1,3 +1,19 @@
+/**
+ * Payment Info Component
+ * Form section for collecting payment information and terms in invoice creation
+ * Provides input fields for payment notes, bank details, PayPal, credit card info, and tax rate
+ * Used in invoice creation workflow for payment instructions and financial details
+ * @param notes - Invoice payment notes and terms
+ * @param bankAccountName - Bank account holder name
+ * @param bankBSB - Bank BSB (routing number)
+ * @param bankAccountNumber - Bank account number
+ * @param paypalEmail - PayPal payment email address
+ * @param creditCardNote - Credit card payment instructions
+ * @param taxRate - Tax rate percentage for calculations
+ * @param onInputChange - Callback function called when form fields change
+ * @returns JSX element representing the payment information form section
+ */
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +29,20 @@ interface PaymentInfoProps {
   onInputChange: (field: string, value: string | number) => void;
 }
 
+/**
+ * PaymentInfo component for collecting payment details and terms
+ * Renders form fields for payment notes, banking information, and tax settings
+ * Manages form state through parent component callbacks
+ * @param notes - Current payment notes value
+ * @param bankAccountName - Current bank account name value
+ * @param bankBSB - Current BSB value
+ * @param bankAccountNumber - Current account number value
+ * @param paypalEmail - Current PayPal email value
+ * @param creditCardNote - Current credit card note value
+ * @param taxRate - Current tax rate value
+ * @param onInputChange - Function called when any field value changes
+ * @returns JSX element representing the payment information form
+ */
 export function PaymentInfo({
   notes,
   bankAccountName,

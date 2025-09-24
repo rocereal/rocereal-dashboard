@@ -1,3 +1,15 @@
+/**
+ * Pricing Tier Card Component
+ * Individual pricing tier card with enhanced visual design and comprehensive features
+ * Displays tier icon, pricing, limits, features, and call-to-action button
+ * Includes popular badge, savings calculation, and highlighted features
+ * Used in classic icons pricing page for premium tier presentation
+ * @param tier - Pricing tier object containing all tier details and configuration
+ * @param billingCycle - Current billing cycle (monthly or yearly) for pricing display
+ * @param onSelectTier - Callback function called when tier is selected
+ * @returns JSX element representing the enhanced pricing tier card
+ */
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +28,16 @@ const iconMap = {
   Building,
 };
 
+/**
+ * PricingTierCard component for displaying individual pricing tiers with enhanced design
+ * Renders comprehensive tier card with icon, pricing, limits, features, and CTA
+ * Calculates and displays savings for yearly billing and handles popular tier highlighting
+ * Manages tier selection through parent component callbacks with visual feedback
+ * @param tier - The pricing tier data to display with all configuration details
+ * @param billingCycle - Current billing cycle for price calculation and display
+ * @param onSelectTier - Function called when tier selection button is clicked
+ * @returns JSX element representing the enhanced pricing tier card
+ */
 export function PricingTierCard({
   tier,
   billingCycle,

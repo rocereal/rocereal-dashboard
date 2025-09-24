@@ -1,3 +1,16 @@
+/**
+ * Invoices Table Component
+ * Comprehensive data table for displaying and managing invoice records
+ * Provides sorting, searching, bulk selection, and individual invoice actions
+ * Includes functionality for viewing, printing, and deleting invoices
+ * Features bulk operations for multiple invoice management
+ * @param invoices - Array of invoice objects to display in the table
+ * @param onView - Optional callback for viewing invoice details
+ * @param onPrint - Optional callback for printing invoices
+ * @param onDelete - Optional callback for deleting invoices
+ * @returns JSX element representing the invoices data table
+ */
+
 "use client";
 
 import { DeleteConfirmationDialog } from "@/components/dialogs";
@@ -27,6 +40,15 @@ interface InvoicesTableProps {
   onDelete?: (invoice: Invoice) => void;
 }
 
+/**
+ * InvoicesTable component for displaying invoice data in a comprehensive table
+ * Provides advanced table functionality with selection, actions, and bulk operations
+ * Manages invoice viewing, printing, and deletion with confirmation dialogs
+ * @param invoices - Array of invoice data to render in the table
+ * @param onPrint - Callback function for printing individual invoices
+ * @param onDelete - Callback function for deleting individual invoices
+ * @returns JSX element representing the invoices management table
+ */
 export function InvoicesTable({
   invoices,
   onPrint,

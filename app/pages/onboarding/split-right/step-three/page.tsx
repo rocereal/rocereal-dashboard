@@ -1,3 +1,11 @@
+/**
+ * Split Right Step Three Onboarding Page Component
+ * Third step of the split-screen onboarding flow with content on right side and image on left
+ * Displays configuration/setup step with form for advanced user settings with visual background
+ * Includes progress indicator and navigation to next/previous steps
+ * Part of the multi-step onboarding process for new users with enhanced visual design
+ */
+
 "use client";
 
 import backgroundSeven from "@/app/assets/images/background_seven.jpg";
@@ -7,6 +15,12 @@ import { Logo } from "@/components/shared/Logo";
 import { onboardingSteps } from "@/data/onboarding";
 import { useState } from "react";
 
+/**
+ * StepThreePage component for the third step of split-right onboarding
+ * Renders split-screen layout with form on right and background image on left
+ * Manages loading state during form submission and navigation
+ * @returns JSX element representing the third onboarding step with visual design
+ */
 export default function StepThreePage() {
   const [isLoading, setIsLoading] = useState(false);
 

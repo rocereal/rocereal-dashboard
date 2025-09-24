@@ -1,3 +1,12 @@
+/**
+ * Notifications Settings Component
+ * User notification preferences management interface for email and push notifications
+ * Provides toggle switches for marketing emails, security alerts, account updates, and push notifications
+ * Allows users to customize their notification preferences and communication settings
+ * Part of the settings section for user account management and preferences
+ * @returns JSX element representing the notifications settings interface
+ */
+
 "use client";
 
 import {
@@ -10,6 +19,12 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
+/**
+ * Notifications component for managing user notification preferences
+ * Renders toggle switches for email and push notification settings
+ * Provides interface for customizing communication preferences
+ * @returns JSX element representing the notifications settings form
+ */
 export function Notifications() {
   return (
     <div className="space-y-6">

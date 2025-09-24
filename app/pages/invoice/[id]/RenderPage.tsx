@@ -1,3 +1,11 @@
+/**
+ * Invoice Detail Render Page Component
+ * Main render component for displaying comprehensive invoice details
+ * Shows complete invoice information including header, items, totals, and payment methods
+ * Provides action buttons for viewing, downloading, sharing, editing, and deleting
+ * Handles invoice not found scenarios with proper error handling
+ */
+
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
@@ -19,6 +27,14 @@ interface RenderPageProps {
   id: string;
 }
 
+/**
+ * RenderPage component for displaying detailed invoice information
+ * Retrieves invoice data by ID and renders comprehensive invoice view
+ * Includes all invoice sections: header, details, addresses, items, totals, notes, and payment methods
+ * Provides action buttons for various invoice operations
+ * @param id - The invoice ID to display details for
+ * @returns JSX element representing the detailed invoice view
+ */
 export default function RenderPage({ id }: RenderPageProps) {
   const data: InvoiceDetail | undefined = invoiceDetailsData[id];
 

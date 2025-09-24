@@ -1,3 +1,11 @@
+/**
+ * Split Right Step Two Onboarding Page Component
+ * Second step of the split-screen onboarding flow with content on right side and image on left
+ * Displays preferences/setup step with form for user preferences and settings with visual background
+ * Includes progress indicator and navigation to next/previous steps
+ * Part of the multi-step onboarding process for new users with enhanced visual design
+ */
+
 "use client";
 
 import backgroundSix from "@/app/assets/images/background_six.jpg";
@@ -7,6 +15,12 @@ import { Logo } from "@/components/shared/Logo";
 import { onboardingSteps } from "@/data/onboarding";
 import { useState } from "react";
 
+/**
+ * StepTwoPage component for the second step of split-right onboarding
+ * Renders split-screen layout with form on right and background image on left
+ * Manages loading state during form submission and navigation
+ * @returns JSX element representing the second onboarding step with visual design
+ */
 export default function StepTwoPage() {
   const [isLoading, setIsLoading] = useState(false);
 

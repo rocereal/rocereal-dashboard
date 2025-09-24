@@ -1,3 +1,11 @@
+/**
+ * Classic Icons Pricing Render Page Component
+ * Main render component for the classic icons pricing page with comprehensive layout
+ * Displays hero section, pricing tiers, testimonials, comparison table, FAQ, and CTA
+ * Provides interactive billing toggle and plan selection functionality
+ * Features alternative design approach with enhanced visual elements
+ */
+
 "use client";
 
 import { useState } from "react";
@@ -14,6 +22,13 @@ import {
 } from "./components";
 import { BillingToggle } from "../components/BillingToggle";
 
+/**
+ * RenderPage component for classic icons pricing page
+ * Renders comprehensive pricing page with all sections and interactive elements
+ * Manages billing cycle state and handles plan selection navigation
+ * Provides complete pricing experience with testimonials and comparisons
+ * @returns JSX element representing the full classic icons pricing page
+ */
 export default function RenderPage() {
   const router = useRouter();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(

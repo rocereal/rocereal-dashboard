@@ -1,3 +1,13 @@
+/**
+ * Comparison Table Component
+ * Feature comparison table for pricing plans showing capabilities across tiers
+ * Displays features with checkmarks/X marks and text values for different plan levels
+ * Provides detailed comparison between Free, Professional, and Enterprise plans
+ * Used in classic icons pricing page to help users understand plan differences
+ * @param comparisons - Array of pricing comparison objects with feature data
+ * @returns JSX element representing the feature comparison table
+ */
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, X } from "lucide-react";
 import { PricingComparison } from "@/data/pricing-design2";
@@ -6,6 +16,14 @@ interface ComparisonTableProps {
   comparisons: PricingComparison[];
 }
 
+/**
+ * ComparisonTable component for displaying feature comparisons across pricing tiers
+ * Renders responsive table with feature names and availability indicators
+ * Handles boolean and string feature values with appropriate visual indicators
+ * Provides comprehensive plan comparison for user decision making
+ * @param comparisons - Array of feature comparison data for all pricing tiers
+ * @returns JSX element representing the pricing comparison table
+ */
 export function ComparisonTable({ comparisons }: ComparisonTableProps) {
   const renderFeatureValue = (value: boolean | string) => {
     if (typeof value === "boolean") {

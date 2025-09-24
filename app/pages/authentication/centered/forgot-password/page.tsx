@@ -1,3 +1,11 @@
+/**
+ * Centered Forgot Password Page Component
+ * Authentication page for password reset request with centered layout
+ * Provides email input form for password reset and success confirmation
+ * Includes navigation back to login page
+ * Uses centered authentication layout with backdrop blur effects
+ */
+
 "use client";
 
 import { ForgotPasswordForm } from "@/components/forms/auth/ForgotPasswordForm";
@@ -19,6 +27,11 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  /**
+   * Handles forgot password request submission
+   * Simulates API call and manages loading state
+   * Transitions to success state upon completion
+   */
   const handleForgotPassword = async () => {
     setIsLoading(true);
 
@@ -29,6 +42,12 @@ export default function ForgotPasswordPage() {
     setIsSubmitted(true);
   };
 
+  /**
+   * ForgotPasswordPage component for password reset requests
+   * Renders form for email input and success confirmation with different UI states
+   * Manages loading state during submission and provides user feedback
+   * @returns JSX element representing the forgot password page interface
+   */
   if (isSubmitted) {
     return (
       <div className="w-full max-w-md space-y-8 z-40">

@@ -22,6 +22,13 @@ export const metadata: Metadata = {
   description: "A Next.js template with configurable layout and theme",
 };
 
+/**
+ * Root Layout for the Application
+ * This layout wraps the application content with the standard site structure
+ * Provides theme and layout configuration for the entire app
+ * @param children - The page content
+ * @returns The complete HTML document structure for the app
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

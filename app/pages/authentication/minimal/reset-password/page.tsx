@@ -1,3 +1,11 @@
+/**
+ * Minimal Reset Password Page Component
+ * Authentication page for password reset completion with minimal layout and clean design
+ * Provides new password input form and success confirmation
+ * Includes navigation back to login page
+ * Uses minimal authentication layout with subtle background pattern
+ */
+
 "use client";
 
 import { ResetPasswordForm } from "@/components/forms/auth/ResetPasswordForm";
@@ -19,6 +27,11 @@ export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  /**
+   * Handles password reset submission with new password
+   * Simulates API call and manages loading state
+   * Transitions to success state upon completion
+   */
   const handleResetPassword = async () => {
     setIsLoading(true);
 
@@ -29,6 +42,12 @@ export default function ResetPasswordPage() {
     setIsSubmitted(true);
   };
 
+  /**
+   * ResetPasswordPage component for password reset completion
+   * Renders form for new password input and success confirmation with different UI states
+   * Manages loading state during submission and provides user feedback
+   * @returns JSX element representing the minimal reset password page interface
+   */
   if (isSubmitted) {
     return (
       <div className="space-y-8 max-w-md w-full">

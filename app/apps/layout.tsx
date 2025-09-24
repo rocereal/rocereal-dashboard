@@ -1,3 +1,11 @@
+/**
+ * Layout for Apps Pages
+ * This layout wraps the apps page content with the standard site structure
+ * Provides navigation and structure for app sections
+ * @param children - The page content
+ * @returns The layout structure for apps pages
+ */
+
 import { AppHeader } from "@/components/shared/app-header";
 import { AppSidebar } from "@/components/shared/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";

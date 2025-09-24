@@ -1,3 +1,13 @@
+/**
+ * Testimonials Section Component
+ * Customer testimonials section displaying user reviews and feedback
+ * Shows star ratings, quotes, author information, and subscription plan badges
+ * Provides social proof and credibility for pricing page conversion
+ * Used in classic icons pricing page to build trust and showcase satisfaction
+ * @param testimonials - Array of testimonial objects with user feedback and details
+ * @returns JSX element representing the customer testimonials section
+ */
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +18,14 @@ interface TestimonialsSectionProps {
   testimonials: Testimonial[];
 }
 
+/**
+ * TestimonialsSection component for displaying customer testimonials and reviews
+ * Renders testimonial cards with ratings, quotes, author info, and plan badges
+ * Provides visual social proof to build trust and credibility
+ * Handles avatar images and fallbacks for user profile pictures
+ * @param testimonials - Array of testimonial data including content, author, and plan info
+ * @returns JSX element representing the testimonials section
+ */
 export function TestimonialsSection({
   testimonials,
 }: TestimonialsSectionProps) {

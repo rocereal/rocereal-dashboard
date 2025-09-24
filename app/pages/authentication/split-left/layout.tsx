@@ -1,6 +1,22 @@
+/**
+ * Split Left Authentication Layout Component
+ * Root layout for split-screen authentication pages with form on left and carousel on right
+ * Wraps authentication pages with two-column layout and gradient background
+ * Provides split layout for login, register, and password recovery pages
+ * @param children - The authentication page content to be rendered in the left column
+ * @returns The complete layout structure for split-left authentication pages
+ */
+
 import AuthCarousel from "@/components/forms/auth/AuthCarousel";
 import { sliders } from "@/data/sliders";
 
+/**
+ * SplitLeftLayout component for authentication pages
+ * Provides a two-column layout with form on the left and carousel on the right
+ * Uses responsive design that stacks on mobile devices
+ * @param children - The page content to be rendered in the left column
+ * @returns JSX element representing the split-left authentication layout
+ */
 export default function SplitLeftLayout({
   children,
 }: {

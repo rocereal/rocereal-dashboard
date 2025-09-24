@@ -1,3 +1,17 @@
+/**
+ * Client Info Component
+ * Form section for collecting client information in invoice creation
+ * Provides input fields for client name, address, phone, email, and website
+ * Used in invoice creation workflow for client details entry
+ * @param clientName - Client's full name
+ * @param clientAddress - Client's complete address
+ * @param clientPhone - Client's phone number
+ * @param clientEmail - Client's email address
+ * @param clientWebsite - Client's website URL
+ * @param onInputChange - Callback function called when form fields change
+ * @returns JSX element representing the client information form section
+ */
+
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +25,18 @@ interface ClientInfoProps {
   onInputChange: (field: string, value: string | number) => void;
 }
 
+/**
+ * ClientInfo component for collecting client details in invoice creation
+ * Renders form fields for client information including contact details
+ * Manages form state through parent component callbacks
+ * @param clientName - Current client name value
+ * @param clientAddress - Current client address value
+ * @param clientPhone - Current client phone value
+ * @param clientEmail - Current client email value
+ * @param clientWebsite - Current client website value
+ * @param onInputChange - Function called when any field value changes
+ * @returns JSX element representing the client information form
+ */
 export function ClientInfo({
   clientName,
   clientAddress,

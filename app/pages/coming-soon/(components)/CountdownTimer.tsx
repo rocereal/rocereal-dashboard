@@ -1,3 +1,13 @@
+/**
+ * Countdown Timer Component
+ * Displays a countdown timer showing days, hours, minutes, and seconds until target date
+ * Updates every second and automatically stops when target date is reached
+ * Used in coming soon pages to build anticipation for product launches
+ * @param targetDate - Optional target date for countdown, defaults to 30 days from now
+ * @param className - Additional CSS classes for styling
+ * @returns JSX element displaying the countdown timer
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -8,6 +18,14 @@ interface CountdownTimerProps {
   className?: string;
 }
 
+/**
+ * CountdownTimer component for displaying time remaining until target date
+ * Calculates and displays days, hours, minutes, and seconds
+ * Updates every second and handles countdown completion
+ * @param targetDate - Optional target date, defaults to 30 days from current date
+ * @param className - Additional CSS classes for custom styling
+ * @returns JSX element representing the countdown timer display
+ */
 export default function CountdownTimer({
   targetDate,
   className,

@@ -1,3 +1,13 @@
+/**
+ * FAQ Accordion Component
+ * Expandable accordion interface for displaying frequently asked questions
+ * Shows question-answer pairs in collapsible format with smooth animations
+ * Displays search result count and handles empty states
+ * Used in FAQ pages to provide organized, searchable help content
+ * @param faqs - Array of FAQ items to display in the accordion
+ * @returns JSX element representing the FAQ accordion interface
+ */
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Accordion,
@@ -11,6 +21,13 @@ interface FAQAccordionProps {
   faqs: FAQItem[];
 }
 
+/**
+ * FAQAccordion component for displaying FAQ items in expandable format
+ * Renders accordion with questions as triggers and answers as content
+ * Shows result count and handles empty search states gracefully
+ * @param faqs - Array of FAQ items to render in the accordion
+ * @returns JSX element representing the FAQ accordion
+ */
 export default function FAQAccordion({ faqs }: FAQAccordionProps) {
   return (
     <div className="max-w-3xl mx-auto">

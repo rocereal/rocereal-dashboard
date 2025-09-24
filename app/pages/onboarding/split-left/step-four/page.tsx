@@ -1,3 +1,11 @@
+/**
+ * Split Left Step Four Onboarding Page Component
+ * Final step of the split-screen onboarding flow with content on left side and wizard on right
+ * Displays completion/setup step with final form for user completion and dashboard navigation
+ * Includes progress indicator and navigation to dashboard or back to previous steps
+ * Part of the multi-step onboarding process for new users
+ */
+
 "use client";
 
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
@@ -6,6 +14,12 @@ import { Separator } from "@/components/ui/separator";
 import { onboardingSteps } from "@/data/onboarding";
 import { useState } from "react";
 
+/**
+ * StepFourPage component for the final step of split-left onboarding
+ * Renders split-screen layout with completion form on left and wizard sidebar on right
+ * Manages loading state during final submission and navigation to dashboard
+ * @returns JSX element representing the final onboarding step
+ */
 export default function StepFourPage() {
   const [isLoading, setIsLoading] = useState(false);
 

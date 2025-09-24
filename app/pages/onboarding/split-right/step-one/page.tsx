@@ -1,3 +1,11 @@
+/**
+ * Split Right Step One Onboarding Page Component
+ * First step of the split-screen onboarding flow with content on right side and image on left
+ * Displays welcome/setup step with form for initial user information and visual background
+ * Includes progress indicator and navigation to next step
+ * Part of the multi-step onboarding process for new users with enhanced visual design
+ */
+
 "use client";
 
 import backgroundFive from "@/app/assets/images/background_five.jpg";
@@ -7,6 +15,12 @@ import { Logo } from "@/components/shared/Logo";
 import { onboardingSteps } from "@/data/onboarding";
 import { useState } from "react";
 
+/**
+ * StepOnePage component for the first step of split-right onboarding
+ * Renders split-screen layout with form on right and background image on left
+ * Manages loading state during form submission and navigation
+ * @returns JSX element representing the first onboarding step with visual design
+ */
 export default function StepOnePage() {
   const [isLoading, setIsLoading] = useState(false);
 

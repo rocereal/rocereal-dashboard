@@ -1,3 +1,14 @@
+/**
+ * Billing Toggle Component
+ * Interactive toggle switch for switching between monthly and yearly billing cycles
+ * Displays current billing cycle with visual indicator and savings badge for yearly plans
+ * Provides smooth animation when switching between billing options
+ * Used in pricing pages to allow users to compare monthly vs yearly pricing
+ * @param billingCycle - Current selected billing cycle (monthly or yearly)
+ * @param onToggle - Callback function called when billing cycle is toggled
+ * @returns JSX element representing the billing cycle toggle switch
+ */
+
 import { Button } from "@/components/ui/button";
 
 interface BillingToggleProps {
@@ -5,6 +16,15 @@ interface BillingToggleProps {
   onToggle: (cycle: "monthly" | "yearly") => void;
 }
 
+/**
+ * BillingToggle component for switching between monthly and yearly billing
+ * Renders toggle switch with labels and savings indicator for yearly plans
+ * Manages billing cycle state through parent component callbacks
+ * Provides visual feedback for current selection and savings
+ * @param billingCycle - Current billing cycle selection
+ * @param onToggle - Function called when toggle is clicked
+ * @returns JSX element representing the billing toggle interface
+ */
 export function BillingToggle({ billingCycle, onToggle }: BillingToggleProps) {
   return (
     <div className="flex items-center justify-center space-x-4 mb-8">

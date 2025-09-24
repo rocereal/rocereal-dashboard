@@ -1,3 +1,15 @@
+/**
+ * Pricing Card Component
+ * Individual pricing plan card displaying plan details, pricing, and features
+ * Shows plan name, description, price based on billing cycle, and feature list
+ * Includes popular plan badge, savings calculation, and limitations display
+ * Used in pricing pages to showcase different subscription tiers
+ * @param plan - Pricing plan object containing all plan details and features
+ * @param billingCycle - Current billing cycle (monthly or yearly) for pricing display
+ * @param onSelectPlan - Callback function called when plan is selected
+ * @returns JSX element representing the pricing plan card
+ */
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +22,16 @@ interface PricingCardProps {
   onSelectPlan: (planId: string) => void;
 }
 
+/**
+ * PricingCard component for displaying individual pricing plan information
+ * Renders comprehensive plan card with pricing, features, and selection button
+ * Calculates and displays savings for yearly billing and handles popular plan highlighting
+ * Manages plan selection through parent component callbacks
+ * @param plan - The pricing plan data to display
+ * @param billingCycle - Current billing cycle for price calculation
+ * @param onSelectPlan - Function called when plan selection button is clicked
+ * @returns JSX element representing the pricing plan card
+ */
 export function PricingCard({
   plan,
   billingCycle,

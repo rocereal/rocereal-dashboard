@@ -1,3 +1,15 @@
+/**
+ * Subscribe Form Component
+ * Email subscription form for coming soon pages to collect user email addresses
+ * Provides email input field with validation and submit button
+ * Handles form submission with loading states and error handling
+ * Used to build email lists for product launch notifications
+ * @param onSubmit - Optional callback function called with email on form submission
+ * @param placeholder - Placeholder text for email input field
+ * @param buttonText - Text for submit button
+ * @returns JSX element representing the email subscription form
+ */
+
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -12,6 +24,15 @@ interface SubscribeProps {
   buttonText?: string;
 }
 
+/**
+ * Subscribe component for email collection on coming soon pages
+ * Renders email input form with validation and submit functionality
+ * Manages loading state during submission and provides user feedback
+ * @param onSubmit - Optional callback function executed on successful submission
+ * @param placeholder - Placeholder text for the email input field
+ * @param buttonText - Text displayed on the submit button
+ * @returns JSX element representing the subscription form
+ */
 const Subscribe = ({
   onSubmit,
   placeholder = "Enter your email",

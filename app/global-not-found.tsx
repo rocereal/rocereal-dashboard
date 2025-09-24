@@ -22,6 +22,14 @@ export const metadata: Metadata = metadataTemplates.dashboard(
   "Page Not Found",
   "The page you’re looking for isn’t here. Return to Fisio’s homepage to keep exploring."
 );
+
+/**
+ * Root Layout for 404 Not Found Page
+ * This layout wraps the 404 page content with the standard site structure
+ * Fetches global site data and renders the not found page with recent articles
+ * @param children - The page content (not used in this layout)
+ * @returns The complete HTML document structure for the 404 page
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

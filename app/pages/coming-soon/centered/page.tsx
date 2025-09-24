@@ -1,3 +1,11 @@
+/**
+ * Centered Coming Soon Page Component
+ * Coming soon page with centered layout displaying countdown timer and subscription form
+ * Combines countdown timer, social proof, and email subscription components
+ * Uses centered layout with backdrop blur effects for visual appeal
+ * Builds anticipation for product launch with engaging UI elements
+ */
+
 import {
   Card,
   CardContent,
@@ -9,7 +17,13 @@ import CountdownTimer from "../(components)/CountdownTimer";
 import Subscribe from "../(components)/Form";
 import SocialProof from "../(components)/SocialProof";
 
-export default function LoginPage() {
+/**
+ * ComingSoonPage component for displaying launch countdown and subscription
+ * Renders countdown timer, social proof indicators, and email subscription form
+ * Provides engaging user experience to build anticipation for product launch
+ * @returns JSX element representing the centered coming soon page
+ */
+export default function ComingSoonPage() {
   return (
     <div className="space-y-8 max-w-md w-full">
       {/* Form */}

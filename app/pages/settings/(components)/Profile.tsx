@@ -1,3 +1,12 @@
+/**
+ * Profile Settings Component
+ * User profile management interface for personal information and account details
+ * Provides form fields for updating name, email, bio, and profile avatar
+ * Allows users to modify their personal information and profile settings
+ * Part of the settings section for user account management
+ * @returns JSX element representing the profile settings interface
+ */
+
 "use client";
 
 import {
@@ -12,6 +21,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+/**
+ * Profile component for managing user profile information
+ * Renders form fields for personal details, avatar upload, and bio
+ * Provides interface for updating user account information
+ * @returns JSX element representing the profile settings form
+ */
 export function Profile() {
   return (
     <div className="space-y-6">

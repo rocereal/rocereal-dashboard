@@ -1,3 +1,12 @@
+/**
+ * Security Settings Component
+ * User account security management interface for password changes and security features
+ * Provides form fields for password updates, two-factor authentication toggle, and session management
+ * Allows users to enhance account security and manage active login sessions
+ * Part of the settings section for user account security and protection
+ * @returns JSX element representing the security settings interface
+ */
+
 "use client";
 
 import {
@@ -12,6 +21,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
+/**
+ * Security component for managing user account security settings
+ * Renders password change form, 2FA toggle, and session management
+ * Provides interface for enhancing account security
+ * @returns JSX element representing the security settings form
+ */
 export function Security() {
   return (
     <div className="space-y-6">

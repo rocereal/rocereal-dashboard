@@ -1,3 +1,11 @@
+/**
+ * Split Right Step Four Onboarding Page Component
+ * Final step of the split-screen onboarding flow with content on right side and image on left
+ * Displays completion/setup step with final form for user completion and dashboard navigation
+ * Includes progress indicator and navigation to dashboard or back to previous steps
+ * Part of the multi-step onboarding process for new users with enhanced visual design
+ */
+
 "use client";
 
 import backgroundEight from "@/app/assets/images/background_eight.jpg";
@@ -7,6 +15,12 @@ import { Logo } from "@/components/shared/Logo";
 import { onboardingSteps } from "@/data/onboarding";
 import { useState } from "react";
 
+/**
+ * StepFourPage component for the final step of split-right onboarding
+ * Renders split-screen layout with completion form on right and background image on left
+ * Manages loading state during final submission and navigation to dashboard
+ * @returns JSX element representing the final onboarding step with visual design
+ */
 export default function StepFourPage() {
   const [isLoading, setIsLoading] = useState(false);
 

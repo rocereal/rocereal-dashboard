@@ -1,3 +1,11 @@
+/**
+ * Invoice Dashboard Render Page Component
+ * Main render component for the invoice management dashboard
+ * Displays invoice statistics, metrics cards, and comprehensive invoice table
+ * Provides functionality for viewing, printing, and deleting invoices
+ * Includes navigation to create new invoices and export reports
+ */
+
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
@@ -14,6 +22,13 @@ import { useState } from "react";
 import { InvoicesTable } from "./InvoicesTable";
 import { SectionCards } from "./SectionCards";
 
+/**
+ * RenderPage component for invoice management dashboard
+ * Displays comprehensive invoice overview with metrics and table
+ * Manages invoice operations including view, print, and delete
+ * Provides navigation and export functionality
+ * @returns JSX element representing the invoice dashboard
+ */
 export default function RenderPage() {
   const [invoices, setInvoices] = useState(invoicesData);
 

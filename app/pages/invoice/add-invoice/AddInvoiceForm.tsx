@@ -1,3 +1,11 @@
+/**
+ * Add Invoice Form Component
+ * Comprehensive form for creating new invoices with all necessary sections
+ * Includes company info, client info, project details, invoice items, and payment information
+ * Handles form state management, calculations, and submission
+ * Provides complete invoice creation workflow with validation and data processing
+ */
+
 "use client";
 
 import { DashboardHeader } from "@/components/custom/headers/dashboard-header";
@@ -23,6 +31,13 @@ interface InvoiceItem {
   amount: number;
 }
 
+/**
+ * AddInvoiceForm component for comprehensive invoice creation
+ * Manages complete invoice form state including all sections and calculations
+ * Handles item management, tax calculations, and form submission
+ * Provides structured workflow for creating professional invoices
+ * @returns JSX element representing the complete invoice creation form
+ */
 export default function AddInvoiceForm() {
   const router = useRouter();
 

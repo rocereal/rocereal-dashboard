@@ -1,3 +1,13 @@
+/**
+ * Pricing Inventory Form Component
+ * Form section for collecting pricing and inventory information in invoice creation
+ * Provides input fields for price, stock quantity, and product status
+ * Used in invoice creation workflow for product pricing and availability
+ * @param formData - Object containing form field values (price, stock, status)
+ * @param onChange - Callback function called when form fields change
+ * @returns JSX element representing the pricing and inventory form section
+ */
+
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -19,6 +29,14 @@ interface PricingInventoryFormProps {
   onChange: (field: string, value: string) => void;
 }
 
+/**
+ * PricingInventoryForm component for collecting product pricing and inventory
+ * Renders form fields for price, stock quantity, and product status selection
+ * Manages form state through parent component callbacks
+ * @param formData - Current form data values for the fields
+ * @param onChange - Function called when any field value changes
+ * @returns JSX element representing the pricing and inventory form
+ */
 export function PricingInventoryForm({
   formData,
   onChange,

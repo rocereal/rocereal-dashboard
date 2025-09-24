@@ -1,3 +1,19 @@
+/**
+ * Minimal Authentication Layout Component
+ * Root layout for minimal authentication pages providing clean, simple styling
+ * Wraps authentication pages with subtle background pattern and centered content
+ * Provides minimal layout for login, register, and password recovery pages
+ * @param children - The authentication page content to be rendered within the layout
+ * @returns The complete layout structure for minimal authentication pages
+ */
+
+/**
+ * MinimalLayout component for authentication pages
+ * Provides a clean, minimal layout with subtle background pattern
+ * Centers content in a constrained width container for focused user experience
+ * @param children - The page content to be rendered within the layout
+ * @returns JSX element representing the minimal authentication layout
+ */
 export default function MinimalLayout({
   children,
 }: {

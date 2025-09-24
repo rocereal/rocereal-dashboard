@@ -1,3 +1,12 @@
+/**
+ * Pricing Page Component
+ * Main pricing page displaying subscription plans, features, and FAQ section
+ * Provides comprehensive pricing information with interactive billing toggle
+ * Includes hero section, pricing cards grid, features showcase, and FAQ accordion
+ * Handles plan selection and navigation for subscription signup flow
+ * Part of the pricing section for business subscription management
+ */
+
 "use client";
 
 import { useState } from "react";
@@ -14,6 +23,13 @@ import {
   PricingFeatures,
 } from "../components";
 
+/**
+ * PricingPage component for displaying comprehensive pricing information
+ * Renders hero section, pricing cards, features, FAQ, and CTA sections
+ * Manages billing cycle state and handles plan selection navigation
+ * Provides complete pricing experience with all necessary components
+ * @returns JSX element representing the full pricing page
+ */
 export default function PricingPage() {
   const router = useRouter();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(

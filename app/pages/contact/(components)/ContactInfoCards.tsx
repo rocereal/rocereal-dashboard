@@ -1,3 +1,11 @@
+/**
+ * Contact Info Cards Component
+ * Display cards showing contact information including address, phone, email, and business hours
+ * Provides visual contact details with icons and responsive grid layout
+ * Used in contact pages to display company contact information
+ * @returns JSX element representing the contact information cards
+ */
+
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
@@ -25,6 +33,12 @@ const contactInfo = [
   },
 ];
 
+/**
+ * ContactInfoCards component for displaying company contact details
+ * Renders grid of cards with contact information and icons
+ * Provides responsive layout with hover effects for better UX
+ * @returns JSX element representing the contact information display
+ */
 export default function ContactInfoCards() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

@@ -1,3 +1,19 @@
+/**
+ * Invoice Items Section Component
+ * Dynamic form section for managing invoice line items in invoice creation
+ * Provides functionality to add, edit, and remove invoice items with automatic calculations
+ * Displays item details, quantities, prices, tax, and amounts with running totals
+ * Used in invoice creation workflow for itemized billing
+ * @param items - Array of invoice item objects with description, units, price, tax, and amount
+ * @param subtotal - Calculated subtotal of all items before tax
+ * @param tax - Calculated total tax amount for all items
+ * @param total - Calculated grand total including tax
+ * @param onAddItem - Callback function to add a new item to the invoice
+ * @param onUpdateItem - Callback function to update an existing item field
+ * @param onRemoveItem - Callback function to remove an item from the invoice
+ * @returns JSX element representing the invoice items management section
+ */
+
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -25,6 +41,20 @@ interface InvoiceItemsSectionProps {
   onRemoveItem: (index: number) => void;
 }
 
+/**
+ * InvoiceItemsSection component for managing invoice line items
+ * Renders dynamic form for adding/editing invoice items with automatic calculations
+ * Displays itemized billing with descriptions, quantities, pricing, and totals
+ * Provides add/remove functionality for comprehensive invoice item management
+ * @param items - Array of current invoice items
+ * @param subtotal - Current subtotal value
+ * @param tax - Current tax total value
+ * @param total - Current grand total value
+ * @param onAddItem - Function called to add new item
+ * @param onUpdateItem - Function called to update item field
+ * @param onRemoveItem - Function called to remove item
+ * @returns JSX element representing the invoice items section
+ */
 export function InvoiceItemsSection({
   items,
   subtotal,

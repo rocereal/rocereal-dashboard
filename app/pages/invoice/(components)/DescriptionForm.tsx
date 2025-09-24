@@ -1,3 +1,13 @@
+/**
+ * Description Form Component
+ * Form section for collecting product description in invoice creation
+ * Provides textarea input for detailed product information
+ * Used in invoice creation workflow for product description entry
+ * @param description - Current description text value
+ * @param onChange - Callback function called when description changes
+ * @returns JSX element representing the description form section
+ */
+
 "use client";
 
 import { Label } from "@/components/ui/label";
@@ -8,6 +18,14 @@ interface DescriptionFormProps {
   onChange: (value: string) => void;
 }
 
+/**
+ * DescriptionForm component for collecting product description
+ * Renders textarea field for detailed product information entry
+ * Includes helper text to guide users on description content
+ * @param description - Current description text value
+ * @param onChange - Function called when description text changes
+ * @returns JSX element representing the description form
+ */
 export function DescriptionForm({
   description,
   onChange,
