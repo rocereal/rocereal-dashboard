@@ -9,7 +9,7 @@
 
 import { AppHeader } from "@/components/shared/app-header";
 import { AppSidebar } from "@/components/shared/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { ConfigurableLayout } from "@/components/shared/configurable-layout";
 
 /**
  * ComingSoonLayout component for coming soon pages
@@ -18,18 +18,10 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
  * @param children - The page content to be rendered within the layout
  * @returns JSX element representing the coming soon layout
  */
-export default function ComingSoonLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <AppHeader />
-        <div className="flex flex-1 flex-col gap-4">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+    <ConfigurableLayout header={<AppHeader />} sidebar={<AppSidebar />}>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-8">{children}</div>
+    </ConfigurableLayout>
   );
 }

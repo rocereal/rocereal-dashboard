@@ -124,7 +124,7 @@
 
 /* Prevent theme flash during route transitions */
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 .dark {

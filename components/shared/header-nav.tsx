@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { ChevronDown, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type MenuItem = {
   title: string;
@@ -136,8 +136,19 @@ function NavItem({ item, depth = 0 }: { item: MenuItem; depth?: number }) {
 }
 
 export function HeaderNav({ items }: HeaderNavProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <div className="flex items-center space-x-1">
+    <div
+      className={cn(
+        "flex items-center space-x-1 transition-opacity duration-200",
+        mounted ? "opacity-100" : "opacity-0"
+      )}
+    >
       {items.map((item, index) => {
         // Skip section headers for header navigation
         if (item.isSection) {

@@ -29,6 +29,15 @@ export function ConfigurableLayout({
     setIsHydrated(true);
   }, []);
 
+  // Use the data attribute set by the script as the initial state
+  const [initialLayout, setInitialLayout] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setInitialLayout(document.documentElement.getAttribute("data-layout"));
+    }
+  }, []);
+
   const maxWidthClasses = {
     sm: "max-w-sm",
     md: "max-w-md",
@@ -46,9 +55,19 @@ export function ConfigurableLayout({
 
   const isHeaderNav = config.layoutType === "header-nav";
 
-  // On mobile, always show sidebar. On desktop, hide sidebar only in header-nav mode
-  // During hydration, be conservative and don't show sidebar to avoid flash
-  const shouldShowSidebar = isHydrated ? isMobile || !isHeaderNav : false;
+  // Use initial layout from script during hydration, then use actual config
+  const effectiveLayoutType = !isHydrated
+    ? initialLayout || "sidebar"
+    : config.layoutType;
+  const effectiveIsHeaderNav = effectiveLayoutType === "header-nav";
+
+  // Always show sidebar until we're certain, unless we know it should be header-nav
+  const shouldShowSidebar = isMobile || !effectiveIsHeaderNav;
+
+  // Don't render anything until we have the initial layout info
+  if (!isHydrated && initialLayout === null) {
+    return null; // or a simple loading state
+  }
 
   if (shouldShowSidebar && sidebar) {
     // When sidebar is shown, use SidebarProvider structure
