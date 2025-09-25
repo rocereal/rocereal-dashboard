@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/button";
 export function HeroSection() {
   return (
     <div className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center">
-      <Navbar />
-
       <div className="absolute inset-x-0 bottom-0 h-px w-full bg-neutral-200/80 dark:bg-neutral-800/80">
         <div className="absolute mx-auto h-px w-40 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
       </div>
@@ -49,20 +47,3 @@ export function HeroSection() {
     </div>
   );
 }
-
-const Navbar = () => {
-  return (
-    <nav className="sticky top-0 z-50 flex w-full items-center justify-between  bg-background/80 px-4 py-4 backdrop-blur-md ">
-      <div className="w-16 h-16 flex">
-        <Logo />
-      </div>
-      {/* Right Section */}
-      <div className="ml-auto flex items-center gap-2">
-        <ThemeToggle />
-        <Button className="w-fit transform rounded-lg px-6 py-2 font-medium  transition-all duration-300 hover:-translate-y-0.5 ">
-          Get Started
-        </Button>
-      </div>
-    </nav>
-  );
-};

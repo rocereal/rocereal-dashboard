@@ -23,6 +23,8 @@ import { HeroSection } from "./Hero";
 import PagesViews from "./PageTabs";
 import TechStack from "./TechStack";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { Navbar } from "./ResizableNavbar";
+import { NavbarLanding } from "./Navbar";
 
 /**
  * Fisio Dashboard Landing Page Component
@@ -85,7 +87,8 @@ export default function RenderPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-20">
+      <NavbarLanding />
       {/* Hero Section */}
       <HeroSection />
 
