@@ -25,12 +25,6 @@ const featuresData = [
     color: "purple",
   },
   {
-    title: "SEO Friendly",
-    description: "Blazing fast performance and optimized SEO",
-    icon: Zap,
-    color: "green",
-  },
-  {
     title: "Light/Dark Mode",
     description: "Fisio – Modern Next.js Template with Light/Dark theme mode",
     icon: Shield,

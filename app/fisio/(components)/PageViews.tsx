@@ -13,7 +13,7 @@ const pageViews = [
     description: "Clean and centered authentication pages with modern design",
     icon: BarChart3,
     features: ["Secure Login", "Password Recovery", "User Registration"],
-    lightpreview: "/images/Light Centered Authentication.png",
+    lightpreview: "/images/Dark Centered Authentication.png",
     darkpreview: "/images/Dark Centered Authentication.png",
     link: "/pages/authentication/centered/login",
   },
