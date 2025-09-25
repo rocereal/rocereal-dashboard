@@ -92,11 +92,11 @@ export const menudata = {
       url: "#",
       icon: ShoppingCart,
       items: [
-        { title: "Add Product", url: "/apps/ecommerce/add-product" },
-        { title: "Order Details", url: "/apps/ecommerce/orders/ord-001" },
-        { title: "Orders", url: "/apps/ecommerce/orders" },
         { title: "Product Details", url: "/apps/ecommerce/products/prod-001" },
         { title: "Products", url: "/apps/ecommerce/products" },
+        { title: "Add Product", url: "/apps/ecommerce/add-product" },
+        { title: "Orders", url: "/apps/ecommerce/orders" },
+        { title: "Order Details", url: "/apps/ecommerce/orders/ord-001" },
       ],
     },
     {
@@ -104,9 +104,9 @@ export const menudata = {
       url: "#",
       icon: FolderKanban,
       items: [
-        { title: "Add File", url: "/apps/files/add-file" },
-        { title: "File Details", url: "/apps/files/1" },
         { title: "File Manager", url: "/apps/files" },
+        { title: "File Details", url: "/apps/files/1" },
+        { title: "Add File", url: "/apps/files/add-file" },
       ],
     },
     {
@@ -114,9 +114,9 @@ export const menudata = {
       url: "#",
       icon: Receipt,
       items: [
-        { title: "Add Invoice", url: "/apps/invoice/add-invoice" },
         { title: "Invoices", url: "/apps/invoice" },
         { title: "View Invoice", url: "/apps/invoice/INV-2025-001" },
+        { title: "Add Invoice", url: "/apps/invoice/add-invoice" },
       ],
     },
     {
@@ -124,8 +124,8 @@ export const menudata = {
       url: "#",
       icon: Notebook,
       items: [
-        { title: "Course Details", url: "/apps/lms/web-development-basics" },
         { title: "Courses", url: "/apps/lms" },
+        { title: "Course Details", url: "/apps/lms/web-development-basics" },
       ],
     },
     {
@@ -138,13 +138,13 @@ export const menudata = {
       url: "#",
       icon: BookOpen,
       items: [
-        { title: "Add Property", url: "/apps/real-estate/add-property" },
+        { title: "Properties", url: "/apps/real-estate" },
+        { title: "Property Details", url: "/apps/real-estate/prop-001" },
         {
           title: "Edit Property",
           url: "/apps/real-estate/edit-estate/prop-001",
         },
-        { title: "Properties", url: "/apps/real-estate" },
-        { title: "Property Details", url: "/apps/real-estate/prop-001" },
+        { title: "Add Property", url: "/apps/real-estate/add-property" },
       ],
     },
     {
@@ -152,9 +152,9 @@ export const menudata = {
       url: "#",
       icon: FileText,
       items: [
-        { title: "Create Task", url: "/apps/tasks/create" },
         { title: "Task Details", url: "/apps/tasks/1" },
         { title: "Task List", url: "/apps/tasks" },
+        { title: "Create Task", url: "/apps/tasks/create" },
       ],
     },
     {
@@ -162,9 +162,9 @@ export const menudata = {
       url: "#",
       icon: UserPlus,
       items: [
-        { title: "Add User", url: "/apps/users/add-user" },
         { title: "User Details", url: "/apps/users/user_001" },
         { title: "Users", url: "/apps/users" },
+        { title: "Add User", url: "/apps/users/add-user" },
       ],
     },
 
@@ -180,36 +180,35 @@ export const menudata = {
       url: "#",
       icon: Lock,
       items: [
-        {
-          title: "Centered Forgot Password",
-          url: "/pages/authentication/centered/forgot-password",
-        },
         { title: "Centered Login", url: "/authentication/centered/login" },
+
         {
           title: "Centered Register",
           url: "/pages/authentication/centered/register",
         },
         {
+          title: "Centered Forgot Password",
+          url: "/pages/authentication/centered/forgot-password",
+        },
+        {
           title: "Centered Reset Password",
           url: "/pages/authentication/centered/reset-password",
         },
-        {
-          title: "Minimal Forgot Password",
-          url: "/pages/authentication/minimal/forgot-password",
-        },
+
         { title: "Minimal Login", url: "/pages/authentication/minimal/login" },
         {
           title: "Minimal Register",
           url: "/pages/authentication/minimal/register",
         },
         {
+          title: "Minimal Forgot Password",
+          url: "/pages/authentication/minimal/forgot-password",
+        },
+        {
           title: "Minimal Reset Password",
           url: "/pages/authentication/minimal/reset-password",
         },
-        {
-          title: "Split-Left Forgot Password",
-          url: "/pages/authentication/split-left/forgot-password",
-        },
+
         {
           title: "Split-Left Login",
           url: "/pages/authentication/split-left/login",
@@ -219,13 +218,14 @@ export const menudata = {
           url: "/pages/authentication/split-left/register",
         },
         {
+          title: "Split-Left Forgot Password",
+          url: "/pages/authentication/split-left/forgot-password",
+        },
+        {
           title: "Split-Left Reset Password",
           url: "/pages/authentication/split-left/reset-password",
         },
-        {
-          title: "Split-Right Forgot Password",
-          url: "/pages/authentication/split-right/forgot-password",
-        },
+
         {
           title: "Split-Right Login",
           url: "/pages/authentication/split-right/login",
@@ -234,6 +234,11 @@ export const menudata = {
           title: "Split-Right Register",
           url: "/pages/authentication/split-right/register",
         },
+        {
+          title: "Split-Right Forgot Password",
+          url: "/pages/authentication/split-right/forgot-password",
+        },
+
         {
           title: "Split-Right Reset Password",
           url: "/pages/authentication/split-right/reset-password",
