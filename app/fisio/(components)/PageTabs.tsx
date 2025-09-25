@@ -39,19 +39,19 @@ export default function PageTabs() {
         className="!w-full border bg-card rounded-lg p-8"
         grid="!grid !grid-cols-4"
       >
-        <TabsContent value="dashboards" className="!pt-8">
+        <TabsContent value="dashboards" className="!pt-8 cursor-pointer">
           <DashboardViews />
         </TabsContent>
 
-        <TabsContent value="apps" className="!pt-8">
+        <TabsContent value="apps" className="!pt-8 cursor-pointer">
           <AppViews />
         </TabsContent>
 
-        <TabsContent value="pages" className="!pt-8">
+        <TabsContent value="pages" className="!pt-8 cursor-pointer">
           <PageViews />
         </TabsContent>
 
-        <TabsContent value="settings" className="!pt-8">
+        <TabsContent value="settings" className="!pt-8 cursor-pointer">
           <SettingsViews />
         </TabsContent>
       </TabsWithIcons>

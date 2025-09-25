@@ -10,54 +10,60 @@ import Link from "next/link";
 const dashboardViews = [
   {
     title: "AI Dashboard",
-    description: "Comprehensive analytics with real-time metrics and insights",
+    description:
+      "Advanced AI analytics with machine learning insights and predictive modeling",
     icon: BarChart3,
-    features: ["Real-time data", "Custom reports", "Data visualization"],
+    features: ["Predictive Analytics", "ML Model Monitoring", "AI Insights"],
     lightpreview: "/images/Light Artificial Intelligence Dashboard.png",
     darkpreview: "/images/Dark Artificial Intelligence Dashboard.png",
     link: "/ai",
   },
   {
     title: "CRM Dashboard",
-    description: "Customer relationship management with lead tracking",
+    description:
+      "Customer relationship management with lead tracking and sales automation",
     icon: Users,
-    features: ["Lead management", "Customer insights", "Sales pipeline"],
+    features: ["Lead Management", "Customer Insights", "Sales Pipeline"],
     lightpreview: "/images/Light Customer Relationship Dashboard.png",
     darkpreview: "/images/Dark Customer Relationship Dashboard.png",
     link: "/crm",
   },
   {
     title: "Crypto Dashboard",
-    description: "Financial overview with budgeting and expense tracking",
+    description:
+      "Cryptocurrency portfolio tracking with real-time market data and analytics",
     icon: TrendingUp,
-    features: ["Budget tracking", "Expense reports", "Financial goals"],
+    features: ["Portfolio Tracking", "Market Analysis", "Price Alerts"],
     lightpreview: "/images/Light Crypto Performance Dashboard.png",
     darkpreview: "/images/Dark Crypto Performance Dashboard.png",
     link: "/crypto",
   },
   {
     title: "E-commerce Dashboard",
-    description: "Financial overview with budgeting and expense tracking",
+    description:
+      "Online store management with sales tracking and inventory control",
     icon: TrendingUp,
-    features: ["Budget tracking", "Expense reports", "Financial goals"],
+    features: ["Sales Analytics", "Inventory Management", "Order Processing"],
     lightpreview: "/images/Light E-commerce Performance Dashboard.png",
     darkpreview: "/images/Dark E-commerce Performance Dashboard.png",
     link: "/ecommerce",
   },
   {
     title: "Education Dashboard",
-    description: "Financial overview with budgeting and expense tracking",
+    description:
+      "Learning management system with course tracking and student progress",
     icon: TrendingUp,
-    features: ["Budget tracking", "Expense reports", "Financial goals"],
+    features: ["Course Management", "Student Progress", "Assessment Tools"],
     lightpreview: "/images/Light Learning Performance Dashboard.png",
     darkpreview: "/images/Dark Learning Performance Dashboard.png",
     link: "/education",
   },
   {
     title: "Finance Dashboard",
-    description: "Financial overview with budgeting and expense tracking",
+    description:
+      "Financial overview with budgeting, expense tracking, and investment monitoring",
     icon: TrendingUp,
-    features: ["Budget tracking", "Expense reports", "Financial goals"],
+    features: ["Budget Tracking", "Expense Reports", "Investment Analytics"],
     lightpreview: "/images/Light Financial Performance Dashboard.png",
     darkpreview: "/images/Dark Financial Performance Dashboard.png",
     link: "/finance",
@@ -91,7 +97,7 @@ export default function DashboardViews() {
               />
             </div>
 
-            <CardContent className="flex flex-col justify-between align-center items-center py-6">
+            <CardContent className="flex flex-col justify-between py-6">
               <div className="flex flex-row justify-between align-center items-center py-6 w-full">
                 <h1 className="text-primary font-medium">{view.title}</h1>
                 <Link

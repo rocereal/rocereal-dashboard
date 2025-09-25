@@ -73,7 +73,7 @@ export const Maintenance: React.FC<SvgProps> = ({ className }) => (
     xmlns="http://www.w3.org/2000/svg"
     className={className}
   >
-    <g clip-path="url(#clip0_52_13275)">
+    <g clipPath="url(#clip0_52_13275)">
       <path
         d="M301.033 272.942C300.773 271.933 300.278 271 299.589 270.219C298.9 269.438 298.035 268.831 297.067 268.447C296.074 268.119 294.994 268.182 294.048 268.625C293.101 269.068 292.36 269.857 291.976 270.829C290.156 269.312 287.38 270.515 285.92 272.38C283.56 275.391 285.392 280.324 285.785 280.639C286.275 280.871 286.818 280.967 287.358 280.92L305 280.83C306.602 280.726 308.189 280.448 309.73 279.999C312.742 278.796 314.787 273.616 312.854 271.009C311.528 269.234 308.933 268.863 306.831 269.526C304.687 270.275 302.715 271.448 301.033 272.976"
         fill="#6CDD6C"
@@ -1468,5 +1468,44 @@ export const Fourfour: React.FC<SvgProps> = ({ className }) => (
       strokeLinecap="round"
       strokeLinejoin="round"
     />
+  </svg>
+);
+
+export const Background: React.FC<SvgProps> = ({ className }) => (
+  <svg
+    width="1920"
+    height="1080"
+    viewBox="0 0 1920 1080"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <g clipPath="url(#clip0_63_13065)">
+      <rect
+        x="462"
+        y="346"
+        width="996"
+        height="996"
+        rx="498"
+        stroke="#D1D5DB"
+        strokeWidth="4"
+        strokeDasharray="12 12"
+      />
+      <rect
+        x="189"
+        y="73"
+        width="1542"
+        height="1542"
+        rx="771"
+        stroke="#D1D5DB"
+        strokeWidth="4"
+        strokeDasharray="18.55 18.55"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_63_13065">
+        <rect width="1920" height="1080" fill="white" />
+      </clipPath>
+    </defs>
   </svg>
 );

@@ -19,7 +19,7 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
-import { HeroSection } from "./Hero";
+import { CircularFloatingText, HeroSection } from "./Hero";
 import PagesViews from "./PageTabs";
 import TechStack from "./TechStack";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
@@ -87,7 +87,25 @@ export default function RenderPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background pt-20">
+    <div className="min-h-screen pt-20">
+      {/* 👇 CIRCULAR FLOATING TEXT LAYOUT BELOW IMAGE */}
+      <div className="mt-12 hidden sm:flex absolute top-12 left-0 w-full h-[100vh] z-20 justify-center items-center">
+        <CircularFloatingText
+          items={[
+            "📊 Analytics",
+            "💬 128 Comments",
+            "↑ 245",
+            "✅ Completed",
+            "⭐ Favorites",
+            "👥 1.2k Users",
+            "⚡ Fast Reports",
+            "💼 Projects",
+            "🔔 Alerts",
+            "📈 Growth",
+          ]}
+        />
+      </div>
+
       <NavbarLanding />
       {/* Hero Section */}
       <HeroSection />
@@ -96,94 +114,6 @@ export default function RenderPage() {
       <TechStack />
 
       <PagesViews />
-      {/* Features Section */}
-      <section className="py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Powerful Features for
-              <span className="text-primary"> Modern Workflows</span>
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to manage your business efficiently, from
-              analytics to team collaboration.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card
-                key={index}
-                className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-md"
-                onMouseEnter={() => setIsHovered(`feature-${index}`)}
-                onMouseLeave={() => setIsHovered(null)}
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <ImageComponentOptimized
-                    src={feature.image}
-                    alt={feature.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  <div className="absolute top-4 left-4">
-                    <feature.icon className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
-                  <CardDescription className="text-base">
-                    {feature.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button
-                    className={`w-full transition-all duration-300 ${
-                      isHovered === `feature-${index}`
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                    }`}
-                  >
-                    {feature.cta}
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-      {/* CTA Section */}
-      <section className="py-24 px-4 bg-primary text-primary-foreground">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            Ready to Transform Your Workflow?
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join thousands of businesses already using Fisio to streamline their
-            operations and boost productivity.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="text-lg px-8 py-6"
-              onClick={() => (window.location.href = "/dashboard")}
-            >
-              Get Started Today
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-6 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10"
-              onClick={() => (window.location.href = "/contact")}
-            >
-              <FileText className="mr-2 w-5 h-5" />
-              Contact Sales
-            </Button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

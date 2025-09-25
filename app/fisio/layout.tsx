@@ -21,18 +21,10 @@ export default function FisioLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 opacity-30 min-h-screen">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,1) 1px, transparent 0)`,
-            backgroundSize: "20px 20px",
-          }}
-        />
-      </div>
+      {/* Background Pattern */}
+      <div className="fixed inset-0 opacity-75 h-[100vh] bg-gradient-to-b from-violet-50 from-0% via-amber-50 via-50% to-fuchsia-50 to-100% dark:bg-gradient-to-b dark:from-stone-900 dark:from-0% dark:via-neutral-900 dark:via-50% dark:to-gray-900 dark:to-100% pointer-events-none"></div>
       {/* Content - Full width for landing page */}
-      <div className="relative">{children}</div>
+      <div className="relative z-10">{children}</div>
     </div>
   );
 }

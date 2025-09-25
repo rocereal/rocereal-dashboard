@@ -41,7 +41,7 @@ export function TabsWithIcons({
         className={cn(className, "w-full")}
       >
         <TabsPrimitive.List
-          className={cn(grid, "border-b border-border w-full")}
+          className={cn(grid, "border-b border-border w-full cursor-pointer")}
         >
           <div className="flex space-x-8">
             {tabs.map((tab) => {
@@ -51,7 +51,7 @@ export function TabsWithIcons({
                   key={tab.id}
                   value={tab.id}
                   className={cn(
-                    "flex items-center space-x-2 border-b-2 border-transparent pb-3 pt-2 font-medium text-base text-muted-background hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary transition-all duration-300 ease-in-out"
+                    "flex items-center cursor-pointer space-x-2 border-b-2 border-transparent pb-3 pt-2 font-medium text-base text-muted-background hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary transition-all duration-300 ease-in-out"
                   )}
                 >
                   {IconComponent && <IconComponent className="h-4 w-4" />}
