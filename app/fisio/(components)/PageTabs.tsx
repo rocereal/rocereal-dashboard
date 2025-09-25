@@ -36,22 +36,22 @@ export default function PageTabs() {
       <TabsWithIcons
         tabs={tabs}
         variant="underline"
-        className="!w-full border bg-card rounded-lg p-6"
+        className="!w-full border bg-card rounded-lg p-8"
         grid="!grid !grid-cols-4"
       >
-        <TabsContent value="dashboards" className="space-y-6 pt-4">
+        <TabsContent value="dashboards" className="!pt-8">
           <DashboardViews />
         </TabsContent>
 
-        <TabsContent value="apps" className="space-y-6 pt-4">
+        <TabsContent value="dashboards" className="!pt-8">
           <AppViews />
         </TabsContent>
 
-        <TabsContent value="pages" className="space-y-6 pt-4">
+        <TabsContent value="dashboards" className="!pt-8">
           <PageViews />
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-6 pt-4">
+        <TabsContent value="dashboards" className="!pt-8">
           <SettingsViews />
         </TabsContent>
       </TabsWithIcons>

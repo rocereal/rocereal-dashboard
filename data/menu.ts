@@ -92,8 +92,8 @@ export const menudata = {
       url: "#",
       icon: ShoppingCart,
       items: [
-        { title: "Product Details", url: "/apps/ecommerce/products/prod-001" },
         { title: "Products", url: "/apps/ecommerce/products" },
+        { title: "Product Details", url: "/apps/ecommerce/products/prod-001" },
         { title: "Add Product", url: "/apps/ecommerce/add-product" },
         { title: "Orders", url: "/apps/ecommerce/orders" },
         { title: "Order Details", url: "/apps/ecommerce/orders/ord-001" },
