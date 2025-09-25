@@ -98,7 +98,7 @@ export default function DashboardViews() {
             </div>
 
             <CardContent className="flex flex-col justify-between py-6">
-              <div className="flex flex-row justify-between align-center items-center py-6 w-full">
+              <div className="flex flex-wrap gap-2 justify-between align-center items-center py-6 w-full">
                 <h1 className="text-primary font-medium">{view.title}</h1>
                 <Link
                   shallow={true}

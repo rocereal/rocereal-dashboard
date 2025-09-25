@@ -103,8 +103,10 @@ export function FAQ({
                   value={faq.id}
                   className="border-b cursor-pointer"
                 >
-                  <AccordionTrigger className="text-left hover:no-underline py-6 cursor-pointer">
-                    <span className="font-medium text-lg">{faq.question}</span>
+                  <AccordionTrigger className="text-left hover:no-underline py-2 cursor-pointer">
+                    <span className="font-medium text-base">
+                      {faq.question}
+                    </span>
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground pb-6 leading-relaxed">
                     {faq.answer}
