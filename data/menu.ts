@@ -180,68 +180,24 @@ export const menudata = {
       url: "#",
       icon: Lock,
       items: [
-        { title: "Centered Login", url: "/authentication/centered/login" },
-
         {
-          title: "Centered Register",
-          url: "/pages/authentication/centered/register",
-        },
-        {
-          title: "Centered Forgot Password",
-          url: "/pages/authentication/centered/forgot-password",
-        },
-        {
-          title: "Centered Reset Password",
-          url: "/pages/authentication/centered/reset-password",
-        },
-
-        { title: "Minimal Login", url: "/pages/authentication/minimal/login" },
-        {
-          title: "Minimal Register",
-          url: "/pages/authentication/minimal/register",
-        },
-        {
-          title: "Minimal Forgot Password",
-          url: "/pages/authentication/minimal/forgot-password",
-        },
-        {
-          title: "Minimal Reset Password",
-          url: "/pages/authentication/minimal/reset-password",
+          title: "Centered Authentication",
+          url: "/pages/authentication/centered/login",
         },
 
         {
-          title: "Split-Left Login",
+          title: "Minimal Authentication",
+          url: "/pages/authentication/minimal/login",
+        },
+
+        {
+          title: "Split-Left Authentication",
           url: "/pages/authentication/split-left/login",
         },
-        {
-          title: "Split-Left Register",
-          url: "/pages/authentication/split-left/register",
-        },
-        {
-          title: "Split-Left Forgot Password",
-          url: "/pages/authentication/split-left/forgot-password",
-        },
-        {
-          title: "Split-Left Reset Password",
-          url: "/pages/authentication/split-left/reset-password",
-        },
 
         {
-          title: "Split-Right Login",
+          title: "Split-Right Authentication",
           url: "/pages/authentication/split-right/login",
-        },
-        {
-          title: "Split-Right Register",
-          url: "/pages/authentication/split-right/register",
-        },
-        {
-          title: "Split-Right Forgot Password",
-          url: "/pages/authentication/split-right/forgot-password",
-        },
-
-        {
-          title: "Split-Right Reset Password",
-          url: "/pages/authentication/split-right/reset-password",
         },
       ],
     },
@@ -454,68 +410,23 @@ export const menudataMobile = {
           icon: Lock,
           items: [
             {
-              title: "Centered Login",
+              title: "Centered Authentication",
               url: "/pages/authentication/centered/login",
             },
+
             {
-              title: "Centered Register",
-              url: "/pages/authentication/centered/register",
-            },
-            {
-              title: "Centered Forgot Password",
-              url: "/pages/authentication/centered/forgot-password",
-            },
-            {
-              title: "Centered Reset Password",
-              url: "/pages/authentication/centered/reset-password",
-            },
-            {
-              title: "Minimal Login",
+              title: "Minimal Authentication",
               url: "/pages/authentication/minimal/login",
             },
+
             {
-              title: "Minimal Register",
-              url: "/pages/authentication/minimal/register",
-            },
-            {
-              title: "Minimal Forgot Password",
-              url: "/pages/authentication/minimal/forgot-password",
-            },
-            {
-              title: "Minimal Reset Password",
-              url: "/pages/authentication/minimal/reset-password",
-            },
-            {
-              title: "Split-Left Login",
+              title: "Split-Left Authentication",
               url: "/pages/authentication/split-left/login",
             },
+
             {
-              title: "Split-Left Register",
-              url: "/pages/authentication/split-left/register",
-            },
-            {
-              title: "Split-Left Forgot Password",
-              url: "/pages/authentication/split-left/forgot-password",
-            },
-            {
-              title: "Split-Left Reset Password",
-              url: "/pages/authentication/split-left/reset-password",
-            },
-            {
-              title: "Split-Right Login",
+              title: "Split-Right Authentication",
               url: "/pages/authentication/split-right/login",
-            },
-            {
-              title: "Split-Right Register",
-              url: "/pages/authentication/split-right/register",
-            },
-            {
-              title: "Split-Right Forgot Password",
-              url: "/pages/authentication/split-right/forgot-password",
-            },
-            {
-              title: "Split-Right Reset Password",
-              url: "/pages/authentication/split-right/reset-password",
             },
           ],
         },

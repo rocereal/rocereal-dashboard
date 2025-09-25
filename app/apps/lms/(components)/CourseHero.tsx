@@ -106,29 +106,23 @@ export function CourseHero({
                   <Play className="h-4 w-4 mr-2" />
                   Continue Learning
                 </Button>
-                <Link
-                  href={`/apps/lms/${course.courseId}/curriculum`}
+
+                <Button
+                  variant="outline"
+                  size="lg"
                   className=" w-full lg:w-fit"
                 >
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className=" w-full lg:w-fit"
-                  >
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    View Curriculum
-                  </Button>
-                </Link>
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  View Curriculum
+                </Button>
               </>
             ) : (
               <>
                 <EnrollmentPreview course={course} />
-                <Link href={`/apps/lms/${course.courseId}/curriculum`}>
-                  <Button variant="outline" size="lg">
-                    <Play className="h-4 w-4 mr-2" />
-                    Preview Curriculum
-                  </Button>
-                </Link>
+                <Button variant="outline" size="lg">
+                  <Play className="h-4 w-4 mr-2" />
+                  Preview Curriculum
+                </Button>
               </>
             )}
           </div>
