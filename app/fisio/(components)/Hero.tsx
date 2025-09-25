@@ -31,7 +31,10 @@ export function CircularFloatingText({
   const radius = Math.min(dimensions.width, dimensions.height) / 2 - 40; // "-40" = padding from edge
 
   return (
-    <div ref={containerRef} className="absolute inset-0 w-full h-full">
+    <div
+      ref={containerRef}
+      className="absolute inset-0 w-full h-full hidden sm:block"
+    >
       {dimensions.width > 0 &&
         dimensions.height > 0 &&
         items.map((text, index) => {
@@ -61,8 +64,8 @@ export function CircularFloatingText({
 export function HeroSection() {
   return (
     <div className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center">
-      <div className="absolute size-fullitems-center justify-center opacity-20">
-        <Background />
+      <div className="absolute size-full items-center justify-center opacity-20">
+        <Background className="w-full" />
       </div>
       <div className="px-4 py-10 md:py-20">
         {/* Badge */}
@@ -87,19 +90,6 @@ export function HeroSection() {
             Explore Now
           </Button>
         </div>
-
-        {/* Preview Image */}
-        {/* <div className="relative z-10 mt-20 rounded-3xl bg-neutral-100 p-4 shadow-md dark:bg-neutral-900">
-          <div className="overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
-            <Image
-              src="/images/Promo Image.png"
-              alt="Landing page preview"
-              className="aspect-[16/9] h-auto w-full object-cover"
-              height={1000}
-              width={1000}
-            />
-          </div>
-        </div> */}
       </div>
 
       <PromoCarousel />
