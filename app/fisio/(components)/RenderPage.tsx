@@ -36,7 +36,7 @@ export default function RenderPage() {
         />
       </div>
 
-      <NavbarLanding />
+      {/* <NavbarLanding /> */}
       {/* Hero Section */}
       <section id="hero">
         <HeroSection />
