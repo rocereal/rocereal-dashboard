@@ -70,7 +70,7 @@ export function HeroSection() {
       <div className="px-4 py-10 md:py-20">
         {/* Badge */}
         <div className="mx-auto flex w-fit items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-full px-4 py-2 text-sm font-medium text-blue-700 mb-8">
-          Modern Tech Stack
+          Best Nextjs Admin Template
         </div>
 
         {/* Headline */}
