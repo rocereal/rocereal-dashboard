@@ -150,11 +150,9 @@ export function SEOTab({ productData, setProductData }: SEOTabProps) {
       <div className="bg-muted/50 rounded-lg p-2 lg:p-6">
         <h4 className="text-md font-semibold mb-4">Search Result Preview</h4>
 
-        {/* Google Search Result Preview */}
+        {/* Search Result Preview */}
         <div className="space-y-2">
-          <div className="text-sm text-muted-foreground">
-            Google Search Result
-          </div>
+          <div className="text-sm text-muted-foreground">Search Result</div>
           <div className="border rounded-lg p-4 bg-white">
             <div className="space-y-1">
               <div className="flex items-center gap-2">

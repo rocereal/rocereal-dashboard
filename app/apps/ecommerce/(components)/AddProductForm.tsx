@@ -155,28 +155,32 @@ export default function AddProductForm() {
         ]}
       />
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap gap-4 items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold">Product Details</h2>
           <p className="text-sm text-muted-foreground">
             Fill in the information below to create your new product.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleCancel}>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            onClick={handleCancel}
+            className="w-full lg:w-fit"
+          >
             <X className="h-4 w-4 mr-2" />
             Cancel
           </Button>
-          <Button onClick={handleSave}>
+          <Button onClick={handleSave} className="w-full lg:w-fit">
             <Save className="h-4 w-4 mr-2" />
-            Save Product
+            Save Changes
           </Button>
         </div>
       </div>
 
       <TabsWithIcons
         tabs={tabs}
-        className="!w-full lg:!w-full border  bg-card rounded-md p-8"
+        className="w-full border-0 lg:border rounded-lg p-0 lg:p-4"
         grid="!grid !grid-cols-5"
       >
         <TabsContent value="information" className="space-y-4 pt-4">
