@@ -36,7 +36,7 @@ export default function PageTabs() {
       <TabsWithIcons
         tabs={tabs}
         variant="underline"
-        className="!w-full border bg-card rounded-lg p-8"
+        className="!w-full border bg-transparent rounded-lg p-8"
         grid="!grid !grid-cols-4"
       >
         <TabsContent value="dashboards" className="!pt-8 cursor-pointer">

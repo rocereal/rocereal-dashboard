@@ -12,19 +12,26 @@ import {
   ArrowRight,
   BarChart3,
   Calendar,
+  CheckCircle,
+  Code,
+  Database,
   FileText,
   Globe,
+  Palette,
   Shield,
   TrendingUp,
   Users,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { CircularFloatingText, HeroSection } from "./Hero";
 import PagesViews from "./PageTabs";
 import TechStack from "./TechStack";
+import { TechStackChecklist } from "./TechStackChecklist";
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Navbar } from "./ResizableNavbar";
 import { NavbarLanding } from "./Navbar";
+import { Features } from "./Features";
 
 /**
  * Fisio Dashboard Landing Page Component
@@ -33,59 +40,6 @@ import { NavbarLanding } from "./Navbar";
  * @returns The JSX element representing the Fisio dashboard landing page
  */
 export default function RenderPage() {
-  const [isHovered, setIsHovered] = useState<string | null>(null);
-
-  const features = [
-    {
-      icon: BarChart3,
-      title: "Advanced Analytics",
-      description:
-        "Get deep insights into your business metrics with powerful analytics and reporting tools.",
-      image: "/assets/images/background_one.jpg",
-      cta: "View Analytics",
-    },
-    {
-      icon: Users,
-      title: "Team Collaboration",
-      description:
-        "Seamlessly collaborate with your team members with real-time updates and shared workspaces.",
-      image: "/assets/images/background_two.jpg",
-      cta: "Explore Collaboration",
-    },
-    {
-      icon: Calendar,
-      title: "Smart Scheduling",
-      description:
-        "Manage your calendar efficiently with intelligent scheduling and automated reminders.",
-      image: "/assets/images/background_three.jpg",
-      cta: "Schedule Now",
-    },
-    {
-      icon: Shield,
-      title: "Enterprise Security",
-      description:
-        "Bank-level security with end-to-end encryption and advanced access controls.",
-      image: "/assets/images/background_four.jpg",
-      cta: "Learn Security",
-    },
-    {
-      icon: TrendingUp,
-      title: "Performance Monitoring",
-      description:
-        "Monitor your application's performance with real-time metrics and alerts.",
-      image: "/assets/images/background_five.jpg",
-      cta: "Monitor Performance",
-    },
-    {
-      icon: Globe,
-      title: "Global Reach",
-      description:
-        "Connect with users worldwide with multi-language support and global infrastructure.",
-      image: "/assets/images/background_six.jpg",
-      cta: "Go Global",
-    },
-  ];
-
   return (
     <div className="min-h-screen pt-20">
       {/* 👇 CIRCULAR FLOATING TEXT LAYOUT BELOW IMAGE */}
@@ -108,12 +62,29 @@ export default function RenderPage() {
 
       <NavbarLanding />
       {/* Hero Section */}
-      <HeroSection />
+      <section id="hero">
+        <HeroSection />
+      </section>
 
       {/* Tech Stack Section */}
-      <TechStack />
+      <section id="tech-stack">
+        <TechStack />
+      </section>
 
-      <PagesViews />
+      {/* Views Section */}
+      <section id="views">
+        <PagesViews />
+      </section>
+
+      {/* Technology Section */}
+      <section id="technology">
+        <TechStackChecklist />
+      </section>
+
+      {/* Features Section */}
+      <section id="features">
+        <Features />
+      </section>
     </div>
   );
 }

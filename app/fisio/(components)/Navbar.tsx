@@ -38,10 +38,9 @@ export function NavbarLanding() {
           <NavbarLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            <Button variant="secondary" className="bg-transparent shadow-none">
-              Login
+            <Button variant="default" className="rounded-full">
+              View Documentation
             </Button>
-            <Button variant="default">View Documentation</Button>
           </div>
         </NavBody>
 
@@ -72,17 +71,10 @@ export function NavbarLanding() {
             <div className="flex w-full flex-col gap-4">
               <Button
                 onClick={() => setIsMobileMenuOpen(false)}
-                variant={"default"}
-                className="w-full"
-              >
-                Login
-              </Button>
-              <Button
-                onClick={() => setIsMobileMenuOpen(false)}
                 variant="secondary"
                 className="w-full"
               >
-                Book a call
+                Documentation
               </Button>
             </div>
           </MobileNavMenu>

@@ -31,12 +31,6 @@ export default function RenderPage() {
         title="Account Settings"
         subtitle="Manage your profile, preferences, and account details on Fisio."
       />
-      <div>
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your account settings and preferences.
-        </p>
-      </div>
 
       <TabsWithIcons tabs={settingsTabs}>
         <TabsContent value="profile">

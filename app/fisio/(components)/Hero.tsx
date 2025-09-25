@@ -7,6 +7,7 @@ import { Background } from "@/components/svg/Icons";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import PromoCarousel from "./Carousel";
 
 // --- Circular Floating Text Component ---
 export function CircularFloatingText({
@@ -90,7 +91,7 @@ export function HeroSection() {
         </div>
 
         {/* Preview Image */}
-        <div className="relative z-10 mt-20 rounded-3xl bg-neutral-100 p-4 shadow-md dark:bg-neutral-900">
+        {/* <div className="relative z-10 mt-20 rounded-3xl bg-neutral-100 p-4 shadow-md dark:bg-neutral-900">
           <div className="overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
             <Image
               src="/images/Promo Image.png"
@@ -100,8 +101,10 @@ export function HeroSection() {
               width={1000}
             />
           </div>
-        </div>
+        </div> */}
       </div>
+
+      <PromoCarousel />
     </div>
   );
 }
