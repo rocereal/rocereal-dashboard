@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   CheckCircle,
   Code,
@@ -77,8 +77,8 @@ interface TechStackChecklistProps {
 }
 
 export function Features({
-  title = "Built with Modern Technologies",
-  description = "Fisio leverages cutting-edge technologies for optimal performance, developer experience, and user satisfaction.",
+  title = "Packed with Powerful Features",
+  description = "From reusable components to responsive layouts, everything is built to help you move faster and build smarter.",
   className = "",
 }: TechStackChecklistProps) {
   const getColorClasses = (color: string) => {
@@ -112,10 +112,10 @@ export function Features({
   };
 
   return (
-    <section className={`py-24 px-4 ${className}`}>
+    <section className={`py-6 px-4 ${className}`}>
       <div className="max-w-7xl mx-auto">
-        <div className="text-start mb-16">
-          <h2 className="text-base mb-4">{title}</h2>
+        <div className="flex flex-col text-start py-8 gap-2">
+          <h2 className="text-base">{title}</h2>
           <p className="text-xl text-muted-foreground">{description}</p>
         </div>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import {
   Carousel,
   CarouselContent,
@@ -7,11 +8,8 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
-import { Button } from "@/components/ui/button";
 import type { StaticImageData } from "next/image";
+import { useCallback, useEffect, useState } from "react";
 
 export interface TestimonialSlide {
   id: number;
@@ -134,17 +132,6 @@ const PromoCarousel: React.FC<TestimonialCarouselProps> = ({
     };
   }, [api]); // Re-run when API changes
 
-  // Navigation callback functions
-  const scrollToPrev = useCallback(() => {
-    if (!api) return; // Exit if API not available
-    api.scrollPrev(); // Scroll to previous slide
-  }, [api]);
-
-  const scrollToNext = useCallback(() => {
-    if (!api) return; // Exit if API not available
-    api.scrollNext(); // Scroll to next slide
-  }, [api]);
-
   return (
     <div
       className={`relative ${className} w-full h-full z-20 gap-4 flex flex-col`}
@@ -193,27 +180,6 @@ const PromoCarousel: React.FC<TestimonialCarouselProps> = ({
           ))}
         </CarouselContent>
       </Carousel>
-
-      <div className="flex gap-2 ml-4 z-40">
-        <Button
-          onClick={scrollToPrev}
-          disabled={!canScrollPrev}
-          className="border rounded-full p-2 size-8"
-          variant={"secondary"}
-          size="icon"
-        >
-          <ArrowLeft className="size-4" />
-        </Button>
-        <Button
-          onClick={scrollToNext}
-          disabled={!canScrollNext}
-          className="border rounded-full p-2 size-8"
-          variant={"secondary"}
-          size="icon"
-        >
-          <ArrowRight className="size-4" />
-        </Button>
-      </div>
     </div>
   );
 };

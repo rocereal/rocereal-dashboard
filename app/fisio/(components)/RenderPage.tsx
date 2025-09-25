@@ -1,37 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ArrowRight,
-  BarChart3,
-  Calendar,
-  CheckCircle,
-  Code,
-  Database,
-  FileText,
-  Globe,
-  Palette,
-  Shield,
-  TrendingUp,
-  Users,
-  Zap,
-} from "lucide-react";
-import { useState } from "react";
+import { FAQ } from "./FAQ";
+import { Features } from "./Features";
 import { CircularFloatingText, HeroSection } from "./Hero";
+import { NavbarLanding } from "./Navbar";
 import PagesViews from "./PageTabs";
 import TechStack from "./TechStack";
 import { TechStackChecklist } from "./TechStackChecklist";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
-import { Navbar } from "./ResizableNavbar";
-import { NavbarLanding } from "./Navbar";
-import { Features } from "./Features";
 
 /**
  * Fisio Dashboard Landing Page Component
@@ -84,6 +59,11 @@ export default function RenderPage() {
       {/* Features Section */}
       <section id="features">
         <Features />
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq">
+        <FAQ />
       </section>
     </div>
   );

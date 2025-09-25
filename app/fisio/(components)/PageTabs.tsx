@@ -33,10 +33,17 @@ const tabs = [
 export default function PageTabs() {
   return (
     <div className="max-w-7xl mx-auto">
+      <div className="flex flex-col text-start py-8 gap-2">
+        <h2 className="text-base">Built-In Pages for Every Use Case</h2>
+        <p className="text-xl text-muted-foreground">
+          Packed with dashboards, apps, auth, and utility pages — fully
+          responsive and customizable out of the box.
+        </p>
+      </div>
       <TabsWithIcons
         tabs={tabs}
         variant="underline"
-        className="!w-full border bg-transparent rounded-lg p-8"
+        className="!w-full bg-transparent rounded-lg"
         grid="!grid !grid-cols-4"
       >
         <TabsContent value="dashboards" className="!pt-8 cursor-pointer">

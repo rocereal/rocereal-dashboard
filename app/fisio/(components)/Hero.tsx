@@ -1,11 +1,7 @@
 "use client";
 
-import { ThemeToggle } from "@/components/shared/header";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
-import { Logo } from "@/components/shared/Logo";
 import { Background } from "@/components/svg/Icons";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import PromoCarousel from "./Carousel";
 

@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  CheckCircle,
+  CircleCheck,
   Code,
   Database,
   Globe,
@@ -81,7 +81,7 @@ interface TechStackChecklistProps {
 }
 
 export function TechStackChecklist({
-  title = "Built with Modern Technologies",
+  title = "Powerful Tools, Seamless Integration",
   description = "Fisio leverages cutting-edge technologies for optimal performance, developer experience, and user satisfaction.",
   className = "",
 }: TechStackChecklistProps) {
@@ -116,10 +116,10 @@ export function TechStackChecklist({
   };
 
   return (
-    <section className={`py-24 px-4 ${className}`}>
+    <section className={`py-6 px-4 ${className}`}>
       <div className="max-w-7xl mx-auto">
-        <div className="text-start mb-16">
-          <h2 className="text-base mb-4">{title}</h2>
+        <div className="flex flex-col text-start py-8 gap-2">
+          <h2 className="text-base">{title}</h2>
           <p className="text-xl text-muted-foreground">{description}</p>
         </div>
 
@@ -145,7 +145,7 @@ export function TechStackChecklist({
                 <CardContent className="space-y-3">
                   {category.technologies.map((tech, techIndex) => (
                     <div key={techIndex} className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <CircleCheck className="w-5 h-5 text-green-500" />
                       <span className="font-medium">{tech.name}</span>
                       <span className="text-sm text-muted-foreground">
                         {tech.description}

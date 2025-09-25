@@ -26,6 +26,10 @@ export function NavbarLanding() {
       name: "Technology",
       link: "#technology",
     },
+    {
+      name: "FAQ",
+      link: "#faq",
+    },
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

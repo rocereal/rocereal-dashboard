@@ -13,7 +13,7 @@ const pageViews = [
     description: "Clean and centered authentication pages with modern design",
     icon: BarChart3,
     features: ["Secure Login", "Password Recovery", "User Registration"],
-    lightpreview: "/images/Dark Centered Authentication.png",
+    lightpreview: "/images/Light Centered Authentication.png",
     darkpreview: "/images/Dark Centered Authentication.png",
     link: "/pages/authentication/centered/login",
   },
@@ -208,7 +208,7 @@ export default function PageViews() {
               </div>
               <div className="flex flex-wrap gap-1">
                 {view.features.map((feature, idx) => (
-                  <Badge key={idx} variant="secondary" className="text-xs">
+                  <Badge key={idx} variant="default" className="text-xs">
                     {feature}
                   </Badge>
                 ))}

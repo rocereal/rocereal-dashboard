@@ -91,7 +91,7 @@ export default function SettingsViews() {
               </div>
               <div className="flex flex-wrap gap-1 mb-4">
                 {view.features.map((feature, idx) => (
-                  <Badge key={idx} variant="secondary" className="text-xs">
+                  <Badge key={idx} variant="default" className="text-xs">
                     {feature}
                   </Badge>
                 ))}

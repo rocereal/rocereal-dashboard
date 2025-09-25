@@ -145,7 +145,7 @@ export default function AppViews() {
               </div>
               <div className="flex flex-wrap gap-1">
                 {view.features.map((feature, idx) => (
-                  <Badge key={idx} variant="secondary" className="text-xs">
+                  <Badge key={idx} variant="default" className="text-xs">
                     {feature}
                   </Badge>
                 ))}
