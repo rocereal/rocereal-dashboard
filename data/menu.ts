@@ -22,6 +22,7 @@ import {
   FolderKanban,
   MapPinHouse,
   Users,
+  BookCheck,
 } from "lucide-react";
 
 export const menudata = {
@@ -256,6 +257,14 @@ export const menudata = {
       title: "Settings",
       isSection: true,
     },
+    // ======================
+    // Changelog
+    // ======================
+    {
+      title: "Changelog",
+      url: "/pages/changelog",
+      icon: BookCheck,
+    },
     {
       title: "System Settings",
       url: "/pages/settings",
@@ -484,6 +493,15 @@ export const menudataMobile = {
           ],
         },
       ],
+    },
+
+    // ======================
+    // Changelog
+    // ======================
+    {
+      title: "Changelog",
+      url: "/pages/changelog",
+      icon: BookCheck,
     },
 
     // ======================
