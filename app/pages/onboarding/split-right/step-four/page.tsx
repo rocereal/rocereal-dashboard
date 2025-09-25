@@ -5,7 +5,6 @@
  */
 
 import { metadataTemplates } from "@/lib/metadata";
-import type { Metadata } from "next";
 import RenderPage from "./RenderPage";
 
 export const metadata = metadataTemplates.onboarding("Complete Setup");

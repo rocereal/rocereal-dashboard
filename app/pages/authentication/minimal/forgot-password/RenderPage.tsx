@@ -60,7 +60,7 @@ export default function RenderPage() {
             Check your email
           </h1>
           <p className="text-muted-foreground mt-2">
-            We've sent you a password reset link
+            We&apos;ve sent you a password reset link
           </p>
         </div>
 
@@ -70,8 +70,9 @@ export default function RenderPage() {
             <Alert>
               <CheckCircle className="h-4 w-4" />
               <AlertDescription>
-                If an account with that email exists, we've sent you a password
-                reset link. Please check your email and follow the instructions.
+                If an account with that email exists, we&apos;ve sent you a
+                password reset link. Please check your email and follow the
+                instructions.
               </AlertDescription>
             </Alert>
 
@@ -102,7 +103,7 @@ export default function RenderPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Reset password</CardTitle>
           <CardDescription className="text-center">
-            We'll send you a link to reset your password
+            We&apos;ll send you a link to reset your password
           </CardDescription>
         </CardHeader>
         <CardContent>

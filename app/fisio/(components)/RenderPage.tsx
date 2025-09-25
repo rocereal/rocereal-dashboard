@@ -1,24 +1,5 @@
 "use client";
 
-import {
-  ArrowRight,
-  BarChart3,
-  Calendar,
-  CheckCircle,
-  Clock,
-  DollarSign,
-  Eye,
-  FileText,
-  Globe,
-  Shield,
-  Star,
-  TrendingUp,
-  Users,
-  Palette,
-  Atom,
-  Layers,
-} from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,10 +8,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import {
+  ArrowRight,
+  BarChart3,
+  Calendar,
+  FileText,
+  Globe,
+  Shield,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import { useState } from "react";
 import { HeroSection } from "./Hero";
-import TechStack from "./TechStack";
 import PagesViews from "./PageTabs";
+import TechStack from "./TechStack";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 /**
  * Fisio Dashboard Landing Page Component
@@ -124,7 +116,7 @@ export default function RenderPage() {
                 onMouseLeave={() => setIsHovered(null)}
               >
                 <div className="relative h-48 overflow-hidden">
-                  <img
+                  <ImageComponentOptimized
                     src={feature.image}
                     alt={feature.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"

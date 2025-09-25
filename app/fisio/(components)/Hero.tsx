@@ -1,9 +1,9 @@
 "use client";
 
 import { ThemeToggle } from "@/components/shared/header";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Logo } from "@/components/shared/Logo";
 import { Button } from "@/components/ui/button";
-import { motion } from "motion/react";
 
 export function HeroSection() {
   return (
@@ -35,8 +35,8 @@ export function HeroSection() {
           </Button>
         </div>
         <div className="relative z-10 mt-20 rounded-3xl bg-neutral-100 p-4 shadow-md dark:bg-neutral-900">
-          <div className="w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
-            <img
+          <div className="w-full aspect-video overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
+            <ImageComponentOptimized
               src="/images/Promo Image.png"
               alt="Landing page preview"
               className="aspect-[16/9] h-auto w-full object-cover"

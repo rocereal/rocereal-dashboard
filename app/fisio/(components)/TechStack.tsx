@@ -1,25 +1,8 @@
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
-import {
-  ArrowRight,
-  CheckCircle,
-  FileText,
-  Globe,
-  Shield,
-  Star,
-  TrendingUp,
-  Palette,
-  Atom,
-  Layers,
-} from "lucide-react";
+import { Atom, FileText, Globe, Layers, Palette, Shield } from "lucide-react";
 import { useState } from "react";
 
 export default function TechStackUI() {
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
-
-  const handleImageError = (techName: string) => {
-    setImageErrors((prev) => ({ ...prev, [techName]: true }));
-  };
-
   const techStack = [
     {
       name: "Next.js",
@@ -84,7 +67,6 @@ export default function TechStackUI() {
                           width={32}
                           height={32}
                           unoptimized={true}
-                          onError={() => handleImageError(tech.name)}
                         />
                       </div>
 

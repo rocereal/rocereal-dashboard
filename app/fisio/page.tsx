@@ -1,4 +1,3 @@
-import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
 import RenderPage from "./(components)/RenderPage";
 

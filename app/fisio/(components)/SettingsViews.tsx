@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, Settings, Shield, ArrowRight } from "lucide-react";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 
 const settingsViews = [
   {
@@ -49,7 +50,7 @@ export default function SettingsViews() {
             className="group hover:shadow-lg transition-all duration-300"
           >
             <div className="relative h-32 overflow-hidden rounded-t-lg">
-              <img
+              <ImageComponentOptimized
                 src={view.preview}
                 alt={view.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
