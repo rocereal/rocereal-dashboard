@@ -160,7 +160,7 @@ export function PricingTab({ productData, setProductData }: PricingTabProps) {
       </div>
 
       {/* Pricing Preview */}
-      <div className="bg-muted/50 rounded-lg p-6">
+      <div className="bg-muted/50 rounded-lg p-2 lg:p-6">
         <h4 className="text-md font-semibold mb-4">Pricing Preview</h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
