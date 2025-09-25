@@ -8,32 +8,7 @@ import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
 import RenderPage from "./RenderPage";
 
-export const metadata: Metadata = {
-  title: "Welcome - Fisio Onboarding",
-  description:
-    "Start your Fisio dashboard journey with our guided onboarding process. Set up your account and preferences.",
-  keywords: [
-    "onboarding",
-    "setup",
-    "welcome",
-    "dashboard",
-    "fisio",
-    "split-left",
-    "step one",
-  ],
-  openGraph: {
-    title: "Welcome - Fisio Onboarding",
-    description:
-      "Start your Fisio dashboard journey with our guided onboarding process.",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Welcome - Fisio Onboarding",
-    description:
-      "Start your Fisio dashboard journey with our guided onboarding process.",
-  },
-};
+export const metadata = metadataTemplates.onboarding("Welcome");
 
 export default function StepOnePage() {
   return <RenderPage />;

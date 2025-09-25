@@ -8,30 +8,7 @@ import { metadataTemplates } from "@/lib/metadata";
 import type { Metadata } from "next";
 import RenderPage from "./RenderPage";
 
-export const metadata: Metadata = {
-  title: "Reset Password - Fisio Dashboard",
-  description:
-    "Request a password reset link to regain access to your Fisio dashboard account.",
-  keywords: [
-    "reset password",
-    "forgot password",
-    "password recovery",
-    "dashboard",
-    "fisio",
-  ],
-  openGraph: {
-    title: "Reset Password - Fisio Dashboard",
-    description:
-      "Request a password reset link to regain access to your Fisio dashboard account.",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Reset Password - Fisio Dashboard",
-    description:
-      "Request a password reset link to regain access to your Fisio dashboard account.",
-  },
-};
+export const metadata = metadataTemplates.auth("Reset Password");
 
 export default function ForgotPasswordPage() {
   return <RenderPage />;
