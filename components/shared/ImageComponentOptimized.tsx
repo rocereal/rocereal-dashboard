@@ -43,7 +43,7 @@ const ImageComponentOptimized: React.FC<OptimizedImageProps> = ({
   alt,
   fill = true,
   sizes,
-  quality = priority ? 90 : 85,
+  quality = priority ? 50 : 75,
   width,
   height,
   aspectRatio,

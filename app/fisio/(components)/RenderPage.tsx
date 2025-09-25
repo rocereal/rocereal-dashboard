@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { FAQ } from "./FAQ";
 import { Features } from "./Features";
 import { CircularFloatingText, HeroSection } from "./Hero";
