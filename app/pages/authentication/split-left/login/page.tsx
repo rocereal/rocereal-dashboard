@@ -1,59 +1,39 @@
-"use client";
+/**
+ * Split-Left Login Page
+ * Server component that renders the split-left login page with proper metadata
+ * Provides SEO metadata and renders the client-side login form component
+ */
 
-import { LoginForm } from "@/components/auth/LoginForm";
-import { Logo } from "@/components/shared/Logo";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useState } from "react";
+import { metadataTemplates } from "@/lib/metadata";
+import type { Metadata } from "next";
+import RenderPage from "./RenderPage";
+
+export const metadata: Metadata = {
+  title: "Sign In - Fisio Dashboard",
+  description:
+    "Sign in to your Fisio dashboard account to access your workspace and manage your projects.",
+  keywords: [
+    "login",
+    "signin",
+    "authentication",
+    "dashboard",
+    "fisio",
+    "split-left",
+  ],
+  openGraph: {
+    title: "Sign In - Fisio Dashboard",
+    description:
+      "Sign in to your Fisio dashboard account to access your workspace.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sign In - Fisio Dashboard",
+    description:
+      "Sign in to your Fisio dashboard account to access your workspace.",
+  },
+};
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleLogin = async (
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ) => {
-    setIsLoading(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setIsLoading(false);
-    console.log("Login attempt:", { email, password, rememberMe });
-  };
-
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="hidden lg:flex text-center">
-        <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
-          <Logo />
-        </div>
-      </div>
-
-      {/* Login Form */}
-      <Card className="border-none shadow-none !bg-transparent">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Sign in</CardTitle>
-          <CardDescription className="text-center">
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <LoginForm
-            onSubmit={handleLogin}
-            isLoading={isLoading}
-            forgotPasswordHref="/authentication/split-left/forgot-password"
-            signUpHref="/authentication/split-left/register"
-          />
-        </CardContent>
-      </Card>
-    </div>
-  );
+  return <RenderPage />;
 }

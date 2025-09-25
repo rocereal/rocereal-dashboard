@@ -1,72 +1,102 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Users, TrendingUp, ArrowRight } from "lucide-react";
-import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowRight, BarChart3, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
 
 const appViews = [
   {
-    title: "AI Dashboard",
-    description: "Comprehensive analytics with real-time metrics and insights",
+    title: "Calendar",
+    description: "Smart scheduling with team collaboration features",
     icon: BarChart3,
-    features: ["Real-time data", "Custom reports", "Data visualization"],
-    lightpreview: "/images/Light Artificial Intelligence Dashboard.png",
-    darkpreview: "/images/Dark Artificial Intelligence Dashboard.png",
-    link: "/ai",
+    features: ["Event Scheduling", "Team Calendar", "Meeting Rooms"],
+    lightpreview: "/images/Light Calendar Dashboard.png",
+    darkpreview: "/images/Dark Calendar Dashboard.png",
+    link: "/apps/calendar",
   },
   {
-    title: "CRM Dashboard",
-    description: "Customer relationship management with lead tracking",
+    title: "Tasks",
+    description: "Project management with kanban boards and timelines",
     icon: Users,
-    features: ["Lead management", "Customer insights", "Sales pipeline"],
-    lightpreview: "/images/Light Customer Relationship Dashboard.png",
-    darkpreview: "/images/Dark Customer Relationship Dashboard.png",
-    link: "/crm",
+    features: ["Kanban Boards", "Task Tracking", "Team Projects"],
+    lightpreview: "/images/Light Tasks Dashboard.png",
+    darkpreview: "/images/Dark Tasks Dashboard.png",
+    link: "/apps/tasks",
   },
   {
-    title: "Crypto Dashboard",
-    description: "Financial overview with budgeting and expense tracking",
+    title: "Messenger",
+    description: "Unified messaging with video calls and file sharing",
     icon: TrendingUp,
-    features: ["Budget tracking", "Expense reports", "Financial goals"],
-    lightpreview: "/images/Light Crypto Performance Dashboard.png",
-    darkpreview: "/images/Dark Crypto Performance Dashboard.png",
-    link: "/crypto",
+    features: ["Video Calls", "File Sharing", "Team Chat"],
+    lightpreview: "/images/Light Messenger Dashboard.png",
+    darkpreview: "/images/Dark Messenger Dashboard.png",
+    link: "/apps/messenger",
   },
   {
-    title: "E-commerce Dashboard",
-    description: "Financial overview with budgeting and expense tracking",
+    title: "Email",
+    description: "Professional email management and communication",
     icon: TrendingUp,
-    features: ["Budget tracking", "Expense reports", "Financial goals"],
+    features: ["Email Templates", "Contact Management", "Inbox Organization"],
+    lightpreview: "/images/Light Email Dashboard.png",
+    darkpreview: "/images/Dark Email Dashboard.png",
+    link: "/apps/email",
+  },
+  {
+    title: "Files",
+    description: "Secure file storage and collaboration platform",
+    icon: TrendingUp,
+    features: ["Cloud Storage", "File Sharing", "Version History"],
+    lightpreview: "/images/Light Files Dashboard.png",
+    darkpreview: "/images/Dark Files Dashboard.png",
+    link: "/apps/files",
+  },
+  {
+    title: "Invoice",
+    description: "Streamlined invoicing and payment management",
+    icon: TrendingUp,
+    features: ["Invoice Creation", "Payment Tracking", "Client Portal"],
+    lightpreview: "/images/Light Invoice Management.png",
+    darkpreview: "/images/Dark Invoice Management.png",
+    link: "/apps/invoice",
+  },
+  {
+    title: "E-commerce",
+    description: "Complete online store management solution",
+    icon: TrendingUp,
+    features: ["Product Catalog", "Order Management", "Sales Analytics"],
     lightpreview: "/images/Light E-commerce Performance Dashboard.png",
     darkpreview: "/images/Dark E-commerce Performance Dashboard.png",
-    link: "/ecommerce",
+    link: "/apps/ecommerce/products",
   },
   {
-    title: "Education Dashboard",
-    description: "Financial overview with budgeting and expense tracking",
+    title: "Real Estate",
+    description: "Property management and listing platform",
     icon: TrendingUp,
-    features: ["Budget tracking", "Expense reports", "Financial goals"],
+    features: ["Property Listings", "Market Analysis", "Client Database"],
+    lightpreview: "/images/Light Real Estate Management.png",
+    darkpreview: "/images/Dark Real Estate Management.png",
+    link: "/apps/real-estate",
+  },
+  {
+    title: "Learning Management",
+    description: "Educational platform for courses and training",
+    icon: TrendingUp,
+    features: ["Course Builder", "Student Progress", "Certification"],
     lightpreview: "/images/Light Learning Performance Dashboard.png",
     darkpreview: "/images/Dark Learning Performance Dashboard.png",
-    link: "/education",
+    link: "/apps/lms",
   },
   {
-    title: "Finance Dashboard",
-    description: "Financial overview with budgeting and expense tracking",
+    title: "User Management",
+    description: "Comprehensive user administration system",
     icon: TrendingUp,
-    features: ["Budget tracking", "Expense reports", "Financial goals"],
-    lightpreview: "/images/Light Financial Performance Dashboard.png",
-    darkpreview: "/images/Dark Financial Performance Dashboard.png",
-    link: "/finance",
+    features: ["User Roles", "Access Control", "Audit Logs"],
+    lightpreview: "/images/Light User Management - Fisio Dashboard.png",
+    darkpreview: "/images/Dark User Management - Fisio Dashboard.png",
+    link: "/apps/users",
   },
 ];
 
@@ -97,7 +127,7 @@ export default function AppViews() {
               />
             </div>
 
-            <CardContent className="flex flex-col justify-between align-center items-center py-6">
+            <CardContent className="flex flex-col justify-between align-start items-start py-6">
               <div className="flex flex-row justify-between align-center items-center py-6 w-full">
                 <h1 className="text-primary font-medium">{view.title}</h1>
                 <Link
@@ -113,7 +143,7 @@ export default function AppViews() {
                   </Button>
                 </Link>
               </div>
-              <div className="flex flex-wrap gap-1 mb-4">
+              <div className="flex flex-wrap gap-1">
                 {view.features.map((feature, idx) => (
                   <Badge key={idx} variant="secondary" className="text-xs">
                     {feature}

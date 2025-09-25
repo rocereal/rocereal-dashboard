@@ -43,15 +43,15 @@ export default function PageTabs() {
           <DashboardViews />
         </TabsContent>
 
-        <TabsContent value="dashboards" className="!pt-8">
+        <TabsContent value="apps" className="!pt-8">
           <AppViews />
         </TabsContent>
 
-        <TabsContent value="dashboards" className="!pt-8">
+        <TabsContent value="pages" className="!pt-8">
           <PageViews />
         </TabsContent>
 
-        <TabsContent value="dashboards" className="!pt-8">
+        <TabsContent value="settings" className="!pt-8">
           <SettingsViews />
         </TabsContent>
       </TabsWithIcons>

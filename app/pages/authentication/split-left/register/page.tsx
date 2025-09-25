@@ -1,53 +1,39 @@
-"use client";
+/**
+ * Split-Left Register Page
+ * Server component that renders the split-left register page with proper metadata
+ * Provides SEO metadata and renders the client-side register form component
+ */
 
-import { RegisterForm } from "@/components/auth/RegisterForm";
-import { Logo } from "@/components/shared/Logo";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useState } from "react";
+import { metadataTemplates } from "@/lib/metadata";
+import type { Metadata } from "next";
+import RenderPage from "./RenderPage";
+
+export const metadata: Metadata = {
+  title: "Sign Up - Fisio Dashboard",
+  description:
+    "Create your Fisio dashboard account to start managing your projects and collaborating with your team.",
+  keywords: [
+    "register",
+    "signup",
+    "create account",
+    "dashboard",
+    "fisio",
+    "split-left",
+  ],
+  openGraph: {
+    title: "Sign Up - Fisio Dashboard",
+    description:
+      "Create your Fisio dashboard account to start managing your projects.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sign Up - Fisio Dashboard",
+    description:
+      "Create your Fisio dashboard account to start managing your projects.",
+  },
+};
 
 export default function RegisterPage() {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleRegister = async () => {
-    setIsLoading(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setIsLoading(false);
-  };
-
-  return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="hidden lg:flex text-center">
-        <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center">
-          <Logo />
-        </div>
-      </div>
-
-      {/* Registration Form */}
-      <Card className="border-none shadow-none !bg-transparent">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Sign up</CardTitle>
-          <CardDescription className="text-center">
-            Create your account to get started
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <RegisterForm
-            onSubmit={handleRegister}
-            isLoading={isLoading}
-            signInHref="/authentication/split-left/login"
-          />
-        </CardContent>
-      </Card>
-    </div>
-  );
+  return <RenderPage />;
 }

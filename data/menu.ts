@@ -152,8 +152,8 @@ export const menudata = {
       url: "#",
       icon: FileText,
       items: [
-        { title: "Task Details", url: "/apps/tasks/1" },
         { title: "Task List", url: "/apps/tasks" },
+        { title: "Task Details", url: "/apps/tasks/1" },
         { title: "Create Task", url: "/apps/tasks/create" },
       ],
     },
@@ -162,8 +162,8 @@ export const menudata = {
       url: "#",
       icon: UserPlus,
       items: [
-        { title: "User Details", url: "/apps/users/user_001" },
         { title: "Users", url: "/apps/users" },
+        { title: "User Details", url: "/apps/users/user_001" },
         { title: "Add User", url: "/apps/users/add-user" },
       ],
     },
@@ -453,7 +453,10 @@ export const menudataMobile = {
           url: "#",
           icon: Lock,
           items: [
-            { title: "Centered Login", url: "/authentication/centered/login" },
+            {
+              title: "Centered Login",
+              url: "/pages/authentication/centered/login",
+            },
             {
               title: "Centered Register",
               url: "/pages/authentication/centered/register",
