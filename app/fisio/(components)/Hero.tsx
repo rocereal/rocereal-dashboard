@@ -3,63 +3,6 @@
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-
-// --- Circular Floating Text Component ---
-export function CircularFloatingText({
-  items,
-  centerOffset = { x: 0, y: 0 },
-}: {
-  items: string[];
-  centerOffset?: { x: number; y: number };
-}) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
-  useEffect(() => {
-    if (containerRef.current) {
-      const resizeObserver = new ResizeObserver(() => {
-        const rect = containerRef.current!.getBoundingClientRect();
-        setDimensions({ width: rect.width, height: rect.height });
-      });
-      resizeObserver.observe(containerRef.current);
-      return () => resizeObserver.disconnect();
-    }
-  }, []);
-
-  // radius = half the smaller dimension of container (so text touches edges)
-  const radius = Math.min(dimensions.width, dimensions.height) / 2 - 40; // "-40" = padding from edge
-
-  return (
-    <div
-      ref={containerRef}
-      className="absolute inset-0 w-full h-full hidden sm:block"
-    >
-      {dimensions.width > 0 &&
-        dimensions.height > 0 &&
-        items.map((text, index) => {
-          const angle = (index / items.length) * 2 * Math.PI - Math.PI / 2;
-          const x =
-            Math.cos(angle) * radius + dimensions.width / 2 + centerOffset.x;
-          const y =
-            Math.sin(angle) * radius + dimensions.height / 2 + centerOffset.y;
-
-          return (
-            <div
-              key={index}
-              className="absolute text-xs font-medium text-gray-600 dark:text-gray-300
-                       bg-white dark:bg-gray-800 px-2 py-1 rounded-full shadow-sm
-                       border border-gray-200 dark:border-gray-700 transform
-                       -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${x}px`, top: `${y}px` }}
-            >
-              {text}
-            </div>
-          );
-        })}
-    </div>
-  );
-}
 
 export function HeroSection() {
   return (
