@@ -4,6 +4,7 @@ import { Background } from "@/components/svg/Icons";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import PromoCarousel from "./Carousel";
+import Link from "next/link";
 
 // --- Circular Floating Text Component ---
 export function CircularFloatingText({
@@ -85,10 +86,43 @@ export function HeroSection() {
         </p>
 
         {/* Buttons */}
-        <div className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Button className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
-            Explore Now
-          </Button>
+        <div className="relative z-20 mt-8 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            shallow={true}
+            href={"https://fisio.obare27.com"}
+            target="_blank"
+            passHref
+            style={{ textDecoration: "none" }}
+            className="cursor-pointer"
+          >
+            <Button size="sm">Get Started</Button>
+          </Link>
+          <Link
+            shallow={true}
+            href={"https://themeforest.net/user/obare27"}
+            target="_blank"
+            passHref
+            style={{ textDecoration: "none" }}
+            className="cursor-pointer"
+          >
+            <Button size="sm" className="bg-[#82b440] hover:bg-[#82b440]">
+              Portfolio
+            </Button>
+          </Link>
+          <Link
+            shallow={true}
+            href={"https://fisio-docs.obare27.com/contact"}
+            passHref
+            style={{ textDecoration: "none" }}
+            className="cursor-pointer"
+          >
+            <Button
+              size="sm"
+              className="cursor-pointer bg-[#C57642] hover:bg-[#C57642]"
+            >
+              Contact Us
+            </Button>
+          </Link>
         </div>
       </div>
 

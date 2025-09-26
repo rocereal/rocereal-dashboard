@@ -11,6 +11,7 @@ import {
   NavBody,
   NavItems,
 } from "./ResizableNavbar";
+import Link from "next/link";
 
 export function NavbarLanding() {
   const navItems = [
@@ -42,9 +43,17 @@ export function NavbarLanding() {
           <NavbarLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            <Button variant="default" className="rounded-full">
-              View Documentation
-            </Button>
+            <Link
+              shallow={true}
+              href={"https://fisio-docs.obare27.com"}
+              passHref
+              style={{ textDecoration: "none" }}
+              className="cursor-pointer "
+            >
+              <Button variant="default" className="rounded-full">
+                View Documentation
+              </Button>
+            </Link>
           </div>
         </NavBody>
 
@@ -73,13 +82,17 @@ export function NavbarLanding() {
               </a>
             ))}
             <div className="flex w-full flex-col gap-4">
-              <Button
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="secondary"
-                className="w-full"
+              <Link
+                shallow={true}
+                href={"https://fisio-docs.obare27.com/contact"}
+                passHref
+                style={{ textDecoration: "none" }}
+                className="cursor-pointer "
               >
-                Documentation
-              </Button>
+                <Button variant="secondary" className="w-full">
+                  Documentation
+                </Button>
+              </Link>
             </div>
           </MobileNavMenu>
         </MobileNav>
