@@ -11,7 +11,7 @@ import { MetadataRoute } from "next"; // TypeScript types for Next.js metadata A
 /**
  * Robots Configuration Function
  * Generates the robots.txt file content for search engine crawlers
- * Defines crawling rules for different user agents - disallows all for admin project
+ * Defines crawling rules for different user agents - allows crawling of fisio landing page, disallows rest
  * @returns MetadataRoute.Robots object containing crawler instructions
  */
 export default function robots(): MetadataRoute.Robots {
@@ -19,11 +19,16 @@ export default function robots(): MetadataRoute.Robots {
     // Define crawling rules for different user agents
     rules: [
       {
-        // Disallow all crawlers for admin project
+        // Allow crawling of fisio landing page
         userAgent: "*",
-        disallow: "/", // Disallow crawling of all pages
+        allow: "/fisio",
+      },
+      {
+        // Disallow crawling of all other pages
+        userAgent: "*",
+        disallow: "/",
       },
     ],
-    // No sitemap provided for admin project
+    // No sitemap provided
   };
 }
