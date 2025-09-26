@@ -34,7 +34,9 @@ export default function PageTabs() {
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-0">
       <div className="flex flex-col text-start py-8 gap-2">
-        <h2 className="text-base">Built-In Pages for Every Use Case</h2>
+        <h2 className="text-base lg:text-4xl font-bold">
+          Built-In Pages for Every Use Case
+        </h2>
         <p className="text-xl text-muted-foreground">
           Packed with dashboards, apps, auth, and utility pages — fully
           responsive and customizable out of the box.

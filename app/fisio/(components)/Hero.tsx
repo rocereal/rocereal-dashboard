@@ -1,10 +1,9 @@
 "use client";
 
-import { Background } from "@/components/svg/Icons";
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef, useState } from "react";
-import PromoCarousel from "./Carousel";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 // --- Circular Floating Text Component ---
 export function CircularFloatingText({
@@ -64,69 +63,76 @@ export function CircularFloatingText({
 
 export function HeroSection() {
   return (
-    <div className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center">
-      <div className="absolute size-full items-center justify-center opacity-20">
-        <Background className="w-full" />
+    <div className="h-[45vh] lg:h-[100vh]">
+      {/* Background Image */}
+      <div className="absolute inset-0 -z-10 aspect-video">
+        <ImageComponentOptimized
+          src={"/images/Cover Website.webp"}
+          alt={"Fisio"}
+          unoptimized={true}
+          className="object-cover w-full h-full"
+          fill
+        />
       </div>
-      <div className="px-4 py-10 md:py-20">
-        {/* Badge */}
-        <div className="mx-auto flex w-fit items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-full px-4 py-2 text-sm font-medium text-blue-700 mb-8">
-          Best Nextjs Admin Template
-        </div>
+      <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-center">
+        <div className="px-4 py-30 lg:py-10 relative z-10">
+          {/* Badge */}
+          {/* <div className="mx-auto flex w-fit items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-full px-4 py-2 text-sm font-medium text-blue-700 mb-8">
+            Best Nextjs Admin Template
+          </div> */}
 
-        {/* Headline */}
-        <h1 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold md:text-4xl lg:text-7xl">
-          Build Admin Panels That Work Smarter
-        </h1>
+          {/* Headline */}
+          <h1 className="relative z-10 mx-auto text-center text-2xl font-bold md:text-4xl text-dark dark:text-white lg:text-white">
+            Build Admin Panels That Work Smarter
+          </h1>
 
-        {/* Subtitle */}
-        <p className="relative z-10 mx-auto max-w-xl py-4 text-center text-lg font-normal">
-          Packed with reusable components, Tailwind styling, and Next.js best
-          practices — so you can launch faster, without reinventing the wheel.
-        </p>
+          {/* Subtitle */}
+          <p className="relative z-10 mx-auto max-w-2xl text-center text-sm lg:text-lg font-normal text-dark dark:text-white lg:text-white">
+            Packed with reusable components, Tailwind styling, and Next.js best
+            practices — so you can launch faster, without reinventing the wheel.
+          </p>
 
-        {/* Buttons */}
-        <div className="relative z-20 mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            shallow={true}
-            href={"https://fisio.obare27.com"}
-            target="_blank"
-            passHref
-            style={{ textDecoration: "none" }}
-            className="cursor-pointer"
-          >
-            <Button size="sm">Get Started</Button>
-          </Link>
-          <Link
-            shallow={true}
-            href={"https://themeforest.net/user/obare27"}
-            target="_blank"
-            passHref
-            style={{ textDecoration: "none" }}
-            className="cursor-pointer"
-          >
-            <Button size="sm" className="bg-[#82b440] hover:bg-[#82b440]">
-              Portfolio
-            </Button>
-          </Link>
-          <Link
-            shallow={true}
-            href={"https://fisio-docs.obare27.com/contact"}
-            passHref
-            style={{ textDecoration: "none" }}
-            className="cursor-pointer"
-          >
-            <Button
-              size="sm"
-              className="cursor-pointer bg-[#C57642] hover:bg-[#C57642]"
+          {/* Buttons */}
+          <div className="relative z-20 mt-8 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              shallow={true}
+              href={"https://fisio.obare27.com"}
+              target="_blank"
+              passHref
+              style={{ textDecoration: "none" }}
+              className="cursor-pointer"
             >
-              Contact Us
-            </Button>
-          </Link>
+              <Button size="sm">Get Started</Button>
+            </Link>
+            <Link
+              shallow={true}
+              href={"https://themeforest.net/user/obare27"}
+              target="_blank"
+              passHref
+              style={{ textDecoration: "none" }}
+              className="cursor-pointer"
+            >
+              <Button size="sm" className="bg-[#82b440] hover:bg-[#82b440]">
+                Portfolio
+              </Button>
+            </Link>
+            <Link
+              shallow={true}
+              href={"https://fisio-docs.obare27.com/contact"}
+              passHref
+              style={{ textDecoration: "none" }}
+              className="cursor-pointer"
+            >
+              <Button
+                size="sm"
+                className="cursor-pointer bg-[#C57642] hover:bg-[#C57642]"
+              >
+                Contact Us
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
-
-      <PromoCarousel />
     </div>
   );
 }

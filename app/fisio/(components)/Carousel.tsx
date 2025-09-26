@@ -153,7 +153,7 @@ const PromoCarousel: React.FC<TestimonialCarouselProps> = ({
         className="w-full"
         setApi={setApi} // Connect to carousel API
       >
-        <CarouselContent className="ml-2">
+        <CarouselContent className="ml-0">
           {(slides || defaultSlides).map((slide, index) => (
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
               <div className="relative overflow-hidden aspect-video w-full flex flex-col">
@@ -170,7 +170,7 @@ const PromoCarousel: React.FC<TestimonialCarouselProps> = ({
                     {slide.title}
                   </h3>
                   {slide.subtitle && (
-                    <p className="text-white/90 text-sm hidden lg:block">
+                    <p className="text-white/90 text-sm lg:block">
                       {slide.subtitle}
                     </p>
                   )}

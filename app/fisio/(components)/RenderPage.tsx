@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import PromoCarousel from "./Carousel";
 import { FAQ } from "./FAQ";
 import { Features } from "./Features";
-import { CircularFloatingText, HeroSection } from "./Hero";
+import { HeroSection } from "./Hero";
 import { NavbarLanding } from "./Navbar";
 import PagesViews from "./PageTabs";
 import TechStack from "./TechStack";
@@ -18,24 +18,6 @@ import { TechStackChecklist } from "./TechStackChecklist";
 export default function RenderPage() {
   return (
     <div className="min-h-screen pt-20">
-      {/* 👇 CIRCULAR FLOATING TEXT LAYOUT BELOW IMAGE */}
-      <div className="mt-12 hidden sm:flex absolute top-12 left-0 w-full h-[100vh] z-20 justify-center items-center">
-        <CircularFloatingText
-          items={[
-            "📊 Analytics",
-            "💬 128 Comments",
-            "↑ 245",
-            "✅ Completed",
-            "⭐ Favorites",
-            "👥 1.2k Users",
-            "⚡ Fast Reports",
-            "💼 Projects",
-            "🔔 Alerts",
-            "📈 Growth",
-          ]}
-        />
-      </div>
-
       <NavbarLanding />
       {/* Hero Section */}
       <section id="hero">
@@ -60,6 +42,10 @@ export default function RenderPage() {
       {/* Features Section */}
       <section id="features">
         <Features />
+      </section>
+
+      <section className="overflow-x-hidden max-w-7xl mx-auto">
+        <PromoCarousel />
       </section>
 
       {/* FAQ Section */}

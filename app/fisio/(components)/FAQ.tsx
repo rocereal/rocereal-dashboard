@@ -86,11 +86,11 @@ export function FAQ({
     <section className={`py-6 px-4 ${className}`}>
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col text-start py-8 gap-2">
-          <h2 className="text-base">{title}</h2>
+          <h2 className="text-base lg:text-4xl font-bold">{title}</h2>
           <p className="text-xl text-muted-foreground">{description}</p>
         </div>
 
-        <Card className="border shadow-none">
+        <Card className="border-0 shadow-none bg-transparent">
           <CardContent className="px-6">
             <Accordion
               type="single"

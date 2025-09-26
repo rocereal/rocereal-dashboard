@@ -1,5 +1,6 @@
 "use client";
 
+import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   CircleCheck,
@@ -117,9 +118,9 @@ export function TechStackChecklist({
 
   return (
     <section className={`py-6 px-4 ${className}`}>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto space-y-4">
         <div className="flex flex-col text-start py-8 gap-2">
-          <h2 className="text-base">{title}</h2>
+          <h2 className="text-base lg:text-4xl font-bold">{title}</h2>
           <p className="text-xl text-muted-foreground">{description}</p>
         </div>
 
@@ -156,6 +157,16 @@ export function TechStackChecklist({
               </Card>
             );
           })}
+        </div>
+
+        <div className="aspect-video border rounded-md overflow-x-hidden">
+          <ImageComponentOptimized
+            src={"/images/Cover Promos.webp"}
+            alt={"Fisio"}
+            unoptimized={true}
+            className="object-cover w-full h-full"
+            fill
+          />
         </div>
       </div>
     </section>
