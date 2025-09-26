@@ -49,10 +49,10 @@ export default function RenderPage() {
         onDateRangeChange={setDateRange}
       />
       <SectionCards metrics={cryptoMetrics} />
-      // Grid container for chart and converter
+      {/* Grid container for chart and converter */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Price Chart - Takes 2 columns */}
-        // Price chart container
+        {/* Price chart container */}
         <div className="lg:col-span-2 h-full">
           <SampleLineChart
             data={cryptoPriceData}
@@ -72,7 +72,7 @@ export default function RenderPage() {
           />
         </div>
         {/* Coin Converter - Takes 1 column */}
-        // Coin converter container
+        {/* Coin converter container */}
         <div className="lg:col-span-1 h-full">
           <CoinConverter className="h-full shadow-xs" />
         </div>

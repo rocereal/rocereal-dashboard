@@ -38,7 +38,7 @@ export function UserMetrics() {
         dataKeys={["desktop", "mobile"]}
         dateKey="date"
       />
-      // Grid container for charts
+      {/* Grid container for charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <SampleLineChart />
 

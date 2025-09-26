@@ -3,12 +3,11 @@ import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
 import { LayoutConfigProvider } from "@/lib/layout-config";
 import { ThemeProvider } from "@/lib/theme-provider";
+import { ThemeLayoutScript } from "@/lib/themeScript";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
-import Script from "next/script";
 import "./globals.css";
-import { ThemeLayoutScript } from "@/lib/themeScript";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

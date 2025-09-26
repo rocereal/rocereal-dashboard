@@ -200,7 +200,7 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
   return (
     // Table container
     <div className="bg-card rounded-lg border">
-      // Table content wrapper
+      {/* Table content wrapper */}
       <div className="p-6">
         <DataTable
           columns={columns}

@@ -24,7 +24,7 @@ export function EngagementMetrics() {
     // Main container for engagement metrics
     <div className="flex flex-col space-y-4">
       <SectionCards metrics={engagementMetricsData} />
-      // Grid container for first row of charts
+      {/* Grid container for first row of charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Most Used AI Features - Pie Chart */}
         <PieChart
@@ -51,7 +51,7 @@ export function EngagementMetrics() {
           nameKey="name"
         />
       </div>
-      // Grid container for second row of charts
+      {/* Grid container for second row of charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Popular Query Topics - Word Cloud */}
         <WordCloud

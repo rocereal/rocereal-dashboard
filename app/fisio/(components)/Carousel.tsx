@@ -93,7 +93,6 @@ const defaultSlides: TestimonialSlide[] = [
 const PromoCarousel: React.FC<TestimonialCarouselProps> = ({
   className = "",
   slides,
-  type = "left",
 }) => {
   // Carousel API state for controlling navigation
   const [api, setApi] = useState<CarouselApi>();

@@ -286,7 +286,7 @@ export function CryptoTable() {
   return (
     // Table container with background and border
     <div className="bg-card rounded-lg border">
-      // Table content padding container
+      {/* Table content padding container */}
       <div className="p-6">
         <DataTable
           columns={columns}

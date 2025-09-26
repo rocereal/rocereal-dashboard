@@ -37,7 +37,7 @@ export function ModelMetrics() {
     // Main container for model metrics
     <div className="flex flex-col space-y-4">
       <SectionCards metrics={modelMetricsData} />
-      // Grid container for model charts
+      {/* Grid container for model charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Average Latency Line Chart */}
         <SampleLineChart

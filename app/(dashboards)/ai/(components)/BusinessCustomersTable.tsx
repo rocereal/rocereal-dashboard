@@ -201,7 +201,6 @@ export function BusinessCustomersTable() {
   return (
     // Table container
     <div className="bg-card rounded-lg border">
-      // Table content wrapper
       <div className="p-6">
         <DataTable
           columns={businessColumns}

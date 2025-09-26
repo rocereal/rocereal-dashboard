@@ -96,7 +96,7 @@ export default function RenderPage() {
         onDateRangeChange={setDateRange}
       />
       <SectionCards metrics={crmMetrics} />
-      // Grid container for sales funnel charts
+      {/* Grid container for sales funnel charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <SampleLineChart
           data={crmSalesFunnelData}
