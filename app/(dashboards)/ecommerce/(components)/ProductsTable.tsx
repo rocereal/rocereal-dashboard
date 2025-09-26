@@ -29,14 +29,32 @@ interface ProductsTableProps {
   onView?: (product: Product) => void;
 }
 
+/**
+ * Products Table Component
+ * Displays a comprehensive table of products with sorting, filtering, and bulk actions
+ * Includes columns for product image, name, SKU, category, price, stock, status, and actions
+ * Provides functionality for selecting, viewing, editing, and deleting products
+ * @param products - Array of product objects to display in the table
+ * @returns The JSX element representing the products data table
+ */
 export function ProductsTable({ products }: ProductsTableProps) {
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
   const [orders, setOrders] = useState(ordersData);
 
+  /**
+   * Handle Delete Order Function
+   * Sets the order ID to be deleted, triggering the confirmation dialog
+   * @param orderId - The ID of the order to be deleted
+   */
   const handleDeleteOrder = (orderId: string) => {
     setOrderToDelete(orderId);
   };
 
+  /**
+   * Confirm Delete Order Function
+   * Confirms the deletion of the selected order and removes it from the orders list
+   * Resets the orderToDelete state after deletion
+   */
   const confirmDeleteOrder = () => {
     if (orderToDelete) {
       setOrders(orders.filter((order) => order.id !== orderToDelete));
@@ -44,6 +62,10 @@ export function ProductsTable({ products }: ProductsTableProps) {
     }
   };
 
+  /**
+   * Cancel Delete Order Function
+   * Cancels the deletion process by resetting the orderToDelete state
+   */
   const cancelDeleteOrder = () => {
     setOrderToDelete(null);
   };

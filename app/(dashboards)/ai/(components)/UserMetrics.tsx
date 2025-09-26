@@ -19,8 +19,16 @@ const salesConfig: ChartConfig = {
   },
 };
 
+/**
+ * User Metrics Component
+ * This component displays user-related AI metrics and analytics
+ * It renders section cards with user metrics, traffic analytics bar chart, and financial overview charts
+ * Provides insights into user behavior, website traffic, and revenue trends
+ * @returns The JSX element representing the user metrics dashboard
+ */
 export function UserMetrics() {
   return (
+    // Main container for user metrics
     <div className="flex flex-col space-y-4">
       <SectionCards metrics={aiUserMetrics} />
       <SampleBarChart
@@ -30,6 +38,7 @@ export function UserMetrics() {
         dataKeys={["desktop", "mobile"]}
         dateKey="date"
       />
+      // Grid container for charts
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <SampleLineChart />
 

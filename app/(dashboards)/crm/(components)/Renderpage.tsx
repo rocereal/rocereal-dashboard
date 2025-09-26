@@ -47,10 +47,24 @@ const dealsConfig: ChartConfig = {
   },
 };
 
+/**
+ * Render Page Component
+ * This is the main rendering component for the CRM dashboard page
+ * It displays the dashboard header with breadcrumbs and action buttons, followed by CRM metrics, charts, and customer table
+ * Provides the overall layout and navigation for the Customer Relationship Management dashboard
+ * @returns The JSX element representing the complete CRM dashboard page layout
+ */
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
   const [isAddContactOpen, setIsAddContactOpen] = useState(false);
 
+  /**
+   * Handle Add Contact
+   * This function handles the submission of the add contact form
+   * It logs the contact data and closes the form modal
+   * In a real application, this would add the contact to the data store
+   * @param contactData - Object containing the contact information (name, email, phone, notes)
+   */
   const handleAddContact = (contactData: {
     name: string;
     email: string;
@@ -64,6 +78,7 @@ export default function RenderPage() {
   };
 
   return (
+    // Main container for the CRM dashboard layout
     <div className="flex flex-col space-y-4">
       <DashboardHeader
         title="Customer Relationship Dashboard"
@@ -80,9 +95,8 @@ export default function RenderPage() {
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
       />
-
       <SectionCards metrics={crmMetrics} />
-
+      // Grid container for sales funnel charts
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <SampleLineChart
           data={crmSalesFunnelData}
@@ -110,9 +124,7 @@ export default function RenderPage() {
           showTimeRange={true}
         />
       </div>
-
       <CRMCustomerTable data={crmCustomers} />
-
       <AddContactForm
         open={isAddContactOpen}
         onOpenChange={setIsAddContactOpen}

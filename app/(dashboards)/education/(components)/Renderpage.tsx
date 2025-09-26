@@ -15,6 +15,13 @@ import { SectionCards } from "./SectionCards";
 import { StudentEngagementChart } from "./StudentEngagementChart";
 import { TimeSpentChart } from "./TimeSpentChart";
 
+/**
+ * Education Render Page Component
+ * This is the main rendering component for the education dashboard page
+ * It displays the dashboard header, metrics cards, engagement charts, time spent charts, and recent students table
+ * Provides the overall layout and functionality for the Learning Performance dashboard
+ * @returns The JSX element representing the complete education dashboard page layout
+ */
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
 

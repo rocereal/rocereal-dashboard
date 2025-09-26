@@ -1,3 +1,10 @@
+/**
+ * Model Metrics Component
+ * This component displays AI model performance metrics
+ * It renders section cards with key model data and charts showing latency trends and completion success rates
+ * Provides insights into model response times, error rates, and overall performance
+ * @returns The JSX element representing the model metrics dashboard
+ */
 "use client";
 
 import { SampleBarChart } from "@/components/charts/SampleBarChart";
@@ -27,9 +34,10 @@ const completionConfig: ChartConfig = {
 
 export function ModelMetrics() {
   return (
+    // Main container for model metrics
     <div className="flex flex-col space-y-4">
       <SectionCards metrics={modelMetricsData} />
-
+      // Grid container for model charts
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Average Latency Line Chart */}
         <SampleLineChart

@@ -23,6 +23,14 @@ interface CRMCustomerTableProps {
   data: CRMCustomer[];
 }
 
+/**
+ * CRM Customer Table Component
+ * This component renders a data table displaying CRM customer information
+ * It includes columns for customer details, plan tier, contact dates, lifetime value, and status
+ * Provides bulk actions for managing selected customers and search functionality
+ * @param data - Array of CRM customer objects to display
+ * @returns The JSX element representing the CRM customer table
+ */
 export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
   const columns: ColumnDef<CRMCustomer>[] = [
     {
@@ -161,6 +169,14 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
     },
   ];
 
+  /**
+   * Bulk Actions Handler
+   * This function handles bulk operations for selected CRM customers
+   * It provides functionality for selecting all, deleting, and exporting selected items
+   * @param selectedRows - Array of selected CRM customer objects
+   * @param table - The table instance from TanStack Table
+   * @returns The JSX element for bulk actions component
+   */
   const bulkActions = (
     selectedRows: CRMCustomer[],
     table: Table<CRMCustomer>
@@ -182,7 +198,9 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
   );
 
   return (
+    // Table container
     <div className="bg-card rounded-lg border">
+      // Table content wrapper
       <div className="p-6">
         <DataTable
           columns={columns}

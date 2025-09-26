@@ -24,7 +24,15 @@ export default function RenderPage() {
     },
   };
 
+  /**
+   * Render Page Component
+   * This is the main rendering component for the crypto dashboard page
+   * It displays the dashboard header with breadcrumbs and action buttons, followed by crypto metrics, price chart, coin converter, and crypto table
+   * Provides the overall layout and navigation for the Crypto Performance dashboard
+   * @returns The JSX element representing the complete crypto dashboard page layout
+   */
   return (
+    // Main container for the crypto dashboard layout
     <div className="flex flex-col space-y-6">
       <DashboardHeader
         title="Crypto Performance Dashboard"
@@ -40,11 +48,11 @@ export default function RenderPage() {
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
       />
-
       <SectionCards metrics={cryptoMetrics} />
-
+      // Grid container for chart and converter
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Price Chart - Takes 2 columns */}
+        // Price chart container
         <div className="lg:col-span-2 h-full">
           <SampleLineChart
             data={cryptoPriceData}
@@ -63,13 +71,12 @@ export default function RenderPage() {
             className="h-full"
           />
         </div>
-
         {/* Coin Converter - Takes 1 column */}
+        // Coin converter container
         <div className="lg:col-span-1 h-full">
           <CoinConverter className="h-full shadow-xs" />
         </div>
       </div>
-
       <CryptoTable />
     </div>
   );

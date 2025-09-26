@@ -9,11 +9,21 @@ interface SectionCardsProps {
   className?: string;
 }
 
+/**
+ * Section Cards Component
+ * This component renders a grid of metric cards displaying key CRM performance indicators
+ * Each card shows a metric title, value, change indicator, and description
+ * Supports customizable metrics data and optional className for styling
+ * @param metrics - Array of CRM metric objects to display
+ * @param className - Optional CSS class name for additional styling
+ * @returns The JSX element representing the metrics cards grid
+ */
 export function SectionCards({ metrics, className }: SectionCardsProps) {
   // Use provided metrics or default empty array
   const displayMetrics = metrics || [];
 
   return (
+    // Grid container for metrics cards
     <div
       className={cn(
         "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4",

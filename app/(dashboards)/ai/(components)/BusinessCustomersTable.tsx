@@ -1,3 +1,10 @@
+/**
+ * Business Customers Table Component
+ * This component renders a data table displaying business customers information
+ * It includes columns for customer details, subscription plans, usage metrics, and actions
+ * Provides bulk actions for managing selected customers and search functionality
+ * @returns The JSX element representing the business customers table
+ */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -163,6 +170,14 @@ export const businessColumns: ColumnDef<BusinessCustomer>[] = [
 ];
 
 export function BusinessCustomersTable() {
+  /**
+   * Bulk Actions Handler
+   * This function handles bulk operations for selected business customers
+   * It provides functionality for selecting all, deleting, and exporting selected items
+   * @param selectedRows - Array of selected business customer objects
+   * @param table - The table instance from TanStack Table
+   * @returns The JSX element for bulk actions component
+   */
   const bulkActions = (
     selectedRows: BusinessCustomer[],
     table: Table<BusinessCustomer>
@@ -184,7 +199,9 @@ export function BusinessCustomersTable() {
   );
 
   return (
+    // Table container
     <div className="bg-card rounded-lg border">
+      // Table content wrapper
       <div className="p-6">
         <DataTable
           columns={businessColumns}

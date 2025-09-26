@@ -9,6 +9,15 @@ interface SectionCardsProps {
   className?: string;
 }
 
+/**
+ * E-commerce Section Cards Component
+ * Displays a grid of metric cards showing key e-commerce performance indicators
+ * Each card includes an icon, title, value, change percentage, and description
+ * Supports customizable metrics and styling through props
+ * @param metrics - Array of e-commerce metric objects to display in the cards
+ * @param className - Optional CSS class name for additional styling
+ * @returns The JSX element representing the grid of metric cards
+ */
 export function SectionCards({ metrics, className }: SectionCardsProps) {
   // Use provided metrics or default empty array
   const displayMetrics = metrics || [];

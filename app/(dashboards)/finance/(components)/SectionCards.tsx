@@ -15,6 +15,13 @@ interface SectionCardsProps {
   className?: string;
 }
 
+/**
+ * Get Icon Component Function
+ * Maps icon name strings to their corresponding Lucide React icon components
+ * Used for dynamically rendering icons in metric cards
+ * @param iconName - The string name of the icon to retrieve
+ * @returns The corresponding Lucide React icon component
+ */
 const getIconComponent = (iconName?: string) => {
   switch (iconName) {
     case "DollarSign":
@@ -34,6 +41,15 @@ const getIconComponent = (iconName?: string) => {
   }
 };
 
+/**
+ * Finance Section Cards Component
+ * Displays a grid of metric cards showing key financial performance indicators
+ * Each card includes an icon, title, value, and change percentage
+ * Supports customizable metrics and styling through props
+ * @param metrics - Array of metric objects to display in the cards
+ * @param className - Optional CSS class name for additional styling
+ * @returns The JSX element representing the grid of metric cards
+ */
 export function SectionCards({ metrics, className }: SectionCardsProps) {
   // Use provided metrics or default empty array
   const displayMetrics = metrics || [];

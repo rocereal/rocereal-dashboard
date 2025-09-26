@@ -24,15 +24,34 @@ const revenueConfig: ChartConfig = {
   },
 };
 
+/**
+ * E-commerce Render Page Component
+ * This is the main rendering component for the e-commerce dashboard page
+ * It displays the dashboard header, metrics cards, revenue chart, conversion funnel, and products table
+ * Provides the overall layout and functionality for the E-commerce Performance dashboard
+ * @returns The JSX element representing the complete e-commerce dashboard page layout
+ */
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
   const [products, setProducts] = useState(productsData);
 
+  /**
+   * Handle Edit Product Function
+   * Handles the edit action for a product
+   * Logs the product to console and prepares for edit functionality implementation
+   * @param product - The product object to be edited
+   */
   const handleEdit = (product: Product) => {
     console.log("Edit product:", product);
     // Implement edit functionality
   };
 
+  /**
+   * Handle Delete Product Function
+   * Handles the delete action for a product with user confirmation
+   * Shows a confirmation dialog and removes the product from the list if confirmed
+   * @param product - The product object to be deleted
+   */
   const handleDelete = (product: Product) => {
     console.log("Delete product:", product);
     // Implement delete functionality with confirmation
@@ -41,6 +60,12 @@ export default function RenderPage() {
     }
   };
 
+  /**
+   * Handle View Product Function
+   * Handles the view action for a product
+   * Logs the product to console and prepares for view details functionality implementation
+   * @param product - The product object to be viewed
+   */
   const handleView = (product: Product) => {
     console.log("View product:", product);
     // Implement view details functionality

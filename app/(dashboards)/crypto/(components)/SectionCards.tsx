@@ -9,11 +9,21 @@ interface SectionCardsProps {
   className?: string;
 }
 
+/**
+ * Section Cards Component
+ * Displays a grid of metric cards showing key cryptocurrency performance indicators
+ * Each card includes an icon, title, value, change percentage, and description
+ * Supports customizable metrics and styling through props
+ * @param metrics - Array of crypto metric objects to display in the cards
+ * @param className - Optional CSS class name for additional styling
+ * @returns The JSX element representing the grid of metric cards
+ */
 export function SectionCards({ metrics, className }: SectionCardsProps) {
   // Use provided metrics or default empty array
   const displayMetrics = metrics || [];
 
   return (
+    // Metrics grid container
     <div
       className={cn(
         "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4",

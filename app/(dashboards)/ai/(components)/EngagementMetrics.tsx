@@ -1,3 +1,10 @@
+/**
+ * Engagement Metrics Component
+ * This component displays user engagement metrics for AI services
+ * It renders section cards with key engagement data and various charts including pie, radar, word cloud, and funnel charts
+ * Provides insights into feature usage, user journeys, query topics, and engagement patterns
+ * @returns The JSX element representing the engagement metrics dashboard
+ */
 "use client";
 
 import { FunnelChart } from "@/components/charts/FunnelChart";
@@ -14,8 +21,10 @@ import { SectionCards } from "./SectionCards";
 
 export function EngagementMetrics() {
   return (
+    // Main container for engagement metrics
     <div className="flex flex-col space-y-4">
       <SectionCards metrics={engagementMetricsData} />
+      // Grid container for first row of charts
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Most Used AI Features - Pie Chart */}
         <PieChart
@@ -42,7 +51,7 @@ export function EngagementMetrics() {
           nameKey="name"
         />
       </div>
-
+      // Grid container for second row of charts
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Popular Query Topics - Word Cloud */}
         <WordCloud

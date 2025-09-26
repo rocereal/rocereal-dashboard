@@ -17,6 +17,13 @@ interface StudentEngagementChartProps {
   }>;
 }
 
+/**
+ * Student Engagement Chart Component
+ * Displays a line chart showing student engagement over time
+ * Visualizes the number of active learners per week using Recharts
+ * @param data - Array of data points with week and activeLearners count
+ * @returns The JSX element representing the student engagement line chart
+ */
 export function StudentEngagementChart({ data }: StudentEngagementChartProps) {
   return (
     <div className="h-80">

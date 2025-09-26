@@ -23,6 +23,14 @@ interface RecentStudentsTableProps {
   students: RecentStudent[];
 }
 
+/**
+ * Recent Students Table Component
+ * Displays a comprehensive table of recently enrolled students with sorting, filtering, and bulk actions
+ * Includes columns for student info, course, enrollment date, progress, certificates, status, and actions
+ * Provides functionality for selecting, viewing, editing, and managing student records
+ * @param students - Array of recent student objects to display in the table
+ * @returns The JSX element representing the recent students data table
+ */
 export function RecentStudentsTable({ students }: RecentStudentsTableProps) {
   const columns: ColumnDef<RecentStudent>[] = [
     {
@@ -134,6 +142,12 @@ export function RecentStudentsTable({ students }: RecentStudentsTableProps) {
       header: "Status",
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
+        /**
+         * Get Status Color Function
+         * Returns appropriate CSS classes for status badges based on student status
+         * @param status - The status string of the student
+         * @returns CSS class string for the status badge styling
+         */
         const getStatusColor = (status: string) => {
           switch (status) {
             case "active":

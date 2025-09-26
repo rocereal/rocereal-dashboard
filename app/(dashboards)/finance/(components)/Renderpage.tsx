@@ -18,6 +18,13 @@ const profitLossConfig: ChartConfig = {
   },
 };
 
+/**
+ * Finance Render Page Component
+ * This is the main rendering component for the finance dashboard page
+ * It displays the dashboard header, metrics cards, profit/loss chart, asset allocation chart, and transactions table
+ * Provides the overall layout and functionality for the Financial Performance dashboard
+ * @returns The JSX element representing the complete finance dashboard page layout
+ */
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
 

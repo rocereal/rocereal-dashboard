@@ -18,12 +18,29 @@ interface SectionCardsProps {
   className?: string;
 }
 
+/**
+ * Education Section Cards Component
+ * Displays a grid of metric cards or course cards showing key education performance indicators
+ * Each card includes an icon, title, value, change percentage, and description for metrics
+ * For courses, shows course image, enrollment, completion rate, and rating
+ * Supports customizable metrics and courses through props
+ * @param metrics - Array of education metric objects to display in the cards
+ * @param courses - Array of course objects to display as course cards
+ * @param className - Optional CSS class name for additional styling
+ * @returns The JSX element representing the grid of metric or course cards
+ */
 export function SectionCards({
   metrics,
   courses,
   className,
 }: SectionCardsProps) {
-  // Icon mapping function
+  /**
+   * Get Icon Component Function
+   * Maps icon name strings to their corresponding Lucide React icon components
+   * Used for dynamically rendering icons in course cards
+   * @param iconName - The string name of the icon to retrieve
+   * @returns The corresponding Lucide React icon component
+   */
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
       case "graduation-cap":

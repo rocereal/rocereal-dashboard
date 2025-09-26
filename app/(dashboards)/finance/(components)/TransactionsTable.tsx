@@ -25,6 +25,13 @@ import {
 } from "lucide-react";
 import { showToast } from "@/components/ui/sonner";
 
+/**
+ * Format Currency Function
+ * Formats a numerical value into a USD currency string
+ * Uses absolute value to ensure positive display
+ * @param value - The numerical value to format as currency
+ * @returns The formatted currency string in USD
+ */
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -32,6 +39,12 @@ const formatCurrency = (value: number) => {
   }).format(Math.abs(value));
 };
 
+/**
+ * Get Status Color Function
+ * Returns appropriate CSS classes for status badges based on transaction status
+ * @param status - The status of the transaction
+ * @returns CSS class string for the status badge styling
+ */
 const getStatusColor = (status: TransactionData["status"]) => {
   switch (status) {
     case "completed":
@@ -45,6 +58,12 @@ const getStatusColor = (status: TransactionData["status"]) => {
   }
 };
 
+/**
+ * Get Type Color Function
+ * Returns appropriate CSS classes for type badges based on transaction type
+ * @param type - The type of the transaction
+ * @returns CSS class string for the type badge styling
+ */
 const getTypeColor = (type: TransactionData["type"]) => {
   switch (type) {
     case "credit":
@@ -60,6 +79,12 @@ const getTypeColor = (type: TransactionData["type"]) => {
   }
 };
 
+/**
+ * Get Method Color Function
+ * Returns appropriate CSS classes for method badges based on transaction method
+ * @param method - The method of the transaction
+ * @returns CSS class string for the method badge styling
+ */
 const getMethodColor = (method: TransactionData["method"]) => {
   switch (method) {
     case "card":
@@ -247,6 +272,13 @@ export const columns: ColumnDef<TransactionData>[] = [
   },
 ];
 
+/**
+ * Transactions Table Component
+ * Displays a comprehensive table of financial transactions with sorting, filtering, and bulk actions
+ * Includes columns for transaction details, amounts, types, methods, status, and actions
+ * Provides functionality for selecting, viewing, and managing transaction records
+ * @returns The JSX element representing the transactions data table
+ */
 export function TransactionsTable() {
   const bulkActions = (
     selectedRows: TransactionData[],

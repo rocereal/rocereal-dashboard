@@ -17,6 +17,13 @@ interface TimeSpentChartProps {
   }>;
 }
 
+/**
+ * Time Spent Chart Component
+ * Displays a bar chart showing time spent on different courses
+ * Visualizes the average time spent by course in hours using Recharts
+ * @param data - Array of data points with course name and hours spent
+ * @returns The JSX element representing the time spent bar chart
+ */
 export function TimeSpentChart({ data }: TimeSpentChartProps) {
   return (
     <div className="h-80">

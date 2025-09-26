@@ -28,6 +28,14 @@ const currentPrices = {
   polygon: 0.62,
 };
 
+/**
+ * Coin Converter Component
+ * This component allows users to convert between different cryptocurrencies
+ * It displays current prices and calculates conversion rates in real time
+ * Provides a user-friendly interface for currency conversion with coin selection
+ * @param className - Optional CSS class name for custom styling
+ * @returns The JSX element representing the coin converter interface
+ */
 export function CoinConverter({ className }: CoinConverterProps) {
   const [fromCoin, setFromCoin] = useState("bitcoin");
   const [toCoin, setToCoin] = useState("ethereum");
@@ -49,6 +57,13 @@ export function CoinConverter({ className }: CoinConverterProps) {
   const fromCoinData = cryptoCoins.find((coin) => coin.id === fromCoin);
   const toCoinData = cryptoCoins.find((coin) => coin.id === toCoin);
 
+  /**
+   * Format Price Function
+   * Formats a numerical price value into a currency string
+   * Uses USD currency formatting with appropriate decimal places based on price magnitude
+   * @param price - The numerical price value to format
+   * @returns The formatted price string in USD currency
+   */
   const formatPrice = (price: number) => {
     if (price >= 1) {
       return new Intl.NumberFormat("en-US", {

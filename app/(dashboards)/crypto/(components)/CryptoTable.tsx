@@ -22,6 +22,13 @@ import {
 } from "lucide-react";
 import { showToast } from "@/components/ui/sonner";
 
+/**
+ * Format Currency Function
+ * Formats a numerical value into a USD currency string
+ * Adjusts decimal places based on whether the value is less than 1
+ * @param value - The numerical value to format as currency
+ * @returns The formatted currency string in USD
+ */
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -31,6 +38,13 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
+/**
+ * Format Large Number Function
+ * Formats large numerical values into abbreviated strings with suffixes (T, B, M, K)
+ * Used for displaying market cap and volume values in a readable format
+ * @param value - The large numerical value to format
+ * @returns The formatted string with appropriate suffix
+ */
 const formatLargeNumber = (value: number) => {
   if (value >= 1e12) {
     return `$${(value / 1e12).toFixed(2)}T`;
@@ -241,6 +255,13 @@ export const columns: ColumnDef<CryptoTableData>[] = [
   },
 ];
 
+/**
+ * Crypto Table Component
+ * Displays a comprehensive table of cryptocurrency data with sorting, filtering, and bulk actions
+ * Includes columns for coin name, price, market changes, market cap, volume, and actions
+ * Provides functionality for selecting, viewing, and managing cryptocurrency entries
+ * @returns The JSX element representing the cryptocurrency data table
+ */
 export function CryptoTable() {
   const bulkActions = (
     selectedRows: CryptoTableData[],
@@ -263,7 +284,9 @@ export function CryptoTable() {
   );
 
   return (
+    // Table container with background and border
     <div className="bg-card rounded-lg border">
+      // Table content padding container
       <div className="p-6">
         <DataTable
           columns={columns}
