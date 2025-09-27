@@ -1,5 +1,4 @@
 "use client";
-
 import ImageComponentOptimized from "@/components/shared/ImageComponentOptimized";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -17,24 +16,17 @@ export function HeroSection() {
           fill
         />
       </div>
-      <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-center">
-        <div className="px-4 py-30 lg:py-10 relative z-10">
-          {/* Badge */}
-          {/* <div className="mx-auto flex w-fit items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-full px-4 py-2 text-sm font-medium text-blue-700 mb-8">
-            Best Nextjs Admin Template
-          </div> */}
-
+      <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-end lg:justify-center h-full">
+        <div className="px-4 mb-8 lg:mb-0 relative z-10">
           {/* Headline */}
           <h1 className="relative z-10 mx-auto text-center text-2xl font-bold md:text-4xl text-dark dark:text-white lg:text-white">
-            Build Admin Panels That Work Smarter1
+            Build Admin Panels That Work Smarter
           </h1>
-
           {/* Subtitle */}
           <p className="relative z-10 mx-auto max-w-2xl text-center text-sm lg:text-lg font-normal text-dark dark:text-white lg:text-white">
             Packed with reusable components, Tailwind styling, and Next.js best
             practices — so you can launch faster, without reinventing the wheel.
           </p>
-
           {/* Buttons */}
           <div className="relative z-20 mt-8 flex flex-wrap items-center justify-center gap-4">
             <Button
