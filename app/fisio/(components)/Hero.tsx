@@ -26,7 +26,7 @@ export function HeroSection() {
 
           {/* Headline */}
           <h1 className="relative z-10 mx-auto text-center text-2xl font-bold md:text-4xl text-dark dark:text-white lg:text-white">
-            Build Admin Panels That Work Smarter
+            Build Admin Panels That Work Smarter1
           </h1>
 
           {/* Subtitle */}
