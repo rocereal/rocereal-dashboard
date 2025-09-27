@@ -11,14 +11,16 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useLayoutConfig } from "@/lib/layout-config";
 import { useTheme } from "@/lib/theme-provider";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Monitor, Moon, RotateCcw, Sun, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FloatingConfigButton } from "./shared/floating-config-button";
 
 export function ConfigPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const { config, updateConfig, resetConfig } = useLayoutConfig();
+  const isMobile = useIsMobile();
 
   const handleThemeChange = (newTheme: "light" | "dark" | "system") => {
     setTheme(newTheme);
@@ -27,6 +29,13 @@ export function ConfigPanel() {
   const handleLayoutChange = (key: keyof typeof config, value: string) => {
     updateConfig({ [key]: value });
   };
+
+  // Force sidebar layout on mobile
+  useEffect(() => {
+    if (isMobile && config.layoutType !== "sidebar") {
+      updateConfig({ layoutType: "sidebar" });
+    }
+  }, [isMobile, config.layoutType, updateConfig]);
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -156,15 +165,24 @@ export function ConfigPanel() {
               >
                 Sidebar
               </Button>
-              <Button
-                variant={
-                  config.layoutType === "header-nav" ? "default" : "outline"
-                }
-                size="sm"
-                onClick={() => handleLayoutChange("layoutType", "header-nav")}
-              >
-                Header Nav
-              </Button>
+              <div className="flex flex-col gap-1">
+                <Button
+                  variant={
+                    config.layoutType === "header-nav" ? "default" : "outline"
+                  }
+                  size="sm"
+                  onClick={() => handleLayoutChange("layoutType", "header-nav")}
+                  disabled={isMobile}
+                  className={isMobile ? "cursor-not-allowed opacity-60" : ""}
+                >
+                  Header Nav
+                </Button>
+                {isMobile && (
+                  <span className="text-xs text-muted-foreground text-center">
+                    Desktop only
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 

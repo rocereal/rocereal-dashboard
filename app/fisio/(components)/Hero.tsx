@@ -37,16 +37,16 @@ export function HeroSection() {
 
           {/* Buttons */}
           <div className="relative z-20 mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              shallow={true}
-              href={"https://fisio.obare27.com"}
-              target="_blank"
-              passHref
-              style={{ textDecoration: "none" }}
-              className="cursor-pointer"
+            <Button
+              size="sm"
+              onClick={() =>
+                document
+                  .getElementById("views")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
             >
-              <Button size="sm">Get Started</Button>
-            </Link>
+              Get Started
+            </Button>
             <Link
               shallow={true}
               href={"https://themeforest.net/user/obare27"}
