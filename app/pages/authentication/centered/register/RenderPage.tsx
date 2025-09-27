@@ -62,7 +62,7 @@ export default function RenderPage() {
           <RegisterForm
             onSubmit={handleRegister}
             isLoading={isLoading}
-            signInHref="/authentication/centered/login"
+            signInHref="/pages/authentication/centered/login"
             inputClassName="bg-white/50 dark:bg-slate-700/50"
             socialLoginProps={{
               separatorText: "Or continue with",

@@ -44,7 +44,7 @@ export default function RenderPage() {
           <RegisterForm
             onSubmit={handleRegister}
             isLoading={isLoading}
-            signInHref="/authentication/split-right/login"
+            signInHref="/pages/authentication/split-right/login"
           />
         </CardContent>
       </Card>

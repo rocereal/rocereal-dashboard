@@ -70,8 +70,8 @@ export default function LoginPage() {
           <LoginForm
             onSubmit={handleLogin}
             isLoading={isLoading}
-            forgotPasswordHref="/authentication/centered/forgot-password"
-            signUpHref="/authentication/centered/register"
+            forgotPasswordHref="/pages/authentication/centered/forgot-password"
+            signUpHref="/pages/authentication/centered/register"
             inputClassName="bg-white/50 dark:bg-slate-700/50"
             socialLoginProps={{
               separatorText: "Or continue with",

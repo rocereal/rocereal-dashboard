@@ -58,7 +58,7 @@ export default function RenderPage() {
 
             <div className="mt-6">
               <Button className="w-full">
-                <Link href="/authentication/split-right/login">
+                <Link href="/pages/authentication/split-right/login">
                   Sign in with new password
                 </Link>
               </Button>
@@ -99,7 +99,7 @@ export default function RenderPage() {
       <div className="text-start">
         <Button variant="ghost">
           <Link
-            href="/authentication/split-right/login"
+            href="/pages/authentication/split-right/login"
             className="flex flex-row items-center "
           >
             <ArrowLeft className="mr-2 h-4 w-4" />

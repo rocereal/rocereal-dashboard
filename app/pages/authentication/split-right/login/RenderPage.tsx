@@ -49,8 +49,8 @@ export default function RenderPage() {
           <LoginForm
             onSubmit={handleLogin}
             isLoading={isLoading}
-            forgotPasswordHref="/authentication/split-right/forgot-password"
-            signUpHref="/authentication/split-right/register"
+            forgotPasswordHref="/pages/authentication/split-right/forgot-password"
+            signUpHref="/pages/authentication/split-right/register"
           />
         </CardContent>
       </Card>

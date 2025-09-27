@@ -46,8 +46,8 @@ export default function RenderPage() {
           <StepThree
             onSubmit={handleForm}
             isLoading={isLoading}
-            onboardingHref="/onboarding/split-left/step-four"
-            skipHref="/onboarding/split-left/step-three"
+            onboardingHref="/pages/onboarding/split-left/step-four"
+            skipHref="/pages/onboarding/split-left/step-three"
           />
         </div>
       </div>

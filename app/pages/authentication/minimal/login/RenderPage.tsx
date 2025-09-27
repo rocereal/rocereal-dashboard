@@ -70,8 +70,8 @@ export default function RenderPage() {
           <LoginForm
             onSubmit={handleLogin}
             isLoading={isLoading}
-            forgotPasswordHref="/authentication/minimal/forgot-password"
-            signUpHref="/authentication/minimal/register"
+            forgotPasswordHref="/pages/authentication/minimal/forgot-password"
+            signUpHref="/pages/authentication/minimal/register"
             inputClassName="bg-white/50 dark:bg-slate-900/50"
             socialLoginProps={{
               separatorText: "Or continue with",
