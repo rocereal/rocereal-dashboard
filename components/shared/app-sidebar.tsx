@@ -26,7 +26,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent
         className={
           state === "collapsed"
-            ? "overflow-y-auto max-h-[calc(100vh-8rem)] scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
+            ? "!overflow-y-auto max-h-[calc(100vh-10rem)]"
             : ""
         }
       >
