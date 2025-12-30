@@ -52,7 +52,7 @@ export function TimeSpentChart({ data }: TimeSpentChartProps) {
               boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
             }}
             labelStyle={{ color: "hsl(0 0% 9%)" }}
-            formatter={(value: number) => [`${value} hours`, "Time Spent"]}
+            formatter={(value: number | undefined) => value !== undefined ? [`${value} hours`, "Time Spent"] : ["N/A", "Time Spent"]}
           />
           <Bar dataKey="hours" fill="#10b981" radius={[4, 4, 0, 0]} />
         </BarChart>
