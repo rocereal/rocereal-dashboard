@@ -42,19 +42,17 @@ export function NavbarLanding() {
         <NavBody>
           <NavbarLogo />
           <NavItems items={navItems} />
-          <div className="flex items-center gap-4">
-            <Link
-              shallow={true}
-              href={"https://fisio-docs.obare27.com"}
-              passHref
-              style={{ textDecoration: "none" }}
-              className="cursor-pointer "
-            >
-              <Button variant="default" className="rounded-full">
-                View Documentation
-              </Button>
-            </Link>
-          </div>
+          <Link
+            shallow={true}
+            href={"https://fisio-docs.obare27.com"}
+            passHref
+            style={{ textDecoration: "none" }}
+            className="cursor-pointer z-40"
+          >
+            <Button variant="default" className="rounded-full">
+              View Documentation
+            </Button>
+          </Link>
         </NavBody>
 
         {/* Mobile Navigation */}
