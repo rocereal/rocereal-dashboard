@@ -42,7 +42,7 @@ export default function ContactPage() {
     <div className="min-h-screen py-12">
       <div className="container mx-auto px-4">
         <ContactHeader
-          title=" Contact Us"
+          title=" Contact Me"
           subtitle=" Get in touch with us. We'd love to hear from you and answer any
         questions you may have."
         />

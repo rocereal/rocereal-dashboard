@@ -6,7 +6,7 @@ import Link from "next/link";
 export function HeroSection() {
   return (
     <>
-      <div className="hidden lg:block h-[45vh] lg:h-[100vh]">
+      <div className="hidden lg:block h-[45vh] lg:h-screen">
         {/* Background Image */}
         <div className="absolute inset-0 -z-10 aspect-video">
           <ImageComponentOptimized
@@ -43,7 +43,7 @@ export function HeroSection() {
               </Button>
               <Link
                 shallow={true}
-                href={"https://themeforest.net/user/obare27"}
+                href={"https://obare27.com"}
                 target="_blank"
                 passHref
                 style={{ textDecoration: "none" }}
@@ -64,7 +64,7 @@ export function HeroSection() {
                   size="sm"
                   className="cursor-pointer bg-[#C57642] hover:bg-[#C57642]"
                 >
-                  Contact Us
+                  Contact Me
                 </Button>
               </Link>
             </div>
@@ -112,7 +112,7 @@ export function HeroSection() {
               </Button>
               <Link
                 shallow={true}
-                href={"https://themeforest.net/user/obare27"}
+                href={"https://obare27.com"}
                 target="_blank"
                 passHref
                 style={{ textDecoration: "none" }}
@@ -133,7 +133,7 @@ export function HeroSection() {
                   size="sm"
                   className="cursor-pointer bg-[#C57642] hover:bg-[#C57642]"
                 >
-                  Contact Us
+                  Contact Me
                 </Button>
               </Link>
             </div>

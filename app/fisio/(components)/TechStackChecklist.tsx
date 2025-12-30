@@ -18,8 +18,8 @@ const techStackData = [
     icon: Code,
     color: "blue",
     technologies: [
-      { name: "Next.js 15.5.3", description: "React Framework" },
-      { name: "React 19.1.0", description: "UI Library" },
+      { name: "Next.js 16.1.1", description: "React Framework" },
+      { name: "React 19.2.3", description: "UI Library" },
       { name: "TypeScript 5", description: "Type Safety" },
     ],
   },

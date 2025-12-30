@@ -14,7 +14,7 @@ import {
 const featuresData = [
   {
     title: "Next.js 15 & React 19",
-    description: "Fisio Nextjs Template Built with Next.js 15 & React 19",
+    description: "Fisio Nextjs Template Built with Next.js 16 & React 19",
     icon: Code,
     color: "blue",
   },
