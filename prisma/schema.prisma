@@ -56,3 +56,23 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model CrmCall {
+  id              String   @id @default(cuid())
+  invoxId         String   @unique
+  caller          String
+  account         String?
+  date            DateTime
+  duration        String?
+  status          String?
+  source          String?
+  campaign        String?
+  utmSource       String?
+  medium          String?
+  receivingNumber String?
+  recordingUri    String?
+  reason          String?
+  summary         String?
+  rawPayload      Json?
+  createdAt       DateTime @default(now())
+}

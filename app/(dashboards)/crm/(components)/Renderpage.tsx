@@ -3,6 +3,7 @@
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { CRMCustomerTable } from "@/app/(dashboards)/crm/(components)/CrmCustomerTable";
+import { InvoxCallsTable } from "./InvoxCallsTable";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { crmCustomers } from "@/data/crm-customers";
@@ -124,6 +125,7 @@ export default function RenderPage() {
           showTimeRange={true}
         />
       </div>
+      <InvoxCallsTable />
       <CRMCustomerTable data={crmCustomers} />
       <AddContactForm
         open={isAddContactOpen}
