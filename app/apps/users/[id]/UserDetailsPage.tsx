@@ -1,186 +1,150 @@
-/**
- * User Details Page Component
- * Displays comprehensive user profile information with header and tabbed content
- * Shows user avatar, personal details, status, role, and contact information
- * Includes tabbed interface for detailed user management sections
- */
-
 "use client";
 
 import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { users } from "@/data/users-data";
-import { Calendar, Clock, Mail, Phone } from "lucide-react";
-import { notFound } from "next/navigation";
-import { useMemo } from "react";
+import { Calendar, Clock, Mail } from "lucide-react";
+import { useEffect, useState } from "react";
 import { UserDetailsTabs } from "./components/UserDetailsTabs";
+import type { User } from "@/data/users-data";
 
-/**
- * Props for the UserDetailsPage component
- * @param userId - The ID of the user to display details for
- */
 interface UserDetailsPageProps {
   userId: string;
 }
 
+type DbUser = {
+  id: string;
+  name: string | null;
+  email: string;
+  image: string | null;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+function dbUserToUser(u: DbUser): User {
+  const [firstName = "", ...rest] = (u.name ?? u.email).split(" ");
+  return {
+    id: u.id,
+    email: u.email,
+    firstName,
+    lastName: rest.join(" "),
+    avatar: u.image ?? "",
+    role: (u.role as User["role"]) || "user",
+    status: "active",
+    plan: "free",
+    createdAt: u.createdAt,
+    updatedAt: u.updatedAt,
+    metadata: {
+      timezone: "Europe/Bucharest",
+      language: "ro",
+      theme: "light",
+      notifications: { email: true, push: false, sms: false, marketing: false },
+      privacy: { profileVisibility: "team", dataSharing: false, analytics: false },
+      totalLogins: 0,
+      lastActive: u.updatedAt,
+      sessionDuration: 0,
+      featuresUsed: [],
+    },
+  };
+}
+
+const roleColors: Record<string, string> = {
+  admin: "bg-purple-100 text-purple-800",
+  manager: "bg-blue-100 text-blue-800",
+  user: "bg-green-100 text-green-800",
+  viewer: "bg-gray-100 text-gray-800",
+};
+
+const formatDate = (d: string) =>
+  new Date(d).toLocaleDateString("ro-RO", { year: "numeric", month: "long", day: "numeric" });
+
+const formatDateTime = (d: string) =>
+  new Date(d).toLocaleString("ro-RO", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
 export default function UserDetailsPage({ userId }: UserDetailsPageProps) {
-  /**
-   * Memoized user lookup to find user by ID
-   */
-  const user = useMemo(() => {
-    return users.find((u) => u.id === userId);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then((r) => {
+        if (r.status === 404) { setNotFound(true); return null; }
+        return r.json();
+      })
+      .then((data) => {
+        if (data) setUser(dbUserToUser(data));
+      })
+      .catch(() => setNotFound(true))
+      .finally(() => setIsLoading(false));
   }, [userId]);
 
-  if (!user) {
-    notFound();
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-64 text-muted-foreground">Se incarca...</div>;
   }
 
-  /**
-   * Generates user initials from first and last name
-   * @param firstName - User's first name
-   * @param lastName - User's last name
-   * @returns Uppercase initials string
-   */
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-  };
+  if (notFound || !user) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 space-y-2">
+        <p className="text-xl font-semibold">Utilizatorul nu a fost gasit</p>
+        <p className="text-muted-foreground">ID: {userId}</p>
+      </div>
+    );
+  }
 
-  /**
-   * Formats a date string to a localized date format
-   * @param dateString - ISO date string to format
-   * @returns Formatted date string
-   */
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+  const initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
 
-  /**
-   * Formats a date string to include date and time
-   * @param dateString - ISO date string to format
-   * @returns Formatted date and time string
-   */
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  /**
-   * Color mappings for user status badges
-   */
-  const statusColors = {
-    active: "bg-green-100 text-green-800",
-    inactive: "bg-gray-100 text-gray-800",
-    pending: "bg-yellow-100 text-yellow-800",
-    suspended: "bg-red-100 text-red-800",
-  };
-
-  /**
-   * Color mappings for user role badges
-   */
-  const roleColors = {
-    admin: "bg-purple-100 text-purple-800",
-    manager: "bg-blue-100 text-blue-800",
-    user: "bg-green-100 text-green-800",
-    viewer: "bg-gray-100 text-gray-800",
-  };
-
-  /**
-   * UserDetailsPage component for displaying comprehensive user profile information
-   * Renders user header with avatar, personal details, status, and role badges
-   * Includes tabbed interface for detailed user management sections
-   * @param userId - The ID of the user to display
-   * @returns JSX element representing the user details page
-   */
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
         title={`${user.firstName} ${user.lastName}`}
-        subtitle={`User ID: ${user.id}`}
+        subtitle={`ID: ${user.id}`}
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
-          { label: "Users", href: "/apps/users" },
-          { label: "User Details" },
+          { label: "Utilizatori", href: "/apps/users" },
+          { label: "Detalii utilizator" },
         ]}
       />
 
-      {/* User Profile Header */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-wrap items-start space-x-4">
             <Avatar className="w-20 h-20">
-              <AvatarImage
-                src={
-                  (typeof user.avatar === "string"
-                    ? user.avatar
-                    : user.avatar?.src) ||
-                  `/avatars/${user.firstName
-                    .toLowerCase()
-                    .replace(" ", "-")}.jpg`
-                }
-                alt={user.firstName}
-              />
-              <AvatarFallback className="text-lg">
-                {getInitials(user.firstName, user.lastName)}
-              </AvatarFallback>
+              <AvatarImage src={user.avatar as string} alt={user.firstName} />
+              <AvatarFallback className="text-lg">{initials}</AvatarFallback>
             </Avatar>
-            <div className="flex-1 flex-wrap space-y-2">
+            <div className="flex-1 space-y-2">
               <div className="flex flex-wrap items-center space-x-2">
-                <h1 className="text-2xl font-bold">
-                  {user.firstName} {user.lastName}
-                </h1>
-                <Badge className={statusColors[user.status]}>
-                  {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                </Badge>
-                <Badge className={roleColors[user.role]}>
+                <h1 className="text-2xl font-bold">{user.firstName} {user.lastName}</h1>
+                <Badge className="bg-green-100 text-green-800">Activ</Badge>
+                <Badge className={roleColors[user.role] ?? "bg-gray-100 text-gray-800"}>
                   {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                 </Badge>
               </div>
-              <div className="flex items-center flex-wrap gap-4 text-sm text-muted-foreground">
+              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
                   <Mail className="w-4 h-4" />
                   <span>{user.email}</span>
                 </div>
-                {user.metadata.phone && (
-                  <div className="flex items-center space-x-1">
-                    <Phone className="w-4 h-4" />
-                    <span>{user.metadata.phone}</span>
-                  </div>
-                )}
               </div>
-              <div className="flex flex-wrap gap-4 items-center text-sm">
+              <div className="flex flex-wrap gap-4 text-sm">
                 <div className="flex items-center space-x-1">
                   <Calendar className="w-4 h-4" />
-                  <span>Joined {formatDate(user.createdAt)}</span>
+                  <span>Inregistrat {formatDate(user.createdAt)}</span>
                 </div>
-                {user.lastLogin && (
-                  <div className="flex items-center space-x-1">
-                    <Clock className="w-4 h-4" />
-                    <span>Last login {formatDateTime(user.lastLogin)}</span>
-                  </div>
-                )}
+                <div className="flex items-center space-x-1">
+                  <Clock className="w-4 h-4" />
+                  <span>Actualizat {formatDateTime(user.updatedAt)}</span>
+                </div>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Tabbed Content */}
-      <UserDetailsTabs
-        user={user}
-        formatDate={formatDate}
-        formatDateTime={formatDateTime}
-      />
+      <UserDetailsTabs user={user} formatDate={formatDate} formatDateTime={formatDateTime} />
     </div>
   );
 }

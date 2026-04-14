@@ -10,8 +10,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 export function UserAccount() {
+  const router = useRouter();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -25,25 +28,31 @@ export function UserAccount() {
       <DropdownMenuContent className="w-56 !bg-card" align="end" forceMount>
         <DropdownMenuLabel className="font-normal bg-transparent cursor-pointer hover:!bg-secondary/50 hover:dark:!text-white">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Obare Geoffrey</p>
+            <p className="text-sm font-medium leading-none">Administrator</p>
             <p className="text-xs leading-none text-muted-foreground">
-              info@obare27.com
+              admin@dashboard.com
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="bg-transparent cursor-pointer hover:!bg-secondary/50 hover:dark:!text-white">
-          Profile
+        <DropdownMenuItem
+          className="bg-transparent cursor-pointer hover:!bg-secondary/50 hover:dark:!text-white"
+          onClick={() => router.push("/pages/settings")}
+        >
+          Profil
         </DropdownMenuItem>
-        <DropdownMenuItem className="bg-transparent cursor-pointer hover:!bg-secondary/50 hover:dark:!text-white">
-          Settings
-        </DropdownMenuItem>
-        <DropdownMenuItem className="bg-transparent cursor-pointer hover:!bg-secondary/50 hover:dark:!text-white">
-          Support
+        <DropdownMenuItem
+          className="bg-transparent cursor-pointer hover:!bg-secondary/50 hover:dark:!text-white"
+          onClick={() => router.push("/pages/settings")}
+        >
+          Setari
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="bg-transparent cursor-pointer hover:!bg-secondary/50 hover:dark:!text-white">
-          Log out
+        <DropdownMenuItem
+          className="bg-transparent cursor-pointer hover:!bg-secondary/50 hover:dark:!text-white"
+          onClick={() => router.push("/login")}
+        >
+          Deconectare
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

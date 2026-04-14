@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import RenderPage from "./(components)/Renderpage";
 
 export const metadata: Metadata = metadataTemplates.dashboard(
-  "Crypto Performance Dashboard",
-  "Track live market trends, portfolio performance, and trading activity in real time."
+  "Dashboard Financiar",
+  "Monitorizeaza performanta vanzarilor, prognozele si activitatile echipei tale."
 );
 
 /**

@@ -10,22 +10,22 @@ import SettingsViews from "./SettingsViews";
 const tabs = [
   {
     id: "dashboards",
-    label: "Dashboards",
+    label: "Dashboard-uri",
     iconName: "BarChart3",
   },
   {
     id: "apps",
-    label: "Apps",
+    label: "Aplicatii",
     iconName: "Globe",
   },
   {
     id: "pages",
-    label: "Pages",
+    label: "Pagini",
     iconName: "FileText",
   },
   {
     id: "settings",
-    label: "Settings",
+    label: "Setari",
     iconName: "Settings",
   },
 ];
@@ -35,11 +35,11 @@ export default function PageTabs() {
     <div className="max-w-7xl mx-auto px-4 lg:px-0">
       <div className="flex flex-col text-start py-8 gap-2">
         <h2 className="text-base lg:text-4xl font-bold">
-          Built-In Pages for Every Use Case
+          Pagini Integrate pentru Orice Scenariu
         </h2>
         <p className="text-xl text-muted-foreground">
-          Packed with dashboards, apps, auth, and utility pages — fully
-          responsive and customizable out of the box.
+          Plin de dashboard-uri, aplicatii, autentificare si pagini utilitare —
+          complet responsive si personalizabile din prima.
         </p>
       </div>
       <TabsWithIcons

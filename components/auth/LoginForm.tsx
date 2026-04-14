@@ -49,7 +49,7 @@ export function LoginForm({
   };
 
   const {
-    separatorText = "Or continue with",
+    separatorText = "Sau continua cu",
     facebookText = "Facebook",
     googleText = "Google",
     onFacebookClick,
@@ -69,7 +69,7 @@ export function LoginForm({
             <Input
               id="email"
               type="email"
-              placeholder="Enter your email"
+              placeholder="Introdu adresa de email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={`pl-10 ${inputClassName}`}
@@ -81,14 +81,14 @@ export function LoginForm({
         {/* Password Field */}
         <div className="space-y-4">
           <Label htmlFor="password" className="block">
-            Password
+            Parola
           </Label>
           <div className="relative">
             <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
+              placeholder="Introdu parola"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={`pl-10 pr-10 ${inputClassName}`}
@@ -116,13 +116,13 @@ export function LoginForm({
                 checked={rememberMe}
                 onCheckedChange={(checked) => setRememberMe(checked === true)}
               />
-              <span>Remember me</span>
+              <span>Tine-ma minte</span>
             </label>
             <Link
               href={forgotPasswordHref}
               className="text-xs md:text-sm text-primary dark:text-white hover:underline text-end"
             >
-              Forgot password?
+              Ai uitat parola?
             </Link>
           </div>
         )}
@@ -134,7 +134,7 @@ export function LoginForm({
           disabled={isLoading}
           loading={isLoading}
         >
-          {isLoading ? "Signing in..." : "Sign in"}
+          {isLoading ? "Se autentifica..." : "Autentificare"}
         </Button>
       </form>
 
@@ -154,12 +154,12 @@ export function LoginForm({
       {signUpHref && (
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            Nu ai cont?{" "}
             <Link
               href={signUpHref}
               className="text-primary hover:underline font-medium"
             >
-              Sign up
+              Inregistreaza-te
             </Link>
           </p>
         </div>

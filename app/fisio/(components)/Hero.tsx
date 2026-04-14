@@ -21,13 +21,13 @@ export function HeroSection() {
           <div className="px-4 -mb-8 lg:mb-0 relative z-10">
             {/* Headline */}
             <h1 className="relative z-10 mx-auto text-center text-2xl font-bold md:text-4xl text-dark dark:text-white md:text-white">
-              Build Admin Panels That Work Smarter
+              Construieste Panouri Admin Mai Inteligente
             </h1>
             {/* Subtitle */}
             <p className="relative z-10 mx-auto max-w-2xl text-center text-sm lg:text-lg font-normal text-dark dark:text-white md:text-white">
-              Packed with reusable components, Tailwind styling, and Next.js
-              best practices — so you can launch faster, without reinventing the
-              wheel.
+              Plin de componente reutilizabile, stilizare Tailwind si bune
+              practici Next.js — ca sa lansezi mai repede, fara sa reinventezi
+              roata.
             </p>
             {/* Buttons */}
             <div className="relative z-20 mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -39,7 +39,7 @@ export function HeroSection() {
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
               >
-                Get Started
+                Incepe
               </Button>
               <Link
                 shallow={true}
@@ -50,7 +50,7 @@ export function HeroSection() {
                 className="cursor-pointer"
               >
                 <Button size="sm" className="bg-[#82b440] hover:bg-[#82b440]">
-                  Portfolio
+                  Portofoliu
                 </Button>
               </Link>
               <Link
@@ -64,7 +64,7 @@ export function HeroSection() {
                   size="sm"
                   className="cursor-pointer bg-[#C57642] hover:bg-[#C57642]"
                 >
-                  Contact Me
+                  Contacteaza-ma
                 </Button>
               </Link>
             </div>
@@ -90,13 +90,13 @@ export function HeroSection() {
           <div className="px-4 mb-4 relative z-10">
             {/* Headline */}
             <h1 className="relative z-10 mx-auto text-center text-2xl font-bold text-dark dark:text-white">
-              Build Admin Panels That Work Smarter
+              Construieste Panouri Admin Mai Inteligente
             </h1>
             {/* Subtitle */}
             <p className="relative z-10 mx-auto max-w-2xl text-center text-sm font-normal text-dark dark:text-white">
-              Packed with reusable components, Tailwind styling, and Next.js
-              best practices — so you can launch faster, without reinventing the
-              wheel.
+              Plin de componente reutilizabile, stilizare Tailwind si bune
+              practici Next.js — ca sa lansezi mai repede, fara sa reinventezi
+              roata.
             </p>
             {/* Buttons */}
             <div className="relative z-20 mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -108,7 +108,7 @@ export function HeroSection() {
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
               >
-                Get Started
+                Incepe
               </Button>
               <Link
                 shallow={true}
@@ -119,7 +119,7 @@ export function HeroSection() {
                 className="cursor-pointer"
               >
                 <Button size="sm" className="bg-[#82b440] hover:bg-[#82b440]">
-                  Portfolio
+                  Portofoliu
                 </Button>
               </Link>
               <Link
@@ -133,7 +133,7 @@ export function HeroSection() {
                   size="sm"
                   className="cursor-pointer bg-[#C57642] hover:bg-[#C57642]"
                 >
-                  Contact Me
+                  Contacteaza-ma
                 </Button>
               </Link>
             </div>

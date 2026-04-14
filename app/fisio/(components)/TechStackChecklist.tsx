@@ -14,63 +14,63 @@ import {
 
 const techStackData = [
   {
-    category: "Core Framework",
+    category: "Framework Principal",
     icon: Code,
     color: "blue",
     technologies: [
-      { name: "Next.js 16.1.1", description: "React Framework" },
-      { name: "React 19.2.3", description: "UI Library" },
-      { name: "TypeScript 5", description: "Type Safety" },
+      { name: "Next.js 16.1.1", description: "Framework React" },
+      { name: "React 19.2.3", description: "Librarie UI" },
+      { name: "TypeScript 5", description: "Siguranta Tipurilor" },
     ],
   },
   {
-    category: "UI Components",
+    category: "Componente UI",
     icon: Palette,
     color: "purple",
     technologies: [
-      { name: "Radix UI", description: "Accessible Components" },
-      { name: "Tailwind CSS 4", description: "Styling Framework" },
-      { name: "Lucide React", description: "Icon Library" },
+      { name: "Radix UI", description: "Componente Accesibile" },
+      { name: "Tailwind CSS 4", description: "Framework de Stilizare" },
+      { name: "Lucide React", description: "Librarie de Iconuri" },
     ],
   },
   {
-    category: "Data & Performance",
+    category: "Date si Performanta",
     icon: Database,
     color: "green",
     technologies: [
-      { name: "TanStack Table", description: "Data Tables" },
-      { name: "Recharts", description: "Data Visualization" },
-      { name: "Motion", description: "Animations" },
+      { name: "TanStack Table", description: "Tabele de Date" },
+      { name: "Recharts", description: "Vizualizare Date" },
+      { name: "Motion", description: "Animatii" },
     ],
   },
   {
-    category: "Development Tools",
+    category: "Instrumente Dezvoltare",
     icon: Zap,
     color: "orange",
     technologies: [
-      { name: "Turbopack", description: "Fast Builds" },
-      { name: "ESLint", description: "Code Quality" },
-      { name: "Next.js Toploader", description: "Loading States" },
+      { name: "Turbopack", description: "Build-uri Rapide" },
+      { name: "ESLint", description: "Calitatea Codului" },
+      { name: "Next.js Toploader", description: "Stari de Incarcare" },
     ],
   },
   {
-    category: "Utilities",
+    category: "Utilitare",
     icon: Shield,
     color: "cyan",
     technologies: [
-      { name: "Date-fns", description: "Date Handling" },
-      { name: "Sonner", description: "Notifications" },
-      { name: "React BlurHash", description: "Image Optimization" },
+      { name: "Date-fns", description: "Gestionare Date" },
+      { name: "Sonner", description: "Notificari" },
+      { name: "React BlurHash", description: "Optimizare Imagini" },
     ],
   },
   {
-    category: "Enhanced UX",
+    category: "UX Imbunatatit",
     icon: Globe,
     color: "pink",
     technologies: [
-      { name: "Embla Carousel", description: "Image Carousels" },
-      { name: "React Day Picker", description: "Date Selection" },
-      { name: "CMDk", description: "Command Palette" },
+      { name: "Embla Carousel", description: "Carusele de Imagini" },
+      { name: "React Day Picker", description: "Selectare Data" },
+      { name: "CMDk", description: "Paleta de Comenzi" },
     ],
   },
 ];
@@ -82,8 +82,8 @@ interface TechStackChecklistProps {
 }
 
 export function TechStackChecklist({
-  title = "Powerful Tools, Seamless Integration",
-  description = "Fisio leverages cutting-edge technologies for optimal performance, developer experience, and user satisfaction.",
+  title = "Instrumente Puternice, Integrare Perfecta",
+  description = "Fisio foloseste tehnologii de ultima generatie pentru performanta optima, experienta dezvoltatorului si satisfactia utilizatorilor.",
   className = "",
 }: TechStackChecklistProps) {
   const getColorClasses = (color: string) => {

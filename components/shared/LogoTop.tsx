@@ -17,17 +17,17 @@ export function LogoTop() {
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
-          className="group data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          className="group h-auto py-2 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center!"
           onClick={toggleSidebar}
         >
-          <Logo className="size-12" />
+          <Logo className="!w-8 !h-8 group-data-[collapsible=icon]:mx-auto" />
 
           <div className="group-data-[state=collapsed]:hidden grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-medium text-neutral-800 dark:text-neutral-200">
-              Fisio
+              RO CEREAL
             </span>
             <span className="truncate text-xs text-neutral-800 dark:text-neutral-200">
-              Best Dashboard Template
+              Dashboard
             </span>
           </div>
 

@@ -1,14 +1,6 @@
-/**
- * Security Settings Component
- * User account security management interface for password changes and security features
- * Provides form fields for password updates, two-factor authentication toggle, and session management
- * Allows users to enhance account security and manage active login sessions
- * Part of the settings section for user account security and protection
- * @returns JSX element representing the security settings interface
- */
-
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -18,74 +10,99 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
+import { toast } from "sonner";
 
-/**
- * Security component for managing user account security settings
- * Renders password change form, 2FA toggle, and session management
- * Provides interface for enhancing account security
- * @returns JSX element representing the security settings form
- */
 export function Security() {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      toast.error("Parolele noi nu coincid");
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error("Parola noua trebuie sa aiba minim 8 caractere");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/user/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error || "Eroare la schimbarea parolei"); return; }
+      toast.success("Parola schimbata cu succes");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch {
+      toast.error("Eroare de retea");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Change Password</CardTitle>
+          <CardTitle>Schimba Parola</CardTitle>
           <CardDescription>
-            Update your password to keep your account secure.
+            Actualizeaza parola pentru a-ti pastra contul securizat.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="currentPassword">Current Password</Label>
-            <Input id="currentPassword" type="password" />
+            <Label htmlFor="currentPassword">Parola curenta</Label>
+            <Input
+              id="currentPassword"
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="newPassword">New Password</Label>
-            <Input id="newPassword" type="password" />
+            <Label htmlFor="newPassword">Parola noua</Label>
+            <Input
+              id="newPassword"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm New Password</Label>
-            <Input id="confirmPassword" type="password" />
+            <Label htmlFor="confirmPassword">Confirma parola noua</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
           </div>
-          <Button>Update Password</Button>
+          <Button onClick={handlePasswordChange} disabled={isSaving}>
+            {isSaving ? "Se salveaza..." : "Schimba Parola"}
+          </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Two-Factor Authentication</CardTitle>
+          <CardTitle>Sesiune activa</CardTitle>
           <CardDescription>
-            Add an extra layer of security to your account.
+            Informatii despre sesiunea ta curenta.
           </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Enable 2FA</Label>
-              <p className="text-sm text-muted-foreground">
-                Secure your account with two-factor authentication.
-              </p>
-            </div>
-            <Switch />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Login Sessions</CardTitle>
-          <CardDescription>Manage your active login sessions.</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            You are currently logged in on this device.
+            Esti conectat pe acest dispozitiv.
           </p>
-          <Button variant="outline" className="mt-4">
-            View All Sessions
-          </Button>
         </CardContent>
       </Card>
     </div>

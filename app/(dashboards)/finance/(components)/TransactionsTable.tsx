@@ -129,7 +129,7 @@ export const columns: ColumnDef<TransactionData>[] = [
     header: "Date / Time",
     cell: ({ row }) => {
       const date = row.getValue("date") as string;
-      const time = row.getValue("time") as string;
+      const time = row.original.time;
       return (
         <div className="text-sm">
           <div>{new Date(date).toLocaleDateString()}</div>

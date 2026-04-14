@@ -1,7 +1,7 @@
-import { ConfigPanel } from "@/components/config-panel";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
 import { LayoutConfigProvider } from "@/lib/layout-config";
+import { AuthSessionProvider } from "@/lib/session-provider";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { ThemeLayoutScript } from "@/lib/themeScript";
 import type { Metadata } from "next";
@@ -62,16 +62,17 @@ export default function RootLayout({
           shadow="0 0 10px var(--primary),0 0 5px var(--primary)"
           zIndex={1600}
         />
-        <ThemeProvider defaultTheme="light" storageKey="fisio-ui-theme">
-          <LayoutConfigProvider storageKey="fisio-layout-config">
-            <div className="min-h-screen flex flex-col">
-              <div className="flex-1">{children}</div>
-              <Footer />
-            </div>
-            <ConfigPanel />
-            <Toaster />
-          </LayoutConfigProvider>
-        </ThemeProvider>
+        <AuthSessionProvider>
+          <ThemeProvider defaultTheme="light" storageKey="fisio-ui-theme">
+            <LayoutConfigProvider storageKey="fisio-layout-config">
+              <div className="min-h-screen flex flex-col">
+                <div className="flex-1">{children}</div>
+                <Footer />
+              </div>
+              <Toaster />
+            </LayoutConfigProvider>
+          </ThemeProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

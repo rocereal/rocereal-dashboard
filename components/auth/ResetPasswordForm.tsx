@@ -23,9 +23,9 @@ export function ResetPasswordForm({
   inputClassName = "",
   showPasswordRequirements = true,
   passwordRequirements = [
-    "At least 8 characters long",
-    "Contains uppercase and lowercase letters",
-    "Includes at least one number",
+    "Cel putin 8 caractere",
+    "Contine litere mari si mici",
+    "Include cel putin un numar",
   ],
 }: ResetPasswordFormProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -46,12 +46,12 @@ export function ResetPasswordForm({
     setError("");
 
     if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters long");
+      setError("Parola trebuie sa aiba cel putin 8 caractere");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords don't match");
+      setError("Parolele nu coincid");
       return;
     }
 
@@ -64,14 +64,14 @@ export function ResetPasswordForm({
         {/* Password Field */}
         <div className="space-y-2">
           <Label htmlFor="password" className="block">
-            New password
+            Parola noua
           </Label>
           <div className="relative">
             <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Enter new password"
+              placeholder="Introdu parola noua"
               value={formData.password}
               onChange={(e) => handleInputChange("password", e.target.value)}
               className={`pl-10 pr-10 ${inputClassName}`}
@@ -94,14 +94,14 @@ export function ResetPasswordForm({
         {/* Confirm Password Field */}
         <div className="space-y-2">
           <Label htmlFor="confirmPassword" className="block">
-            Confirm new password
+            Confirma parola noua
           </Label>
           <div className="relative">
             <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
-              placeholder="Confirm new password"
+              placeholder="Confirma parola noua"
               value={formData.confirmPassword}
               onChange={(e) =>
                 handleInputChange("confirmPassword", e.target.value)
@@ -126,7 +126,7 @@ export function ResetPasswordForm({
         {/* Password Requirements */}
         {showPasswordRequirements && (
           <div className="text-sm text-muted-foreground">
-            <p className="font-medium mb-1">Password requirements:</p>
+            <p className="font-medium mb-1">Cerinte parola:</p>
             <ul className="list-disc list-inside space-y-1 text-xs">
               {passwordRequirements.map((requirement, index) => (
                 <li key={index}>{requirement}</li>
@@ -144,7 +144,7 @@ export function ResetPasswordForm({
 
         {/* Submit Button */}
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Updating password..." : "Update password"}
+          {isLoading ? "Se actualizeaza parola..." : "Actualizeaza parola"}
         </Button>
       </form>
     </div>

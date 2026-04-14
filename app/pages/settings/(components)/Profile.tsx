@@ -1,14 +1,7 @@
-/**
- * Profile Settings Component
- * User profile management interface for personal information and account details
- * Provides form fields for updating name, email, bio, and profile avatar
- * Allows users to modify their personal information and profile settings
- * Part of the settings section for user account management
- * @returns JSX element representing the profile settings interface
- */
-
 "use client";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -18,60 +11,94 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-/**
- * Profile component for managing user profile information
- * Renders form fields for personal details, avatar upload, and bio
- * Provides interface for updating user account information
- * @returns JSX element representing the profile settings form
- */
 export function Profile() {
+  const { data: session, update } = useSession();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (session?.user) {
+      setName(session.user.name ?? "");
+      setEmail(session.user.email ?? "");
+    }
+  }, [session]);
+
+  const getInitials = (n: string) =>
+    n.split(" ").map((p) => p[0]).join("").toUpperCase().slice(0, 2);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error || "Eroare la salvare"); return; }
+      await update({ name: data.name, email: data.email });
+      toast.success("Profil actualizat cu succes");
+    } catch {
+      toast.error("Eroare de retea");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
+          <CardTitle>Informatii Profil</CardTitle>
           <CardDescription>
-            Update your personal information and profile settings.
+            Actualizeaza informatiile tale personale si setarile profilului.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
-              <AvatarImage src="/avatars/01.png" alt="Profile" />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarImage src={session?.user?.image ?? ""} alt="Profile" />
+              <AvatarFallback>{name ? getInitials(name) : "?"}</AvatarFallback>
             </Avatar>
-            <div>
-              <Button variant="outline" size="sm">
-                Change Avatar
-              </Button>
+            <div className="space-y-1">
+              <p className="text-sm font-medium">{name || "—"}</p>
+              <p className="text-sm text-muted-foreground">{email || "—"}</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input id="firstName" defaultValue="John" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input id="lastName" defaultValue="Doe" />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="name">Nume complet</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Numele tau"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
-              defaultValue="john.doe@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="email@exemplu.ro"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
-            <Input id="bio" placeholder="Tell us about yourself" />
+            <Label>Rol</Label>
+            <Input
+              value={(session?.user as { role?: string })?.role ?? "user"}
+              disabled
+            />
           </div>
-          <Button>Save Changes</Button>
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? "Se salveaza..." : "Salveaza Modificarile"}
+          </Button>
         </CardContent>
       </Card>
     </div>

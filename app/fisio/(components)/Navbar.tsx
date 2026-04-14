@@ -16,19 +16,19 @@ import Link from "next/link";
 export function NavbarLanding() {
   const navItems = [
     {
-      name: "Views",
+      name: "Vizualizari",
       link: "#views",
     },
     {
-      name: "Features",
+      name: "Functionalitati",
       link: "#features",
     },
     {
-      name: "Technology",
+      name: "Tehnologie",
       link: "#technology",
     },
     {
-      name: "FAQ",
+      name: "Intrebari",
       link: "#faq",
     },
   ];
@@ -50,7 +50,7 @@ export function NavbarLanding() {
             className="cursor-pointer z-40"
           >
             <Button variant="default" className="rounded-full">
-              View Documentation
+              Vezi Documentatia
             </Button>
           </Link>
         </NavBody>
@@ -88,7 +88,7 @@ export function NavbarLanding() {
                 className="cursor-pointer "
               >
                 <Button variant="secondary" className="w-full">
-                  Documentation
+                  Documentatie
                 </Button>
               </Link>
             </div>

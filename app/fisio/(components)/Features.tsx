@@ -14,57 +14,57 @@ import {
 const featuresData = [
   {
     title: "Next.js 15 & React 19",
-    description: "Fisio Nextjs Template Built with Next.js 16 & React 19",
+    description: "Template Fisio Next.js construit cu Next.js 16 & React 19",
     icon: Code,
     color: "blue",
   },
   {
     title: "Tailwind 4",
-    description: "Styled using Tailwind CSS for full customization",
+    description: "Stilizat cu Tailwind CSS pentru personalizare completa",
     icon: Palette,
     color: "purple",
   },
   {
-    title: "Light/Dark Mode",
-    description: "Fisio – Modern Next.js Template with Light/Dark theme mode",
+    title: "Mod Luminos/Intunecat",
+    description: "Fisio – Template modern Next.js cu tema luminoasa/intunecata",
     icon: Shield,
     color: "orange",
   },
   {
-    title: "Reusable Components",
-    description: "Reusable, clean, and modular components",
+    title: "Componente Reutilizabile",
+    description: "Componente reutilizabile, curate si modulare",
     icon: Database,
     color: "cyan",
   },
   {
     title: "Responsive",
-    description: "Fully responsive design across all devices",
+    description: "Design complet responsive pe toate dispozitivele",
     icon: Globe,
     color: "pink",
   },
   {
-    title: "Developer Friendly",
+    title: "Usor de Folosit",
     description:
-      "Fisio Nextjs Template Comes with Developer-friendly folder structure",
+      "Template Fisio vine cu o structura de foldere prietenoasa pentru dezvoltatori",
     icon: CheckCircle,
     color: "blue",
   },
   {
-    title: "Increase interaction",
+    title: "Creste Interactiunea",
     description:
-      "Engage your audience with a stunning, intuitive design that keeps them hooked.",
+      "Implica-ti audienta cu un design uimitor si intuitiv care ii tine captivati.",
     icon: Zap,
     color: "purple",
   },
   {
-    title: "Detailed Documentation",
-    description: "We have made detailed documentation, so it's easy to use.",
+    title: "Documentatie Detaliata",
+    description: "Am creat o documentatie detaliata, astfel incat e usor de folosit.",
     icon: Database,
     color: "green",
   },
   {
-    title: "Dedicated Support",
-    description: "We believe in supreme support is key, and we offer that.",
+    title: "Suport Dedicat",
+    description: "Credem ca suportul de calitate este esential, si il oferim.",
     icon: Shield,
     color: "orange",
   },
@@ -77,8 +77,8 @@ interface TechStackChecklistProps {
 }
 
 export function Features({
-  title = "Packed with Powerful Features",
-  description = "From reusable components to responsive layouts, everything is built to help you move faster and build smarter.",
+  title = "Plin de Functionalitati Puternice",
+  description = "De la componente reutilizabile la layout-uri responsive, totul este construit sa te ajute sa mergi mai repede si sa construiesti mai inteligent.",
   className = "",
 }: TechStackChecklistProps) {
   const getColorClasses = (color: string) => {

@@ -30,7 +30,7 @@ export function ForgotPasswordForm({
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address");
+      setError("Te rugam sa introduci o adresa de email valida");
       return;
     }
 
@@ -50,7 +50,7 @@ export function ForgotPasswordForm({
             <Input
               id="email"
               type="email"
-              placeholder="Enter your email address"
+              placeholder="Introdu adresa de email"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -76,7 +76,7 @@ export function ForgotPasswordForm({
           disabled={isLoading}
           loading={isLoading}
         >
-          {isLoading ? "Sending reset link..." : "Send reset link"}
+          {isLoading ? "Se trimite link-ul..." : "Trimite link de resetare"}
         </Button>
       </form>
     </div>

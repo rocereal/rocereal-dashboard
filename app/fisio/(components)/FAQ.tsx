@@ -11,63 +11,63 @@ import { Card, CardContent } from "@/components/ui/card";
 const faqData = [
   {
     id: "item-1",
-    question: "What technologies is Fisio built with?",
+    question: "Cu ce tehnologii este construit Fisio?",
     answer:
-      "Fisio is built with Next.js 15, React 19, TypeScript, and Tailwind CSS 4. It includes modern libraries like Radix UI for components, TanStack Table for data tables, Recharts for visualizations, and Motion for animations.",
+      "Fisio este construit cu Next.js 15, React 19, TypeScript si Tailwind CSS 4. Include librarii moderne precum Radix UI pentru componente, TanStack Table pentru tabele de date, Recharts pentru vizualizari si Motion pentru animatii.",
   },
   {
     id: "item-2",
-    question: "Is Fisio responsive and mobile-friendly?",
+    question: "Este Fisio responsive si compatibil cu mobilul?",
     answer:
-      "Yes, Fisio is fully responsive and optimized for all devices including mobile phones, tablets, and desktops. All components are built with mobile-first design principles.",
+      "Da, Fisio este complet responsive si optimizat pentru toate dispozitivele, inclusiv telefoane mobile, tablete si desktop-uri. Toate componentele sunt construite cu principii de design mobile-first.",
   },
   {
     id: "item-3",
-    question: "Does Fisio support light and dark themes?",
+    question: "Suporta Fisio teme luminoase si intunecate?",
     answer:
-      "Absolutely! Fisio includes both light and dark theme modes. Users can toggle between themes, and the template automatically adapts all components and pages to the selected theme.",
+      "Absolut! Fisio include atat modul luminos cat si cel intunecat. Utilizatorii pot comuta intre teme, iar template-ul adapteaza automat toate componentele si paginile la tema selectata.",
   },
   {
     id: "item-4",
-    question: "How many dashboard variants does Fisio include?",
+    question: "Cate variante de dashboard include Fisio?",
     answer:
-      "Fisio includes 6 comprehensive dashboard variants: AI Analytics, CRM, Crypto, E-commerce, Education, and Finance dashboards. Each dashboard is fully functional with relevant charts, tables, and features.",
+      "Fisio include 6 variante complete de dashboard: AI Analytics, CRM, Crypto, E-commerce, Educatie si Finante. Fiecare dashboard este complet functional cu grafice, tabele si functionalitati relevante.",
   },
   {
     id: "item-5",
-    question: "What authentication options are available?",
+    question: "Ce optiuni de autentificare sunt disponibile?",
     answer:
-      "Fisio provides 4 different authentication layouts: Centered, Minimal, Split-Left, and Split-Right designs. Each includes login, register, forgot password, and reset password pages.",
+      "Fisio ofera 4 layout-uri diferite de autentificare: Centrat, Minimal, Splituit-Stanga si Splituit-Dreapta. Fiecare include pagini de login, inregistrare, parola uitata si resetare parola.",
   },
   {
     id: "item-6",
-    question: "Is the code well-documented and easy to customize?",
+    question: "Codul este bine documentat si usor de personalizat?",
     answer:
-      "Yes, Fisio comes with detailed documentation, clean code structure, and TypeScript support. All components are modular and reusable, making customization straightforward for developers.",
+      "Da, Fisio vine cu documentatie detaliata, structura de cod curata si suport TypeScript. Toate componentele sunt modulare si reutilizabile, facand personalizarea simpla pentru dezvoltatori.",
   },
   {
     id: "item-7",
-    question: "Does Fisio include charts and data visualization?",
+    question: "Include Fisio grafice si vizualizare de date?",
     answer:
-      "Yes, Fisio includes 8 different chart types built with Recharts, including bar charts, line charts, pie charts, radar charts, and more. All charts are responsive and customizable.",
+      "Da, Fisio include 8 tipuri diferite de grafice construite cu Recharts, inclusiv grafice cu bare, grafice liniare, grafice circulare, grafice radar si altele. Toate graficele sunt responsive si personalizabile.",
   },
   {
     id: "item-8",
-    question: "What pages and components are included?",
+    question: "Ce pagini si componente sunt incluse?",
     answer:
-      "Fisio includes 70+ pages covering dashboards, authentication, settings, onboarding, e-commerce, learning management, real estate, and utility pages. Plus 99 reusable components for maximum flexibility.",
+      "Fisio include 70+ pagini acoperind dashboard-uri, autentificare, setari, onboarding, e-commerce, management invatare, imobiliare si pagini utilitare. Plus 99 de componente reutilizabile pentru flexibilitate maxima.",
   },
   {
     id: "item-9",
-    question: "Is Fisio SEO-friendly and performant?",
+    question: "Este Fisio optimizat pentru SEO si performanta?",
     answer:
-      "Yes, Fisio is built with Next.js for optimal SEO and performance. It includes proper meta tags, semantic HTML, fast loading times, and follows web accessibility standards.",
+      "Da, Fisio este construit cu Next.js pentru SEO si performanta optima. Include meta tag-uri corecte, HTML semantic, timpi de incarcare rapizi si respecta standardele de accesibilitate web.",
   },
   {
     id: "item-10",
-    question: "Do you provide support and updates?",
+    question: "Oferiti suport si actualizari?",
     answer:
-      "Yes, we provide dedicated support and regular updates. The template includes detailed documentation, and our support team is available to help with any questions or customization needs.",
+      "Da, oferim suport dedicat si actualizari regulate. Template-ul include documentatie detaliata, iar echipa noastra de suport este disponibila pentru orice intrebari sau nevoi de personalizare.",
   },
 ];
 
@@ -78,8 +78,8 @@ interface FAQProps {
 }
 
 export function FAQ({
-  title = "Frequently Asked Questions",
-  description = "Find answers to common questions about Fisio dashboard template",
+  title = "Intrebari Frecvente",
+  description = "Gaseste raspunsuri la intrebarile frecvente despre template-ul de dashboard Fisio",
   className = "",
 }: FAQProps) {
   return (

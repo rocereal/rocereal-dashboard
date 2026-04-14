@@ -11,7 +11,7 @@ interface SocialLoginButtonsProps {
 }
 
 export function SocialLoginButtons({
-  separatorText = "Or continue with",
+  separatorText = "Sau continua cu",
   facebookText = "Facebook",
   googleText = "Google",
   onFacebookClick,

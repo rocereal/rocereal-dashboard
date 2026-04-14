@@ -1,83 +1,127 @@
 "use client";
 
-import { SampleLineChart } from "@/components/charts/SampleLineChart";
-import { CoinConverter } from "@/app/(dashboards)/crypto/(components)/CoinConverter";
-import { CryptoTable } from "@/app/(dashboards)/crypto/(components)/CryptoTable";
 import { DashboardHeader } from "@/components/headers/dashboard-header";
-import { ChartConfig } from "@/components/ui/charts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
-import { cryptoMetrics } from "@/data/crypto-metrics";
-import { cryptoCoins, cryptoPriceData } from "@/data/crypto-prices";
-import { TrendingUp } from "lucide-react";
+import { financiarMetrics, vanzariDupaMotiv, vanzariDupaSursa } from "@/data/financiar-data";
+import { AlertTriangle, TrendingUp } from "lucide-react";
 import { useState } from "react";
-import { SectionCards } from "./SectionCards";
+import { CereriDeschise } from "./CereriDeschise";
+import { GaugeCard } from "./GaugeCard";
+import { PrognozaBarChart } from "./PrognozaBarChart";
+import { PrognozaMicaChart } from "./PrognozaMicaChart";
+import { TopAgentiCard } from "./TopAgentiCard";
+import { VanzariDonut } from "./VanzariDonut";
+
+
+function MetricCard({
+  label,
+  valoare,
+  trend,
+  pozitiv,
+}: {
+  label: string;
+  valoare: string;
+  trend: string;
+  pozitiv: boolean;
+}) {
+  return (
+    <Card className="shadow-xs">
+      <CardContent className="pt-4">
+        <p className="text-xs text-muted-foreground mb-1">{label}</p>
+        <p className="text-2xl font-bold">{valoare}</p>
+        <div
+          className={`flex items-center gap-1 mt-1 text-xs font-medium ${
+            pozitiv
+              ? "text-green-600 dark:text-green-400"
+              : "text-red-500 dark:text-red-400"
+          }`}
+        >
+          {pozitiv ? (
+            <TrendingUp className="h-3 w-3" />
+          ) : (
+            <AlertTriangle className="h-3 w-3" />
+          )}
+          {trend}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function VandutCard() {
+  return (
+    <div className="flex flex-col gap-4 h-full">
+      {/* Sold by me - dark card */}
+      <Card className="bg-primary text-primary-foreground shadow-xs flex-1">
+        <CardHeader className="pb-1">
+          <CardTitle className="text-sm font-semibold opacity-80">
+            Vandut luna aceasta
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-xs opacity-70 mb-1">Luna curenta</p>
+          <p className="text-3xl font-bold">2M EUR</p>
+          <p className="text-xs opacity-60 mt-1">
+            Target (Toate vanzarile): 580K EUR (0%)
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Activities card */}
+      <Card className="shadow-xs flex-1">
+        <CardHeader className="pb-1">
+          <CardTitle className="text-sm font-semibold">
+            Activitati in vanzari
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-xs text-muted-foreground mb-1">
+            Data urmatoarei activitati a trecut
+          </p>
+          <p className="text-4xl font-bold text-red-500">11</p>
+          <p className="text-xs text-muted-foreground mt-1">Trebuie sa fie: 0</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
-  const [selectedCoin, setSelectedCoin] = useState("bitcoin");
 
-  const selectedCoinData = cryptoCoins.find((coin) => coin.id === selectedCoin);
-  const coinConfig: ChartConfig = {
-    [selectedCoin]: {
-      label: selectedCoinData?.name || "Coin",
-      color: "var(--chart-1)",
-    },
-  };
-
-  /**
-   * Render Page Component
-   * This is the main rendering component for the crypto dashboard page
-   * It displays the dashboard header with breadcrumbs and action buttons, followed by crypto metrics, price chart, coin converter, and crypto table
-   * Provides the overall layout and navigation for the Crypto Performance dashboard
-   * @returns The JSX element representing the complete crypto dashboard page layout
-   */
   return (
-    // Main container for the crypto dashboard layout
-    <div className="flex flex-col space-y-6">
+    <div className="flex flex-col space-y-4">
       <DashboardHeader
-        title="Crypto Performance Dashboard"
-        subtitle="Track your crypto portfolio performance and market insights in real time."
+        title="Dashboard Financiar"
+        subtitle="Monitorizeaza performanta vanzarilor, prognozele si activitatile echipei tale."
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
-          { label: "Crypto Performance Dashboard" },
+          { label: "Dashboard Financiar" },
         ]}
-        primaryAction={{
-          label: "Add Asset",
-          icon: <TrendingUp className="h-4 w-4" />,
-        }}
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
       />
-      <SectionCards metrics={cryptoMetrics} />
-      {/* Grid container for chart and converter */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Price Chart - Takes 2 columns */}
-        {/* Price chart container */}
-        <div className="lg:col-span-2 h-full">
-          <SampleLineChart
-            data={cryptoPriceData}
-            title={`${selectedCoinData?.name || "Bitcoin"} Price Chart`}
-            description={`Track ${
-              selectedCoinData?.name || "Bitcoin"
-            } price movements over time`}
-            config={coinConfig}
-            dataKeys={[selectedCoin]}
-            dateKey="date"
-            showTimeRange={true}
-            showCoinSelector={true}
-            selectedCoin={selectedCoin}
-            onCoinChange={setSelectedCoin}
-            cryptoCoins={cryptoCoins}
-            className="h-full"
-          />
-        </div>
-        {/* Coin Converter - Takes 1 column */}
-        {/* Coin converter container */}
-        <div className="lg:col-span-1 h-full">
-          <CoinConverter className="h-full shadow-xs" />
-        </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {financiarMetrics.map((m, i) => (
+          <MetricCard key={i} {...m} />
+        ))}
       </div>
-      <CryptoTable />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="lg:col-span-1"><TopAgentiCard /></div>
+        <div className="lg:col-span-2"><PrognozaBarChart /></div>
+        <div className="lg:col-span-1"><GaugeCard value={36} /></div>
+        <div className="lg:col-span-1"><VandutCard /></div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <CereriDeschise />
+        <VanzariDonut title="Vanzari castigate dupa motiv" data={vanzariDupaMotiv} />
+        <VanzariDonut title="Vanzari castigate dupa sursa" data={vanzariDupaSursa} />
+        <PrognozaMicaChart />
+      </div>
     </div>
   );
 }
