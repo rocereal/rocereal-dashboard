@@ -74,24 +74,24 @@ export function CRMCustomerTable() {
     },
     {
       id: "customerName",
-      header: "Customer Name",
+      header: "Nume Client",
       cell: () => "Lead",
     },
     {
       accessorKey: "account",
-      header: "Account Manager",
+      header: "Agent asignat",
       cell: ({ row }) => row.getValue("account") as string ?? "-",
     },
     {
       id: "planTier",
-      header: "Plan/Tier",
+      header: "Status",
       cell: () => (
         <Badge variant="outline">Prospect</Badge>
       ),
     },
     {
       accessorKey: "date",
-      header: "Last Contact",
+      header: "Inregistrat in",
       cell: ({ row }) => {
         const date = row.getValue("date") as string;
         try {
@@ -103,11 +103,11 @@ export function CRMCustomerTable() {
     },
     {
       accessorKey: "caller",
-      header: "Next Follow-Up",
+      header: "Telefon",
     },
     {
       accessorKey: "duration",
-      header: "Lifetime Value",
+      header: "Durata apel",
       cell: ({ row }) => {
         const duration = row.getValue("duration") as string | null;
         return duration ? `${duration}s` : "-";
@@ -115,7 +115,7 @@ export function CRMCustomerTable() {
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: "Stadiu",
       cell: ({ row }) => {
         const status = row.getValue("status") as string | null;
         if (!status) return "-";
@@ -132,7 +132,7 @@ export function CRMCustomerTable() {
     },
     {
       id: "callStatus",
-      header: "Call Status",
+      header: "Status",
       cell: ({ row }) => {
         const status = row.original.status;
         if (!status) return "-";
@@ -149,7 +149,7 @@ export function CRMCustomerTable() {
     },
     {
       accessorKey: "source",
-      header: "Channel",
+      header: "Canal",
       cell: ({ row }) => (row.getValue("source") as string | null) ?? "-",
     },
     {
