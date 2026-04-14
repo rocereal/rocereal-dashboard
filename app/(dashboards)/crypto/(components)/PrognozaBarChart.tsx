@@ -50,7 +50,7 @@ export function PrognozaBarChart() {
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  formatter={(value: number) => [`${formatEUR(value)} EUR`, "Valoare"]}
+                  formatter={(value) => [`${formatEUR(Number(value))} EUR`, "Valoare"]}
                 />
               }
             />
