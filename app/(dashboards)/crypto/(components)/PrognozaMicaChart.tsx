@@ -58,8 +58,8 @@ export function PrognozaMicaChart() {
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  formatter={(value: number, name: string) => [
-                    `${formatEUR(value)} EUR`,
+                  formatter={(value, name) => [
+                    `${formatEUR(Number(value))} EUR`,
                     name === "actual" ? "Realizat" : "Prognoza",
                   ]}
                 />

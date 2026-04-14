@@ -44,6 +44,11 @@ function dbUserToUser(u: DbUser): User {
       lastActive: u.updatedAt,
       sessionDuration: 0,
       featuresUsed: [],
+      twoFactorEnabled: false,
+      lastPasswordChange: u.updatedAt,
+      loginAttempts: 0,
+      securityQuestions: false,
+      integrations: [],
     },
   };
 }
