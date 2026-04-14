@@ -3,10 +3,8 @@
 import { SampleLineChart } from "@/components/charts/SampleLineChart";
 import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { CRMCustomerTable } from "@/app/(dashboards)/crm/(components)/CrmCustomerTable";
-import { InvoxCallsTable } from "./InvoxCallsTable";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
-import { crmCustomers } from "@/data/crm-customers";
 import { crmMetrics } from "@/data/crm-metrics";
 import { crmSalesFunnelData } from "@/data/crm-sales-funnel";
 import { UserPlus } from "lucide-react";
@@ -125,8 +123,7 @@ export default function RenderPage() {
           showTimeRange={true}
         />
       </div>
-      <InvoxCallsTable />
-      <CRMCustomerTable data={crmCustomers} />
+      <CRMCustomerTable />
       <AddContactForm
         open={isAddContactOpen}
         onOpenChange={setIsAddContactOpen}

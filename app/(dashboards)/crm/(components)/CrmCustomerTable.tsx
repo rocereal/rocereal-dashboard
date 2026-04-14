@@ -1,10 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ColumnDef, Table } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTable, createSortableColumn } from "@/components/ui/data-table";
+import { DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,25 +15,41 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BulkActions } from "@/components/tables/BulkActions";
-import { CRMCustomer } from "@/data/crm-customers";
 import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
 import { showToast } from "@/components/ui/sonner";
 
-interface CRMCustomerTableProps {
-  data: CRMCustomer[];
+interface CrmCall {
+  id: string;
+  invoxId: string;
+  caller: string;
+  account: string | null;
+  date: string;
+  duration: string | null;
+  status: string | null;
+  source: string | null;
+  campaign: string | null;
+  utmSource: string | null;
+  medium: string | null;
+  receivingNumber: string | null;
+  rawPayload: Record<string, unknown> | null;
 }
 
-/**
- * CRM Customer Table Component
- * This component renders a data table displaying CRM customer information
- * It includes columns for customer details, plan tier, contact dates, lifetime value, and status
- * Provides bulk actions for managing selected customers and search functionality
- * @param data - Array of CRM customer objects to display
- * @returns The JSX element representing the CRM customer table
- */
-export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
-  const columns: ColumnDef<CRMCustomer>[] = [
+export function CRMCustomerTable() {
+  const [data, setData] = useState<CrmCall[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/crm/calls")
+      .then((r) => r.json())
+      .then((calls) => {
+        setData(calls);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const columns: ColumnDef<CrmCall>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -55,68 +72,57 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
       enableSorting: false,
       enableHiding: false,
     },
-    createSortableColumn("customerName", "Customer Name"),
-    createSortableColumn("accountManager", "Account Manager"),
     {
-      accessorKey: "planTier",
-      header: "Plan/Tier",
-      cell: ({ row }) => {
-        const planTier = row.getValue("planTier") as string;
-        const variant =
-          planTier === "Enterprise"
-            ? "default"
-            : planTier === "Professional"
-            ? "secondary"
-            : "outline";
-
-        return (
-          <Badge variant={variant} className="capitalize">
-            {planTier}
-          </Badge>
-        );
-      },
+      id: "customerName",
+      header: "Customer Name",
+      cell: () => "Lead",
     },
     {
-      accessorKey: "lastContact",
+      accessorKey: "account",
+      header: "Account Manager",
+      cell: ({ row }) => row.getValue("account") as string ?? "-",
+    },
+    {
+      id: "planTier",
+      header: "Plan/Tier",
+      cell: () => (
+        <Badge variant="outline">Prospect</Badge>
+      ),
+    },
+    {
+      accessorKey: "date",
       header: "Last Contact",
       cell: ({ row }) => {
-        const date = row.getValue("lastContact") as string;
-        return format(new Date(date), "MMM dd, yyyy");
+        const date = row.getValue("date") as string;
+        try {
+          return format(new Date(date), "dd MMM yyyy");
+        } catch {
+          return date;
+        }
       },
     },
     {
-      accessorKey: "nextFollowUp",
+      accessorKey: "caller",
       header: "Next Follow-Up",
-      cell: ({ row }) => {
-        const date = row.getValue("nextFollowUp") as string;
-        return format(new Date(date), "MMM dd, yyyy");
-      },
     },
     {
-      accessorKey: "lifetimeValue",
+      accessorKey: "duration",
       header: "Lifetime Value",
       cell: ({ row }) => {
-        const value = row.getValue("lifetimeValue") as number;
-        return new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(value);
+        const duration = row.getValue("duration") as string | null;
+        return duration ? `${duration}s` : "-";
       },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const status = row.getValue("status") as CRMCustomer["status"];
+        const status = row.getValue("status") as string | null;
+        if (!status) return "-";
         const variant =
-          status === "Active"
-            ? "default" // Blue for active
-            : status === "Prospect"
-            ? "secondary" // Neutral/gray for prospect
-            : status === "Inactive"
-            ? "destructive" // Red for inactive
-            : "outline"; // Outline for churned
-
+          status === "answered" ? "default"
+          : status === "missed" ? "destructive"
+          : "secondary";
         return (
           <Badge variant={variant} className="capitalize">
             {status}
@@ -125,11 +131,63 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
       },
     },
     {
+      id: "callStatus",
+      header: "Call Status",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        if (!status) return "-";
+        const variant =
+          status === "answered" ? "default"
+          : status === "missed" ? "destructive"
+          : "secondary";
+        return (
+          <Badge variant={variant} className="capitalize">
+            {status}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "source",
+      header: "Channel",
+      cell: ({ row }) => (row.getValue("source") as string | null) ?? "-",
+    },
+    {
+      accessorKey: "utmSource",
+      header: "utm_source",
+      cell: ({ row }) => {
+        const val = row.getValue("utmSource") as string | null;
+        const raw = row.original.rawPayload;
+        return val ?? (raw?.utm_source as string) ?? "-";
+      },
+    },
+    {
+      accessorKey: "medium",
+      header: "utm_medium",
+      cell: ({ row }) => {
+        const val = row.getValue("medium") as string | null;
+        const raw = row.original.rawPayload;
+        return val ?? (raw?.utm_medium as string) ?? "-";
+      },
+    },
+    {
+      accessorKey: "campaign",
+      header: "utm_campaign",
+      cell: ({ row }) => (row.getValue("campaign") as string | null) ?? "-",
+    },
+    {
+      id: "utmTerm",
+      header: "utm_term",
+      cell: ({ row }) => {
+        const raw = row.original.rawPayload;
+        return (raw?.utm_term as string) ?? "-";
+      },
+    },
+    {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const customer = row.original;
-
+        const call = row.original;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -142,26 +200,21 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => {
-                  navigator.clipboard.writeText(customer.id);
+                  navigator.clipboard.writeText(call.caller);
                   showToast({
-                    title: `Copied ${customer.id}`,
-                    description: "Customer ID copied to clipboard",
+                    title: `Copied ${call.caller}`,
+                    description: "Phone number copied to clipboard",
                     button: {
                       label: "Close",
-                      onClick: () => console.log("Undo clicked"),
+                      onClick: () => {},
                     },
                   });
                 }}
               >
-                Copy customer name
+                Copy phone number
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>View customer details</DropdownMenuItem>
-              <DropdownMenuItem>Edit customer</DropdownMenuItem>
-              <DropdownMenuItem>Schedule follow-up</DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600">
-                Delete customer
-              </DropdownMenuItem>
+              <DropdownMenuItem>View call details</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -169,44 +222,33 @@ export function CRMCustomerTable({ data }: CRMCustomerTableProps) {
     },
   ];
 
-  /**
-   * Bulk Actions Handler
-   * This function handles bulk operations for selected CRM customers
-   * It provides functionality for selecting all, deleting, and exporting selected items
-   * @param selectedRows - Array of selected CRM customer objects
-   * @param table - The table instance from TanStack Table
-   * @returns The JSX element for bulk actions component
-   */
-  const bulkActions = (
-    selectedRows: CRMCustomer[],
-    table: Table<CRMCustomer>
-  ) => (
+  const bulkActions = (selectedRows: CrmCall[], table: Table<CrmCall>) => (
     <BulkActions
       selectedItems={selectedRows}
       isAllSelected={table.getIsAllPageRowsSelected()}
       onSelectAll={(checked) => table.toggleAllPageRowsSelected(checked)}
-      onBulkDelete={() => {
-        // For now, just clear selection. In a real app, you'd delete the selected items.
-        table.setRowSelection({});
-      }}
-      onExport={() => {
-        // Placeholder for export functionality
-        console.log("Exporting selected CRM customers:", selectedRows);
-      }}
-      itemName="customer"
+      onBulkDelete={() => table.setRowSelection({})}
+      onExport={() => console.log("Exporting:", selectedRows)}
+      itemName="call"
     />
   );
 
+  if (loading) {
+    return (
+      <div className="bg-card rounded-lg border p-6">
+        <p className="text-muted-foreground">Loading calls...</p>
+      </div>
+    );
+  }
+
   return (
-    // Table container
     <div className="bg-card rounded-lg border">
-      {/* Table content wrapper */}
       <div className="p-6">
         <DataTable
           columns={columns}
           data={data}
-          searchKey="customerName"
-          searchPlaceholder="Search customers..."
+          searchKey="caller"
+          searchPlaceholder="Search by phone..."
           bulkActions={bulkActions}
         />
       </div>
