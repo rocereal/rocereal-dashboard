@@ -16,9 +16,6 @@ const nextConfig: NextConfig = {
   // Compression
   compress: true,
 
-  // Production output - use 'standalone' for Docker deployments
-  output: "standalone",
-
   // Security headers
   async headers() {
     return [
