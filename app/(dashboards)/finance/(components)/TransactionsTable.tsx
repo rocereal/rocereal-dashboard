@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BulkActions } from "@/components/tables/BulkActions";
 import { ColumnDef, Table } from "@tanstack/react-table";
-import { ArrowUpDown, Eye, MoreHorizontal, TrendingUp } from "lucide-react";
+import { ArrowUpDown, Eye, MoreHorizontal, RefreshCw, TrendingUp } from "lucide-react";
 import { showToast } from "@/components/ui/sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface SmartbillInvoice {
   id: string;
@@ -26,9 +26,8 @@ interface SmartbillInvoice {
   taxAmount: number;
   currency: string;
   status: string;
-  client: string;
-  seriesName: string;
-  number: string;
+  series: string;
+  number: number;
 }
 
 const formatRON = (value: number) =>
@@ -44,8 +43,8 @@ const getStatusColor = (status: string) => {
       return "bg-green-50 text-green-700 border-green-200 hover:bg-green-50 dark:bg-green-950 dark:text-green-300 dark:border-green-800";
     case "emisa":
       return "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800";
-    case "draft":
-      return "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-50 dark:bg-yellow-950 dark:text-yellow-300 dark:border-yellow-800";
+    case "partial":
+      return "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-50 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800";
     case "anulata":
       return "bg-red-50 text-red-700 border-red-200 hover:bg-red-50 dark:bg-red-950 dark:text-red-300 dark:border-red-800";
     default:
@@ -85,7 +84,7 @@ const columns: ColumnDef<SmartbillInvoice>[] = [
       if (!raw) return <span className="text-muted-foreground">—</span>;
       return (
         <div className="text-sm">
-          <div>{new Date(raw).toLocaleDateString("ro-RO")}</div>
+          {new Date(raw).toLocaleDateString("ro-RO")}
         </div>
       );
     },
@@ -101,15 +100,12 @@ const columns: ColumnDef<SmartbillInvoice>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => {
-      const amount = row.getValue("totalAmount") as number;
-      return (
-        <div className="font-medium flex items-center gap-1 text-green-600">
-          <TrendingUp className="h-4 w-4" />
-          {formatRON(amount)}
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <div className="font-medium flex items-center gap-1 text-green-600">
+        <TrendingUp className="h-4 w-4" />
+        {formatRON(row.getValue("totalAmount") as number)}
+      </div>
+    ),
   },
   {
     accessorKey: "netAmount",
@@ -178,26 +174,51 @@ const columns: ColumnDef<SmartbillInvoice>[] = [
   },
 ];
 
+async function fetchInvoices(): Promise<SmartbillInvoice[]> {
+  const res = await fetch("/api/finance/invoices");
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
+
 export function TransactionsTable() {
   const [data, setData] = useState<SmartbillInvoice[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [lastSynced, setLastSynced] = useState<Date | null>(null);
+  const syncTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const runSync = async () => {
+    setSyncing(true);
+    try {
+      await fetch("/api/finance/invoices/sync");
+      const fresh = await fetchInvoices();
+      setData(fresh);
+      setLastSynced(new Date());
+    } catch {
+      // silently fail — data already shown from initial load
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   useEffect(() => {
-    fetch("/api/finance/invoices")
-      .then((r) => r.json())
+    // 1. Load current DB data immediately
+    fetchInvoices()
       .then((invoices) => {
-        if (Array.isArray(invoices)) {
-          setData(invoices);
-        } else {
-          setError(invoices.error ?? "Eroare la incarcarea facturilor");
-        }
+        setData(invoices);
         setLoading(false);
       })
-      .catch(() => {
-        setError("Eroare la conectarea cu SmartBill");
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
+
+    // 2. Trigger background sync — picks up any new invoices from SmartBill
+    syncTimeout.current = setTimeout(() => {
+      runSync();
+    }, 500); // slight delay so the table renders first
+
+    return () => {
+      if (syncTimeout.current) clearTimeout(syncTimeout.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const bulkActions = (
@@ -216,14 +237,31 @@ export function TransactionsTable() {
 
   return (
     <div className="bg-card rounded-lg border">
-      <div className="p-6">
+      {/* Sync status bar */}
+      <div className="flex items-center justify-between px-6 pt-4 pb-2">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <RefreshCw className={`h-3 w-3 ${syncing ? "animate-spin" : ""}`} />
+          {syncing
+            ? "Sincronizare cu SmartBill..."
+            : lastSynced
+            ? `Sincronizat la ${lastSynced.toLocaleTimeString("ro-RO")}`
+            : "SmartBill"}
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs"
+          onClick={runSync}
+          disabled={syncing}
+        >
+          Refresh
+        </Button>
+      </div>
+
+      <div className="px-6 pb-6">
         {loading ? (
           <div className="flex items-center justify-center py-12 text-muted-foreground">
-            Se incarca facturile SmartBill...
-          </div>
-        ) : error ? (
-          <div className="flex items-center justify-center py-12 text-muted-foreground">
-            {error}
+            Se incarca facturile...
           </div>
         ) : (
           <DataTable
