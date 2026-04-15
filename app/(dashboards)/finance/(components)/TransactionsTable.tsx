@@ -13,94 +13,47 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BulkActions } from "@/components/tables/BulkActions";
-import { transactionsData, type TransactionData } from "@/data/finance";
 import { ColumnDef, Table } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  Download,
-  Eye,
-  MoreHorizontal,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
+import { ArrowUpDown, Eye, MoreHorizontal, TrendingUp } from "lucide-react";
 import { showToast } from "@/components/ui/sonner";
+import { useEffect, useState } from "react";
 
-/**
- * Format Currency Function
- * Formats a numerical value into a USD currency string
- * Uses absolute value to ensure positive display
- * @param value - The numerical value to format as currency
- * @returns The formatted currency string in USD
- */
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
+interface SmartbillInvoice {
+  id: string;
+  issueDate: string | null;
+  totalAmount: number;
+  netAmount: number;
+  taxAmount: number;
+  currency: string;
+  status: string;
+  client: string;
+  seriesName: string;
+  number: string;
+}
+
+const formatRON = (value: number) =>
+  new Intl.NumberFormat("ro-RO", {
     style: "currency",
-    currency: "USD",
+    currency: "RON",
+    minimumFractionDigits: 2,
   }).format(Math.abs(value));
-};
 
-/**
- * Get Status Color Function
- * Returns appropriate CSS classes for status badges based on transaction status
- * @param status - The status of the transaction
- * @returns CSS class string for the status badge styling
- */
-const getStatusColor = (status: TransactionData["status"]) => {
-  switch (status) {
-    case "completed":
+const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "incasata":
       return "bg-green-50 text-green-700 border-green-200 hover:bg-green-50 dark:bg-green-950 dark:text-green-300 dark:border-green-800";
-    case "pending":
+    case "emisa":
+      return "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800";
+    case "draft":
       return "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-50 dark:bg-yellow-950 dark:text-yellow-300 dark:border-yellow-800";
-    case "failed":
+    case "anulata":
       return "bg-red-50 text-red-700 border-red-200 hover:bg-red-50 dark:bg-red-950 dark:text-red-300 dark:border-red-800";
     default:
       return "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:border-gray-800";
   }
 };
 
-/**
- * Get Type Color Function
- * Returns appropriate CSS classes for type badges based on transaction type
- * @param type - The type of the transaction
- * @returns CSS class string for the type badge styling
- */
-const getTypeColor = (type: TransactionData["type"]) => {
-  switch (type) {
-    case "credit":
-      return "bg-green-50 text-green-700 border-green-200 hover:bg-green-50 dark:bg-green-950 dark:text-green-300 dark:border-green-800";
-    case "debit":
-      return "bg-red-50 text-red-700 border-red-200 hover:bg-red-50 dark:bg-red-950 dark:text-red-300 dark:border-red-800";
-    case "transfer":
-      return "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800";
-    case "refund":
-      return "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-50 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800";
-    default:
-      return "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:border-gray-800";
-  }
-};
-
-/**
- * Get Method Color Function
- * Returns appropriate CSS classes for method badges based on transaction method
- * @param method - The method of the transaction
- * @returns CSS class string for the method badge styling
- */
-const getMethodColor = (method: TransactionData["method"]) => {
-  switch (method) {
-    case "card":
-      return "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800";
-    case "bank_transfer":
-      return "bg-green-50 text-green-700 border-green-200 hover:bg-green-50 dark:bg-green-950 dark:text-green-300 dark:border-green-800";
-    case "mobile_money":
-      return "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-50 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800";
-    case "cash":
-      return "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-50 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800";
-    default:
-      return "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-50 dark:bg-gray-950 dark:text-gray-300 dark:border-gray-800";
-  }
-};
-
-export const columns: ColumnDef<TransactionData>[] = [
+const columns: ColumnDef<SmartbillInvoice>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -125,96 +78,62 @@ export const columns: ColumnDef<TransactionData>[] = [
   },
   createSortableColumn("id", "Transaction ID"),
   {
-    accessorKey: "date",
+    accessorKey: "issueDate",
     header: "Date / Time",
     cell: ({ row }) => {
-      const date = row.getValue("date") as string;
-      const time = row.original.time;
+      const raw = row.getValue("issueDate") as string | null;
+      if (!raw) return <span className="text-muted-foreground">—</span>;
       return (
         <div className="text-sm">
-          <div>{new Date(date).toLocaleDateString()}</div>
-          <div className="text-muted-foreground">{time}</div>
+          <div>{new Date(raw).toLocaleDateString("ro-RO")}</div>
         </div>
       );
     },
   },
   {
-    accessorKey: "amount",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Amount
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    accessorKey: "totalAmount",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Amount
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const amount = row.getValue("amount") as number;
-      const isPositive = amount > 0;
+      const amount = row.getValue("totalAmount") as number;
       return (
-        <div
-          className={`font-medium flex items-center gap-1 ${
-            isPositive ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {isPositive ? (
-            <TrendingUp className="h-4 w-4" />
-          ) : (
-            <TrendingDown className="h-4 w-4" />
-          )}
-          {formatCurrency(amount)}
+        <div className="font-medium flex items-center gap-1 text-green-600">
+          <TrendingUp className="h-4 w-4" />
+          {formatRON(amount)}
         </div>
       );
     },
   },
   {
-    accessorKey: "currency",
+    accessorKey: "netAmount",
     header: "Currency",
-    cell: ({ row }) => {
-      return <span className="font-medium">{row.getValue("currency")}</span>;
-    },
+    cell: ({ row }) => (
+      <span className="font-medium">{formatRON(row.getValue("netAmount") as number)}</span>
+    ),
   },
   {
-    accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => {
-      const type = row.getValue("type") as TransactionData["type"];
-      return (
-        <Badge variant="outline" className={`capitalize ${getTypeColor(type)}`}>
-          {type}
-        </Badge>
-      );
-    },
-  },
-  createSortableColumn("category", "Category"),
-  {
-    accessorKey: "method",
-    header: "Method",
-    cell: ({ row }) => {
-      const method = row.getValue("method") as TransactionData["method"];
-      return (
-        <Badge
-          variant="outline"
-          className={`capitalize ${getMethodColor(method)}`}
-        >
-          {method.replace("_", " ")}
-        </Badge>
-      );
-    },
+    accessorKey: "taxAmount",
+    header: "Category",
+    cell: ({ row }) => (
+      <span className="font-medium text-muted-foreground">
+        {formatRON(row.getValue("taxAmount") as number)}
+      </span>
+    ),
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "Type",
     cell: ({ row }) => {
-      const status = row.getValue("status") as TransactionData["status"];
+      const status = row.getValue("status") as string;
       return (
-        <Badge
-          variant="outline"
-          className={`capitalize ${getStatusColor(status)}`}
-        >
+        <Badge variant="outline" className={getStatusColor(status)}>
           {status}
         </Badge>
       );
@@ -224,8 +143,7 @@ export const columns: ColumnDef<TransactionData>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const transaction = row.original;
-
+      const invoice = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -235,35 +153,23 @@ export const columns: ColumnDef<TransactionData>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>Actiuni</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => {
-                navigator.clipboard.writeText(transaction.id);
+                navigator.clipboard.writeText(invoice.id);
                 showToast({
-                  title: `Copied ${transaction.id}`,
-                  description: "Transaction ID copied to clipboard",
-                  button: {
-                    label: "Close",
-                    onClick: () => console.log("Undo clicked"),
-                  },
+                  title: `Copiat ${invoice.id}`,
+                  description: "Numarul facturii a fost copiat",
+                  button: { label: "Inchide", onClick: () => {} },
                 });
               }}
             >
-              Copy transaction ID
+              Copiaza numarul facturii
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <Eye className="mr-2 h-4 w-4" />
-              View details
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Download className="mr-2 h-4 w-4" />
-              Download receipt
-            </DropdownMenuItem>
-            <DropdownMenuItem>Report issue</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600">
-              Cancel transaction
+              Vezi detalii
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -272,44 +178,62 @@ export const columns: ColumnDef<TransactionData>[] = [
   },
 ];
 
-/**
- * Transactions Table Component
- * Displays a comprehensive table of financial transactions with sorting, filtering, and bulk actions
- * Includes columns for transaction details, amounts, types, methods, status, and actions
- * Provides functionality for selecting, viewing, and managing transaction records
- * @returns The JSX element representing the transactions data table
- */
 export function TransactionsTable() {
+  const [data, setData] = useState<SmartbillInvoice[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/finance/invoices")
+      .then((r) => r.json())
+      .then((invoices) => {
+        if (Array.isArray(invoices)) {
+          setData(invoices);
+        } else {
+          setError(invoices.error ?? "Eroare la incarcarea facturilor");
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Eroare la conectarea cu SmartBill");
+        setLoading(false);
+      });
+  }, []);
+
   const bulkActions = (
-    selectedRows: TransactionData[],
-    table: Table<TransactionData>
+    selectedRows: SmartbillInvoice[],
+    table: Table<SmartbillInvoice>
   ) => (
     <BulkActions
       selectedItems={selectedRows}
       isAllSelected={table.getIsAllPageRowsSelected()}
       onSelectAll={(checked) => table.toggleAllPageRowsSelected(checked)}
-      onBulkDelete={() => {
-        // For now, just clear selection. In a real app, you'd delete the selected items.
-        table.setRowSelection({});
-      }}
-      onExport={() => {
-        // Placeholder for export functionality
-        console.log("Exporting selected transactions:", selectedRows);
-      }}
-      itemName="transaction"
+      onBulkDelete={() => table.setRowSelection({})}
+      onExport={() => console.log("Export:", selectedRows)}
+      itemName="factura"
     />
   );
 
   return (
     <div className="bg-card rounded-lg border">
       <div className="p-6">
-        <DataTable
-          columns={columns}
-          data={transactionsData}
-          searchKey="id"
-          searchPlaceholder="Search transactions..."
-          bulkActions={bulkActions}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center py-12 text-muted-foreground">
+            Se incarca facturile SmartBill...
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center py-12 text-muted-foreground">
+            {error}
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={data}
+            searchKey="id"
+            searchPlaceholder="Cauta dupa numarul facturii..."
+            bulkActions={bulkActions}
+          />
+        )}
       </div>
     </div>
   );

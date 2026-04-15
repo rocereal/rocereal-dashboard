@@ -6,7 +6,8 @@ import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { financeCharts, financeMetrics, profitLossData } from "@/data/finance";
-import { TrendingUp } from "lucide-react";
+// TransactionsTable self-fetches from /api/finance/invoices (SmartBill)
+import { RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { SectionCards } from "./SectionCards";
 import { TransactionsTable } from "./TransactionsTable";
@@ -27,6 +28,14 @@ const profitLossConfig: ChartConfig = {
  */
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSync = async () => {
+    setSyncing(true);
+    await fetch("/api/finance/invoices/sync").catch(() => {});
+    setSyncing(false);
+    window.location.reload();
+  };
 
   return (
     <div className="flex flex-col space-y-6">
@@ -38,8 +47,9 @@ export default function RenderPage() {
           { label: "Financial Performance Dashboard" },
         ]}
         primaryAction={{
-          label: "Reports",
-          icon: <TrendingUp className="h-4 w-4" />,
+          label: syncing ? "Se sincronizeaza..." : "Sync SmartBill",
+          onClick: handleSync,
+          icon: <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />,
         }}
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
