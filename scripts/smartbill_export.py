@@ -110,8 +110,30 @@ def export_csv_from_smartbill() -> str:
         print(f"→ Selectare companie: {COMPANY}...")
         try:
             page.get_by_text("Alege compania", exact=False).wait_for(timeout=10_000)
+            page.wait_for_timeout(800)  # asteapta animatia modala
             screenshot(page, "04_alege_compania_modal")
-            page.get_by_text("RO CEREAL SA", exact=False).click()
+
+            company_clicked = False
+            for strategy in [
+                lambda: page.locator("li, div, a").filter(has_text="RO CEREAL SA").first.click(timeout=5_000),
+                lambda: page.get_by_text("RO CEREAL SA", exact=True).click(timeout=5_000),
+                lambda: page.get_by_text("RO CEREAL SA", exact=False).first.click(timeout=5_000),
+                lambda: page.locator("text=RO CEREAL SA").click(timeout=5_000),
+                lambda: page.get_by_text("RO18533200", exact=False).click(timeout=5_000),
+            ]:
+                try:
+                    strategy()
+                    company_clicked = True
+                    print("  ✓ Click RO CEREAL SA reusit")
+                    break
+                except Exception as e:
+                    print(f"  (strategie esuata: {e})")
+                    continue
+
+            if not company_clicked:
+                screenshot(page, "04b_company_click_failed")
+                raise RuntimeError("Nu am putut da click pe RO CEREAL SA")
+
             page.wait_for_load_state("networkidle")
             screenshot(page, "05_company_selected")
             print("  ✓ RO CEREAL SA selectata")
@@ -123,8 +145,31 @@ def export_csv_from_smartbill() -> str:
         print(f"→ Selectare sediu: {BRANCH}...")
         try:
             page.get_by_text("Alege sediul", exact=False).wait_for(timeout=10_000)
+            page.wait_for_timeout(800)  # asteapta animatia modala
             screenshot(page, "06_alege_sediul_modal")
-            page.get_by_text("SUCURSALA SIBIU", exact=False).click()
+
+            # Incearca mai multi selectori pentru a da click pe randul corect
+            branch_clicked = False
+            for strategy in [
+                lambda: page.locator("li, div, a").filter(has_text="SUCURSALA SIBIU").first.click(timeout=5_000),
+                lambda: page.get_by_text("SUCURSALA SIBIU", exact=True).click(timeout=5_000),
+                lambda: page.get_by_text("SUCURSALA SIBIU", exact=False).first.click(timeout=5_000),
+                lambda: page.locator("text=SUCURSALA SIBIU").click(timeout=5_000),
+                lambda: page.get_by_text("Sediu secundar", exact=False).click(timeout=5_000),
+            ]:
+                try:
+                    strategy()
+                    branch_clicked = True
+                    print("  ✓ Click SUCURSALA SIBIU reusit")
+                    break
+                except Exception as e:
+                    print(f"  (strategie esuata: {e})")
+                    continue
+
+            if not branch_clicked:
+                screenshot(page, "06b_branch_click_failed")
+                raise RuntimeError("Nu am putut da click pe SUCURSALA SIBIU")
+
             page.wait_for_load_state("networkidle")
             screenshot(page, "07_branch_selected")
             print("  ✓ SUCURSALA SIBIU selectata")
