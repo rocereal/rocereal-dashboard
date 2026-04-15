@@ -106,30 +106,40 @@ def export_csv_from_smartbill() -> str:
         page.wait_for_load_state("networkidle")
         screenshot(page, "03_after_login")
 
-        # 2. Asteapta modalul "Alege sediul" si selecteaza SUCURSALA SIBIU
-        # Compania (RO CEREAL SA) e deja pre-selectata — trebuie doar ales sediul
+        # 2. Asteapta modalul "Alege compania" si selecteaza RO CEREAL SA
+        print(f"→ Selectare companie: {COMPANY}...")
+        try:
+            page.get_by_text("Alege compania", exact=False).wait_for(timeout=10_000)
+            screenshot(page, "04_alege_compania_modal")
+            page.get_by_text("RO CEREAL SA", exact=False).click()
+            page.wait_for_load_state("networkidle")
+            screenshot(page, "05_company_selected")
+            print("  ✓ RO CEREAL SA selectata")
+        except PlaywrightTimeout:
+            screenshot(page, "04_no_company_modal")
+            print("  (modalul 'Alege compania' nu a aparut — posibil deja selectata)")
+
+        # 3. Asteapta modalul "Alege sediul" si selecteaza SUCURSALA SIBIU
         print(f"→ Selectare sediu: {BRANCH}...")
         try:
-            # Asteapta sa apara modalul cu sediile
             page.get_by_text("Alege sediul", exact=False).wait_for(timeout=10_000)
-            screenshot(page, "04_alege_sediul_modal")
-            # Click pe randul SUCURSALA SIBIU
+            screenshot(page, "06_alege_sediul_modal")
             page.get_by_text("SUCURSALA SIBIU", exact=False).click()
             page.wait_for_load_state("networkidle")
-            screenshot(page, "05_branch_selected")
+            screenshot(page, "07_branch_selected")
             print("  ✓ SUCURSALA SIBIU selectata")
         except PlaywrightTimeout:
-            screenshot(page, "04_no_modal")
+            screenshot(page, "06_no_branch_modal")
             print("  (modalul 'Alege sediul' nu a aparut — posibil deja in cont)")
 
         # 4. Navigate: Documente emise → Facturi
         print("→ Navigare la Documente emise → Facturi...")
         page.get_by_text("Documente emise", exact=False).click()
         page.wait_for_load_state("networkidle")
-        screenshot(page, "06_documente_emise")
+        screenshot(page, "08_documente_emise")
         page.get_by_text("Facturi", exact=False).first.click()
         page.wait_for_load_state("networkidle")
-        screenshot(page, "07_facturi_page")
+        screenshot(page, "09_facturi_page")
 
         # 5. Set "Toate" filter (all invoices, not just current month)
         print("→ Setare filtru 'Toate'...")
@@ -138,7 +148,7 @@ def export_csv_from_smartbill() -> str:
             period_btn.click()
             page.get_by_text("Toate", exact=False).first.click()
             page.wait_for_load_state("networkidle")
-            screenshot(page, "08_filter_all")
+            screenshot(page, "10_filter_all")
         except PlaywrightTimeout:
             print("  (filtru 'Toate' nu gasit — continuam cu ce e setat)")
 
@@ -157,10 +167,10 @@ def export_csv_from_smartbill() -> str:
             content = Path(path).read_bytes()
             print(f"  ✓ Descarcat: {download.suggested_filename} ({len(content)} bytes)")
         except PlaywrightTimeout:
-            screenshot(page, "09_export_failed")
-            raise RuntimeError("Nu am gasit butonul de export. Verifica screenshot-ul 09_export_failed.png")
+            screenshot(page, "11_export_failed")
+            raise RuntimeError("Nu am gasit butonul de export. Verifica screenshot-ul 11_export_failed.png")
 
-        screenshot(page, "10_done")
+        screenshot(page, "12_done")
         browser.close()
 
     # Detect encoding
