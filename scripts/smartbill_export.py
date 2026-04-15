@@ -84,58 +84,34 @@ def export_csv_from_smartbill() -> str:
         page.wait_for_load_state("networkidle")
         screenshot(page, "01_homepage")
 
-        # Email field — try multiple selectors
-        email_selectors = [
-            'input[type="email"]',
-            'input[name="email"]',
-            'input[name="username"]',
-            'input[placeholder*="email" i]',
-            'input[placeholder*="Email" i]',
-        ]
-        for sel in email_selectors:
-            if page.locator(sel).count() > 0:
-                page.locator(sel).first.fill(EMAIL)
-                print(f"  email selector: {sel}")
-                break
+        # Accept cookie popup (appears before login form is usable)
+        try:
+            cookie_btn = page.get_by_text("Accept toate cookie-urile", exact=False)
+            cookie_btn.wait_for(timeout=5_000)
+            cookie_btn.click()
+            print("  ✓ Cookie popup acceptat")
+            page.wait_for_load_state("networkidle")
+        except PlaywrightTimeout:
+            print("  (nu a aparut popup cookie)")
 
-        # Password field
-        pass_selectors = [
-            'input[type="password"]',
-            'input[name="password"]',
-            'input[name="parola"]',
-            'input[placeholder*="parol" i]',
-        ]
-        for sel in pass_selectors:
-            if page.locator(sel).count() > 0:
-                page.locator(sel).first.fill(PASSWORD)
-                print(f"  password selector: {sel}")
-                break
+        screenshot(page, "02_after_cookies")
 
-        # Submit button
-        submit_selectors = [
-            'button[type="submit"]',
-            'input[type="submit"]',
-            'button:has-text("Intra")',
-            'button:has-text("Intră")',
-            'button:has-text("Login")',
-            'button:has-text("Conectare")',
-            'button:has-text("Autentificare")',
-        ]
-        for sel in submit_selectors:
-            if page.locator(sel).count() > 0:
-                page.locator(sel).first.click()
-                print(f"  submit selector: {sel}")
-                break
+        # Fill email
+        page.locator('input[placeholder="Email utilizator"]').fill(EMAIL)
+        # Fill password
+        page.locator('input[placeholder="Parola"]').fill(PASSWORD)
+        # Click login
+        page.get_by_text("Intra in cont", exact=True).click()
 
         page.wait_for_load_state("networkidle")
-        screenshot(page, "02_after_login")
+        screenshot(page, "03_after_login")
 
         # 2. Select company
         print(f"→ Selectare companie: {COMPANY}...")
         try:
             page.get_by_text(COMPANY, exact=False).first.click()
             page.wait_for_load_state("networkidle")
-            screenshot(page, "03_company_selected")
+            screenshot(page, "04_company_selected")
         except PlaywrightTimeout:
             print("  (nu a aparut selectia de companie — posibil deja selectata)")
 
@@ -144,7 +120,7 @@ def export_csv_from_smartbill() -> str:
         try:
             page.get_by_text(BRANCH, exact=False).first.click()
             page.wait_for_load_state("networkidle")
-            screenshot(page, "04_branch_selected")
+            screenshot(page, "05_branch_selected")
         except PlaywrightTimeout:
             print("  (nu a aparut selectia de sediu — posibil deja selectat)")
 
@@ -152,19 +128,19 @@ def export_csv_from_smartbill() -> str:
         print("→ Navigare la Documente emise → Facturi...")
         page.get_by_text("Documente emise", exact=False).click()
         page.wait_for_load_state("networkidle")
+        screenshot(page, "06_documente_emise")
         page.get_by_text("Facturi", exact=False).first.click()
         page.wait_for_load_state("networkidle")
-        screenshot(page, "05_facturi_page")
+        screenshot(page, "07_facturi_page")
 
         # 5. Set "Toate" filter (all invoices, not just current month)
         print("→ Setare filtru 'Toate'...")
         try:
-            # SmartBill has a period dropdown — try to select "Toate" or widest range
             period_btn = page.get_by_text("Luna curenta", exact=False).first
             period_btn.click()
             page.get_by_text("Toate", exact=False).first.click()
             page.wait_for_load_state("networkidle")
-            screenshot(page, "06_filter_all")
+            screenshot(page, "08_filter_all")
         except PlaywrightTimeout:
             print("  (filtru 'Toate' nu gasit — continuam cu ce e setat)")
 
@@ -172,7 +148,6 @@ def export_csv_from_smartbill() -> str:
         print("→ Export CSV/Excel...")
         try:
             with page.expect_download(timeout=30_000) as dl_info:
-                # Try common export button labels
                 for label in ["Export", "Exporta", "Descarca", "Excel", "CSV"]:
                     try:
                         page.get_by_text(label, exact=False).first.click(timeout=5_000)
@@ -184,12 +159,10 @@ def export_csv_from_smartbill() -> str:
             content = Path(path).read_bytes()
             print(f"  ✓ Descarcat: {download.suggested_filename} ({len(content)} bytes)")
         except PlaywrightTimeout:
-            screenshot(page, "07_export_failed")
-            # Fallback: try to find any download link
-            print("  ⚠ Export button not found — checking page content...")
-            raise RuntimeError("Nu am gasit butonul de export. Verifica screenshot-ul 07_export_failed.png")
+            screenshot(page, "09_export_failed")
+            raise RuntimeError("Nu am gasit butonul de export. Verifica screenshot-ul 09_export_failed.png")
 
-        screenshot(page, "08_done")
+        screenshot(page, "10_done")
         browser.close()
 
     # Detect encoding
