@@ -84,9 +84,49 @@ def export_csv_from_smartbill() -> str:
         page.wait_for_load_state("networkidle")
         screenshot(page, "01_homepage")
 
-        page.get_by_label("Email").fill(EMAIL)
-        page.get_by_label("Parola", exact=False).fill(PASSWORD)
-        page.get_by_role("button", name=re.compile(r"intr[aă]", re.IGNORECASE)).click()
+        # Email field — try multiple selectors
+        email_selectors = [
+            'input[type="email"]',
+            'input[name="email"]',
+            'input[name="username"]',
+            'input[placeholder*="email" i]',
+            'input[placeholder*="Email" i]',
+        ]
+        for sel in email_selectors:
+            if page.locator(sel).count() > 0:
+                page.locator(sel).first.fill(EMAIL)
+                print(f"  email selector: {sel}")
+                break
+
+        # Password field
+        pass_selectors = [
+            'input[type="password"]',
+            'input[name="password"]',
+            'input[name="parola"]',
+            'input[placeholder*="parol" i]',
+        ]
+        for sel in pass_selectors:
+            if page.locator(sel).count() > 0:
+                page.locator(sel).first.fill(PASSWORD)
+                print(f"  password selector: {sel}")
+                break
+
+        # Submit button
+        submit_selectors = [
+            'button[type="submit"]',
+            'input[type="submit"]',
+            'button:has-text("Intra")',
+            'button:has-text("Intră")',
+            'button:has-text("Login")',
+            'button:has-text("Conectare")',
+            'button:has-text("Autentificare")',
+        ]
+        for sel in submit_selectors:
+            if page.locator(sel).count() > 0:
+                page.locator(sel).first.click()
+                print(f"  submit selector: {sel}")
+                break
+
         page.wait_for_load_state("networkidle")
         screenshot(page, "02_after_login")
 
