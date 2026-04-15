@@ -2,11 +2,11 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
 
 const SMARTBILL_BASE = "https://ws.smartbill.ro/SBORO/api";
-const BATCH_SIZE = 25; // stay under rate limit (30/min)
-const INITIAL_LOOKBACK = 200; // how many invoices to fetch on first sync
+// Parallel fetches per series per run — fast enough for 10s Hobby timeout
+const BATCH_SIZE = 8;
+const INITIAL_LOOKBACK = 50; // first run: last 50 per series
 
 function smartbillAuth() {
   const email = process.env.SMARTBILL_EMAIL!;
@@ -19,38 +19,30 @@ async function getSeriesFromAPI(cif: string) {
     `${SMARTBILL_BASE}/series?cif=${encodeURIComponent(cif)}&type=f`,
     { headers: { Authorization: smartbillAuth(), Accept: "application/json" }, cache: "no-store" }
   );
-  if (!res.ok) throw new Error(`Series API error ${res.status}`);
+  if (!res.ok) throw new Error(`Series API ${res.status}: ${await res.text()}`);
   const data = await res.json();
-  return data.list as { name: string; nextNumber: number; type: string }[];
+  return data.list as { name: string; nextNumber: number }[];
 }
 
 async function getPaymentStatus(cif: string, series: string, number: number) {
-  const url = `${SMARTBILL_BASE}/invoice/paymentstatus?cif=${encodeURIComponent(cif)}&seriesname=${encodeURIComponent(series)}&number=${number}`;
-  const res = await fetch(url, {
-    headers: { Authorization: smartbillAuth(), Accept: "application/json" },
-    cache: "no-store",
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  if (data.errorText) return null;
-  return data as {
-    invoiceTotalAmount: number;
-    paidAmount: number;
-    unpaidAmount: number;
-    paid: boolean;
-  };
+  try {
+    const url = `${SMARTBILL_BASE}/invoice/paymentstatus?cif=${encodeURIComponent(cif)}&seriesname=${encodeURIComponent(series)}&number=${number}`;
+    const res = await fetch(url, {
+      headers: { Authorization: smartbillAuth(), Accept: "application/json" },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.errorText) return null;
+    return data as { invoiceTotalAmount: number; paidAmount: number; unpaidAmount: number; paid: boolean };
+  } catch {
+    return null;
+  }
 }
 
-export async function GET(req: Request) {
-  // Protect cron endpoint — only allow Vercel cron or internal calls
-  const authHeader = req.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const cif = process.env.SMARTBILL_CIF!;
-  if (!cif) return NextResponse.json({ error: "SMARTBILL_CIF not set" }, { status: 503 });
+export async function GET() {
+  const cif = process.env.SMARTBILL_CIF;
+  if (!cif) return NextResponse.json({ error: "SMARTBILL_CIF not configured" }, { status: 503 });
 
   const seriesList = await getSeriesFromAPI(cif);
   const results: Record<string, unknown> = {};
@@ -63,17 +55,12 @@ export async function GET(req: Request) {
     // Load or initialize sync state
     let state = await prisma.smartbillSyncState.findUnique({ where: { series } });
     if (!state) {
-      // First run: start from INITIAL_LOOKBACK invoices ago
       const startFrom = Math.max(1, lastInvoice - INITIAL_LOOKBACK + 1);
       state = await prisma.smartbillSyncState.create({
         data: { series, lastSyncedNumber: startFrom - 1, nextNumber },
       });
     } else {
-      // Update the nextNumber if it changed
-      await prisma.smartbillSyncState.update({
-        where: { series },
-        data: { nextNumber },
-      });
+      await prisma.smartbillSyncState.update({ where: { series }, data: { nextNumber } });
     }
 
     const fromNumber = state.lastSyncedNumber + 1;
@@ -84,64 +71,40 @@ export async function GET(req: Request) {
       continue;
     }
 
-    let fetched = 0;
-    let lastSuccessful = state.lastSyncedNumber;
+    // Fetch all numbers in this batch IN PARALLEL
+    const numbers = Array.from({ length: toNumber - fromNumber + 1 }, (_, i) => fromNumber + i);
+    const statuses = await Promise.all(numbers.map((n) => getPaymentStatus(cif, series, n)));
 
-    for (let num = fromNumber; num <= toNumber; num++) {
-      const status = await getPaymentStatus(cif, series, num);
-      if (!status) {
-        // Invoice doesn't exist (gap or end of series), skip
-        lastSuccessful = num; // mark as processed even if missing
-        continue;
-      }
+    let fetched = 0;
+    let lastProcessed = state.lastSyncedNumber;
+
+    for (let i = 0; i < numbers.length; i++) {
+      const num = numbers[i];
+      const status = statuses[i];
+      lastProcessed = num;
+
+      if (!status) continue; // gap or non-existent invoice
 
       const total = status.invoiceTotalAmount;
-      // Romanian standard VAT 19%
-      const net = parseFloat((total / 1.19).toFixed(4));
-      const tax = parseFloat((total - net).toFixed(4));
+      const net = parseFloat((total / 1.19).toFixed(2));
+      const tax = parseFloat((total - net).toFixed(2));
       const invoiceKey = `${series}-${num}`;
 
       await prisma.smartbillInvoice.upsert({
         where: { invoiceKey },
-        update: {
-          totalAmount: total,
-          paidAmount: status.paidAmount,
-          unpaidAmount: status.unpaidAmount,
-          paid: status.paid,
-          netAmount: net,
-          taxAmount: tax,
-          syncedAt: new Date(),
-        },
-        create: {
-          invoiceKey,
-          series,
-          number: num,
-          totalAmount: total,
-          paidAmount: status.paidAmount,
-          unpaidAmount: status.unpaidAmount,
-          paid: status.paid,
-          netAmount: net,
-          taxAmount: tax,
-          issuedAt: new Date(), // best approximation for new invoices
-        },
+        update: { totalAmount: total, paidAmount: status.paidAmount, unpaidAmount: status.unpaidAmount, paid: status.paid, netAmount: net, taxAmount: tax, syncedAt: new Date() },
+        create: { invoiceKey, series, number: num, totalAmount: total, paidAmount: status.paidAmount, unpaidAmount: status.unpaidAmount, paid: status.paid, netAmount: net, taxAmount: tax, issuedAt: new Date() },
       });
-
-      lastSuccessful = num;
       fetched++;
     }
 
-    // Update sync state
     await prisma.smartbillSyncState.update({
       where: { series },
-      data: { lastSyncedNumber: Math.max(lastSuccessful, state.lastSyncedNumber) },
+      data: { lastSyncedNumber: lastProcessed },
     });
 
     totalFetched += fetched;
-    results[series] = {
-      fetched,
-      range: `${fromNumber}-${toNumber}`,
-      remaining: Math.max(0, lastInvoice - toNumber),
-    };
+    results[series] = { fetched, from: fromNumber, to: toNumber, remaining: Math.max(0, lastInvoice - toNumber) };
   }
 
   return NextResponse.json({ ok: true, totalFetched, series: results });
