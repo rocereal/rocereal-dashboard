@@ -132,6 +132,19 @@ def export_csv_from_smartbill() -> str:
             screenshot(page, "06_no_branch_modal")
             print("  (modalul 'Alege sediul' nu a aparut — posibil deja in cont)")
 
+        # 3b. Inchide popup-urile informationale (ex: Mentenanta ANAF)
+        for popup_text in ["Am inteles", "Am înțeles", "OK", "Inchide"]:
+            try:
+                btn = page.get_by_text(popup_text, exact=True).first
+                btn.wait_for(timeout=4_000)
+                btn.click()
+                page.wait_for_load_state("networkidle")
+                screenshot(page, "07b_popup_closed")
+                print(f"  ✓ Popup inchis ({popup_text})")
+                break
+            except PlaywrightTimeout:
+                continue
+
         # 4. Navigate: Documente emise → Facturi
         print("→ Navigare la Documente emise → Facturi...")
         page.get_by_text("Documente emise", exact=False).click()
@@ -145,32 +158,74 @@ def export_csv_from_smartbill() -> str:
         print("→ Setare filtru 'Toate'...")
         try:
             period_btn = page.get_by_text("Luna curenta", exact=False).first
+            period_btn.wait_for(timeout=8_000)
             period_btn.click()
+            page.wait_for_load_state("networkidle")
             page.get_by_text("Toate", exact=False).first.click()
             page.wait_for_load_state("networkidle")
             screenshot(page, "10_filter_all")
+            print("  ✓ Filtru 'Toate' setat")
         except PlaywrightTimeout:
+            screenshot(page, "10_filter_unchanged")
             print("  (filtru 'Toate' nu gasit — continuam cu ce e setat)")
 
-        # 6. Export
-        print("→ Export CSV/Excel...")
+        # 6. Export Excel: deschide dropdown-ul de export, apoi click "Exporta Excel"
+        print("→ Deschide meniu export...")
+        screenshot(page, "11_before_export")
+
+        # Deschide dropdown-ul de export (buton cu iconi??a, nu text)
+        # Incercam mai multi selectori pentru butonul trigger
+        dropdown_opened = False
+        for selector in [
+            'button:has-text("Factura")',
+            '[class*="export"] button',
+            '[class*="download"] button',
+            'button[title*="xport"]',
+            'button[title*="escarca"]',
+        ]:
+            try:
+                page.locator(selector).first.click(timeout=3_000)
+                # Verifica daca a aparut "Exporta Excel" in meniu
+                page.get_by_text("Exporta Excel", exact=False).wait_for(timeout=3_000)
+                dropdown_opened = True
+                print(f"  ✓ Dropdown export deschis via: {selector}")
+                break
+            except PlaywrightTimeout:
+                continue
+
+        if not dropdown_opened:
+            # Fallback: incearca sa dai click pe butoanele din header-ul tabelului
+            # pana apare "Exporta Excel"
+            header_buttons = page.locator('button').all()
+            for btn in reversed(header_buttons[-20:]):  # ultimele 20 butoane
+                try:
+                    btn.click(timeout=1_000)
+                    if page.get_by_text("Exporta Excel", exact=False).is_visible():
+                        dropdown_opened = True
+                        print("  ✓ Dropdown export deschis (fallback)")
+                        break
+                except Exception:
+                    continue
+
+        screenshot(page, "11b_export_dropdown")
+
+        if not dropdown_opened:
+            raise RuntimeError("Nu am putut deschide meniul de export. Verifica screenshot-ul 11b_export_dropdown.png")
+
+        # Click "Exporta Excel" si asteapta download-ul
+        print("→ Click Exporta Excel...")
         try:
             with page.expect_download(timeout=30_000) as dl_info:
-                for label in ["Export", "Exporta", "Descarca", "Excel", "CSV"]:
-                    try:
-                        page.get_by_text(label, exact=False).first.click(timeout=5_000)
-                        break
-                    except PlaywrightTimeout:
-                        continue
+                page.get_by_text("Exporta Excel", exact=False).click(timeout=10_000)
             download = dl_info.value
             path = download.path()
             content = Path(path).read_bytes()
             print(f"  ✓ Descarcat: {download.suggested_filename} ({len(content)} bytes)")
         except PlaywrightTimeout:
-            screenshot(page, "11_export_failed")
-            raise RuntimeError("Nu am gasit butonul de export. Verifica screenshot-ul 11_export_failed.png")
+            screenshot(page, "12_export_failed")
+            raise RuntimeError("Download-ul nu a pornit. Verifica screenshot-ul 12_export_failed.png")
 
-        screenshot(page, "12_done")
+        screenshot(page, "13_done")
         browser.close()
 
     # Detect encoding
@@ -272,6 +327,7 @@ def import_csv_to_db(csv_content: str):
             "totalAmount"  = EXCLUDED."totalAmount",
             "netAmount"    = EXCLUDED."netAmount",
             "taxAmount"    = EXCLUDED."taxAmount",
+            "issuedAt"     = EXCLUDED."issuedAt",
             "syncedAt"     = EXCLUDED."syncedAt"
     """
 
