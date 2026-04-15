@@ -80,7 +80,7 @@ def export_csv_from_smartbill() -> str:
 
         # 1. Login
         print("→ Login SmartBill...")
-        page.goto("https://app.smartbill.ro/")
+        page.goto("https://cloud.smartbill.ro/auth/login/")
         page.wait_for_load_state("networkidle")
         screenshot(page, "01_homepage")
 
