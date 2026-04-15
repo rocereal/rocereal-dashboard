@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-SmartBill automated export via Playwright.
-Logs in, selects company + branch, goes to Facturi, exports CSV, imports to DB.
+SmartBill sync via internal web API.
+Playwright is used ONLY for login + company/branch selection (to get session cookies).
+All invoice data is fetched via direct HTTP POST — no browser navigation needed.
 """
 
-import csv
-import io
+import json
 import os
 import re
 import sys
@@ -14,38 +14,32 @@ from datetime import datetime
 from pathlib import Path
 
 import psycopg2
-from psycopg2.extras import Json, execute_values
+import requests
+from psycopg2.extras import execute_values
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 
 # ── Config ────────────────────────────────────────────────────────────────────
 EMAIL    = os.environ.get("SMARTBILL_EMAIL", "contact@rocereal.ro")
 PASSWORD = os.environ.get("SMARTBILL_PASSWORD", "")
 DB_URL   = os.environ.get("DATABASE_URL_UNPOOLED", os.environ.get("DATABASE_URL", ""))
-COMPANY  = "RO CEREAL"        # partial match — avoids diacritic issues
-BRANCH   = "SUCURSALA SIBIU"
 HEADLESS = os.environ.get("HEADLESS", "true").lower() != "false"
 SCREENSHOT_DIR = Path("screenshots")
+
+BASE_URL  = "https://cloud.smartbill.ro"
+AJAX_URL  = f"{BASE_URL}/raport/facturi/ajax/"
+DATE_FROM = "01/01/2020"                          # acoperim tot istoricul
+DATE_TO   = datetime.now().strftime("%d/%m/%Y")   # pana azi
+PAGE_SIZE = 5000                                  # max per request
+
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def screenshot(page, name: str):
     SCREENSHOT_DIR.mkdir(exist_ok=True)
     page.screenshot(path=str(SCREENSHOT_DIR / f"{name}.png"))
-    print(f"  📸 screenshot: {name}.png")
-
-
-def parse_ron(value: str) -> float:
-    """Parse Romanian number format: '1.234,56' → 1234.56"""
-    if not value or value.strip() in ("-", ""):
-        return 0.0
-    cleaned = value.strip().replace(".", "").replace(",", ".")
-    try:
-        return float(cleaned)
-    except ValueError:
-        return 0.0
+    print(f"  📸 {name}.png")
 
 
 def parse_date(value: str) -> datetime | None:
-    """Parse DD/MM/YYYY or YYYY-MM-DD"""
     for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%d.%m.%Y"):
         try:
             return datetime.strptime(value.strip(), fmt)
@@ -54,312 +48,225 @@ def parse_date(value: str) -> datetime | None:
     return None
 
 
-def parse_invoice_key(raw: str):
-    """
-    Convert SmartBill invoice string to (series, number, key).
-    e.g. 'SSB/442' → ('SSB', 442, 'SSB-442')
-         'SSB442'  → ('SSB', 442, 'SSB-442')
-    """
-    raw = raw.strip()
-    m = re.match(r"^([A-Z ]+)[/ ]?(\d+)$", raw.replace(".", ""))
+def parse_invoice_number(raw: str):
+    """'SSB476' → ('SSB', 476, 'SSB-476')"""
+    m = re.match(r"^([A-Z]+)(\d+)$", raw.strip())
     if m:
-        series = m.group(1).strip()
-        number = int(m.group(2))
+        series, number = m.group(1), int(m.group(2))
         return series, number, f"{series}-{number}"
-    return None, None, raw
+    return None, None, raw.strip()
 
 
-# ── Playwright export ─────────────────────────────────────────────────────────
-def export_csv_from_smartbill() -> str:
-    """Returns the raw CSV content as a string."""
+# ── Step 1: Auth via Playwright ───────────────────────────────────────────────
+def get_session_cookies() -> dict:
+    """
+    Performs login + company + branch selection via Playwright.
+    Returns the session cookies needed for direct API calls.
+    """
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=HEADLESS)
-        context = browser.new_context(accept_downloads=True)
-        page = context.new_page()
+        context = browser.new_context()
+        page    = context.new_page()
         page.set_default_timeout(30_000)
 
-        # 1. Login
+        # 1. Load login page
         print("→ Login SmartBill...")
-        page.goto("https://cloud.smartbill.ro/auth/login/")
+        page.goto(f"{BASE_URL}/auth/login/")
         page.wait_for_load_state("networkidle")
-        screenshot(page, "01_homepage")
 
-        # Accept cookie popup (appears before login form is usable)
+        # Accept cookie popup
         try:
-            cookie_btn = page.get_by_text("Accept toate cookie-urile", exact=False)
-            cookie_btn.wait_for(timeout=5_000)
-            cookie_btn.click()
-            print("  ✓ Cookie popup acceptat")
+            page.get_by_text("Accept toate cookie-urile", exact=False).wait_for(timeout=5_000)
+            page.get_by_text("Accept toate cookie-urile", exact=False).click()
             page.wait_for_load_state("networkidle")
+            print("  ✓ Cookie popup acceptat")
         except PlaywrightTimeout:
-            print("  (nu a aparut popup cookie)")
+            pass
 
-        screenshot(page, "02_after_cookies")
-
-        # Fill email
+        # Fill credentials and login
         page.locator('input[placeholder="Email utilizator"]').fill(EMAIL)
-        # Fill password
         page.locator('input[placeholder="Parola"]').fill(PASSWORD)
-        # Click login
         page.get_by_text("Intra in cont", exact=True).click()
-
         page.wait_for_load_state("networkidle")
-        screenshot(page, "03_after_login")
+        screenshot(page, "01_after_login")
+        print("  ✓ Credentiale trimise")
 
-        # 2. Asteapta modalul "Alege compania" si selecteaza RO CEREAL SA
-        print(f"→ Selectare companie: {COMPANY}...")
+        # 2. Select company: click by CIF (unique identifier, no diacritic issues)
+        print("→ Selectare companie RO CEREAL SA...")
         try:
             page.get_by_text("Alege compania", exact=False).wait_for(timeout=10_000)
-            page.wait_for_timeout(800)  # asteapta animatia modala
-            screenshot(page, "04_alege_compania_modal")
-
-            company_clicked = False
-            for strategy in [
-                lambda: page.locator("li, div, a").filter(has_text="RO CEREAL SA").first.click(timeout=5_000),
-                lambda: page.get_by_text("RO CEREAL SA", exact=True).click(timeout=5_000),
-                lambda: page.get_by_text("RO CEREAL SA", exact=False).first.click(timeout=5_000),
-                lambda: page.locator("text=RO CEREAL SA").click(timeout=5_000),
-                lambda: page.get_by_text("RO18533200", exact=False).click(timeout=5_000),
-            ]:
-                try:
-                    strategy()
-                    company_clicked = True
-                    print("  ✓ Click RO CEREAL SA reusit")
-                    break
-                except Exception as e:
-                    print(f"  (strategie esuata: {e})")
-                    continue
-
-            if not company_clicked:
-                screenshot(page, "04b_company_click_failed")
-                raise RuntimeError("Nu am putut da click pe RO CEREAL SA")
-
+            page.wait_for_timeout(800)
+            screenshot(page, "02_company_modal")
+            # CIF-ul RO18533200 apare doar in randul RO CEREAL SA
+            page.get_by_text("RO18533200", exact=False).click(timeout=5_000)
             page.wait_for_load_state("networkidle")
-            screenshot(page, "05_company_selected")
-            print("  ✓ RO CEREAL SA selectata")
+            screenshot(page, "03_company_selected")
+            print("  ✓ RO CEREAL SA selectata (via CIF)")
         except PlaywrightTimeout:
-            screenshot(page, "04_no_company_modal")
-            print("  (modalul 'Alege compania' nu a aparut — posibil deja selectata)")
+            screenshot(page, "02_no_company_modal")
+            print("  (modal companie nu a aparut — posibil deja selectata)")
 
-        # 3. Asteapta modalul "Alege sediul" si selecteaza SUCURSALA SIBIU
-        print(f"→ Selectare sediu: {BRANCH}...")
+        # 3. Select branch: SUCURSALA SIBIU
+        print("→ Selectare sediu SUCURSALA SIBIU...")
         try:
             page.get_by_text("Alege sediul", exact=False).wait_for(timeout=10_000)
-            page.wait_for_timeout(800)  # asteapta animatia modala
-            screenshot(page, "06_alege_sediul_modal")
-
-            # Incearca mai multi selectori pentru a da click pe randul corect
-            branch_clicked = False
-            for strategy in [
-                lambda: page.locator("li, div, a").filter(has_text="SUCURSALA SIBIU").first.click(timeout=5_000),
-                lambda: page.get_by_text("SUCURSALA SIBIU", exact=True).click(timeout=5_000),
-                lambda: page.get_by_text("SUCURSALA SIBIU", exact=False).first.click(timeout=5_000),
-                lambda: page.locator("text=SUCURSALA SIBIU").click(timeout=5_000),
-                lambda: page.get_by_text("Sediu secundar", exact=False).click(timeout=5_000),
-            ]:
-                try:
-                    strategy()
-                    branch_clicked = True
-                    print("  ✓ Click SUCURSALA SIBIU reusit")
-                    break
-                except Exception as e:
-                    print(f"  (strategie esuata: {e})")
-                    continue
-
-            if not branch_clicked:
-                screenshot(page, "06b_branch_click_failed")
-                raise RuntimeError("Nu am putut da click pe SUCURSALA SIBIU")
-
+            page.wait_for_timeout(800)
+            screenshot(page, "04_branch_modal")
+            # "Sediu secundar" este subtitlul unic al SUCURSALA SIBIU
+            page.get_by_text("Sediu secundar", exact=False).click(timeout=5_000)
             page.wait_for_load_state("networkidle")
-            screenshot(page, "07_branch_selected")
-            print("  ✓ SUCURSALA SIBIU selectata")
+            screenshot(page, "05_branch_selected")
+            print("  ✓ SUCURSALA SIBIU selectata (via 'Sediu secundar')")
         except PlaywrightTimeout:
-            screenshot(page, "06_no_branch_modal")
-            print("  (modalul 'Alege sediul' nu a aparut — posibil deja in cont)")
+            screenshot(page, "04_no_branch_modal")
+            print("  (modal sediu nu a aparut — posibil deja in cont)")
 
-        # 3b. Inchide popup-urile informationale (ex: Mentenanta ANAF)
-        for popup_text in ["Am inteles", "Am înțeles", "OK", "Inchide"]:
+        # 4. Dismiss security/info popups
+        for popup_text in ["Activeaza mai tarziu", "Am inteles", "Am înțeles", "OK"]:
             try:
                 btn = page.get_by_text(popup_text, exact=True).first
-                btn.wait_for(timeout=4_000)
+                btn.wait_for(timeout=3_000)
                 btn.click()
                 page.wait_for_load_state("networkidle")
-                screenshot(page, "07b_popup_closed")
-                print(f"  ✓ Popup inchis ({popup_text})")
+                print(f"  ✓ Popup inchis: '{popup_text}'")
                 break
             except PlaywrightTimeout:
                 continue
 
-        # 4. Navigate: Documente emise → Facturi
-        print("→ Navigare la Documente emise → Facturi...")
-        page.get_by_text("Documente emise", exact=False).click()
-        page.wait_for_load_state("networkidle")
-        screenshot(page, "08_documente_emise")
-        page.get_by_text("Facturi", exact=False).first.click()
-        page.wait_for_load_state("networkidle")
-        screenshot(page, "09_facturi_page")
+        screenshot(page, "06_dashboard")
 
-        # 5. Set "Toate" filter (all invoices, not just current month)
-        print("→ Setare filtru 'Toate'...")
-        try:
-            period_btn = page.get_by_text("Luna curenta", exact=False).first
-            period_btn.wait_for(timeout=8_000)
-            period_btn.click()
-            page.wait_for_load_state("networkidle")
-            page.get_by_text("Toate", exact=False).first.click()
-            page.wait_for_load_state("networkidle")
-            screenshot(page, "10_filter_all")
-            print("  ✓ Filtru 'Toate' setat")
-        except PlaywrightTimeout:
-            screenshot(page, "10_filter_unchanged")
-            print("  (filtru 'Toate' nu gasit — continuam cu ce e setat)")
-
-        # 6. Export Excel: deschide dropdown-ul de export, apoi click "Exporta Excel"
-        print("→ Deschide meniu export...")
-        screenshot(page, "11_before_export")
-
-        # Deschide dropdown-ul de export (buton cu iconi??a, nu text)
-        # Incercam mai multi selectori pentru butonul trigger
-        dropdown_opened = False
-        for selector in [
-            'button:has-text("Factura")',
-            '[class*="export"] button',
-            '[class*="download"] button',
-            'button[title*="xport"]',
-            'button[title*="escarca"]',
-        ]:
-            try:
-                page.locator(selector).first.click(timeout=3_000)
-                # Verifica daca a aparut "Exporta Excel" in meniu
-                page.get_by_text("Exporta Excel", exact=False).wait_for(timeout=3_000)
-                dropdown_opened = True
-                print(f"  ✓ Dropdown export deschis via: {selector}")
-                break
-            except PlaywrightTimeout:
-                continue
-
-        if not dropdown_opened:
-            # Fallback: incearca sa dai click pe butoanele din header-ul tabelului
-            # pana apare "Exporta Excel"
-            header_buttons = page.locator('button').all()
-            for btn in reversed(header_buttons[-20:]):  # ultimele 20 butoane
-                try:
-                    btn.click(timeout=1_000)
-                    if page.get_by_text("Exporta Excel", exact=False).is_visible():
-                        dropdown_opened = True
-                        print("  ✓ Dropdown export deschis (fallback)")
-                        break
-                except Exception:
-                    continue
-
-        screenshot(page, "11b_export_dropdown")
-
-        if not dropdown_opened:
-            raise RuntimeError("Nu am putut deschide meniul de export. Verifica screenshot-ul 11b_export_dropdown.png")
-
-        # Click "Exporta Excel" si asteapta download-ul
-        print("→ Click Exporta Excel...")
-        try:
-            with page.expect_download(timeout=30_000) as dl_info:
-                page.get_by_text("Exporta Excel", exact=False).click(timeout=10_000)
-            download = dl_info.value
-            path = download.path()
-            content = Path(path).read_bytes()
-            print(f"  ✓ Descarcat: {download.suggested_filename} ({len(content)} bytes)")
-        except PlaywrightTimeout:
-            screenshot(page, "12_export_failed")
-            raise RuntimeError("Download-ul nu a pornit. Verifica screenshot-ul 12_export_failed.png")
-
-        screenshot(page, "13_done")
+        # Extract and return cookies
+        cookies = {c["name"]: c["value"] for c in context.cookies()}
+        sid = cookies.get("sessionid", "N/A")[:8]
+        print(f"  ✓ Sesiune obtinuta (sessionid: {sid}...)")
         browser.close()
 
-    # Detect encoding
-    try:
-        return content.decode("utf-8-sig")
-    except UnicodeDecodeError:
-        return content.decode("latin-1")
+    return cookies
 
 
-# ── CSV → DB import ───────────────────────────────────────────────────────────
-def import_csv_to_db(csv_content: str):
-    reader = csv.DictReader(io.StringIO(csv_content))
-    headers = reader.fieldnames or []
-    print(f"  Coloane CSV: {headers}")
+# ── Step 2: Fetch invoices via direct HTTP ────────────────────────────────────
+def build_payload(date_from: str, date_to: str, start: int = 0) -> dict:
+    payload = {
+        "sEcho":           "1",
+        "iColumns":        "15",
+        "sColumns":        "",
+        "iDisplayStart":   str(start),
+        "iDisplayLength":  str(PAGE_SIZE),
+        "sSearch":         json.dumps({"from": date_from, "to": date_to, "currency": "0"}),
+        "bRegex":          "",
+        "iSortingCols":    "0",
+        "last_documents_ids": "[]",
+        "aaSorting":       "[]",
+    }
+    for i in range(15):
+        payload[f"mDataProp_{i}"]  = str(i)
+        payload[f"sSearch_{i}"]    = ""
+        payload[f"bRegex_{i}"]     = "false"
+        payload[f"bSearchable_{i}"] = "true"
+        payload[f"bSortable_{i}"]  = "true" if 2 <= i <= 9 else "false"
+    return payload
 
-    rows = []
-    for row in reader:
-        # Find invoice number column (varies by SmartBill version)
-        invoice_raw = (
-            row.get("Factură") or row.get("Factura") or row.get("Nr. Factură") or
-            row.get("Nr. factura") or row.get("Numărul facturii") or
-            row.get("Numar") or ""
-        ).strip()
-        if not invoice_raw:
-            continue
 
-        series, number, invoice_key = parse_invoice_key(invoice_raw)
-        if number is None:
-            print(f"  ⚠ Nu pot parsa numarul facturii: {invoice_raw!r}")
-            continue
+def fetch_all_invoices(cookies: dict) -> list:
+    """Calls /raport/facturi/ajax/ directly with session cookies."""
+    sess = requests.Session()
 
-        # Date columns
-        date_str = (
-            row.get("Data creării") or row.get("Data creare") or
-            row.get("Data emiterii") or row.get("Data") or ""
-        )
-        due_date_str = (
-            row.get("Data scadenței") or row.get("Data scadenta") or ""
-        )
-        issued_at = parse_date(date_str) or datetime.now()
+    # Only the essential cookies for server-side auth + company/branch context
+    for name in ["sessionid", "csrftoken", "dsc", "srvid", "sip", "sblsd"]:
+        if name in cookies:
+            sess.cookies.set(name, cookies[name], domain="cloud.smartbill.ro")
 
-        # Amount columns
-        total    = parse_ron(row.get("Total") or row.get("Valoare totala") or "0")
-        net      = parse_ron(row.get("Valoare fără TVA") or row.get("Valoare fara TVA") or row.get("Net") or "0")
-        tax      = parse_ron(row.get("TVA") or "0")
-        discount = parse_ron(row.get("Discount") or row.get("Reducere") or "0")
+    headers = {
+        "accept":           "application/json, text/javascript, */*; q=0.01",
+        "content-type":     "application/x-www-form-urlencoded; charset=UTF-8",
+        "origin":           BASE_URL,
+        "referer":          f"{BASE_URL}/",
+        "x-csrftoken":      cookies.get("csrftoken", ""),
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent":       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    }
 
-        # If net/tax not in CSV, calculate at 19%
-        if net == 0 and total > 0:
-            net = round(total / 1.19, 2)
-            tax = round(total - net, 2)
+    all_rows = []
+    start    = 0
 
-        # Client
-        client = (
-            row.get("Client") or row.get("Denumire client") or row.get("Partener") or ""
-        ).strip()
+    while True:
+        resp = sess.post(AJAX_URL, headers=headers, data=build_payload(DATE_FROM, DATE_TO, start), timeout=30)
+        resp.raise_for_status()
+        data  = resp.json()
+        batch = data.get("aaData", [])
+        total = int(data.get("iTotalRecords", 0))
 
-        # Status
-        status_raw = (
-            row.get("Status") or row.get("Stare") or ""
-        ).strip().lower()
-        if "anulat" in status_raw:
-            status = "Anulata"
-        elif "incasat" in status_raw or "platit" in status_raw:
-            status = "Incasata"
-        elif "partial" in status_raw:
-            status = "Partial"
-        else:
-            status = "Emisa"
+        all_rows.extend(batch)
+        print(f"  Fetch {start}–{start + len(batch)} din {total}")
 
-        rows.append({
-            "invoice_key": invoice_key,
-            "series": series or "",
-            "number": number,
-            "total": total,
-            "net": net,
-            "tax": tax,
-            "client": client,
-            "issued_at": issued_at,
-            "status": status,
-        })
+        start += len(batch)
+        if start >= total or not batch:
+            break
 
-    print(f"  Randuri parsate: {len(rows)}")
-    if not rows:
-        print("  ⚠ Nu am gasit randuri valide in CSV!")
+    print(f"  ✓ Total randuri: {len(all_rows)}")
+    return all_rows
+
+
+# ── Step 3: Parse + upsert into DB ───────────────────────────────────────────
+def import_to_db(rows: list):
+    """
+    aaData column mapping (from network investigation):
+      [2]  = invoice number (e.g. "SSB476")
+      [3]  = client name
+      [4]  = issue date  DD/MM/YYYY
+      [5]  = due date    DD/MM/YYYY
+      [6]  = net (without VAT)
+      [7]  = VAT
+      [8]  = total
+      [9]  = currency
+      [11] = JSON string: {"is_paid":"y"/"n", "is_annulled":bool, ...}
+    """
+    records = []
+    for row in rows:
+        try:
+            invoice_raw = str(row[2]).strip()
+            series, number, invoice_key = parse_invoice_number(invoice_raw)
+            if number is None:
+                print(f"  ⚠ Skip: {invoice_raw!r}")
+                continue
+
+            issued_at = parse_date(str(row[4])) or datetime.now()
+            net   = float(str(row[6]).replace(",", ".") or 0)
+            tax   = float(str(row[7]).replace(",", ".") or 0)
+            total = float(str(row[8]).replace(",", ".") or 0)
+
+            status_data: dict = {}
+            try:
+                raw11 = row[11]
+                status_data = json.loads(raw11) if isinstance(raw11, str) else (raw11 or {})
+            except Exception:
+                pass
+
+            is_paid     = status_data.get("is_paid", "n") == "y"
+            is_annulled = bool(status_data.get("is_annulled", False))
+
+            records.append({
+                "invoice_key": invoice_key,
+                "series":      series or "",
+                "number":      number,
+                "total":       total,
+                "net":         net,
+                "tax":         tax,
+                "issued_at":   issued_at,
+                "paid":        is_paid,
+                "annulled":    is_annulled,
+            })
+        except Exception as e:
+            label = row[2] if len(row) > 2 else "?"
+            print(f"  ⚠ Eroare la {label}: {e}")
+
+    print(f"  Randuri parsate: {len(records)}")
+    if not records:
+        print("  ⚠ Nicio factura valida!")
         return
 
     conn = psycopg2.connect(DB_URL)
-    cur = conn.cursor()
+    cur  = conn.cursor()
 
     upsert_sql = """
         INSERT INTO "SmartbillInvoice" (
@@ -373,11 +280,12 @@ def import_csv_to_db(csv_content: str):
             "netAmount"    = EXCLUDED."netAmount",
             "taxAmount"    = EXCLUDED."taxAmount",
             "issuedAt"     = EXCLUDED."issuedAt",
+            "paid"         = EXCLUDED."paid",
+            "paidAmount"   = CASE WHEN EXCLUDED."paid" THEN EXCLUDED."totalAmount" ELSE 0 END,
+            "unpaidAmount" = CASE WHEN EXCLUDED."paid" THEN 0 ELSE EXCLUDED."totalAmount" END,
             "syncedAt"     = EXCLUDED."syncedAt"
     """
 
-    # Note: status and client are not in the current schema — we update issuedAt
-    # which is the most important fix (real date instead of sync date)
     data = [
         (
             str(uuid.uuid4()),
@@ -387,38 +295,43 @@ def import_csv_to_db(csv_content: str):
             r["total"],
             r["net"],
             r["tax"],
-            0.0,        # paidAmount — will be corrected by API sync
-            r["total"], # unpaidAmount — will be corrected by API sync
-            r["status"] == "Incasata",
+            r["total"] if r["paid"] else 0.0,
+            0.0 if r["paid"] else r["total"],
+            r["paid"],
             r["issued_at"],
             datetime.now(),
         )
-        for r in rows
+        for r in records
     ]
 
-    template = "(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    execute_values(cur, upsert_sql, data, template=template, page_size=100)
+    execute_values(cur, upsert_sql, data, template="(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", page_size=200)
     conn.commit()
 
     cur.execute('SELECT COUNT(*) FROM "SmartbillInvoice"')
-    total_in_db = cur.fetchone()[0]
+    total_db = cur.fetchone()[0]
     cur.close()
     conn.close()
-
-    print(f"  ✓ Importat {len(rows)} facturi. Total in DB: {total_in_db}")
+    print(f"  ✓ Importat {len(records)} facturi. Total in DB: {total_db}")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     if not PASSWORD:
-        print("ERROR: SMARTBILL_PASSWORD env var not set")
+        print("ERROR: SMARTBILL_PASSWORD not set")
         sys.exit(1)
     if not DB_URL:
-        print("ERROR: DATABASE_URL env var not set")
+        print("ERROR: DATABASE_URL not set")
         sys.exit(1)
 
-    print("=== SmartBill Export ===")
-    csv_content = export_csv_from_smartbill()
-    print("\n=== Import in DB ===")
-    import_csv_to_db(csv_content)
+    print("=== SmartBill Sync ===")
+
+    print("\n[1/3] Autentificare (Playwright)...")
+    cookies = get_session_cookies()
+
+    print(f"\n[2/3] Fetch facturi {DATE_FROM} → {DATE_TO} (HTTP direct)...")
+    invoices = fetch_all_invoices(cookies)
+
+    print("\n[3/3] Import in DB...")
+    import_to_db(invoices)
+
     print("\n✅ Gata!")
