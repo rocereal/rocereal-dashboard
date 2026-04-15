@@ -73,22 +73,31 @@ def get_session_cookies() -> dict:
         print("→ Login SmartBill...")
         page.goto(f"{BASE_URL}/auth/login/")
         page.wait_for_load_state("networkidle")
+        page.wait_for_timeout(2_000)  # allow page JS to settle
+        screenshot(page, "01_login_page")
 
-        # Accept cookie popup
+        # Accept cookie popup and wait for it to disappear
         try:
-            page.get_by_text("Accept toate cookie-urile", exact=False).wait_for(timeout=5_000)
-            page.get_by_text("Accept toate cookie-urile", exact=False).click()
-            page.wait_for_load_state("networkidle")
+            cookie_btn = page.get_by_text("Accept toate cookie-urile", exact=False)
+            cookie_btn.wait_for(timeout=8_000)
+            cookie_btn.click()
+            # Wait until the popup overlay is gone
+            cookie_btn.wait_for(state="hidden", timeout=8_000)
+            page.wait_for_timeout(500)
             print("  ✓ Cookie popup acceptat")
         except PlaywrightTimeout:
-            pass
+            print("  (cookie popup nu a aparut sau deja inchis)")
 
-        # Fill credentials and login
-        page.locator('input[placeholder="Email utilizator"]').fill(EMAIL)
+        screenshot(page, "02_before_login_form")
+
+        # Fill credentials — wait for field to be visible first
+        email_input = page.locator('input[placeholder="Email utilizator"]')
+        email_input.wait_for(state="visible", timeout=15_000)
+        email_input.fill(EMAIL)
         page.locator('input[placeholder="Parola"]').fill(PASSWORD)
         page.get_by_text("Intra in cont", exact=True).click()
         page.wait_for_load_state("networkidle")
-        screenshot(page, "01_after_login")
+        screenshot(page, "03_after_login")
         print("  ✓ Credentiale trimise")
 
         # 2. Select company: click by CIF (unique identifier, no diacritic issues)
@@ -96,14 +105,14 @@ def get_session_cookies() -> dict:
         try:
             page.get_by_text("Alege compania", exact=False).wait_for(timeout=10_000)
             page.wait_for_timeout(800)
-            screenshot(page, "02_company_modal")
+            screenshot(page, "04_company_modal")
             # CIF-ul RO18533200 apare doar in randul RO CEREAL SA
             page.get_by_text("RO18533200", exact=False).click(timeout=5_000)
             page.wait_for_load_state("networkidle")
-            screenshot(page, "03_company_selected")
+            screenshot(page, "05_company_selected")
             print("  ✓ RO CEREAL SA selectata (via CIF)")
         except PlaywrightTimeout:
-            screenshot(page, "02_no_company_modal")
+            screenshot(page, "04_no_company_modal")
             print("  (modal companie nu a aparut — posibil deja selectata)")
 
         # 3. Select branch: SUCURSALA SIBIU
@@ -111,14 +120,14 @@ def get_session_cookies() -> dict:
         try:
             page.get_by_text("Alege sediul", exact=False).wait_for(timeout=10_000)
             page.wait_for_timeout(800)
-            screenshot(page, "04_branch_modal")
+            screenshot(page, "06_branch_modal")
             # "Sediu secundar" este subtitlul unic al SUCURSALA SIBIU
             page.get_by_text("Sediu secundar", exact=False).click(timeout=5_000)
             page.wait_for_load_state("networkidle")
-            screenshot(page, "05_branch_selected")
+            screenshot(page, "07_branch_selected")
             print("  ✓ SUCURSALA SIBIU selectata (via 'Sediu secundar')")
         except PlaywrightTimeout:
-            screenshot(page, "04_no_branch_modal")
+            screenshot(page, "06_no_branch_modal")
             print("  (modal sediu nu a aparut — posibil deja in cont)")
 
         # 4. Dismiss security/info popups
