@@ -71,10 +71,18 @@ def get_session_cookies() -> dict:
 
         # 1. Load login page
         print("→ Login SmartBill...")
-        page.goto(f"{BASE_URL}/auth/login/")
+        response = page.goto(f"{BASE_URL}/auth/login/")
         page.wait_for_load_state("networkidle")
         page.wait_for_timeout(2_000)  # allow page JS to settle
         screenshot(page, "01_login_page")
+
+        # Check for server errors (502, 503, etc.)
+        if response and response.status >= 500:
+            raise RuntimeError(f"SmartBill returned HTTP {response.status} — serverul este down. Retry maine.")
+        # Also check page title for nginx error pages
+        title = page.title()
+        if "502" in title or "503" in title or "Bad Gateway" in title or "nginx" in title.lower():
+            raise RuntimeError(f"SmartBill inaccesibil (pagina: '{title}'). Retry maine.")
 
         # Accept cookie popup and wait for it to disappear
         try:
