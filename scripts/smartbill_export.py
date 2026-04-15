@@ -106,23 +106,21 @@ def export_csv_from_smartbill() -> str:
         page.wait_for_load_state("networkidle")
         screenshot(page, "03_after_login")
 
-        # 2. Select company
-        print(f"→ Selectare companie: {COMPANY}...")
-        try:
-            page.get_by_text(COMPANY, exact=False).first.click()
-            page.wait_for_load_state("networkidle")
-            screenshot(page, "04_company_selected")
-        except PlaywrightTimeout:
-            print("  (nu a aparut selectia de companie — posibil deja selectata)")
-
-        # 3. Select branch
+        # 2. Asteapta modalul "Alege sediul" si selecteaza SUCURSALA SIBIU
+        # Compania (RO CEREAL SA) e deja pre-selectata — trebuie doar ales sediul
         print(f"→ Selectare sediu: {BRANCH}...")
         try:
-            page.get_by_text(BRANCH, exact=False).first.click()
+            # Asteapta sa apara modalul cu sediile
+            page.get_by_text("Alege sediul", exact=False).wait_for(timeout=10_000)
+            screenshot(page, "04_alege_sediul_modal")
+            # Click pe randul SUCURSALA SIBIU
+            page.get_by_text("SUCURSALA SIBIU", exact=False).click()
             page.wait_for_load_state("networkidle")
             screenshot(page, "05_branch_selected")
+            print("  ✓ SUCURSALA SIBIU selectata")
         except PlaywrightTimeout:
-            print("  (nu a aparut selectia de sediu — posibil deja selectat)")
+            screenshot(page, "04_no_modal")
+            print("  (modalul 'Alege sediul' nu a aparut — posibil deja in cont)")
 
         # 4. Navigate: Documente emise → Facturi
         print("→ Navigare la Documente emise → Facturi...")
