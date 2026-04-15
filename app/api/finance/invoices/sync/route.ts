@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 const SMARTBILL_BASE = "https://ws.smartbill.ro/SBORO/api";
-// Parallel fetches per series per run — fast enough for 10s Hobby timeout
-const BATCH_SIZE = 8;
-const INITIAL_LOOKBACK = 50; // first run: last 50 per series
+const BATCH_SIZE = 6; // 6 per series × 3 series = 18 parallel calls, well under 30/10min limit
+const INITIAL_LOOKBACK = 30; // first run: last 30 per series (safe for rate limit)
+const COOLDOWN_MINUTES = 15; // don't sync more than once every 15 minutes
 
 function smartbillAuth() {
   const email = process.env.SMARTBILL_EMAIL!;
@@ -43,6 +43,17 @@ async function getPaymentStatus(cif: string, series: string, number: number) {
 export async function GET() {
   const cif = process.env.SMARTBILL_CIF;
   if (!cif) return NextResponse.json({ error: "SMARTBILL_CIF not configured" }, { status: 503 });
+
+  // Cooldown: skip if any series was synced less than COOLDOWN_MINUTES ago
+  const recentSync = await prisma.smartbillSyncState.findFirst({
+    orderBy: { updatedAt: "desc" },
+  });
+  if (recentSync) {
+    const minutesSince = (Date.now() - recentSync.updatedAt.getTime()) / 60000;
+    if (minutesSince < COOLDOWN_MINUTES) {
+      return NextResponse.json({ ok: true, skipped: true, nextSyncIn: Math.ceil(COOLDOWN_MINUTES - minutesSince) });
+    }
+  }
 
   const seriesList = await getSeriesFromAPI(cif);
   const results: Record<string, unknown> = {};
