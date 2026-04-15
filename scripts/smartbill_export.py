@@ -230,7 +230,9 @@ def import_to_db(rows: list):
                 print(f"  ⚠ Skip: {invoice_raw!r}")
                 continue
 
+            client    = str(row[3]).strip() if row[3] else ""
             issued_at = parse_date(str(row[4])) or datetime.now()
+            due_date  = parse_date(str(row[5])) if row[5] else None
             net   = float(str(row[6]).replace(",", ".") or 0)
             tax   = float(str(row[7]).replace(",", ".") or 0)
             total = float(str(row[8]).replace(",", ".") or 0)
@@ -249,10 +251,12 @@ def import_to_db(rows: list):
                 "invoice_key": invoice_key,
                 "series":      series or "",
                 "number":      number,
+                "client":      client,
                 "total":       total,
                 "net":         net,
                 "tax":         tax,
                 "issued_at":   issued_at,
+                "due_date":    due_date,
                 "paid":        is_paid,
                 "annulled":    is_annulled,
             })
@@ -270,16 +274,18 @@ def import_to_db(rows: list):
 
     upsert_sql = """
         INSERT INTO "SmartbillInvoice" (
-            "id", "invoiceKey", "series", "number",
+            "id", "invoiceKey", "series", "number", "client",
             "totalAmount", "netAmount", "taxAmount",
             "paidAmount", "unpaidAmount", "paid",
-            "issuedAt", "syncedAt"
+            "issuedAt", "dueDate", "syncedAt"
         ) VALUES %s
         ON CONFLICT ("invoiceKey") DO UPDATE SET
+            "client"       = EXCLUDED."client",
             "totalAmount"  = EXCLUDED."totalAmount",
             "netAmount"    = EXCLUDED."netAmount",
             "taxAmount"    = EXCLUDED."taxAmount",
             "issuedAt"     = EXCLUDED."issuedAt",
+            "dueDate"      = EXCLUDED."dueDate",
             "paid"         = EXCLUDED."paid",
             "paidAmount"   = CASE WHEN EXCLUDED."paid" THEN EXCLUDED."totalAmount" ELSE 0 END,
             "unpaidAmount" = CASE WHEN EXCLUDED."paid" THEN 0 ELSE EXCLUDED."totalAmount" END,
@@ -292,6 +298,7 @@ def import_to_db(rows: list):
             r["invoice_key"],
             r["series"],
             r["number"],
+            r["client"],
             r["total"],
             r["net"],
             r["tax"],
@@ -299,12 +306,13 @@ def import_to_db(rows: list):
             0.0 if r["paid"] else r["total"],
             r["paid"],
             r["issued_at"],
+            r["due_date"],
             datetime.now(),
         )
         for r in records
     ]
 
-    execute_values(cur, upsert_sql, data, template="(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", page_size=200)
+    execute_values(cur, upsert_sql, data, template="(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", page_size=200)
     conn.commit()
 
     cur.execute('SELECT COUNT(*) FROM "SmartbillInvoice"')

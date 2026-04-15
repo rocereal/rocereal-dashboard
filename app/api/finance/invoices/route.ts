@@ -11,14 +11,14 @@ export async function GET() {
 
   const mapped = invoices.map((inv) => ({
     id: inv.invoiceKey,
+    client: inv.client,
     issueDate: inv.issuedAt.toISOString(),
+    dueDate: inv.dueDate?.toISOString() ?? null,
     totalAmount: inv.totalAmount,
     netAmount: inv.netAmount,
     taxAmount: inv.taxAmount,
     currency: "RON",
     status: inv.paid ? "Incasata" : inv.unpaidAmount === inv.totalAmount ? "Emisa" : "Partial",
-    paidAmount: inv.paidAmount,
-    unpaidAmount: inv.unpaidAmount,
     series: inv.series,
     number: inv.number,
   }));

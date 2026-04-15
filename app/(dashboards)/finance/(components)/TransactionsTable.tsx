@@ -20,7 +20,9 @@ import { useEffect, useRef, useState } from "react";
 
 interface SmartbillInvoice {
   id: string;
+  client: string;
   issueDate: string | null;
+  dueDate: string | null;
   totalAmount: number;
   netAmount: number;
   taxAmount: number;
@@ -75,12 +77,32 @@ const columns: ColumnDef<SmartbillInvoice>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  createSortableColumn("id", "Transaction ID"),
+  createSortableColumn("id", "Factura"),
+  {
+    accessorKey: "client",
+    header: "Client",
+    cell: ({ row }) => (
+      <span className="text-sm">{row.getValue("client") as string || "—"}</span>
+    ),
+  },
   {
     accessorKey: "issueDate",
-    header: "Date / Time",
+    header: "Data emiterii",
     cell: ({ row }) => {
       const raw = row.getValue("issueDate") as string | null;
+      if (!raw) return <span className="text-muted-foreground">—</span>;
+      return (
+        <div className="text-sm">
+          {new Date(raw).toLocaleDateString("ro-RO")}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "dueDate",
+    header: "Data scadenta",
+    cell: ({ row }) => {
+      const raw = row.getValue("dueDate") as string | null;
       if (!raw) return <span className="text-muted-foreground">—</span>;
       return (
         <div className="text-sm">
@@ -96,7 +118,7 @@ const columns: ColumnDef<SmartbillInvoice>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Amount
+        Total
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
@@ -109,14 +131,14 @@ const columns: ColumnDef<SmartbillInvoice>[] = [
   },
   {
     accessorKey: "netAmount",
-    header: "Currency",
+    header: "Valoare fara TVA",
     cell: ({ row }) => (
       <span className="font-medium">{formatRON(row.getValue("netAmount") as number)}</span>
     ),
   },
   {
     accessorKey: "taxAmount",
-    header: "Category",
+    header: "Valoare TVA",
     cell: ({ row }) => (
       <span className="font-medium text-muted-foreground">
         {formatRON(row.getValue("taxAmount") as number)}

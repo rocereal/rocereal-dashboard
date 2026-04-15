@@ -58,18 +58,20 @@ model VerificationToken {
 }
 
 model SmartbillInvoice {
-  id           String   @id @default(cuid())
-  invoiceKey   String   @unique // e.g. "FCT-10131"
+  id           String    @id @default(cuid())
+  invoiceKey   String    @unique // e.g. "SSB-476"
   series       String
   number       Int
+  client       String    @default("")
   totalAmount  Float
   paidAmount   Float
   unpaidAmount Float
   paid         Boolean
-  netAmount    Float    // calculated: totalAmount / 1.19
-  taxAmount    Float    // calculated: totalAmount - netAmount
-  issuedAt     DateTime // first sync time for historical, cron time for new
-  syncedAt     DateTime @default(now())
+  netAmount    Float
+  taxAmount    Float
+  issuedAt     DateTime
+  dueDate      DateTime?
+  syncedAt     DateTime  @default(now())
 }
 
 model SmartbillSyncState {
