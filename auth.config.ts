@@ -19,6 +19,10 @@ export const authConfig = {
       const isPublicRoute = publicRoutes.some((route) =>
         nextUrl.pathname.startsWith(route)
       );
+      // Webhook endpoints must be accessible without authentication
+      const isWebhook = nextUrl.pathname.startsWith("/api/webhooks/");
+
+      if (isWebhook) return true;
 
       if (isPublicRoute) {
         if (isLoggedIn && nextUrl.pathname === "/login") {
