@@ -8,7 +8,7 @@ import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { crmMetrics } from "@/data/crm-metrics";
 import { crmSalesFunnelData } from "@/data/crm-sales-funnel";
 import { UserPlus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SectionCards } from "./SectionCards";
 import { AddContactForm } from "@/app/apps/messenger/(components)/AddContactForm";
 
@@ -56,6 +56,14 @@ const dealsConfig: ChartConfig = {
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
   const [isAddContactOpen, setIsAddContactOpen] = useState(false);
+  const [totalCalls, setTotalCalls] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/crm/calls/count")
+      .then((r) => r.json())
+      .then((data) => setTotalCalls(data.count))
+      .catch(() => {});
+  }, []);
 
   /**
    * Handle Add Contact
@@ -94,7 +102,11 @@ export default function RenderPage() {
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
       />
-      <SectionCards metrics={crmMetrics} />
+      <SectionCards metrics={crmMetrics.map((m) =>
+        m.id === "total-customers" && totalCalls !== null
+          ? { ...m, value: totalCalls.toLocaleString("ro-RO") }
+          : m
+      )} />
       {/* Grid container for sales funnel charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <SampleLineChart
