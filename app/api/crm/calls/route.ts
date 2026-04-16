@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const debug = req.nextUrl.searchParams.get("debug");
 
@@ -24,7 +26,7 @@ export async function GET(req: NextRequest) {
 
   const calls = await prisma.crmCall.findMany({
     orderBy: { date: "desc" },
-    take: 2500,
+    take: 10000,
   });
   return NextResponse.json(calls);
 }
