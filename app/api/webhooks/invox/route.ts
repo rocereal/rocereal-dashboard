@@ -4,8 +4,25 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get("x-api-key");
-  if (token !== process.env.INVOX_WEBHOOK_TOKEN) {
+  // Check token from multiple possible header locations
+  const token =
+    req.headers.get("x-api-key") ||
+    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
+    req.headers.get("x-token") ||
+    req.headers.get("token") ||
+    new URL(req.url).searchParams.get("token");
+
+  const expectedToken = process.env.INVOX_WEBHOOK_TOKEN;
+
+  if (token !== expectedToken) {
+    // Log headers for debugging (visible in Vercel logs)
+    const headerMap: Record<string, string> = {};
+    req.headers.forEach((v, k) => { headerMap[k] = v; });
+    console.error("[invox webhook] 401 — token mismatch", {
+      received: token,
+      expectedPrefix: expectedToken?.slice(0, 8),
+      headers: Object.keys(headerMap),
+    });
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
