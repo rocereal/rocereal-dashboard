@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
           recordingUri: (c.recording_uri as string) || null,
           reason: (c.reason as string) || null,
           summary: (c.summary as string) || null,
-          rawPayload: c,
+          rawPayload: c as object,
         },
       });
       saved++;
