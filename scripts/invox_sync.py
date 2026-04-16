@@ -77,11 +77,16 @@ def to_row(c: dict) -> tuple:
 
 
 def main():
+    full_sync = "--full" in sys.argv
     conn = psycopg2.connect(DATABASE_URL)
     cur  = conn.cursor()
 
-    last_id = get_last_synced_id(cur)
-    print(f"Last synced invoxId in DB: {last_id}")
+    if full_sync:
+        print("Full sync requested — fetching all calls from INVOX")
+        last_id = None
+    else:
+        last_id = get_last_synced_id(cur)
+        print(f"Last synced invoxId in DB: {last_id}")
 
     calls = fetch_calls(last_call_id=last_id)
     print(f"Fetched {len(calls)} calls from INVOX API")

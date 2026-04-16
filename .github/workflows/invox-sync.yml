@@ -3,7 +3,12 @@ name: INVOX Daily Sync
 on:
   schedule:
     - cron: "0 */4 * * *"   # every 4 hours
-  workflow_dispatch:          # manual trigger
+  workflow_dispatch:
+    inputs:
+      full_sync:
+        description: "Full sync (re-fetch and update all calls)"
+        required: false
+        default: "false"
 
 jobs:
   sync:
@@ -23,4 +28,9 @@ jobs:
         env:
           INVOX_API_KEY: ${{ secrets.INVOX_API_KEY }}
           DATABASE_URL:  ${{ secrets.DATABASE_URL }}
-        run: python scripts/invox_sync.py
+        run: |
+          if [ "${{ github.event.inputs.full_sync }}" = "true" ]; then
+            python scripts/invox_sync.py --full
+          else
+            python scripts/invox_sync.py
+          fi
