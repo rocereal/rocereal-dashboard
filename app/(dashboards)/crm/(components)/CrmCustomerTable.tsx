@@ -78,9 +78,21 @@ export function CRMCustomerTable() {
       cell: () => "Lead",
     },
     {
-      accessorKey: "account",
+      id: "agentAsignat",
       header: "Agent asignat",
-      cell: ({ row }) => row.getValue("account") as string ?? "-",
+      cell: ({ row }) => {
+        const raw = row.original.rawPayload;
+        // Try known INVOX agent field names; fall back to account domain
+        const agent =
+          (raw?.agent as string) ||
+          (raw?.user as string) ||
+          (raw?.operator as string) ||
+          (raw?.extension as string) ||
+          (raw?.agent_name as string) ||
+          (raw?.assigned_to as string) ||
+          null;
+        return agent ?? (row.original.account || "-");
+      },
     },
     {
       id: "planTier",
