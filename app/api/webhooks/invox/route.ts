@@ -4,7 +4,21 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  // No auth check — Invox sends token but format doesn't match expected header
+  const expectedToken = process.env.INVOX_WEBHOOK_TOKEN;
+  if (expectedToken) {
+    const authHeader = req.headers.get("authorization") || "";
+    const receivedToken =
+      req.headers.get("x-api-key") ||
+      authHeader.replace(/^(Bearer|Token)\s+/i, "").trim() ||
+      authHeader.trim() ||
+      req.headers.get("x-token") ||
+      req.headers.get("token") ||
+      new URL(req.url).searchParams.get("token");
+
+    if (receivedToken !== expectedToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
 
   // Parse body — could be JSON or form-encoded
   let body: unknown;
