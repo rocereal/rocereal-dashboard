@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         update: {
           account: (c.account as string) || null,
           status: (c.status as string) || null,
-          duration: (c.duration as string) || null,
+          duration: c.duration != null ? String(c.duration) : null,
           summary: (c.summary as string) || null,
         },
         create: {
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
           caller: (c.caller as string) || "",
           account: (c.account as string) || null,
           date: c.date ? new Date(c.date as string) : new Date(),
-          duration: (c.duration as string) || null,
+          duration: c.duration != null ? String(c.duration) : null,
           status: (c.status as string) || null,
           source: (c.source as string) || null,
           campaign: (c.campaign as string) || null,

@@ -117,8 +117,13 @@ export function CRMCustomerTable() {
       accessorKey: "duration",
       header: "Durata apel",
       cell: ({ row }) => {
-        const duration = row.getValue("duration") as string | null;
-        return duration ? `${duration}s` : "-";
+        const raw = row.original.rawPayload;
+        const secs = raw?.duration != null ? Number(raw.duration) : null;
+        if (secs === null) return "-";
+        if (secs === 0) return "0s";
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
+        return m > 0 ? `${m}m ${s}s` : `${s}s`;
       },
     },
     {
