@@ -21,10 +21,10 @@ export async function POST(req: NextRequest) {
 
   const expectedToken = process.env.INVOX_WEBHOOK_TOKEN;
 
-  // TEMPORARY: skip auth to confirm route works, then re-enable
-  // if (token !== expectedToken) {
-  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  // }
+  if (token !== expectedToken) {
+    console.error("[invox] 401 — token mismatch. received:", token, "headers:", Object.keys(headerMap));
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   // Parse body — could be JSON or form-encoded
   let body: unknown;
