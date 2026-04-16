@@ -15,15 +15,12 @@ export async function POST(req: NextRequest) {
   const expectedToken = process.env.INVOX_WEBHOOK_TOKEN;
 
   if (token !== expectedToken) {
-    // Log headers for debugging (visible in Vercel logs)
     const headerMap: Record<string, string> = {};
-    req.headers.forEach((v, k) => { headerMap[k] = v; });
-    console.error("[invox webhook] 401 — token mismatch", {
-      received: token,
-      expectedPrefix: expectedToken?.slice(0, 8),
-      headers: Object.keys(headerMap),
-    });
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    req.headers.forEach((v, k) => { headerMap[k] = k.toLowerCase().includes("auth") || k.toLowerCase().includes("token") || k.toLowerCase().includes("key") ? v : "[hidden]"; });
+    return NextResponse.json({
+      error: "Unauthorized",
+      debug: { receivedToken: token, headers: headerMap },
+    }, { status: 401 });
   }
 
   const body = await req.json();
