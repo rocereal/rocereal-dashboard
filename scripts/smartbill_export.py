@@ -303,7 +303,13 @@ def import_clients_to_db(rows: list):
         except Exception as e:
             print(f"  ⚠ Eroare client row: {e}")
 
-    print(f"  Clienti parsati: {len(records)}")
+    # Deduplicate by name — keep last occurrence
+    deduped: dict[str, dict] = {}
+    for r in records:
+        deduped[r["name"]] = r
+    records = list(deduped.values())
+
+    print(f"  Clienti parsati (dupa deduplicare): {len(records)}")
     if not records:
         return
 

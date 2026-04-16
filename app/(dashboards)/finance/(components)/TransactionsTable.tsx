@@ -83,16 +83,16 @@ const columns: ColumnDef<SmartbillInvoice>[] = [
   {
     accessorKey: "client",
     header: "Client",
+    cell: ({ row }) => (
+      <span className="text-sm">{row.getValue("client") as string || "—"}</span>
+    ),
+  },
+  {
+    accessorKey: "clientPhone",
+    header: "Telefon",
     cell: ({ row }) => {
-      const invoice = row.original;
-      return (
-        <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-medium">{invoice.client || "—"}</span>
-          {invoice.clientPhone && (
-            <span className="text-xs text-muted-foreground">{invoice.clientPhone}</span>
-          )}
-        </div>
-      );
+      const phone = row.getValue("clientPhone") as string | null;
+      return <span className="text-sm">{phone || "—"}</span>;
     },
   },
   {
