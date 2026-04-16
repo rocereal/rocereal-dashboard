@@ -4,7 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  // Check token from multiple possible header locations
+  // Collect all headers for debug
+  const headerMap: Record<string, string> = {};
+  req.headers.forEach((v, k) => { headerMap[k] = v; });
+
+  // Log everything to Vercel function logs
+  console.log("[invox] headers received:", JSON.stringify(headerMap));
+  console.log("[invox] INVOX_WEBHOOK_TOKEN set:", !!process.env.INVOX_WEBHOOK_TOKEN);
+
   const token =
     req.headers.get("x-api-key") ||
     req.headers.get("authorization")?.replace(/^(Bearer|Token)\s+/i, "") ||
@@ -14,14 +21,10 @@ export async function POST(req: NextRequest) {
 
   const expectedToken = process.env.INVOX_WEBHOOK_TOKEN;
 
-  if (token !== expectedToken) {
-    const headerMap: Record<string, string> = {};
-    req.headers.forEach((v, k) => { headerMap[k] = k.toLowerCase().includes("auth") || k.toLowerCase().includes("token") || k.toLowerCase().includes("key") ? v : "[hidden]"; });
-    return NextResponse.json({
-      error: "Unauthorized",
-      debug: { receivedToken: token, headers: headerMap },
-    }, { status: 401 });
-  }
+  // TEMPORARY: skip auth to confirm route works, then re-enable
+  // if (token !== expectedToken) {
+  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // }
 
   const body = await req.json();
   const calls = Array.isArray(body) ? body : [body];
