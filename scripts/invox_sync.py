@@ -77,12 +77,19 @@ def to_row(c: dict) -> tuple:
 
 
 def main():
-    full_sync = "--full" in sys.argv
+    full_sync = "--full" in sys.argv or "--reset" in sys.argv
+    reset     = "--reset" in sys.argv
     conn = psycopg2.connect(DATABASE_URL)
     cur  = conn.cursor()
 
+    if reset:
+        print("Reset requested — deleting all existing CrmCall records")
+        cur.execute('DELETE FROM "CrmCall"')
+        conn.commit()
+        print("Table cleared.")
+
     if full_sync:
-        print("Full sync requested — fetching all calls from INVOX")
+        print("Full sync — fetching all calls from INVOX")
         last_id = None
     else:
         last_id = get_last_synced_id(cur)
