@@ -26,7 +26,8 @@ HEADLESS = os.environ.get("HEADLESS", "true").lower() != "false"
 SCREENSHOT_DIR = Path("screenshots")
 
 BASE_URL  = "https://cloud.smartbill.ro"
-AJAX_URL  = f"{BASE_URL}/raport/facturi/ajax/"
+AJAX_URL         = f"{BASE_URL}/raport/facturi/ajax/"
+CLIENTS_AJAX_URL = f"{BASE_URL}/nomenclator/clienti/ajax/"
 DATE_FROM = "01/01/2020"                          # acoperim tot istoricul
 DATE_TO   = datetime.now().strftime("%d/%m/%Y")   # pana azi
 PAGE_SIZE = 5000                                  # max per request
@@ -224,6 +225,112 @@ def fetch_all_invoices(cookies: dict) -> list:
     return all_rows
 
 
+# ── Step 2b: Fetch clients ────────────────────────────────────────────────────
+def build_clients_payload(start: int = 0) -> dict:
+    payload = {
+        "sEcho": "1", "iColumns": "8", "sColumns": "",
+        "iDisplayStart": str(start), "iDisplayLength": str(PAGE_SIZE),
+        "sSearch": "", "bRegex": "false",
+        "iSortingCols": "0", "displayCodes": "true",
+    }
+    for i in range(8):
+        payload[f"mDataProp_{i}"] = str(i)
+        payload[f"sSearch_{i}"] = ""
+        payload[f"bRegex_{i}"] = "false"
+        payload[f"bSearchable_{i}"] = "true"
+        payload[f"bSortable_{i}"] = "false" if i in (0, 7) else "true"
+    return payload
+
+
+def fetch_all_clients(cookies: dict) -> list:
+    sess = requests.Session()
+    for name in ["sessionid", "csrftoken", "dsc", "srvid", "sip", "sblsd"]:
+        if name in cookies:
+            sess.cookies.set(name, cookies[name], domain="cloud.smartbill.ro")
+
+    headers = {
+        "accept":           "application/json, text/javascript, */*; q=0.01",
+        "content-type":     "application/x-www-form-urlencoded; charset=UTF-8",
+        "origin":           BASE_URL,
+        "referer":          f"{BASE_URL}/",
+        "x-csrftoken":      cookies.get("csrftoken", ""),
+        "x-requested-with": "XMLHttpRequest",
+        "user-agent":       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    }
+
+    all_rows = []
+    start = 0
+    while True:
+        resp = sess.post(CLIENTS_AJAX_URL, headers=headers, data=build_clients_payload(start), timeout=30)
+        resp.raise_for_status()
+        data  = resp.json()
+        batch = data.get("aaData", [])
+        total = int(data.get("iTotalRecords", 0))
+        all_rows.extend(batch)
+        print(f"  Clienti fetch {start}–{start + len(batch)} din {total}")
+        start += len(batch)
+        if start >= total or not batch:
+            break
+
+    print(f"  ✓ Total clienti: {len(all_rows)}")
+    return all_rows
+
+
+def import_clients_to_db(rows: list):
+    """
+    aaData column mapping for /nomenclator/clienti/ajax/:
+      [1] = denumire client
+      [2] = CIF
+      [3] = cod client
+      [4] = telefon
+      [5] = email
+      [6] = persoana contact
+    """
+    records = []
+    for row in rows:
+        try:
+            name = str(row[1]).strip() if row[1] else ""
+            if not name:
+                continue
+            records.append({
+                "name":    name,
+                "cif":     str(row[2]).strip() if row[2] else "",
+                "code":    str(row[3]).strip() if row[3] else "",
+                "phone":   str(row[4]).strip() if row[4] else "",
+                "email":   str(row[5]).strip() if row[5] else "",
+                "contact": str(row[6]).strip() if row[6] else "",
+            })
+        except Exception as e:
+            print(f"  ⚠ Eroare client row: {e}")
+
+    print(f"  Clienti parsati: {len(records)}")
+    if not records:
+        return
+
+    conn = psycopg2.connect(DB_URL)
+    cur  = conn.cursor()
+
+    upsert_sql = """
+        INSERT INTO "SmartbillClient" ("id", "name", "cif", "clientCode", "phone", "email", "contact")
+        VALUES %s
+        ON CONFLICT ("name") DO UPDATE SET
+            "cif"        = EXCLUDED."cif",
+            "clientCode" = EXCLUDED."clientCode",
+            "phone"      = EXCLUDED."phone",
+            "email"      = EXCLUDED."email",
+            "contact"    = EXCLUDED."contact"
+    """
+    data = [(str(uuid.uuid4()), r["name"], r["cif"], r["code"], r["phone"], r["email"], r["contact"]) for r in records]
+    execute_values(cur, upsert_sql, data, template="(%s,%s,%s,%s,%s,%s,%s)", page_size=200)
+    conn.commit()
+
+    cur.execute('SELECT COUNT(*) FROM "SmartbillClient"')
+    total_db = cur.fetchone()[0]
+    cur.close()
+    conn.close()
+    print(f"  ✓ Importat {len(records)} clienti. Total in DB: {total_db}")
+
+
 # ── Step 3: Parse + upsert into DB ───────────────────────────────────────────
 def import_to_db(rows: list):
     """
@@ -350,13 +457,17 @@ if __name__ == "__main__":
 
     print("=== SmartBill Sync ===")
 
-    print("\n[1/3] Autentificare (Playwright)...")
+    print("\n[1/4] Autentificare (Playwright)...")
     cookies = get_session_cookies()
 
-    print(f"\n[2/3] Fetch facturi {DATE_FROM} → {DATE_TO} (HTTP direct)...")
+    print(f"\n[2/4] Fetch facturi {DATE_FROM} → {DATE_TO}...")
     invoices = fetch_all_invoices(cookies)
 
-    print("\n[3/3] Import in DB...")
+    print("\n[3/4] Fetch clienti...")
+    clients = fetch_all_clients(cookies)
+
+    print("\n[4/4] Import in DB...")
     import_to_db(invoices)
+    import_clients_to_db(clients)
 
     print("\n✅ Gata!")

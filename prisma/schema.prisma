@@ -74,6 +74,16 @@ model SmartbillInvoice {
   syncedAt     DateTime  @default(now())
 }
 
+model SmartbillClient {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  cif         String  @default("")
+  clientCode  String  @default("")
+  phone       String  @default("")
+  email       String  @default("")
+  contact     String  @default("")
+}
+
 model SmartbillSyncState {
   series            String @id
   lastSyncedNumber  Int

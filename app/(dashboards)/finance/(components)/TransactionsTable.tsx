@@ -21,6 +21,8 @@ import { useEffect, useRef, useState } from "react";
 interface SmartbillInvoice {
   id: string;
   client: string;
+  clientPhone: string | null;
+  clientEmail: string | null;
   issueDate: string | null;
   dueDate: string | null;
   totalAmount: number;
@@ -81,9 +83,17 @@ const columns: ColumnDef<SmartbillInvoice>[] = [
   {
     accessorKey: "client",
     header: "Client",
-    cell: ({ row }) => (
-      <span className="text-sm">{row.getValue("client") as string || "—"}</span>
-    ),
+    cell: ({ row }) => {
+      const invoice = row.original;
+      return (
+        <div className="flex flex-col gap-0.5">
+          <span className="text-sm font-medium">{invoice.client || "—"}</span>
+          {invoice.clientPhone && (
+            <span className="text-xs text-muted-foreground">{invoice.clientPhone}</span>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "issueDate",
