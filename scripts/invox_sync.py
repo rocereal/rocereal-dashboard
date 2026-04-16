@@ -11,7 +11,7 @@ import requests
 from psycopg2.extras import execute_values, Json
 
 INVOX_API_KEY = os.environ["INVOX_API_KEY"]
-DATABASE_URL  = os.environ["DATABASE_URL"]
+DATABASE_URL  = os.environ.get("DATABASE_URL_UNPOOLED") or os.environ.get("DATABASE_URL") or ""
 API_URL       = "https://app.invox.eu/api/v2/calls"
 
 
