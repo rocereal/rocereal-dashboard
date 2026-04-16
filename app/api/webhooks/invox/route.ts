@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   // Check token from multiple possible header locations
   const token =
     req.headers.get("x-api-key") ||
-    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
+    req.headers.get("authorization")?.replace(/^(Bearer|Token)\s+/i, "") ||
     req.headers.get("x-token") ||
     req.headers.get("token") ||
     new URL(req.url).searchParams.get("token");
