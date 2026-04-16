@@ -81,17 +81,13 @@ export function CRMCustomerTable() {
       id: "agentAsignat",
       header: "Agent asignat",
       cell: ({ row }) => {
+        const agentMap: Record<string, string> = {
+          "0724547086": "Cătălin",
+          "0722647098": "Valentin",
+        };
         const raw = row.original.rawPayload;
-        // Try known INVOX agent field names; fall back to account domain
-        const agent =
-          (raw?.agent as string) ||
-          (raw?.user as string) ||
-          (raw?.operator as string) ||
-          (raw?.extension as string) ||
-          (raw?.agent_name as string) ||
-          (raw?.assigned_to as string) ||
-          null;
-        return agent ?? (row.original.account || "-");
+        const destNumber = raw?.destinationnumber as string | undefined;
+        return agentMap[destNumber ?? ""] ?? destNumber ?? "-";
       },
     },
     {
