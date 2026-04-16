@@ -13,6 +13,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(latest);
   }
 
+  if (debug === "statuses") {
+    // Return all distinct statuses in DB
+    const rows = await prisma.crmCall.findMany({
+      select: { status: true },
+      distinct: ["status"],
+    });
+    return NextResponse.json(rows.map((r) => r.status));
+  }
+
   const calls = await prisma.crmCall.findMany({
     orderBy: { date: "desc" },
     take: 2500,
