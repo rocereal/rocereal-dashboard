@@ -206,6 +206,21 @@ UPSERT_SQL = """
 TEMPLATE = "(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 
 
+CHUNK_DAYS = 180  # Facebook API max range per request
+
+
+def date_chunks(start_str: str, end_str: str, chunk_days: int):
+    """Yield (chunk_start, chunk_end) pairs covering start→end."""
+    from datetime import date
+    start = date.fromisoformat(start_str)
+    end   = date.fromisoformat(end_str)
+    cur   = start
+    while cur <= end:
+        chunk_end = min(cur + timedelta(days=chunk_days - 1), end)
+        yield cur.strftime("%Y-%m-%d"), chunk_end.strftime("%Y-%m-%d")
+        cur = chunk_end + timedelta(days=1)
+
+
 def main():
     today      = datetime.now(timezone.utc).date()
     date_stop  = today.strftime("%Y-%m-%d")
@@ -219,16 +234,21 @@ def main():
     for level in ("campaign", "adset", "ad"):
         print(f"  Fetching {level} meta...")
         meta = fetch_entity_meta(level)
-        print(f"  Fetching {level} insights...")
-        insights = fetch_insights(level, date_start, date_stop)
-        print(f"  {len(insights)} insight rows for {level}")
-        if not insights:
-            continue
-        rows = build_rows(level, insights, meta)
-        execute_values(cur, UPSERT_SQL, rows, template=TEMPLATE, page_size=200)
-        conn.commit()
-        total += len(rows)
-        print(f"  ✓ {len(rows)} rows upserted for {level}")
+
+        chunks = list(date_chunks(date_start, date_stop, CHUNK_DAYS))
+        print(f"  Fetching {level} insights in {len(chunks)} chunk(s)...")
+
+        for chunk_start, chunk_end in chunks:
+            print(f"    chunk {chunk_start} → {chunk_end}")
+            insights = fetch_insights(level, chunk_start, chunk_end)
+            if not insights:
+                continue
+            rows = build_rows(level, insights, meta)
+            execute_values(cur, UPSERT_SQL, rows, template=TEMPLATE, page_size=200)
+            conn.commit()
+            total += len(rows)
+
+        print(f"  ✓ {level} done")
 
     cur.execute('SELECT COUNT(*) FROM "FacebookAdInsight"')
     db_total = cur.fetchone()[0]
