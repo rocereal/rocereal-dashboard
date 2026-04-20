@@ -208,7 +208,7 @@ export async function GET(req: NextRequest) {
   const from        = searchParams.get("from");
   const to          = searchParams.get("to");
   const campaignIds = searchParams.get("campaignIds") ?? undefined;
-  const adsetIds    = searchParams.get("adsetIds") ?? undefined;
+  const adsetIds    = searchParams.get("adsetIds")    ?? undefined;
 
   // Default to today if no date range provided
   const today = new Date().toISOString().slice(0, 10);
@@ -296,6 +296,19 @@ export async function GET(req: NextRequest) {
 
   // Sort: entities with spend first, then by spend desc
   rows.sort((a, b) => b.spend - a.spend);
+
+  // ?debug=1 returns raw actions arrays to diagnose Results discrepancies
+  if (searchParams.get("debug") === "1") {
+    return NextResponse.json(
+      Array.from(insightsMap.entries()).map(([id, ins]) => ({
+        entityId: id,
+        entityName: ins.campaign_name ?? ins.adset_name ?? ins.ad_name,
+        spend: ins.spend,
+        actions: ins.actions,
+        cost_per_action_type: ins.cost_per_action_type,
+      }))
+    );
+  }
 
   return NextResponse.json(rows);
 }
