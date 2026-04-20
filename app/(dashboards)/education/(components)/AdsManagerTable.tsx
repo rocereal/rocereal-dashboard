@@ -32,8 +32,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowUpDown, Columns, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowUpDown, Columns, Loader2, RefreshCw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 
 type Level = "campaign" | "adset" | "ad";
@@ -235,21 +235,47 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
   const [level, setLevel] = useState<Level>("campaign");
   const [data, setData] = useState<AdRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [lastSynced, setLastSynced] = useState<Date | null>(null);
+  const syncTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [sorting, setSorting] = useState<SortingState>([{ id: "spend", desc: true }]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(HIDDEN_BY_DEFAULT);
   const [rowSelection, setRowSelection] = useState({});
 
-  useEffect(() => {
-    setLoading(true);
+  const fetchData = async () => {
     const params = new URLSearchParams({ level });
     if (dateRange?.from) params.set("from", format(dateRange.from, "yyyy-MM-dd"));
     if (dateRange?.to)   params.set("to",   format(dateRange.to,   "yyyy-MM-dd"));
+    const res = await fetch(`/api/education/facebook-ads?${params}`);
+    const d = await res.json();
+    return Array.isArray(d) ? d : [];
+  };
 
-    fetch(`/api/education/facebook-ads?${params}`)
-      .then((r) => r.json())
-      .then((d) => { setData(Array.isArray(d) ? d : []); setLoading(false); })
+  const runSync = async () => {
+    setSyncing(true);
+    try {
+      await fetch("/api/education/facebook-ads/sync", { method: "POST" });
+      const fresh = await fetchData();
+      setData(fresh);
+      setLastSynced(new Date());
+    } catch {
+      // silently fail — DB data already shown
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchData()
+      .then((d) => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));
+
+    // Background sync after render
+    syncTimeout.current = setTimeout(() => { runSync(); }, 800);
+    return () => { if (syncTimeout.current) clearTimeout(syncTimeout.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level, dateRange]);
 
   const columns = buildColumns(level);
@@ -279,6 +305,21 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
 
   return (
     <div className="space-y-3">
+      {/* Sync status bar */}
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <RefreshCw className={`h-3 w-3 ${syncing ? "animate-spin" : ""}`} />
+          {syncing
+            ? "Sincronizare cu Facebook Ads..."
+            : lastSynced
+            ? `Sincronizat la ${lastSynced.toLocaleTimeString("ro-RO")}`
+            : "Facebook Ads"}
+        </div>
+        <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={runSync} disabled={syncing}>
+          Refresh
+        </Button>
+      </div>
+
       {/* Toolbar */}
       <div className="flex items-center justify-between">
         {/* Level tabs */}
