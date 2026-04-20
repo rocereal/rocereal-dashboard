@@ -166,7 +166,6 @@ function getResultTypeLabel(
 }
 
 // Maps optimization_goal → the exact action_type Facebook Ads Manager counts as "Results"
-// This is the source of truth — matches what FB shows in the Results column
 const GOAL_TO_ACTION: Record<string, string> = {
   "CALL_CLICKS":           "click_to_call_native_call_placed",
   "QUALITY_CALL":          "click_to_call_native_call_placed",
@@ -183,26 +182,48 @@ const GOAL_TO_ACTION: Record<string, string> = {
   "VALUE":                 "offsite_conversion.fb_pixel_purchase",
 };
 
+// Priority order: when optimization_goal is unknown (campaign level),
+// pick the first action_type from this list that exists in the data.
+// Order mirrors what Ads Manager shows as the primary "Results" metric.
+const ACTION_PRIORITY = [
+  "click_to_call_native_call_placed",
+  "lead",
+  "offsite_conversion.fb_pixel_purchase",
+  "offsite_conversion.fb_pixel_lead",
+  "landing_page_view",
+  "onsite_conversion.lead_grouped",
+  "link_click",
+  "video_view",
+  "post_engagement",
+  "page_engagement",
+];
+
 function extractResults(
   ins: Record<string, unknown>,
   objective: string | null | undefined,
   optimizationGoal: string | null | undefined,
 ): { conversions: number; costPerResult: number; resultType: string } {
   const actionsList = ins.actions as Record<string, string>[] | undefined;
+  const costPerActionList = ins.cost_per_action_type as Record<string, string>[] | undefined;
 
   let primaryActionType: string | null = null;
 
-  // 1. Best: use optimization_goal → exact action_type mapping (matches Ads Manager)
+  // 1. Best: optimization_goal → exact mapping (adset/ad level)
   if (optimizationGoal && GOAL_TO_ACTION[optimizationGoal]) {
     primaryActionType = GOAL_TO_ACTION[optimizationGoal];
   }
 
-  // 2. Fallback: use cost_per_action_type[0] (less reliable but better than nothing)
-  if (!primaryActionType) {
-    const costPerActionList = ins.cost_per_action_type as Record<string, string>[] | undefined;
-    if (Array.isArray(costPerActionList) && costPerActionList.length > 0) {
-      primaryActionType = costPerActionList[0].action_type;
-    }
+  // 2. Campaign level: no optimization_goal — pick from priority list
+  //    using only action types that also appear in cost_per_action_type
+  //    (those are the ones FB considers "optimizable" results)
+  if (!primaryActionType && Array.isArray(costPerActionList)) {
+    const costTypes = new Set(costPerActionList.map((c) => c.action_type));
+    primaryActionType = ACTION_PRIORITY.find((t) => costTypes.has(t)) ?? null;
+  }
+
+  // 3. Last resort: first entry of cost_per_action_type
+  if (!primaryActionType && Array.isArray(costPerActionList) && costPerActionList.length > 0) {
+    primaryActionType = costPerActionList[0].action_type;
   }
 
   let totalActions = 0;
