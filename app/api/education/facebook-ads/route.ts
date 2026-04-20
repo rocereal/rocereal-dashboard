@@ -4,6 +4,19 @@ import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
+type MetaRow = {
+  entityId: string;
+  entityName: string;
+  campaignId: string | null;
+  campaignName: string | null;
+  adsetId: string | null;
+  adsetName: string | null;
+  status: string | null;
+  objective: string | null;
+  budget: number | null;
+  budgetType: string | null;
+};
+
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const level       = searchParams.get("level") || "campaign";
@@ -12,42 +25,44 @@ export async function GET(req: NextRequest) {
   const campaignIds = searchParams.get("campaignIds");
   const adsetIds    = searchParams.get("adsetIds");
 
-  const drillFilter: Prisma.FacebookAdInsightWhereInput =
-    level === "adset" && campaignIds ? { campaignId: { in: campaignIds.split(",") } } :
-    level === "ad"    && adsetIds    ? { adsetId:    { in: adsetIds.split(",")    } } :
-    {};
+  // Build WHERE fragments for raw query
+  const drillSql =
+    level === "adset" && campaignIds
+      ? Prisma.sql`AND "campaignId" = ANY(${campaignIds.split(",")}) `
+      : level === "ad" && adsetIds
+      ? Prisma.sql`AND "adsetId" = ANY(${adsetIds.split(",")}) `
+      : Prisma.sql``;
 
-  const baseWhere: Prisma.FacebookAdInsightWhereInput = { level, ...drillFilter };
+  // Step 1: Latest metadata per entityId using proper DISTINCT ON
+  // Orders by dateStop DESC so we get the most recent row (= current status/name/budget)
+  const latestRecords = await prisma.$queryRaw<MetaRow[]>`
+    SELECT DISTINCT ON ("entityId")
+      "entityId", "entityName", "campaignId", "campaignName",
+      "adsetId", "adsetName", "status", "objective",
+      "budget"::float8, "budgetType"
+    FROM "FacebookAdInsight"
+    WHERE "level" = ${level}
+    ${drillSql}
+    ORDER BY "entityId", "dateStop" DESC, "syncedAt" DESC
+  `;
 
-  // Step 1: Get latest metadata per entityId (most recently synced record)
-  // Using distinct on entityId ordered by syncedAt desc to get current status/name/budget
-  const latestRecords = await prisma.facebookAdInsight.findMany({
-    where: baseWhere,
-    distinct: ["entityId"],
-    orderBy: { syncedAt: "desc" },
-    select: {
-      entityId: true,
-      entityName: true,
-      campaignId: true,
-      campaignName: true,
-      adsetId: true,
-      adsetName: true,
-      status: true,
-      objective: true,
-      budget: true,
-      budgetType: true,
-    },
-  });
+  // Filter out stale campaigns no longer in Facebook (null status = never returned by FB meta)
+  const activeEntities = latestRecords.filter((r) => r.status !== null);
+  const entityIds = activeEntities.map((r) => r.entityId);
 
-  // Step 2: Get aggregated metrics grouped only by entityId
-  // Use date range if provided, otherwise aggregate all time
-  const metricsWhere: Prisma.FacebookAdInsightWhereInput = from && to
-    ? {
-        ...baseWhere,
-        dateStart: { gte: new Date(from) },
-        dateStop:  { lte: new Date(to + "T23:59:59Z") },
-      }
-    : baseWhere;
+  if (entityIds.length === 0) return NextResponse.json([]);
+
+  // Step 2: Aggregate metrics, filtered by date range if provided
+  const metricsWhere: Prisma.FacebookAdInsightWhereInput = {
+    level,
+    entityId: { in: entityIds },
+    ...(from && to ? {
+      dateStart: { gte: new Date(from) },
+      dateStop:  { lte: new Date(to + "T23:59:59Z") },
+    } : {}),
+    ...(level === "adset" && campaignIds ? { campaignId: { in: campaignIds.split(",") } } : {}),
+    ...(level === "ad"    && adsetIds    ? { adsetId:    { in: adsetIds.split(",")    } } : {}),
+  };
 
   const metricsRows = await prisma.facebookAdInsight.groupBy({
     by: ["entityId"],
@@ -59,7 +74,7 @@ export async function GET(req: NextRequest) {
   const metricsMap = new Map(metricsRows.map((r) => [r.entityId, r]));
 
   // Step 3: Merge metadata + metrics
-  const mapped = latestRecords.map((r) => {
+  const mapped = activeEntities.map((r) => {
     const m = metricsMap.get(r.entityId);
     const sum = m?._sum;
     const avg = m?._avg;

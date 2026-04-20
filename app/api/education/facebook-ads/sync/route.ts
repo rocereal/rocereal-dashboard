@@ -170,6 +170,19 @@ export async function POST() {
       });
       total++;
     }
+
+    // Propagate current status to ALL historical records for each entity.
+    // This ensures completed/paused campaigns show the correct status even
+    // on rows created before the effective_status fix.
+    for (const [entityId, m] of Object.entries(meta)) {
+      const currentStatus = ((m.effective_status ?? m.status) as string) ?? null;
+      if (currentStatus) {
+        await prisma.facebookAdInsight.updateMany({
+          where: { level, entityId },
+          data: { status: currentStatus, syncedAt: new Date() },
+        });
+      }
+    }
   }
 
   return NextResponse.json({ success: true, synced: total });

@@ -267,6 +267,18 @@ def main():
             conn.commit()
             total += len(rows)
 
+        # Propagate current status to ALL historical rows for each entity.
+        # Ensures completed/paused campaigns reflect the correct status across all dates.
+        print(f"  Updating status for all {level} records from meta...")
+        for entity_id, m in meta.items():
+            status = m.get("effective_status") or m.get("status")
+            if status:
+                cur.execute(
+                    'UPDATE "FacebookAdInsight" SET "status" = %s, "syncedAt" = now() '
+                    'WHERE "level" = %s AND "entityId" = %s',
+                    (status, level, entity_id)
+                )
+        conn.commit()
         print(f"  ✓ {level} done")
 
     cur.execute('SELECT COUNT(*) FROM "FacebookAdInsight"')
