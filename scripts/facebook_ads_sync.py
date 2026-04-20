@@ -54,25 +54,27 @@ def fetch_insights(level: str, date_start: str, date_stop: str) -> list[dict]:
 def fetch_entity_meta(level: str) -> dict:
     """Fetch status/objective/budget per entity."""
     meta = {}
-    ALL_STATUSES = '["ACTIVE","PAUSED","ARCHIVED","DELETED","COMPLETED","IN_PROCESS","WITH_ISSUES"]'
+    # COMPLETED is only valid for campaigns; adsets/ads use a different set
+    CAMPAIGN_STATUSES = '["ACTIVE","PAUSED","ARCHIVED","DELETED","COMPLETED","IN_PROCESS","WITH_ISSUES"]'
+    ADSET_AD_STATUSES = '["ACTIVE","PAUSED","ARCHIVED","DELETED","IN_PROCESS","WITH_ISSUES"]'
     if level == "campaign":
         rows = fb_get(f"{API_BASE}/{AD_ACCOUNT}/campaigns", {
             "fields": "id,name,status,effective_status,objective,daily_budget,lifetime_budget",
-            "effective_status": ALL_STATUSES,
+            "effective_status": CAMPAIGN_STATUSES,
         })
         for r in rows:
             meta[r["id"]] = r
     elif level == "adset":
         rows = fb_get(f"{API_BASE}/{AD_ACCOUNT}/adsets", {
             "fields": "id,name,status,effective_status,daily_budget,lifetime_budget,campaign_id",
-            "effective_status": ALL_STATUSES,
+            "effective_status": ADSET_AD_STATUSES,
         })
         for r in rows:
             meta[r["id"]] = r
     elif level == "ad":
         rows = fb_get(f"{API_BASE}/{AD_ACCOUNT}/ads", {
             "fields": "id,name,status,effective_status,adset_id,campaign_id",
-            "effective_status": ALL_STATUSES,
+            "effective_status": ADSET_AD_STATUSES,
         })
         for r in rows:
             meta[r["id"]] = r
