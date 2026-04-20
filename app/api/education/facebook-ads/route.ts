@@ -29,7 +29,11 @@ async function fbGet(url: string, params: Record<string, string>) {
   return results;
 }
 
-async function fetchMeta(level: string): Promise<Map<string, Record<string, unknown>>> {
+async function fetchMeta(
+  level: string,
+  campaignIds?: string,
+  adsetIds?: string,
+): Promise<Map<string, Record<string, unknown>>> {
   const endpoint =
     level === "campaign" ? "campaigns" :
     level === "adset"    ? "adsets"    : "ads";
@@ -39,7 +43,18 @@ async function fetchMeta(level: string): Promise<Map<string, Record<string, unkn
                            "id,name,effective_status,adset_id,campaign_id";
 
   const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, { fields });
-  return new Map(rows.map((r) => [r.id as string, r]));
+
+  // Filter for drill-down
+  let filtered = rows;
+  if (level === "adset" && campaignIds) {
+    const ids = new Set(campaignIds.split(","));
+    filtered = rows.filter((r) => ids.has(r.campaign_id as string));
+  } else if (level === "ad" && adsetIds) {
+    const ids = new Set(adsetIds.split(","));
+    filtered = rows.filter((r) => ids.has(r.adset_id as string));
+  }
+
+  return new Map(filtered.map((r) => [r.id as string, r]));
 }
 
 async function fetchInsights(
@@ -121,9 +136,9 @@ export async function GET(req: NextRequest) {
   const dateStart = from ?? today;
   const dateStop  = to   ?? today;
 
-  // Fetch metadata (all entities with current effective_status) and insights in parallel
+  // Fetch metadata (filtered by drill-down) and insights in parallel
   const [meta, insightRows] = await Promise.all([
-    fetchMeta(level),
+    fetchMeta(level, campaignIds, adsetIds),
     fetchInsights(level, dateStart, dateStop, campaignIds, adsetIds),
   ]);
 
@@ -174,7 +189,9 @@ export async function GET(req: NextRequest) {
 
     return {
       entityId,
-      entityName:   (ins.campaign_name ?? ins.adset_name ?? ins.ad_name ?? m.name) as string,
+      // entityName must match the level — use meta.name as source of truth
+      // (ins.campaign_name is the PARENT campaign name, not the adset/ad name)
+      entityName:   m.name as string,
       campaignId:   (ins.campaign_id   ?? null) as string | null,
       campaignName: (ins.campaign_name ?? null) as string | null,
       adsetId:      (ins.adset_id      ?? null) as string | null,
