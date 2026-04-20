@@ -300,27 +300,34 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
     setRowSelection({});
   };
 
-  // Button "View Ad Sets" from selected checkboxes
-  const handleDrillSelected = () => {
-    const selectedRows = table.getSelectedRowModel().rows.map((r) => r.original);
-    if (!selectedRows.length) return;
-    if (level === "campaign") {
-      const ids   = selectedRows.map((r) => r.entityId);
-      const names = selectedRows.map((r) => r.entityName);
-      setDrill({ campaignIds: ids, campaignName: names.length === 1 ? names[0] : `${names.length} campanii`, adsetIds: [], adsetName: null });
-      setLevel("adset");
-    } else if (level === "adset") {
-      const ids   = selectedRows.map((r) => r.entityId);
-      const names = selectedRows.map((r) => r.entityName);
-      setDrill((d) => ({ ...d, adsetIds: ids, adsetName: names.length === 1 ? names[0] : `${names.length} ad sets` }));
-      setLevel("ad");
-    }
-    setRowSelection({});
-  };
-
   const handleTabChange = (newLevel: Level) => {
-    if (newLevel === "campaign") setDrill(EMPTY_DRILL);
-    else if (newLevel === "adset") setDrill((d) => ({ ...d, adsetIds: [], adsetName: null }));
+    const selectedRows = table.getSelectedRowModel().rows.map((r) => r.original);
+
+    if (newLevel === "campaign") {
+      setDrill(EMPTY_DRILL);
+    } else if (newLevel === "adset") {
+      // If campaigns are selected, drill into them; otherwise show all
+      if (level === "campaign" && selectedRows.length > 0) {
+        setDrill({
+          campaignIds: selectedRows.map((r) => r.entityId),
+          campaignName: selectedRows.length === 1 ? selectedRows[0].entityName : `${selectedRows.length} campanii`,
+          adsetIds: [],
+          adsetName: null,
+        });
+      } else {
+        setDrill((d) => ({ ...d, adsetIds: [], adsetName: null }));
+      }
+    } else if (newLevel === "ad") {
+      // If adsets are selected, drill into them; otherwise keep current drill
+      if (level === "adset" && selectedRows.length > 0) {
+        setDrill((d) => ({
+          ...d,
+          adsetIds: selectedRows.map((r) => r.entityId),
+          adsetName: selectedRows.length === 1 ? selectedRows[0].entityName : `${selectedRows.length} ad sets`,
+        }));
+      }
+    }
+
     setLevel(newLevel);
     setRowSelection({});
   };
@@ -356,7 +363,7 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
 
   const allTogglable = table.getAllColumns().filter((c) => c.getCanHide());
   const rowLabel = level === "campaign" ? "campanii" : level === "adset" ? "ad sets" : "ads";
-  const selectedCount = Object.values(rowSelection).filter(Boolean).length;
+  const selectedCount = useMemo(() => Object.values(rowSelection).filter(Boolean).length, [rowSelection]);
 
   return (
     <div className="space-y-3">
@@ -395,12 +402,11 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
             ))}
           </div>
 
-          {/* Drill into selected button */}
+          {/* Hint when rows are selected */}
           {selectedCount > 0 && level !== "ad" && (
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1" onClick={handleDrillSelected}>
-              <ChevronRight className="h-3 w-3" />
-              {level === "campaign" ? "Ad Sets" : "Ads"} ({selectedCount})
-            </Button>
+            <span className="text-xs text-muted-foreground">
+              {selectedCount} selectate · click pe {level === "campaign" ? "Ad Sets" : "Ads"} →
+            </span>
           )}
         </div>
 

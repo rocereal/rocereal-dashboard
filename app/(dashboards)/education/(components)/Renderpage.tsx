@@ -22,7 +22,11 @@ import { TimeSpentChart } from "./TimeSpentChart";
  * @returns The JSX element representing the complete education dashboard page layout
  */
 export default function RenderPage() {
-  const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
+  const [dateRange, setDateRange] = useState<DateTimeRange | undefined>({ from: today, to: todayEnd });
 
   return (
     <div className="flex flex-col space-y-6">
