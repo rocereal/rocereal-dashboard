@@ -101,11 +101,22 @@ export async function POST() {
                          m.lifetime_budget ? parseFloat(m.lifetime_budget as string) / 100 : null;
       const budgetType = m.daily_budget ? "daily" : m.lifetime_budget ? "lifetime" : null;
 
-      // Sum all actions (calls, leads, etc.) — same logic as facebook_ads_sync.py
+      // Use primary action type (matches Facebook Ads Manager "Results" column)
+      // cost_per_action_type[0] identifies the campaign's optimization goal action
       const actionsList = ins.actions;
-      const totalActions = Array.isArray(actionsList)
-        ? actionsList.reduce((sum, a) => sum + Math.round(parseFloat((a as Record<string, string>).value ?? "0")), 0)
-        : 0;
+      const costPerActionList = ins.cost_per_action_type;
+      let totalActions = 0;
+      if (Array.isArray(costPerActionList) && costPerActionList.length > 0) {
+        const primaryType = (costPerActionList[0] as Record<string, string>).action_type;
+        totalActions = Array.isArray(actionsList)
+          ? actionsList
+              .filter((a) => (a as Record<string, string>).action_type === primaryType)
+              .reduce((sum, a) => sum + Math.round(parseFloat((a as Record<string, string>).value ?? "0")), 0)
+          : 0;
+      } else if (Array.isArray(actionsList)) {
+        // fallback: sum all actions
+        totalActions = actionsList.reduce((sum, a) => sum + Math.round(parseFloat((a as Record<string, string>).value ?? "0")), 0);
+      }
       const spendVal = safeFloat(ins, "spend");
       const costPerResult = totalActions > 0 ? Math.round((spendVal / totalActions) * 100) / 100 : 0;
 

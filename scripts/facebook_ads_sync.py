@@ -138,9 +138,19 @@ def build_rows(level: str, insights: list[dict], meta: dict) -> list[tuple]:
         else:
             budget = budget_type = None
 
-        # Results: use total actions (calls placed, leads, etc.)
-        actions_list = i.get("actions", [])
-        if isinstance(actions_list, list):
+        # Results: use primary action type (same as Facebook Ads Manager "Results" column)
+        # cost_per_action_type[0] identifies the campaign's primary optimization action
+        actions_list = i.get("actions", []) or []
+        cost_per_action_list = i.get("cost_per_action_type", []) or []
+        if isinstance(cost_per_action_list, list) and cost_per_action_list:
+            primary_type = cost_per_action_list[0].get("action_type")
+            total_actions = sum(
+                int(float(a.get("value", 0)))
+                for a in actions_list
+                if a.get("action_type") == primary_type
+            )
+        elif isinstance(actions_list, list) and actions_list:
+            # fallback: sum all actions if no cost_per_action_type
             total_actions = sum(int(float(a.get("value", 0))) for a in actions_list)
         else:
             total_actions = 0
