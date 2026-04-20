@@ -40,6 +40,28 @@ async function getPaymentStatus(cif: string, series: string, number: number) {
   }
 }
 
+async function getInvoiceDetails(cif: string, series: string, number: number) {
+  try {
+    const url = `${SMARTBILL_BASE}/invoice?cif=${encodeURIComponent(cif)}&seriesname=${encodeURIComponent(series)}&number=${number}`;
+    const res = await fetch(url, {
+      headers: { Authorization: smartbillAuth(), Accept: "application/json" },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.errorText) return null;
+    // SmartBill REST API response shape
+    const inv = data.invoice ?? data;
+    return {
+      client:  (inv.client?.name ?? inv.clientName ?? "") as string,
+      phone:   (inv.client?.phone ?? inv.clientPhone ?? "") as string,
+      dueDate: (inv.paymentDate ?? inv.dueDate ?? null) as string | null,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function GET() {
   const cif = process.env.SMARTBILL_CIF;
   if (!cif) return NextResponse.json({ error: "SMARTBILL_CIF not configured" }, { status: 503 });
@@ -82,9 +104,12 @@ export async function GET() {
       continue;
     }
 
-    // Fetch all numbers in this batch IN PARALLEL
+    // Fetch all numbers in this batch IN PARALLEL (payment status + invoice details)
     const numbers = Array.from({ length: toNumber - fromNumber + 1 }, (_, i) => fromNumber + i);
-    const statuses = await Promise.all(numbers.map((n) => getPaymentStatus(cif, series, n)));
+    const [statuses, details] = await Promise.all([
+      Promise.all(numbers.map((n) => getPaymentStatus(cif, series, n))),
+      Promise.all(numbers.map((n) => getInvoiceDetails(cif, series, n))),
+    ]);
 
     let fetched = 0;
     let lastProcessed = state.lastSyncedNumber;
@@ -100,11 +125,25 @@ export async function GET() {
       const net = parseFloat((total / 1.19).toFixed(2));
       const tax = parseFloat((total - net).toFixed(2));
       const invoiceKey = `${series}-${num}`;
+      const detail = details[i];
+      const client  = detail?.client  ?? "";
+      const dueDate = detail?.dueDate ? new Date(detail.dueDate) : null;
 
       await prisma.smartbillInvoice.upsert({
         where: { invoiceKey },
-        update: { totalAmount: total, paidAmount: status.paidAmount, unpaidAmount: status.unpaidAmount, paid: status.paid, netAmount: net, taxAmount: tax, syncedAt: new Date() },
-        create: { invoiceKey, series, number: num, totalAmount: total, paidAmount: status.paidAmount, unpaidAmount: status.unpaidAmount, paid: status.paid, netAmount: net, taxAmount: tax, issuedAt: new Date() },
+        update: {
+          totalAmount: total, paidAmount: status.paidAmount, unpaidAmount: status.unpaidAmount,
+          paid: status.paid, netAmount: net, taxAmount: tax,
+          ...(client  ? { client }  : {}),
+          ...(dueDate ? { dueDate } : {}),
+          syncedAt: new Date(),
+        },
+        create: {
+          invoiceKey, series, number: num,
+          totalAmount: total, paidAmount: status.paidAmount, unpaidAmount: status.unpaidAmount,
+          paid: status.paid, netAmount: net, taxAmount: tax,
+          client, dueDate, issuedAt: new Date(),
+        },
       });
       fetched++;
     }
