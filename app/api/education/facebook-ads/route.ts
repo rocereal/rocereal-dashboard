@@ -9,15 +9,21 @@ export async function GET(req: NextRequest) {
   const from      = searchParams.get("from");   // YYYY-MM-DD
   const to        = searchParams.get("to");     // YYYY-MM-DD
 
+  const campaignId = searchParams.get("campaignId");
+  const adsetId    = searchParams.get("adsetId");
+
   const dateFilter = from && to ? {
     dateStart: { gte: new Date(from) },
     dateStop:  { lte: new Date(to + "T23:59:59Z") },
   } : {};
 
+  const drillFilter = level === "adset" && campaignId ? { campaignId } :
+                      level === "ad"    && adsetId    ? { adsetId }    : {};
+
   // Aggregate by entityId across the date range
   const rows = await prisma.facebookAdInsight.groupBy({
     by: ["entityId", "entityName", "campaignId", "campaignName", "adsetId", "adsetName", "status", "objective", "budget", "budgetType", "accountId"],
-    where: { level, ...dateFilter },
+    where: { level, ...dateFilter, ...drillFilter },
     _sum: {
       impressions: true,
       clicks: true,
