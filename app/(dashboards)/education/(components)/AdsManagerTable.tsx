@@ -32,11 +32,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowUpDown, ChevronRight, Columns, Loader2, RefreshCw } from "lucide-react";
+import { ArrowUpDown, ChevronRight, Columns, Filter, Loader2, RefreshCw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 
 type Level = "campaign" | "adset" | "ad";
+type StatusFilter = "ALL" | "ACTIVE" | "PAUSED" | "ARCHIVED";
 
 interface AdRow {
   entityId: string;
@@ -62,13 +63,14 @@ interface AdRow {
   frequency: number;
 }
 
-// Drill-down selection state
 interface DrillState {
-  campaignId:   string | null;
+  campaignIds:  string[];
   campaignName: string | null;
-  adsetId:      string | null;
+  adsetIds:     string[];
   adsetName:    string | null;
 }
+
+const EMPTY_DRILL: DrillState = { campaignIds: [], campaignName: null, adsetIds: [], adsetName: null };
 
 const formatRON = (v: number) =>
   new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON", minimumFractionDigits: 2 }).format(v);
@@ -88,7 +90,7 @@ const StatusBadge = ({ status }: { status: string | null }) => {
 
 function buildColumns(level: Level, onDrillDown: (row: AdRow) => void): ColumnDef<AdRow>[] {
   const nameHeader = level === "campaign" ? "Campanie" : level === "adset" ? "Ad Set" : "Ad";
-  const canDrillDown = level !== "ad";
+  const canDrill   = level !== "ad";
 
   return [
     {
@@ -119,10 +121,10 @@ function buildColumns(level: Level, onDrillDown: (row: AdRow) => void): ColumnDe
       ),
       cell: ({ row }) => (
         <div className="flex items-center gap-1 group">
-          {canDrillDown ? (
+          {canDrill ? (
             <button
               className="font-medium max-w-[260px] truncate text-left hover:text-blue-600 hover:underline transition-colors"
-              title={`Vezi ${level === "campaign" ? "Ad Sets" : "Ads"} → ${row.getValue("entityName")}`}
+              title={`Mergi la ${level === "campaign" ? "Ad Sets" : "Ads"} pentru: ${row.getValue("entityName")}`}
               onClick={() => onDrillDown(row.original)}
             >
               {row.getValue("entityName")}
@@ -132,7 +134,7 @@ function buildColumns(level: Level, onDrillDown: (row: AdRow) => void): ColumnDe
               {row.getValue("entityName")}
             </span>
           )}
-          {canDrillDown && (
+          {canDrill && (
             <ChevronRight
               className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex-shrink-0"
               onClick={() => onDrillDown(row.original)}
@@ -207,83 +209,53 @@ function buildColumns(level: Level, onDrillDown: (row: AdRow) => void): ColumnDe
       },
     },
     // Extra columns hidden by default
-    {
-      accessorKey: "impressions",
-      header: "Impresii",
-      cell: ({ row }) => formatNum(row.getValue("impressions")),
-    },
-    {
-      accessorKey: "clicks",
-      header: "Clicuri",
-      cell: ({ row }) => formatNum(row.getValue("clicks")),
-    },
-    {
-      accessorKey: "reach",
-      header: "Reach",
-      cell: ({ row }) => formatNum(row.getValue("reach")),
-    },
-    {
-      accessorKey: "ctr",
-      header: "CTR",
-      cell: ({ row }) => `${(row.getValue("ctr") as number).toFixed(2)}%`,
-    },
-    {
-      accessorKey: "cpc",
-      header: "CPC",
-      cell: ({ row }) => formatRON(row.getValue("cpc")),
-    },
-    {
-      accessorKey: "cpm",
-      header: "CPM",
-      cell: ({ row }) => formatRON(row.getValue("cpm")),
-    },
-    {
-      accessorKey: "frequency",
-      header: "Frecvență",
-      cell: ({ row }) => (row.getValue("frequency") as number).toFixed(2),
-    },
-    {
-      accessorKey: "objective",
-      header: "Obiectiv",
-      cell: ({ row }) => (row.getValue("objective") as string | null) ?? "—",
-    },
+    { accessorKey: "impressions", header: "Impresii",  cell: ({ row }) => formatNum(row.getValue("impressions")) },
+    { accessorKey: "clicks",      header: "Clicuri",   cell: ({ row }) => formatNum(row.getValue("clicks")) },
+    { accessorKey: "reach",       header: "Reach",     cell: ({ row }) => formatNum(row.getValue("reach")) },
+    { accessorKey: "ctr",         header: "CTR",       cell: ({ row }) => `${(row.getValue("ctr") as number).toFixed(2)}%` },
+    { accessorKey: "cpc",         header: "CPC",       cell: ({ row }) => formatRON(row.getValue("cpc")) },
+    { accessorKey: "cpm",         header: "CPM",       cell: ({ row }) => formatRON(row.getValue("cpm")) },
+    { accessorKey: "frequency",   header: "Frecvență", cell: ({ row }) => (row.getValue("frequency") as number).toFixed(2) },
+    { accessorKey: "objective",   header: "Obiectiv",  cell: ({ row }) => (row.getValue("objective") as string | null) ?? "—" },
   ];
 }
 
 const HIDDEN_BY_DEFAULT: VisibilityState = {
-  impressions: false,
-  clicks: false,
-  reach: false,
-  ctr: false,
-  cpc: false,
-  cpm: false,
-  frequency: false,
-  objective: false,
+  impressions: false, clicks: false, reach: false,
+  ctr: false, cpc: false, cpm: false, frequency: false, objective: false,
 };
+
+const STATUS_OPTIONS: { label: string; value: StatusFilter }[] = [
+  { label: "Toate",    value: "ALL"      },
+  { label: "Active",   value: "ACTIVE"   },
+  { label: "Pauzate",  value: "PAUSED"   },
+  { label: "Arhivate", value: "ARCHIVED" },
+];
 
 interface AdsManagerTableProps {
   dateRange?: DateTimeRange;
 }
 
 export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
-  const [level, setLevel]       = useState<Level>("campaign");
-  const [drill, setDrill]       = useState<DrillState>({ campaignId: null, campaignName: null, adsetId: null, adsetName: null });
-  const [data, setData]         = useState<AdRow[]>([]);
-  const [loading, setLoading]   = useState(true);
-  const [syncing, setSyncing]   = useState(false);
+  const [level, setLevel]           = useState<Level>("campaign");
+  const [drill, setDrill]           = useState<DrillState>(EMPTY_DRILL);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
+  const [data, setData]             = useState<AdRow[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [syncing, setSyncing]       = useState(false);
   const [lastSynced, setLastSynced] = useState<Date | null>(null);
   const syncTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [sorting, setSorting]   = useState<SortingState>([{ id: "spend", desc: true }]);
+  const [sorting, setSorting]       = useState<SortingState>([{ id: "spend", desc: true }]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(HIDDEN_BY_DEFAULT);
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
   const buildParams = (lvl: Level, dr: DrillState) => {
     const params = new URLSearchParams({ level: lvl });
     if (dateRange?.from) params.set("from", format(dateRange.from, "yyyy-MM-dd"));
     if (dateRange?.to)   params.set("to",   format(dateRange.to,   "yyyy-MM-dd"));
-    if (lvl === "adset" && dr.campaignId) params.set("campaignId", dr.campaignId);
-    if (lvl === "ad"    && dr.adsetId)    params.set("adsetId",    dr.adsetId);
+    if (lvl === "adset" && dr.campaignIds.length) params.set("campaignIds", dr.campaignIds.join(","));
+    if (lvl === "ad"    && dr.adsetIds.length)    params.set("adsetIds",    dr.adsetIds.join(","));
     return params;
   };
 
@@ -315,35 +287,52 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level, drill, dateRange]);
 
-  // Drill down: campaign → adset, adset → ad
+  // Click on name → drill into children
   const handleDrillDown = (row: AdRow) => {
     if (level === "campaign") {
-      const newDrill = { ...drill, campaignId: row.entityId, campaignName: row.entityName };
-      setDrill(newDrill);
+      setDrill({ campaignIds: [row.entityId], campaignName: row.entityName, adsetIds: [], adsetName: null });
       setLevel("adset");
     } else if (level === "adset") {
-      const newDrill = { ...drill, adsetId: row.entityId, adsetName: row.entityName };
-      setDrill(newDrill);
+      setDrill((d) => ({ ...d, adsetIds: [row.entityId], adsetName: row.entityName }));
       setLevel("ad");
     }
     setRowSelection({});
   };
 
-  // Switch tabs manually — reset drill context for that level
-  const handleTabChange = (newLevel: Level) => {
-    if (newLevel === "campaign") {
-      setDrill({ campaignId: null, campaignName: null, adsetId: null, adsetName: null });
-    } else if (newLevel === "adset") {
-      setDrill((d) => ({ ...d, adsetId: null, adsetName: null }));
+  // Button "View Ad Sets" from selected checkboxes
+  const handleDrillSelected = () => {
+    const selectedRows = table.getSelectedRowModel().rows.map((r) => r.original);
+    if (!selectedRows.length) return;
+    if (level === "campaign") {
+      const ids   = selectedRows.map((r) => r.entityId);
+      const names = selectedRows.map((r) => r.entityName);
+      setDrill({ campaignIds: ids, campaignName: names.length === 1 ? names[0] : `${names.length} campanii`, adsetIds: [], adsetName: null });
+      setLevel("adset");
+    } else if (level === "adset") {
+      const ids   = selectedRows.map((r) => r.entityId);
+      const names = selectedRows.map((r) => r.entityName);
+      setDrill((d) => ({ ...d, adsetIds: ids, adsetName: names.length === 1 ? names[0] : `${names.length} ad sets` }));
+      setLevel("ad");
     }
+    setRowSelection({});
+  };
+
+  const handleTabChange = (newLevel: Level) => {
+    if (newLevel === "campaign") setDrill(EMPTY_DRILL);
+    else if (newLevel === "adset") setDrill((d) => ({ ...d, adsetIds: [], adsetName: null }));
     setLevel(newLevel);
     setRowSelection({});
   };
 
+  // Apply status filter client-side
+  const filteredData = statusFilter === "ALL"
+    ? data
+    : data.filter((r) => r.status === statusFilter);
+
   const columns = buildColumns(level, handleDrillDown);
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: { sorting, columnFilters, columnVisibility, rowSelection },
     onSortingChange: setSorting,
@@ -365,6 +354,7 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
 
   const allTogglable = table.getAllColumns().filter((c) => c.getCanHide());
   const rowLabel = level === "campaign" ? "campanii" : level === "adset" ? "ad sets" : "ads";
+  const selectedCount = Object.values(rowSelection).filter(Boolean).length;
 
   return (
     <div className="space-y-3">
@@ -384,56 +374,86 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
       </div>
 
       {/* Toolbar */}
-      <div className="flex items-center justify-between">
-        {/* Level tabs */}
-        <div className="flex items-center gap-1 bg-muted rounded-md p-1">
-          {TABS.map((t) => (
-            <button
-              key={t.value}
-              onClick={() => handleTabChange(t.value)}
-              className={`px-3 py-1 text-sm rounded transition-colors ${
-                level === t.value
-                  ? "bg-background shadow-sm font-medium"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+      <div className="flex items-center justify-between gap-2">
+        {/* Left: tabs + drill button */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 bg-muted rounded-md p-1">
+            {TABS.map((t) => (
+              <button
+                key={t.value}
+                onClick={() => handleTabChange(t.value)}
+                className={`px-3 py-1 text-sm rounded transition-colors ${
+                  level === t.value
+                    ? "bg-background shadow-sm font-medium"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Drill into selected button */}
+          {selectedCount > 0 && level !== "ad" && (
+            <Button variant="outline" size="sm" className="h-8 text-xs gap-1" onClick={handleDrillSelected}>
+              <ChevronRight className="h-3 w-3" />
+              {level === "campaign" ? "Ad Sets" : "Ads"} ({selectedCount})
+            </Button>
+          )}
         </div>
 
-        {/* Columns toggle */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="h-8 gap-1">
-              <Columns className="h-4 w-4" />
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel>Coloane vizibile</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {allTogglable.map((col) => (
-              <DropdownMenuCheckboxItem
-                key={col.id}
-                checked={col.getIsVisible()}
-                onCheckedChange={(v) => col.toggleVisibility(v)}
-                className="capitalize"
-              >
-                {typeof col.columnDef.header === "string" ? col.columnDef.header : col.id}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Right: status filter + columns */}
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 gap-1">
+                <Filter className="h-4 w-4" />
+                {statusFilter === "ALL" ? "Status" : STATUS_OPTIONS.find((o) => o.value === statusFilter)?.label}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-36">
+              <DropdownMenuLabel>Filtrează status</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {STATUS_OPTIONS.map((o) => (
+                <DropdownMenuCheckboxItem
+                  key={o.value}
+                  checked={statusFilter === o.value}
+                  onCheckedChange={() => setStatusFilter(o.value)}
+                >
+                  {o.label}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 gap-1">
+                <Columns className="h-4 w-4" />
+                Columns
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuLabel>Coloane vizibile</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {allTogglable.map((col) => (
+                <DropdownMenuCheckboxItem
+                  key={col.id}
+                  checked={col.getIsVisible()}
+                  onCheckedChange={(v) => col.toggleVisibility(v)}
+                >
+                  {typeof col.columnDef.header === "string" ? col.columnDef.header : col.id}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
-      {/* Breadcrumb drill-down path */}
+      {/* Breadcrumb */}
       {(drill.campaignName || drill.adsetName) && (
         <div className="flex items-center gap-1 text-sm text-muted-foreground bg-muted/50 rounded-md px-3 py-2">
-          <button
-            className="hover:text-foreground transition-colors"
-            onClick={() => handleTabChange("campaign")}
-          >
+          <button className="hover:text-foreground transition-colors" onClick={() => handleTabChange("campaign")}>
             Toate campaniile
           </button>
           {drill.campaignName && (
@@ -448,18 +468,14 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
                   {drill.campaignName}
                 </button>
               ) : (
-                <span className="font-medium text-foreground truncate max-w-[200px]" title={drill.campaignName}>
-                  {drill.campaignName}
-                </span>
+                <span className="font-medium text-foreground truncate max-w-[200px]">{drill.campaignName}</span>
               )}
             </>
           )}
           {drill.adsetName && (
             <>
               <ChevronRight className="h-3 w-3 flex-shrink-0" />
-              <span className="font-medium text-foreground truncate max-w-[200px]" title={drill.adsetName}>
-                {drill.adsetName}
-              </span>
+              <span className="font-medium text-foreground truncate max-w-[200px]">{drill.adsetName}</span>
             </>
           )}
         </div>
@@ -492,16 +508,12 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
                 <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground text-sm">
                   {level === "campaign"
                     ? "Nicio campanie găsită. Rulează sync-ul din GitHub Actions."
-                    : `Niciun ${level === "adset" ? "ad set" : "ad"} găsit pentru selecția curentă.`}
+                    : `Niciun ${level === "adset" ? "ad set" : "ad"} găsit.`}
                 </TableCell>
               </TableRow>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className={level !== "ad" ? "cursor-default" : ""}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -514,17 +526,13 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
         </Table>
       </div>
 
-      {/* Pagination + summary */}
+      {/* Pagination */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>{table.getFilteredRowModel().rows.length} {rowLabel}</span>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-            Înapoi
-          </Button>
+          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>Înapoi</Button>
           <span>Pagina {table.getState().pagination.pageIndex + 1} din {table.getPageCount()}</span>
-          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            Înainte
-          </Button>
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Înainte</Button>
         </div>
       </div>
     </div>

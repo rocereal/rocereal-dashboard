@@ -19,7 +19,7 @@ API_BASE     = "https://graph.facebook.com/v21.0"
 DAYS_BACK = 1095 if "--full" in sys.argv else 90  # FB retains ~3 years of data
 
 COMMON_FIELDS = "impressions,clicks,spend,reach,frequency,ctr,cpc,cpm,cpp"
-CONVERSION_FIELDS = "purchase_roas,conversions,cost_per_conversion"
+CONVERSION_FIELDS = "purchase_roas,actions,cost_per_action_type"
 
 
 def fb_get(url, params):
@@ -138,6 +138,15 @@ def build_rows(level: str, insights: list[dict], meta: dict) -> list[tuple]:
         else:
             budget = budget_type = None
 
+        # Results: use total actions (calls placed, leads, etc.)
+        actions_list = i.get("actions", [])
+        if isinstance(actions_list, list):
+            total_actions = sum(int(float(a.get("value", 0))) for a in actions_list)
+        else:
+            total_actions = 0
+        spend_val = safe_float(i, "spend")
+        cost_per_result = round(spend_val / total_actions, 2) if total_actions > 0 else 0.0
+
         date_start = datetime.strptime(i["date_start"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
         date_stop  = datetime.strptime(i["date_stop"],  "%Y-%m-%d").replace(tzinfo=timezone.utc)
 
@@ -156,7 +165,7 @@ def build_rows(level: str, insights: list[dict], meta: dict) -> list[tuple]:
             date_stop,
             safe_int(i,   "impressions"),
             safe_int(i,   "clicks"),
-            safe_float(i, "spend"),
+            spend_val,
             safe_int(i,   "reach"),
             safe_float(i, "frequency"),
             safe_float(i, "ctr"),
@@ -164,8 +173,8 @@ def build_rows(level: str, insights: list[dict], meta: dict) -> list[tuple]:
             safe_float(i, "cpm"),
             safe_float(i, "cpp"),
             safe_float(i, "purchase_roas") or None,
-            safe_int(i,   "conversions"),
-            safe_float(i, "cost_per_conversion"),
+            total_actions,
+            cost_per_result,
             budget,
             budget_type,
             AD_ACCOUNT,

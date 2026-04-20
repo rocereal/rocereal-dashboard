@@ -1,70 +1,92 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = req.nextUrl;
-  const level     = (searchParams.get("level") || "campaign") as string;
-  const from      = searchParams.get("from");   // YYYY-MM-DD
-  const to        = searchParams.get("to");     // YYYY-MM-DD
+const BY_FIELDS: Prisma.FacebookAdInsightScalarFieldEnum[] = [
+  "entityId", "entityName", "campaignId", "campaignName",
+  "adsetId", "adsetName", "status", "objective",
+  "budget", "budgetType", "accountId",
+];
 
-  const campaignId = searchParams.get("campaignId");
-  const adsetId    = searchParams.get("adsetId");
-
-  const dateFilter = from && to ? {
-    dateStart: { gte: new Date(from) },
-    dateStop:  { lte: new Date(to + "T23:59:59Z") },
-  } : {};
-
-  const drillFilter = level === "adset" && campaignId ? { campaignId } :
-                      level === "ad"    && adsetId    ? { adsetId }    : {};
-
-  // Aggregate by entityId across the date range
-  const rows = await prisma.facebookAdInsight.groupBy({
-    by: ["entityId", "entityName", "campaignId", "campaignName", "adsetId", "adsetName", "status", "objective", "budget", "budgetType", "accountId"],
-    where: { level, ...dateFilter, ...drillFilter },
-    _sum: {
-      impressions: true,
-      clicks: true,
-      spend: true,
-      reach: true,
-      conversions: true,
-    },
-    _avg: {
-      ctr: true,
-      cpc: true,
-      cpm: true,
-      purchaseRoas: true,
-      costPerConversion: true,
-      frequency: true,
-    },
+async function groupInsights(where: Prisma.FacebookAdInsightWhereInput) {
+  return prisma.facebookAdInsight.groupBy({
+    by: BY_FIELDS,
+    where,
+    _sum: { impressions: true, clicks: true, spend: true, reach: true, conversions: true },
+    _avg: { ctr: true, cpc: true, cpm: true, purchaseRoas: true, costPerConversion: true, frequency: true },
     orderBy: { _sum: { spend: "desc" } },
   });
+}
 
-  const mapped = rows.map((r: typeof rows[0]) => ({
-    entityId:          r.entityId,
-    entityName:        r.entityName,
-    campaignId:        r.campaignId,
-    campaignName:      r.campaignName,
-    adsetId:           r.adsetId,
-    adsetName:         r.adsetName,
-    status:            r.status,
-    objective:         r.objective,
-    budget:            r.budget,
-    budgetType:        r.budgetType,
-    impressions:       r._sum.impressions ?? 0,
-    clicks:            r._sum.clicks ?? 0,
-    spend:             r._sum.spend ?? 0,
-    reach:             r._sum.reach ?? 0,
-    conversions:       r._sum.conversions ?? 0,
-    ctr:               r._avg.ctr ?? 0,
-    cpc:               r._avg.cpc ?? 0,
-    cpm:               r._avg.cpm ?? 0,
-    purchaseRoas:      r._avg.purchaseRoas ?? null,
-    costPerResult:     r._avg.costPerConversion ?? 0,
-    frequency:         r._avg.frequency ?? 0,
-  }));
+type GroupRow = Awaited<ReturnType<typeof groupInsights>>[0];
+
+function extractMetrics(m: GroupRow | null | undefined) {
+  const sum = m?._sum;
+  const avg = m?._avg;
+  return {
+    impressions:   sum?.impressions  ?? 0,
+    clicks:        sum?.clicks       ?? 0,
+    spend:         sum?.spend        ?? 0,
+    reach:         sum?.reach        ?? 0,
+    conversions:   sum?.conversions  ?? 0,
+    ctr:           avg?.ctr          ?? 0,
+    cpc:           avg?.cpc          ?? 0,
+    cpm:           avg?.cpm          ?? 0,
+    purchaseRoas:  avg?.purchaseRoas ?? null,
+    costPerResult: avg?.costPerConversion ?? 0,
+    frequency:     avg?.frequency    ?? 0,
+  };
+}
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = req.nextUrl;
+  const level       = searchParams.get("level") || "campaign";
+  const from        = searchParams.get("from");
+  const to          = searchParams.get("to");
+  const campaignIds = searchParams.get("campaignIds");
+  const adsetIds    = searchParams.get("adsetIds");
+
+  const drillFilter: Prisma.FacebookAdInsightWhereInput =
+    level === "adset" && campaignIds ? { campaignId: { in: campaignIds.split(",") } } :
+    level === "ad"    && adsetIds    ? { adsetId:    { in: adsetIds.split(",")    } } :
+    {};
+
+  const baseWhere: Prisma.FacebookAdInsightWhereInput = { level, ...drillFilter };
+
+  // All entities — gives full list + latest metadata regardless of date
+  const allEntities = await groupInsights(baseWhere);
+
+  // Date-range metrics (only if range provided)
+  let metricsMap: Map<string, GroupRow> | null = null;
+  if (from && to) {
+    const rangeRows = await groupInsights({
+      ...baseWhere,
+      dateStart: { gte: new Date(from) },
+      dateStop:  { lte: new Date(to + "T23:59:59Z") },
+    });
+    metricsMap = new Map(rangeRows.map((r) => [r.entityId, r]));
+  }
+
+  const mapped = allEntities.map((r) => {
+    const m = metricsMap ? (metricsMap.get(r.entityId) ?? null) : r;
+    return {
+      entityId:     r.entityId,
+      entityName:   r.entityName,
+      campaignId:   r.campaignId,
+      campaignName: r.campaignName,
+      adsetId:      r.adsetId,
+      adsetName:    r.adsetName,
+      status:       r.status,
+      objective:    r.objective,
+      budget:       r.budget,
+      budgetType:   r.budgetType,
+      ...extractMetrics(m),
+    };
+  });
+
+  if (metricsMap) mapped.sort((a, b) => b.spend - a.spend);
 
   return NextResponse.json(mapped);
 }
