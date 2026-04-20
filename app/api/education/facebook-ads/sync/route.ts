@@ -57,7 +57,8 @@ async function fetchMeta(level: string) {
     level === "adset"    ? "id,name,status,effective_status,daily_budget,lifetime_budget,campaign_id" :
                            "id,name,status,effective_status,adset_id,campaign_id";
 
-  const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, { fields });
+  const allStatuses = JSON.stringify(["ACTIVE","PAUSED","ARCHIVED","DELETED","COMPLETED","IN_PROCESS","WITH_ISSUES"]);
+  const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, { fields, effective_status: allStatuses });
   for (const r of rows) meta[r.id as string] = r;
   return meta;
 }
