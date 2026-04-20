@@ -39,8 +39,8 @@ async function fetchMeta(
     level === "adset"    ? "adsets"    : "ads";
   const fields =
     level === "campaign" ? "id,name,effective_status,objective,daily_budget,lifetime_budget" :
-    level === "adset"    ? "id,name,effective_status,daily_budget,lifetime_budget,campaign_id" :
-                           "id,name,effective_status,adset_id,campaign_id";
+    level === "adset"    ? "id,name,effective_status,optimization_goal,daily_budget,lifetime_budget,campaign_id" :
+                           "id,name,effective_status,optimization_goal,adset_id,campaign_id";
 
   const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, { fields });
 
@@ -91,7 +91,85 @@ async function fetchInsights(
   return rows;
 }
 
-function extractResults(ins: Record<string, unknown>): { conversions: number; costPerResult: number } {
+// Maps FB action_type / objective / optimization_goal to human-readable labels
+const ACTION_TYPE_LABELS: Record<string, string> = {
+  "call":                                          "Calls placed",
+  "onsite_conversion.flow_complete":               "On-Facebook leads",
+  "lead":                                          "Leads",
+  "offsite_conversion.fb_pixel_lead":              "Leads",
+  "offsite_conversion.fb_pixel_purchase":          "Purchases",
+  "offsite_conversion.fb_pixel_complete_registration": "Registrations",
+  "link_click":                                    "Link clicks",
+  "omni_purchase":                                 "Purchases",
+  "contact_total":                                 "Contacts",
+  "contact":                                       "Contacts",
+  "video_view":                                    "Video views",
+  "post_engagement":                               "Post engagement",
+};
+
+const OBJECTIVE_LABELS: Record<string, string> = {
+  "OUTCOME_LEADS":         "Leads",
+  "OUTCOME_SALES":         "Purchases",
+  "OUTCOME_TRAFFIC":       "Link clicks",
+  "OUTCOME_ENGAGEMENT":    "Post engagement",
+  "OUTCOME_AWARENESS":     "Reach",
+  "OUTCOME_APP_PROMOTION": "App installs",
+  "LEAD_GENERATION":       "Leads",
+  "CONVERSIONS":           "Purchases",
+  "LINK_CLICKS":           "Link clicks",
+  "VIDEO_VIEWS":           "Video views",
+  "PAGE_LIKES":            "Page likes",
+  "REACH":                 "Reach",
+  "BRAND_AWARENESS":       "Reach",
+  "MESSAGES":              "Messages",
+  "CALLS":                 "Calls placed",
+  "STORE_VISITS":          "Store visits",
+};
+
+const OPTIMIZATION_GOAL_LABELS: Record<string, string> = {
+  "CALL_CLICKS":           "Calls placed",
+  "LEAD_GENERATION":       "Leads",
+  "OFFSITE_CONVERSIONS":   "Conversions",
+  "LINK_CLICKS":           "Link clicks",
+  "LANDING_PAGE_VIEWS":    "Landing page views",
+  "REACH":                 "Reach",
+  "IMPRESSIONS":           "Impressions",
+  "VIDEO_VIEWS":           "Video views",
+  "ENGAGED_USERS":         "Post engagement",
+  "REPLIES":               "Messages",
+  "THRUPLAY":              "ThruPlay views",
+  "QUALITY_CALL":          "Calls placed",
+  "VALUE":                 "Value",
+};
+
+function getResultTypeLabel(
+  ins: Record<string, unknown>,
+  objective: string | null | undefined,
+  optimizationGoal: string | null | undefined,
+): string {
+  // 1. Best: use actual primary action type from insights
+  const costPerActionList = ins.cost_per_action_type as Record<string, string>[] | undefined;
+  if (Array.isArray(costPerActionList) && costPerActionList.length > 0) {
+    const t = costPerActionList[0].action_type;
+    if (ACTION_TYPE_LABELS[t]) return ACTION_TYPE_LABELS[t];
+    return t.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+  // 2. Fall back to optimization_goal (adset/ad level)
+  if (optimizationGoal && OPTIMIZATION_GOAL_LABELS[optimizationGoal]) {
+    return OPTIMIZATION_GOAL_LABELS[optimizationGoal];
+  }
+  // 3. Fall back to campaign objective
+  if (objective && OBJECTIVE_LABELS[objective]) {
+    return OBJECTIVE_LABELS[objective];
+  }
+  return "";
+}
+
+function extractResults(
+  ins: Record<string, unknown>,
+  objective: string | null | undefined,
+  optimizationGoal: string | null | undefined,
+): { conversions: number; costPerResult: number; resultType: string } {
   const actionsList = ins.actions;
   const costPerActionList = ins.cost_per_action_type;
   let totalActions = 0;
@@ -111,7 +189,8 @@ function extractResults(ins: Record<string, unknown>): { conversions: number; co
 
   const spend = parseFloat(ins.spend as string) || 0;
   const costPerResult = totalActions > 0 ? Math.round((spend / totalActions) * 100) / 100 : 0;
-  return { conversions: totalActions, costPerResult };
+  const resultType = getResultTypeLabel(ins, objective, optimizationGoal);
+  return { conversions: totalActions, costPerResult, resultType };
 }
 
 function safeFloat(d: Record<string, unknown>, key: string): number {
@@ -178,7 +257,9 @@ export async function GET(req: NextRequest) {
   // Build final rows: one per entity in meta
   const rows = Array.from(meta.entries()).map(([entityId, m]) => {
     const ins = insightsMap.get(entityId) ?? {};
-    const { conversions, costPerResult } = extractResults(ins);
+    const objective       = (m.objective        ?? null) as string | null;
+    const optimizationGoal = (m.optimization_goal ?? null) as string | null;
+    const { conversions, costPerResult, resultType } = extractResults(ins, objective, optimizationGoal);
 
     const budget = m.daily_budget
       ? parseFloat(m.daily_budget as string) / 100
@@ -189,15 +270,13 @@ export async function GET(req: NextRequest) {
 
     return {
       entityId,
-      // entityName must match the level — use meta.name as source of truth
-      // (ins.campaign_name is the PARENT campaign name, not the adset/ad name)
       entityName:   m.name as string,
       campaignId:   (ins.campaign_id   ?? null) as string | null,
       campaignName: (ins.campaign_name ?? null) as string | null,
       adsetId:      (ins.adset_id      ?? null) as string | null,
       adsetName:    (ins.adset_name    ?? null) as string | null,
       status:       m.effective_status as string,
-      objective:    (m.objective       ?? null) as string | null,
+      objective,
       budget,
       budgetType,
       impressions: parseInt(ins.impressions as string) || 0,
@@ -205,6 +284,7 @@ export async function GET(req: NextRequest) {
       spend:       parseFloat(ins.spend     as string) || 0,
       reach:       parseInt(ins.reach       as string) || 0,
       conversions,
+      resultType,
       ctr:         safeFloat(ins, "ctr"),
       cpc:         safeFloat(ins, "cpc"),
       cpm:         safeFloat(ins, "cpm"),

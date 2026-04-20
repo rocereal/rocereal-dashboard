@@ -56,6 +56,7 @@ interface AdRow {
   spend: number;
   reach: number;
   conversions: number;
+  resultType: string;
   ctr: number;
   cpc: number;
   cpm: number;
@@ -158,7 +159,16 @@ function buildColumns(level: Level, onDrillDown: (row: AdRow) => void): ColumnDe
           Results <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       ),
-      cell: ({ row }) => <span>{formatNum(row.getValue("conversions"))}</span>,
+      cell: ({ row }) => {
+        const count = row.getValue("conversions") as number;
+        const type  = row.original.resultType;
+        return (
+          <div className="flex flex-col leading-tight">
+            <span className="font-medium">{count > 0 ? formatNum(count) : "—"}</span>
+            {type && <span className="text-xs text-muted-foreground">{type}</span>}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "costPerResult",
@@ -168,8 +178,14 @@ function buildColumns(level: Level, onDrillDown: (row: AdRow) => void): ColumnDe
         </Button>
       ),
       cell: ({ row }) => {
-        const v = row.getValue("costPerResult") as number;
-        return <span>{v > 0 ? formatRON(v) : "—"}</span>;
+        const v    = row.getValue("costPerResult") as number;
+        const type = row.original.resultType;
+        return (
+          <div className="flex flex-col leading-tight">
+            <span>{v > 0 ? formatRON(v) : "—"}</span>
+            {type && <span className="text-xs text-muted-foreground">{v > 0 ? `Per ${type.toLowerCase()}` : type}</span>}
+          </div>
+        );
       },
     },
     {
