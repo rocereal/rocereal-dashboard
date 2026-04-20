@@ -34,7 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowUpDown, ChevronRight, Columns, Filter, Loader2, RefreshCw } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 
 type Level = "campaign" | "adset" | "ad";
@@ -245,9 +245,7 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [data, setData]             = useState<AdRow[]>([]);
   const [loading, setLoading]       = useState(true);
-  const [syncing, setSyncing]       = useState(false);
-  const [lastSynced, setLastSynced] = useState<Date | null>(null);
-  const syncTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [lastFetched, setLastFetched] = useState<Date | null>(null);
   const [sorting, setSorting]       = useState<SortingState>([{ id: "spend", desc: true }]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(HIDDEN_BY_DEFAULT);
@@ -263,30 +261,23 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
   };
 
   const fetchData = async (lvl = level, dr = drill) => {
-    const res = await fetch(`/api/education/facebook-ads?${buildParams(lvl, dr)}`);
+    const res = await fetch(`/api/education/facebook-ads?${buildParams(lvl, dr)}`, { cache: "no-store" });
     const d = await res.json();
     return Array.isArray(d) ? d : [];
   };
 
-  const runSync = async () => {
-    setSyncing(true);
+  const reload = async () => {
+    setLoading(true);
     try {
-      await fetch("/api/education/facebook-ads/sync", { method: "POST" });
-      const fresh = await fetchData();
-      setData(fresh);
-      setLastSynced(new Date());
+      const d = await fetchData();
+      setData(d);
+      setLastFetched(new Date());
     } catch { /* silently fail */ }
-    finally { setSyncing(false); }
+    finally { setLoading(false); }
   };
 
   useEffect(() => {
-    setLoading(true);
-    fetchData()
-      .then((d) => { setData(d); setLoading(false); })
-      .catch(() => setLoading(false));
-
-    syncTimeout.current = setTimeout(() => { runSync(); }, 800);
-    return () => { if (syncTimeout.current) clearTimeout(syncTimeout.current); };
+    reload();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level, drill, dateRange]);
 
@@ -369,17 +360,17 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
 
   return (
     <div className="space-y-3">
-      {/* Sync status bar */}
+      {/* Status bar */}
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-2">
-          <RefreshCw className={`h-3 w-3 ${syncing ? "animate-spin" : ""}`} />
-          {syncing
-            ? "Sincronizare cu Facebook Ads..."
-            : lastSynced
-            ? `Sincronizat la ${lastSynced.toLocaleTimeString("ro-RO")}`
+          <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
+          {loading
+            ? "Se încarcă din Facebook Ads..."
+            : lastFetched
+            ? `Actualizat la ${lastFetched.toLocaleTimeString("ro-RO")}`
             : "Facebook Ads"}
         </div>
-        <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={runSync} disabled={syncing}>
+        <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={reload} disabled={loading}>
           Refresh
         </Button>
       </div>
