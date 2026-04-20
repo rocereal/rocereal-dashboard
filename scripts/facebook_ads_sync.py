@@ -16,7 +16,7 @@ AD_ACCOUNT   = "act_680994874576116"  # rocereal sibiu
 API_BASE     = "https://graph.facebook.com/v21.0"
 
 # How many days back to sync (default 90, --full = all time)
-DAYS_BACK = 3650 if "--full" in sys.argv else 90
+DAYS_BACK = 1095 if "--full" in sys.argv else 90  # FB retains ~3 years of data
 
 COMMON_FIELDS = "impressions,clicks,spend,reach,frequency,ctr,cpc,cpm,cpp"
 CONVERSION_FIELDS = "purchase_roas,conversions,cost_per_conversion"
