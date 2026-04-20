@@ -1,0 +1,36 @@
+name: Facebook Ads Sync
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"   # every 4 hours
+  workflow_dispatch:
+    inputs:
+      full_sync:
+        description: "Full sync (all time history)"
+        required: false
+        default: "false"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests psycopg2-binary
+
+      - name: Run Facebook Ads sync
+        env:
+          FB_ACCESS_TOKEN:       ${{ secrets.FB_ACCESS_TOKEN }}
+          DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}
+        run: |
+          if [ "${{ github.event.inputs.full_sync }}" = "true" ]; then
+            python scripts/facebook_ads_sync.py --full
+          else
+            python scripts/facebook_ads_sync.py
+          fi

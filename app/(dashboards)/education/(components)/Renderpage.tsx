@@ -4,13 +4,12 @@ import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import {
   educationMetrics,
-  recentStudentsData,
   studentEngagementData,
   timeSpentByCourseData,
 } from "@/data/education";
 import { BookOpen, TrendingUp, Users } from "lucide-react";
 import { useState } from "react";
-import { RecentStudentsTable } from "./RecentStudentsTable";
+import { AdsManagerTable } from "./AdsManagerTable";
 import { SectionCards } from "./SectionCards";
 import { StudentEngagementChart } from "./StudentEngagementChart";
 import { TimeSpentChart } from "./TimeSpentChart";
@@ -72,16 +71,16 @@ export default function RenderPage() {
         </div>
       </div>
 
-      {/* Recent Students Table */}
+      {/* Facebook Ads Manager Table */}
       <div className="bg-card rounded-lg border">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">Recent Students Enrolled</h3>
             <span className="text-sm text-muted-foreground">
-              Latest student registrations
+              Date din Facebook Ads · rocereal sibiu
             </span>
           </div>
-          <RecentStudentsTable students={recentStudentsData} />
+          <AdsManagerTable dateRange={dateRange} />
         </div>
       </div>
     </div>

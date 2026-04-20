@@ -91,6 +91,41 @@ model SmartbillSyncState {
   updatedAt         DateTime @updatedAt
 }
 
+// Facebook Ads cache — one row per (level, entityId, date)
+model FacebookAdInsight {
+  id              String   @id @default(cuid())
+  level           String   // "campaign" | "adset" | "ad"
+  entityId        String   // campaign_id / adset_id / ad_id
+  entityName      String
+  campaignId      String?
+  campaignName    String?
+  adsetId         String?
+  adsetName       String?
+  status          String?
+  objective       String?
+  dateStart       DateTime
+  dateStop        DateTime
+  impressions     Int      @default(0)
+  clicks          Int      @default(0)
+  spend           Float    @default(0)
+  reach           Int      @default(0)
+  frequency       Float    @default(0)
+  ctr             Float    @default(0)   // click-through rate %
+  cpc             Float    @default(0)   // cost per click
+  cpm             Float    @default(0)   // cost per 1000 impressions
+  cpp             Float    @default(0)   // cost per result (purchase)
+  purchaseRoas    Float?                 // ROAS from purchase conversion
+  conversions     Int      @default(0)
+  costPerConversion Float  @default(0)
+  budget          Float?                 // daily or lifetime budget
+  budgetType      String?                // "daily" | "lifetime"
+  accountId       String
+  syncedAt        DateTime @default(now())
+
+  @@unique([level, entityId, dateStart, dateStop])
+  @@index([level, dateStart, dateStop])
+}
+
 model CrmCall {
   id              String   @id @default(cuid())
   invoxId         String   @unique
