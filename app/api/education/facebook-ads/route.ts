@@ -29,7 +29,11 @@ async function fbGet(url: string, params: Record<string, string>) {
   return results;
 }
 
-async function fetchMeta(level: string): Promise<Map<string, Record<string, unknown>>> {
+async function fetchMeta(
+  level: string,
+  campaignIds?: string,
+  adsetIds?: string,
+): Promise<Map<string, Record<string, unknown>>> {
   const endpoint =
     level === "campaign" ? "campaigns" :
     level === "adset"    ? "adsets"    : "ads";
@@ -39,7 +43,18 @@ async function fetchMeta(level: string): Promise<Map<string, Record<string, unkn
                            "id,name,effective_status,adset_id,campaign_id";
 
   const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, { fields });
-  return new Map(rows.map((r) => [r.id as string, r]));
+
+  // Filter for drill-down: adsets by campaignId, ads by adsetId
+  let filtered = rows;
+  if (level === "adset" && campaignIds) {
+    const ids = new Set(campaignIds.split(","));
+    filtered = rows.filter((r) => ids.has(r.campaign_id as string));
+  } else if (level === "ad" && adsetIds) {
+    const ids = new Set(adsetIds.split(","));
+    filtered = rows.filter((r) => ids.has(r.adset_id as string));
+  }
+
+  return new Map(filtered.map((r) => [r.id as string, r]));
 }
 
 async function fetchInsights(
@@ -55,14 +70,11 @@ async function fetchInsights(
     level === "adset"    ? `campaign_id,campaign_name,adset_id,adset_name,${baseFields}` :
                            `campaign_id,campaign_name,adset_id,adset_name,ad_id,ad_name,${baseFields}`;
 
-  const params: Record<string, string> = {
+  const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/insights`, {
     level,
     fields: levelFields,
     time_range: JSON.stringify({ since: dateStart, until: dateStop }),
-  };
-
-  // Drill-down filtering via breakdowns not supported in insights — we filter client-side below
-  const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/insights`, params);
+  });
 
   // Filter for drill-down
   if (level === "adset" && campaignIds) {
@@ -76,27 +88,54 @@ async function fetchInsights(
   return rows;
 }
 
-function extractResults(ins: Record<string, unknown>): { conversions: number; costPerResult: number } {
-  const actionsList = ins.actions;
-  const costPerActionList = ins.cost_per_action_type;
-  let totalActions = 0;
+// Map FB action_type keys to human-readable labels (same as Ads Manager)
+const ACTION_LABELS: Record<string, string> = {
+  "call":                                  "Calls placed",
+  "onsite_conversion.flow_complete":       "On-Facebook leads",
+  "lead":                                  "Leads",
+  "offsite_conversion.fb_pixel_lead":      "Leads",
+  "offsite_conversion.fb_pixel_purchase":  "Purchases",
+  "offsite_conversion.fb_pixel_complete_registration": "Registrations",
+  "link_click":                            "Link clicks",
+  "post_engagement":                       "Post engagement",
+  "page_engagement":                       "Page engagement",
+  "video_view":                            "Video views",
+  "omni_purchase":                         "Purchases",
+  "contact":                               "Contacts",
+  "contact_total":                         "Contacts",
+  "contact_website":                       "Website contacts",
+};
 
-  if (Array.isArray(costPerActionList) && costPerActionList.length > 0) {
-    const primaryType = (costPerActionList[0] as Record<string, string>).action_type;
-    totalActions = Array.isArray(actionsList)
-      ? actionsList
-          .filter((a) => (a as Record<string, string>).action_type === primaryType)
-          .reduce((sum, a) => sum + Math.round(parseFloat((a as Record<string, string>).value ?? "0")), 0)
-      : 0;
-  } else if (Array.isArray(actionsList)) {
-    totalActions = actionsList.reduce(
-      (sum, a) => sum + Math.round(parseFloat((a as Record<string, string>).value ?? "0")), 0
-    );
+function getActionLabel(actionType: string): string {
+  return ACTION_LABELS[actionType] ?? actionType.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function extractResults(ins: Record<string, unknown>): {
+  conversions: number;
+  costPerResult: number;
+  resultType: string;
+} {
+  const actionsList = ins.actions as Record<string, string>[] | undefined;
+  const costPerActionList = ins.cost_per_action_type as Record<string, string>[] | undefined;
+
+  if (!Array.isArray(costPerActionList) || costPerActionList.length === 0 || !Array.isArray(actionsList)) {
+    return { conversions: 0, costPerResult: 0, resultType: "" };
   }
+
+  // cost_per_action_type[0] is the campaign's primary optimization action
+  const primaryType = costPerActionList[0].action_type;
+  const totalActions = actionsList
+    .filter((a) => a.action_type === primaryType)
+    .reduce((sum, a) => sum + Math.round(parseFloat(a.value ?? "0")), 0);
 
   const spend = parseFloat(ins.spend as string) || 0;
   const costPerResult = totalActions > 0 ? Math.round((spend / totalActions) * 100) / 100 : 0;
-  return { conversions: totalActions, costPerResult };
+
+  return {
+    conversions: totalActions,
+    costPerResult,
+    resultType: getActionLabel(primaryType),
+  };
 }
 
 function safeFloat(d: Record<string, unknown>, key: string): number {
@@ -104,6 +143,18 @@ function safeFloat(d: Record<string, unknown>, key: string): number {
   if (v == null) return 0;
   if (Array.isArray(v) && v.length > 0) return parseFloat((v[0] as Record<string, string>).value ?? "0") || 0;
   return parseFloat(v as string) || 0;
+}
+
+function getEntityId(level: string, ins: Record<string, unknown>): string {
+  if (level === "campaign") return ins.campaign_id as string;
+  if (level === "adset")    return ins.adset_id    as string;
+  return ins.ad_id as string;
+}
+
+function getEntityName(level: string, ins: Record<string, unknown>): string {
+  if (level === "campaign") return ins.campaign_name as string;
+  if (level === "adset")    return ins.adset_name    as string;
+  return ins.ad_name as string;
 }
 
 export async function GET(req: NextRequest) {
@@ -114,36 +165,30 @@ export async function GET(req: NextRequest) {
   const from        = searchParams.get("from");
   const to          = searchParams.get("to");
   const campaignIds = searchParams.get("campaignIds") ?? undefined;
-  const adsetIds    = searchParams.get("adsetIds") ?? undefined;
+  const adsetIds    = searchParams.get("adsetIds")    ?? undefined;
 
-  // Default to today if no date range provided
   const today = new Date().toISOString().slice(0, 10);
   const dateStart = from ?? today;
   const dateStop  = to   ?? today;
 
-  // Fetch metadata (all entities with current effective_status) and insights in parallel
   const [meta, insightRows] = await Promise.all([
-    fetchMeta(level),
+    fetchMeta(level, campaignIds, adsetIds),
     fetchInsights(level, dateStart, dateStop, campaignIds, adsetIds),
   ]);
 
-  // Build a map of insights aggregated by entityId (sum over the date range)
+  // Aggregate insights by entityId (sum across days if date range > 1 day)
   const insightsMap = new Map<string, Record<string, unknown>>();
   for (const ins of insightRows) {
-    const entityId =
-      level === "campaign" ? ins.campaign_id as string :
-      level === "adset"    ? ins.adset_id    as string :
-                             ins.ad_id       as string;
+    const entityId = getEntityId(level, ins);
     if (!insightsMap.has(entityId)) {
       insightsMap.set(entityId, { ...ins });
     } else {
-      // Aggregate numerics
       const existing = insightsMap.get(entityId)!;
-      for (const key of ["impressions", "clicks", "reach"] as const) {
-        existing[key] = (parseInt(existing[key] as string) || 0) + (parseInt(ins[key] as string) || 0);
-      }
-      existing.spend = ((parseFloat(existing.spend as string) || 0) + (parseFloat(ins.spend as string) || 0)).toFixed(2);
-      // For actions, merge arrays
+      existing.impressions = String((parseInt(existing.impressions as string) || 0) + (parseInt(ins.impressions as string) || 0));
+      existing.clicks      = String((parseInt(existing.clicks      as string) || 0) + (parseInt(ins.clicks      as string) || 0));
+      existing.reach       = String((parseInt(existing.reach       as string) || 0) + (parseInt(ins.reach       as string) || 0));
+      existing.spend       = ((parseFloat(existing.spend as string) || 0) + (parseFloat(ins.spend as string) || 0)).toFixed(2);
+      // Merge actions array
       if (Array.isArray(ins.actions)) {
         const existingActions = (existing.actions as Record<string, string>[]) ?? [];
         for (const a of ins.actions as Record<string, string>[]) {
@@ -156,14 +201,14 @@ export async function GET(req: NextRequest) {
         }
         existing.actions = existingActions;
       }
-      // Keep cost_per_action_type from first row (identifies the primary action type)
+      // Keep cost_per_action_type from first row (identifies primary action type)
     }
   }
 
-  // Build final rows: one per entity in meta
+  // Build final rows: one per entity from meta
   const rows = Array.from(meta.entries()).map(([entityId, m]) => {
     const ins = insightsMap.get(entityId) ?? {};
-    const { conversions, costPerResult } = extractResults(ins);
+    const { conversions, costPerResult, resultType } = extractResults(ins);
 
     const budget = m.daily_budget
       ? parseFloat(m.daily_budget as string) / 100
@@ -172,9 +217,13 @@ export async function GET(req: NextRequest) {
       : null;
     const budgetType = m.daily_budget ? "daily" : m.lifetime_budget ? "lifetime" : null;
 
+    const entityName = Object.keys(ins).length > 0
+      ? getEntityName(level, ins)
+      : m.name as string;
+
     return {
       entityId,
-      entityName:   (ins.campaign_name ?? ins.adset_name ?? ins.ad_name ?? m.name) as string,
+      entityName,
       campaignId:   (ins.campaign_id   ?? null) as string | null,
       campaignName: (ins.campaign_name ?? null) as string | null,
       adsetId:      (ins.adset_id      ?? null) as string | null,
@@ -188,6 +237,7 @@ export async function GET(req: NextRequest) {
       spend:       parseFloat(ins.spend     as string) || 0,
       reach:       parseInt(ins.reach       as string) || 0,
       conversions,
+      resultType,
       ctr:         safeFloat(ins, "ctr"),
       cpc:         safeFloat(ins, "cpc"),
       cpm:         safeFloat(ins, "cpm"),
@@ -197,7 +247,6 @@ export async function GET(req: NextRequest) {
     };
   });
 
-  // Sort: entities with spend first, then by spend desc
   rows.sort((a, b) => b.spend - a.spend);
 
   return NextResponse.json(rows);
