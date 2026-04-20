@@ -7,6 +7,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -415,13 +416,13 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
               <DropdownMenuLabel>Filtrează status</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {STATUS_OPTIONS.map((o) => (
-                <DropdownMenuCheckboxItem
+                <DropdownMenuItem
                   key={o.value}
-                  checked={statusFilter === o.value}
-                  onCheckedChange={() => setStatusFilter(o.value)}
+                  onClick={() => { setStatusFilter(o.value); setRowSelection({}); }}
+                  className={statusFilter === o.value ? "font-medium bg-accent" : ""}
                 >
                   {o.label}
-                </DropdownMenuCheckboxItem>
+                </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
