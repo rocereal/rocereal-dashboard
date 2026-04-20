@@ -34,7 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowUpDown, ChevronRight, Columns, Filter, Loader2, RefreshCw } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { format } from "date-fns";
 
 type Level = "campaign" | "adset" | "ad";
@@ -325,10 +325,11 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
     setRowSelection({});
   };
 
-  // Apply status filter client-side
-  const filteredData = statusFilter === "ALL"
-    ? data
-    : data.filter((r) => r.status === statusFilter);
+  // Apply status filter client-side — memoized to avoid new array ref on every render
+  const filteredData = useMemo(
+    () => statusFilter === "ALL" ? data : data.filter((r) => r.status === statusFilter),
+    [data, statusFilter]
+  );
 
   const columns = buildColumns(level, handleDrillDown);
 
