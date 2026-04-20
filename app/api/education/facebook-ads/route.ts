@@ -42,7 +42,15 @@ async function fetchMeta(
     level === "adset"    ? "id,name,effective_status,daily_budget,lifetime_budget,campaign_id" :
                            "id,name,effective_status,adset_id,campaign_id";
 
-  const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, { fields });
+  // For campaigns: explicitly request all statuses including COMPLETED.
+  // Facebook API default returns only ACTIVE/PAUSED when no filter is set.
+  // Note: this filter only works for /campaigns, not /adsets or /ads.
+  const params: Record<string, string> = { fields };
+  if (level === "campaign") {
+    params.effective_status = '["ACTIVE","PAUSED","ARCHIVED","DELETED","COMPLETED","IN_PROCESS","WITH_ISSUES"]';
+  }
+
+  const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, params);
 
   // Filter for drill-down: adsets by campaignId, ads by adsetId
   let filtered = rows;
