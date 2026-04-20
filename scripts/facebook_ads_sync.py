@@ -56,19 +56,19 @@ def fetch_entity_meta(level: str) -> dict:
     meta = {}
     if level == "campaign":
         rows = fb_get(f"{API_BASE}/{AD_ACCOUNT}/campaigns", {
-            "fields": "id,name,status,objective,daily_budget,lifetime_budget",
+            "fields": "id,name,status,effective_status,objective,daily_budget,lifetime_budget",
         })
         for r in rows:
             meta[r["id"]] = r
     elif level == "adset":
         rows = fb_get(f"{API_BASE}/{AD_ACCOUNT}/adsets", {
-            "fields": "id,name,status,daily_budget,lifetime_budget,campaign_id",
+            "fields": "id,name,status,effective_status,daily_budget,lifetime_budget,campaign_id",
         })
         for r in rows:
             meta[r["id"]] = r
     elif level == "ad":
         rows = fb_get(f"{API_BASE}/{AD_ACCOUNT}/ads", {
-            "fields": "id,name,status,adset_id,campaign_id",
+            "fields": "id,name,status,effective_status,adset_id,campaign_id",
         })
         for r in rows:
             meta[r["id"]] = r
@@ -125,7 +125,7 @@ def build_rows(level: str, insights: list[dict], meta: dict) -> list[tuple]:
             adset_name = i.get("adset_name")
 
         m = meta.get(entity_id, {})
-        status    = m.get("status")
+        status    = m.get("effective_status") or m.get("status")
         objective = m.get("objective")
 
         # Budget

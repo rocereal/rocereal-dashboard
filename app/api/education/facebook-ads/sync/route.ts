@@ -33,7 +33,7 @@ async function fbGet(url: string, params: Record<string, string>) {
 }
 
 async function fetchInsights(level: string, dateStart: string, dateStop: string) {
-  const baseFields = "impressions,clicks,spend,reach,frequency,ctr,cpc,cpm,cpp,purchase_roas,conversions,cost_per_conversion";
+  const baseFields = "impressions,clicks,spend,reach,frequency,ctr,cpc,cpm,cpp,purchase_roas,actions,cost_per_action_type";
   const levelFields =
     level === "campaign" ? `campaign_id,campaign_name,${baseFields}` :
     level === "adset"    ? `campaign_id,campaign_name,adset_id,adset_name,${baseFields}` :
@@ -53,9 +53,9 @@ async function fetchMeta(level: string) {
     level === "campaign" ? "campaigns" :
     level === "adset"    ? "adsets" : "ads";
   const fields =
-    level === "campaign" ? "id,name,status,objective,daily_budget,lifetime_budget" :
-    level === "adset"    ? "id,name,status,daily_budget,lifetime_budget,campaign_id" :
-                           "id,name,status,adset_id,campaign_id";
+    level === "campaign" ? "id,name,status,effective_status,objective,daily_budget,lifetime_budget" :
+    level === "adset"    ? "id,name,status,effective_status,daily_budget,lifetime_budget,campaign_id" :
+                           "id,name,status,effective_status,adset_id,campaign_id";
 
   const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, { fields });
   for (const r of rows) meta[r.id as string] = r;
@@ -101,6 +101,14 @@ export async function POST() {
                          m.lifetime_budget ? parseFloat(m.lifetime_budget as string) / 100 : null;
       const budgetType = m.daily_budget ? "daily" : m.lifetime_budget ? "lifetime" : null;
 
+      // Sum all actions (calls, leads, etc.) — same logic as facebook_ads_sync.py
+      const actionsList = ins.actions;
+      const totalActions = Array.isArray(actionsList)
+        ? actionsList.reduce((sum, a) => sum + Math.round(parseFloat((a as Record<string, string>).value ?? "0")), 0)
+        : 0;
+      const spendVal = safeFloat(ins, "spend");
+      const costPerResult = totalActions > 0 ? Math.round((spendVal / totalActions) * 100) / 100 : 0;
+
       const ds = new Date((ins.date_start as string) + "T00:00:00Z");
       const de = new Date((ins.date_stop  as string) + "T00:00:00Z");
 
@@ -112,39 +120,39 @@ export async function POST() {
           campaignName: (ins.campaign_name as string) ?? null,
           adsetId:      (ins.adset_id      as string) ?? null,
           adsetName:    (ins.adset_name    as string) ?? null,
-          status:       (m.status          as string) ?? null,
+          status:       ((m.effective_status ?? m.status) as string) ?? null,
           objective:    (m.objective       as string) ?? null,
           dateStart: ds, dateStop: de,
           impressions: safeInt(ins,   "impressions"),
           clicks:      safeInt(ins,   "clicks"),
-          spend:       safeFloat(ins, "spend"),
+          spend:       spendVal,
           reach:       safeInt(ins,   "reach"),
           frequency:   safeFloat(ins, "frequency"),
           ctr:         safeFloat(ins, "ctr"),
           cpc:         safeFloat(ins, "cpc"),
           cpm:         safeFloat(ins, "cpm"),
           cpp:         safeFloat(ins, "cpp"),
-          purchaseRoas:       safeFloat(ins, "purchase_roas") || null,
-          conversions:        safeInt(ins,   "conversions"),
-          costPerConversion:  safeFloat(ins, "cost_per_conversion"),
+          purchaseRoas:      safeFloat(ins, "purchase_roas") || null,
+          conversions:       totalActions,
+          costPerConversion: costPerResult,
           budget, budgetType,
           accountId: AD_ACCOUNT,
         },
         update: {
           entityName,
-          status:      (m.status as string) ?? null,
+          status:      ((m.effective_status ?? m.status) as string) ?? null,
           impressions: safeInt(ins,   "impressions"),
           clicks:      safeInt(ins,   "clicks"),
-          spend:       safeFloat(ins, "spend"),
+          spend:       spendVal,
           reach:       safeInt(ins,   "reach"),
           frequency:   safeFloat(ins, "frequency"),
           ctr:         safeFloat(ins, "ctr"),
           cpc:         safeFloat(ins, "cpc"),
           cpm:         safeFloat(ins, "cpm"),
           cpp:         safeFloat(ins, "cpp"),
-          purchaseRoas:       safeFloat(ins, "purchase_roas") || null,
-          conversions:        safeInt(ins,   "conversions"),
-          costPerConversion:  safeFloat(ins, "cost_per_conversion"),
+          purchaseRoas:      safeFloat(ins, "purchase_roas") || null,
+          conversions:       totalActions,
+          costPerConversion: costPerResult,
           budget, budgetType,
           syncedAt: new Date(),
         },

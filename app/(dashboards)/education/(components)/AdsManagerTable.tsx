@@ -38,7 +38,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { format } from "date-fns";
 
 type Level = "campaign" | "adset" | "ad";
-type StatusFilter = "ALL" | "ACTIVE" | "PAUSED" | "ARCHIVED";
+type StatusFilter = "ALL" | "ACTIVE" | "PAUSED" | "COMPLETED" | "ARCHIVED";
 
 interface AdRow {
   entityId: string;
@@ -82,10 +82,11 @@ const formatNum = (v: number) =>
 const StatusBadge = ({ status }: { status: string | null }) => {
   if (!status) return <span className="text-muted-foreground">—</span>;
   const color =
-    status === "ACTIVE"   ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300" :
-    status === "PAUSED"   ? "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950 dark:text-yellow-300" :
-    status === "ARCHIVED" ? "bg-gray-50 text-gray-500 border-gray-200" :
-                            "bg-gray-50 text-gray-500 border-gray-200";
+    status === "ACTIVE"    ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300" :
+    status === "PAUSED"    ? "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950 dark:text-yellow-300" :
+    status === "COMPLETED" ? "bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950 dark:text-blue-300" :
+    status === "ARCHIVED"  ? "bg-gray-50 text-gray-500 border-gray-200" :
+                             "bg-gray-50 text-gray-500 border-gray-200";
   return <Badge variant="outline" className={color}>{status}</Badge>;
 };
 
@@ -227,10 +228,11 @@ const HIDDEN_BY_DEFAULT: VisibilityState = {
 };
 
 const STATUS_OPTIONS: { label: string; value: StatusFilter }[] = [
-  { label: "Toate",    value: "ALL"      },
-  { label: "Active",   value: "ACTIVE"   },
-  { label: "Pauzate",  value: "PAUSED"   },
-  { label: "Arhivate", value: "ARCHIVED" },
+  { label: "Toate",     value: "ALL"       },
+  { label: "Active",    value: "ACTIVE"    },
+  { label: "Pauzate",   value: "PAUSED"    },
+  { label: "Finalizate",value: "COMPLETED" },
+  { label: "Arhivate",  value: "ARCHIVED"  },
 ];
 
 interface AdsManagerTableProps {
