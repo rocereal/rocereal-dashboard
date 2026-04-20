@@ -165,26 +165,51 @@ function getResultTypeLabel(
   return "";
 }
 
+// Maps optimization_goal → the exact action_type Facebook Ads Manager counts as "Results"
+// This is the source of truth — matches what FB shows in the Results column
+const GOAL_TO_ACTION: Record<string, string> = {
+  "CALL_CLICKS":           "click_to_call_native_call_placed",
+  "QUALITY_CALL":          "click_to_call_native_call_placed",
+  "LEAD_GENERATION":       "lead",
+  "OFFSITE_CONVERSIONS":   "offsite_conversion.fb_pixel_purchase",
+  "LINK_CLICKS":           "link_click",
+  "LANDING_PAGE_VIEWS":    "landing_page_view",
+  "REACH":                 "reach",
+  "IMPRESSIONS":           "impressions",
+  "VIDEO_VIEWS":           "video_view",
+  "THRUPLAY":              "video_view",
+  "ENGAGED_USERS":         "post_engagement",
+  "REPLIES":               "onsite_conversion.messaging_conversation_started_7d",
+  "VALUE":                 "offsite_conversion.fb_pixel_purchase",
+};
+
 function extractResults(
   ins: Record<string, unknown>,
   objective: string | null | undefined,
   optimizationGoal: string | null | undefined,
 ): { conversions: number; costPerResult: number; resultType: string } {
-  const actionsList = ins.actions;
-  const costPerActionList = ins.cost_per_action_type;
-  let totalActions = 0;
+  const actionsList = ins.actions as Record<string, string>[] | undefined;
 
-  if (Array.isArray(costPerActionList) && costPerActionList.length > 0) {
-    const primaryType = (costPerActionList[0] as Record<string, string>).action_type;
-    totalActions = Array.isArray(actionsList)
-      ? actionsList
-          .filter((a) => (a as Record<string, string>).action_type === primaryType)
-          .reduce((sum, a) => sum + Math.round(parseFloat((a as Record<string, string>).value ?? "0")), 0)
-      : 0;
-  } else if (Array.isArray(actionsList)) {
-    totalActions = actionsList.reduce(
-      (sum, a) => sum + Math.round(parseFloat((a as Record<string, string>).value ?? "0")), 0
-    );
+  let primaryActionType: string | null = null;
+
+  // 1. Best: use optimization_goal → exact action_type mapping (matches Ads Manager)
+  if (optimizationGoal && GOAL_TO_ACTION[optimizationGoal]) {
+    primaryActionType = GOAL_TO_ACTION[optimizationGoal];
+  }
+
+  // 2. Fallback: use cost_per_action_type[0] (less reliable but better than nothing)
+  if (!primaryActionType) {
+    const costPerActionList = ins.cost_per_action_type as Record<string, string>[] | undefined;
+    if (Array.isArray(costPerActionList) && costPerActionList.length > 0) {
+      primaryActionType = costPerActionList[0].action_type;
+    }
+  }
+
+  let totalActions = 0;
+  if (primaryActionType && Array.isArray(actionsList)) {
+    totalActions = actionsList
+      .filter((a) => a.action_type === primaryActionType)
+      .reduce((sum, a) => sum + Math.round(parseFloat(a.value ?? "0")), 0);
   }
 
   const spend = parseFloat(ins.spend as string) || 0;
