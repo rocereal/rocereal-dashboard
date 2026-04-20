@@ -42,36 +42,15 @@ async function fetchMeta(
     level === "adset"    ? "id,name,effective_status,daily_budget,lifetime_budget,campaign_id" :
                            "id,name,effective_status,adset_id,campaign_id";
 
-  let rows: Record<string, unknown>[] = [];
-
+  // For campaigns: explicitly request all statuses including COMPLETED.
+  // Facebook API default returns only ACTIVE/PAUSED when no filter is set.
+  // Note: this filter only works for /campaigns, not /adsets or /ads.
+  const params: Record<string, string> = { fields };
   if (level === "campaign") {
-    // Facebook API by default returns only ACTIVE/PAUSED campaigns.
-    // To get COMPLETED ones we need to pass each status as a separate
-    // effective_status[] query param — NOT a JSON array string.
-    const url = new URL(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`);
-    url.searchParams.set("fields", fields);
-    url.searchParams.set("access_token", FB_TOKEN);
-    url.searchParams.set("limit", "500");
-    for (const s of ["ACTIVE", "PAUSED", "ARCHIVED", "DELETED", "COMPLETED", "IN_PROCESS", "WITH_ISSUES"]) {
-      url.searchParams.append("effective_status[]", s);
-    }
-    let nextUrl: string | null = url.toString();
-    while (nextUrl) {
-      const resp = await fetch(nextUrl, { cache: "no-store" });
-      if (!resp.ok) {
-        // If multi-status filter fails, fall back to default (ACTIVE/PAUSED only)
-        const fallback = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, { fields });
-        rows = fallback;
-        nextUrl = null;
-        break;
-      }
-      const json = await resp.json() as { data?: Record<string, unknown>[]; paging?: { next?: string } };
-      rows.push(...(json.data ?? []));
-      nextUrl = json.paging?.next ?? null;
-    }
-  } else {
-    rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, { fields });
+    params.effective_status = '["ACTIVE","PAUSED","ARCHIVED","DELETED","COMPLETED","IN_PROCESS","WITH_ISSUES"]';
   }
+
+  const rows = await fbGet(`${API_BASE}/${AD_ACCOUNT}/${endpoint}`, params);
 
   // Filter for drill-down: adsets by campaignId, ads by adsetId
   let filtered = rows;
@@ -189,7 +168,6 @@ function getEntityName(level: string, ins: Record<string, unknown>): string {
 export async function GET(req: NextRequest) {
   if (!FB_TOKEN) return NextResponse.json({ error: "FB_ACCESS_TOKEN not set" }, { status: 500 });
 
-  try {
   const { searchParams } = req.nextUrl;
   const level       = searchParams.get("level") || "campaign";
   const from        = searchParams.get("from");
@@ -280,8 +258,4 @@ export async function GET(req: NextRequest) {
   rows.sort((a, b) => b.spend - a.spend);
 
   return NextResponse.json(rows);
-  } catch (err) {
-    console.error("FB API error:", err);
-    return NextResponse.json({ error: String(err) }, { status: 502 });
-  }
 }
