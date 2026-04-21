@@ -3,9 +3,9 @@ import {
   BookCheck,
   CalendarDays,
   Database,
-  GraduationCap,
   LayoutDashboard,
   MapPin,
+  Megaphone,
   Settings2,
   ShoppingCart,
   SquareTerminal,
@@ -34,7 +34,6 @@ export const menudata = {
       icon: Users,
       items: [
         { title: "Raport Clienti", url: "/crm" },
-        { title: "Invox", url: "/crm/invox" },
       ],
     },
     {
@@ -54,7 +53,7 @@ export const menudata = {
     {
       title: "Canale Marketing",
       url: "#",
-      icon: GraduationCap,
+      icon: Megaphone,
       items: [
         { title: "Canale Marketing", url: "/education" },
         { title: "Facebook Ads", url: "/education/facebook-ads" },
@@ -66,7 +65,6 @@ export const menudata = {
       icon: Banknote,
       items: [
         { title: "Rapoarte Financiare", url: "/finance" },
-        { title: "Smartbill", url: "/finance/smartbill" },
       ],
     },
 
@@ -83,6 +81,9 @@ export const menudata = {
       icon: Database,
       items: [
         { title: "Google Analytics", url: "/surse-date/google-analytics" },
+        { title: "Invox", url: "/crm/invox" },
+        { title: "Smartbill", url: "/finance/smartbill" },
+        { title: "Facebook Ads", url: "/education/facebook-ads" },
       ],
     },
 
@@ -116,9 +117,6 @@ export const menudata = {
       title: "Settings",
       isSection: true,
     },
-    // ======================
-    // Changelog
-    // ======================
     {
       title: "Changelog",
       url: "/pages/changelog",
@@ -149,15 +147,23 @@ export const menudataMobile = {
       icon: LayoutDashboard,
       items: [
         { title: "Raport Clienti", url: "/crm" },
-        { title: "Invox", url: "/crm/invox" },
         { title: "Tracking Mașini", url: "/tracking" },
         { title: "Canale Vanzare", url: "/ecommerce" },
         { title: "Magazine Online", url: "/ecommerce/magazine-online" },
         { title: "Canale Marketing", url: "/education" },
         { title: "Facebook Ads", url: "/education/facebook-ads" },
         { title: "Rapoarte Financiare", url: "/finance" },
-        { title: "Smartbill", url: "/finance/smartbill" },
+      ],
+    },
+    {
+      title: "Colectare Date",
+      url: "#",
+      icon: Database,
+      items: [
         { title: "Google Analytics", url: "/surse-date/google-analytics" },
+        { title: "Invox", url: "/crm/invox" },
+        { title: "Smartbill", url: "/finance/smartbill" },
+        { title: "Facebook Ads", url: "/education/facebook-ads" },
       ],
     },
 
