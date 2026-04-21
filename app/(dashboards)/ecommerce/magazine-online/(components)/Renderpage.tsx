@@ -14,8 +14,8 @@ import {
 } from "@/data/ecommerce";
 import { TrendingUp } from "lucide-react";
 import { useState } from "react";
-import { SectionCards } from "./SectionCards";
-import { ProductsTable } from "./ProductsTable";
+import { SectionCards } from "@/app/(dashboards)/ecommerce/(components)/SectionCards";
+import { ProductsTable } from "@/app/(dashboards)/ecommerce/(components)/ProductsTable";
 
 const revenueConfig: ChartConfig = {
   revenue: {
@@ -24,61 +24,33 @@ const revenueConfig: ChartConfig = {
   },
 };
 
-/**
- * E-commerce Render Page Component
- * This is the main rendering component for the e-commerce dashboard page
- * It displays the dashboard header, metrics cards, revenue chart, conversion funnel, and products table
- * Provides the overall layout and functionality for the E-commerce Performance dashboard
- * @returns The JSX element representing the complete e-commerce dashboard page layout
- */
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
   const [products, setProducts] = useState(productsData);
 
-  /**
-   * Handle Edit Product Function
-   * Handles the edit action for a product
-   * Logs the product to console and prepares for edit functionality implementation
-   * @param product - The product object to be edited
-   */
   const handleEdit = (product: Product) => {
     console.log("Edit product:", product);
-    // Implement edit functionality
   };
 
-  /**
-   * Handle Delete Product Function
-   * Handles the delete action for a product with user confirmation
-   * Shows a confirmation dialog and removes the product from the list if confirmed
-   * @param product - The product object to be deleted
-   */
   const handleDelete = (product: Product) => {
-    console.log("Delete product:", product);
-    // Implement delete functionality with confirmation
     if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
       setProducts(products.filter((p) => p.id !== product.id));
     }
   };
 
-  /**
-   * Handle View Product Function
-   * Handles the view action for a product
-   * Logs the product to console and prepares for view details functionality implementation
-   * @param product - The product object to be viewed
-   */
   const handleView = (product: Product) => {
     console.log("View product:", product);
-    // Implement view details functionality
   };
 
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
-        title="Canale Vanzare"
+        title="Magazine Online"
         subtitle="Monitor sales, customer behavior, and product performance to drive growth."
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
-          { label: "Canale Vanzare" },
+          { label: "Canale Vanzare", href: "/ecommerce" },
+          { label: "Magazine Online" },
         ]}
         primaryAction={{
           label: "Add Product",
@@ -91,7 +63,6 @@ export default function RenderPage() {
       <SectionCards metrics={ecommerceMetrics} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Price Chart - Takes 2 columns */}
         <div className="lg:col-span-2 h-full">
           <SampleLineChart
             data={revenueData}
@@ -105,8 +76,6 @@ export default function RenderPage() {
             className="h-full"
           />
         </div>
-
-        {/* Coin Converter - Takes 1 column */}
         <div className="lg:col-span-1 h-full">
           <FunnelChart
             data={conversionFunnelData}
@@ -117,7 +86,6 @@ export default function RenderPage() {
         </div>
       </div>
 
-      {/* Products Table */}
       <div className="bg-card rounded-lg border">
         <div className="p-6">
           <h3 className="text-lg font-semibold mb-4">Product Catalog</h3>

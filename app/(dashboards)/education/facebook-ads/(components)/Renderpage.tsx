@@ -9,18 +9,11 @@ import {
 } from "@/data/education";
 import { BookOpen, TrendingUp, Users } from "lucide-react";
 import { useState } from "react";
-import { AdsManagerTable } from "./AdsManagerTable";
-import { SectionCards } from "./SectionCards";
-import { StudentEngagementChart } from "./StudentEngagementChart";
-import { TimeSpentChart } from "./TimeSpentChart";
+import { AdsManagerTable } from "@/app/(dashboards)/education/(components)/AdsManagerTable";
+import { SectionCards } from "@/app/(dashboards)/education/(components)/SectionCards";
+import { StudentEngagementChart } from "@/app/(dashboards)/education/(components)/StudentEngagementChart";
+import { TimeSpentChart } from "@/app/(dashboards)/education/(components)/TimeSpentChart";
 
-/**
- * Education Render Page Component
- * This is the main rendering component for the education dashboard page
- * It displays the dashboard header, metrics cards, engagement charts, time spent charts, and recent students table
- * Provides the overall layout and functionality for the Learning Performance dashboard
- * @returns The JSX element representing the complete education dashboard page layout
- */
 export default function RenderPage() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -31,11 +24,12 @@ export default function RenderPage() {
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
-        title="Canale Marketing"
+        title="Facebook Ads"
         subtitle="Track student progress, course performance, and engagement across programs."
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
-          { label: "Canale Marketing" },
+          { label: "Canale Marketing", href: "/education" },
+          { label: "Facebook Ads" },
         ]}
         primaryAction={{
           label: "Add Course",
@@ -45,12 +39,9 @@ export default function RenderPage() {
         onDateRangeChange={setDateRange}
       />
 
-      {/* Education Metrics Cards */}
       <SectionCards metrics={educationMetrics} />
 
-      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Student Engagement Line Chart */}
         <div className="bg-card rounded-lg border p-6">
           <div className="flex items-center gap-2 mb-4">
             <Users className="h-5 w-5 text-primary" />
@@ -62,7 +53,6 @@ export default function RenderPage() {
           <StudentEngagementChart data={studentEngagementData} />
         </div>
 
-        {/* Time Spent Bar Chart */}
         <div className="bg-card rounded-lg border p-6">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="h-5 w-5 text-primary" />
@@ -75,7 +65,6 @@ export default function RenderPage() {
         </div>
       </div>
 
-      {/* Facebook Ads Manager Table */}
       <div className="bg-card rounded-lg border">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
