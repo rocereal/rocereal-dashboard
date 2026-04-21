@@ -2,6 +2,7 @@ import {
   Banknote,
   BookCheck,
   CalendarDays,
+  Database,
   GraduationCap,
   LayoutDashboard,
   MapPin,
@@ -66,6 +67,22 @@ export const menudata = {
       items: [
         { title: "Rapoarte Financiare", url: "/finance" },
         { title: "Smartbill", url: "/finance/smartbill" },
+      ],
+    },
+
+    // ======================
+    // Colectare Date
+    // ======================
+    {
+      title: "Colectare Date",
+      isSection: true,
+    },
+    {
+      title: "Surse de date",
+      url: "#",
+      icon: Database,
+      items: [
+        { title: "Google Analytics", url: "/surse-date/google-analytics" },
       ],
     },
 
@@ -140,6 +157,7 @@ export const menudataMobile = {
         { title: "Facebook Ads", url: "/education/facebook-ads" },
         { title: "Rapoarte Financiare", url: "/finance" },
         { title: "Smartbill", url: "/finance/smartbill" },
+        { title: "Google Analytics", url: "/surse-date/google-analytics" },
       ],
     },
 
