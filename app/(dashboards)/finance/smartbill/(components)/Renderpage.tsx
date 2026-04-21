@@ -6,10 +6,9 @@ import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { financeCharts, financeMetrics, profitLossData } from "@/data/finance";
-// TransactionsTable self-fetches from /api/finance/invoices (SmartBill)
 import { useState } from "react";
-import { SectionCards } from "./SectionCards";
-import { TransactionsTable } from "./TransactionsTable";
+import { SectionCards } from "@/app/(dashboards)/finance/(components)/SectionCards";
+import { TransactionsTable } from "@/app/(dashboards)/finance/(components)/TransactionsTable";
 
 const profitLossConfig: ChartConfig = {
   profit: {
@@ -18,24 +17,17 @@ const profitLossConfig: ChartConfig = {
   },
 };
 
-/**
- * Finance Render Page Component
- * This is the main rendering component for the finance dashboard page
- * It displays the dashboard header, metrics cards, profit/loss chart, asset allocation chart, and transactions table
- * Provides the overall layout and functionality for the Financial Performance dashboard
- * @returns The JSX element representing the complete finance dashboard page layout
- */
 export default function RenderPage() {
   const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
-        title="Rapoarte Financiare"
-        subtitle="Monitor revenue, expenses, and investment trends to optimize financial health."
+        title="Smartbill"
+        subtitle="Rapoarte și facturi din SmartBill — venituri, cheltuieli și tranzacții."
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
           { label: "Rapoarte Financiare", href: "/finance" },
-          { label: "Rapoarte Financiare" },
+          { label: "Smartbill" },
         ]}
         dateRange={dateRange}
         onDateRangeChange={setDateRange}

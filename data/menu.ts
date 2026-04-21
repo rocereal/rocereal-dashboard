@@ -58,9 +58,13 @@ export const menudata = {
       icon: GraduationCap,
     },
     {
-      title: "Finance",
-      url: "/finance",
+      title: "Rapoarte Financiare",
+      url: "#",
       icon: Banknote,
+      items: [
+        { title: "Rapoarte Financiare", url: "/finance" },
+        { title: "Smartbill", url: "/finance/smartbill" },
+      ],
     },
 
     // ======================
@@ -131,7 +135,8 @@ export const menudataMobile = {
         { title: "Financiar", url: "/crypto" },
         { title: "E-Commerce", url: "/ecommerce" },
         { title: "Education", url: "/education" },
-        { title: "Finance", url: "/finance" },
+        { title: "Rapoarte Financiare", url: "/finance" },
+        { title: "Smartbill", url: "/finance/smartbill" },
       ],
     },
 
