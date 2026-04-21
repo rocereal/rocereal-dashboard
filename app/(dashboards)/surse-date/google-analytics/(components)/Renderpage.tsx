@@ -27,9 +27,9 @@ interface Overview {
   engagementRate: number;
 }
 
-interface TimePoint { date: string; sessions: number; users: number }
+interface TimePoint { [key: string]: string | number | undefined; date: string; sessions: number; users: number }
 interface TopPage { path: string; title: string; views: number; avgDuration: number }
-interface Slice { name: string; value: number }
+interface Slice { [key: string]: string | number | undefined; name: string; value: number }
 
 interface GAData {
   overview: Overview;
