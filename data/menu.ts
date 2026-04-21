@@ -28,11 +28,11 @@ export const menudata = {
       isSection: true,
     },
     {
-      title: "CRM",
+      title: "Management Clienti",
       url: "#",
       icon: Users,
       items: [
-        { title: "CRM", url: "/crm" },
+        { title: "Raport Clienti", url: "/crm" },
         { title: "Invox", url: "/crm/invox" },
       ],
     },
@@ -119,7 +119,7 @@ export const menudataMobile = {
       url: "#",
       icon: LayoutDashboard,
       items: [
-        { title: "CRM", url: "/crm" },
+        { title: "Raport Clienti", url: "/crm" },
         { title: "Invox", url: "/crm/invox" },
         { title: "Financiar", url: "/crypto" },
         { title: "E-Commerce", url: "/ecommerce" },
