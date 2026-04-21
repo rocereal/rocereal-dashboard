@@ -25,20 +25,20 @@ export async function GET() {
   const matched = invoxPhones.filter(p => sbPhones.has(p));
   const unmatched = invoxPhones.filter(p => !sbPhones.has(p));
 
+  const testPhone = "0747230442";
+  const allCalls = await prisma.crmCall.findMany({ select: { caller: true }, where: { caller: { contains: "0747230442" } } });
+  const testSB = sbClients.filter(c => normalizePhone(c.phone) === testPhone);
+  const inCallMap = sbPhones.has(testPhone);
+
   return NextResponse.json({
-    smartbill: {
-      total: sbClients.length,
-      withPhone: withPhone.length,
-      withoutPhone: withoutPhone.length,
-      sample_no_phone: withoutPhone.slice(0, 10).map(c => c.name),
-      sample_phones_raw: withPhone.slice(0, 20).map(c => ({ name: c.name, raw: c.phone, normalized: normalizePhone(c.phone) })),
-    },
-    invox: {
-      uniqueCallers: invoxPhones.length,
-      matched: matched.length,
-      unmatched: unmatched.length,
-      sample_unmatched: unmatched.slice(0, 10),
-      sample_matched: matched.slice(0, 10),
+    smartbill: { total: sbClients.length, withPhone: withPhone.length },
+    invox: { uniqueCallers: invoxPhones.length, matched: matched.length, unmatched: unmatched.length },
+    test_0747230442: {
+      raw_calls_in_db: allCalls.map(c => c.caller),
+      normalized_calls: allCalls.map(c => normalizePhone(c.caller)),
+      in_smartbill: testSB.map(c => ({ name: c.name, phone: c.phone, normalized: normalizePhone(c.phone) })),
+      phone_in_callMap_keys: invoxPhones.includes(testPhone),
+      phone_in_sbPhones: inCallMap,
     },
   });
 }
