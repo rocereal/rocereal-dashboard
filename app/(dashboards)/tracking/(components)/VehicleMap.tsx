@@ -47,6 +47,7 @@ export function VehicleMap({ vehicles }: VehicleMapProps) {
         center: [45.9432, 24.9668], // Romania center
         zoom: 7,
         zoomControl: true,
+        attributionControl: false,
       });
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
