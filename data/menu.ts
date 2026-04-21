@@ -29,8 +29,12 @@ export const menudata = {
     },
     {
       title: "CRM",
-      url: "/crm",
+      url: "#",
       icon: Users,
+      items: [
+        { title: "CRM", url: "/crm" },
+        { title: "Invox", url: "/crm/invox" },
+      ],
     },
     {
       title: "Financiar",
@@ -116,6 +120,7 @@ export const menudataMobile = {
       icon: LayoutDashboard,
       items: [
         { title: "CRM", url: "/crm" },
+        { title: "Invox", url: "/crm/invox" },
         { title: "Financiar", url: "/crypto" },
         { title: "E-Commerce", url: "/ecommerce" },
         { title: "Education", url: "/education" },
