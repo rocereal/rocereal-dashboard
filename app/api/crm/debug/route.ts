@@ -31,12 +31,14 @@ export async function GET() {
       withPhone: withPhone.length,
       withoutPhone: withoutPhone.length,
       sample_no_phone: withoutPhone.slice(0, 10).map(c => c.name),
+      sample_phones_raw: withPhone.slice(0, 20).map(c => ({ name: c.name, raw: c.phone, normalized: normalizePhone(c.phone) })),
     },
     invox: {
       uniqueCallers: invoxPhones.length,
       matched: matched.length,
       unmatched: unmatched.length,
       sample_unmatched: unmatched.slice(0, 10),
+      sample_matched: matched.slice(0, 10),
     },
   });
 }
