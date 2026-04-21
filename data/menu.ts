@@ -5,6 +5,7 @@ import {
   Coins,
   GraduationCap,
   LayoutDashboard,
+  MapPin,
   Settings2,
   ShoppingCart,
   SquareTerminal,
@@ -35,6 +36,11 @@ export const menudata = {
         { title: "Raport Clienti", url: "/crm" },
         { title: "Invox", url: "/crm/invox" },
       ],
+    },
+    {
+      title: "Tracking Mașini",
+      url: "/tracking",
+      icon: MapPin,
     },
     {
       title: "Financiar",
@@ -121,6 +127,7 @@ export const menudataMobile = {
       items: [
         { title: "Raport Clienti", url: "/crm" },
         { title: "Invox", url: "/crm/invox" },
+        { title: "Tracking Mașini", url: "/tracking" },
         { title: "Financiar", url: "/crypto" },
         { title: "E-Commerce", url: "/ecommerce" },
         { title: "Education", url: "/education" },
