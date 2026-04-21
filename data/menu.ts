@@ -2,7 +2,6 @@ import {
   Banknote,
   BookCheck,
   CalendarDays,
-  Coins,
   GraduationCap,
   LayoutDashboard,
   MapPin,
@@ -41,11 +40,6 @@ export const menudata = {
       title: "Tracking Mașini",
       url: "/tracking",
       icon: MapPin,
-    },
-    {
-      title: "Financiar",
-      url: "/crypto",
-      icon: Coins,
     },
     {
       title: "E-Commerce",
@@ -132,7 +126,6 @@ export const menudataMobile = {
         { title: "Raport Clienti", url: "/crm" },
         { title: "Invox", url: "/crm/invox" },
         { title: "Tracking Mașini", url: "/tracking" },
-        { title: "Financiar", url: "/crypto" },
         { title: "E-Commerce", url: "/ecommerce" },
         { title: "Education", url: "/education" },
         { title: "Rapoarte Financiare", url: "/finance" },

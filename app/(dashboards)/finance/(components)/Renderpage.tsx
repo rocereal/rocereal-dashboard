@@ -8,6 +8,8 @@ import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { financeCharts, financeMetrics, profitLossData } from "@/data/finance";
 import { financiarMetrics, vanzariDupaMotiv, vanzariDupaSursa } from "@/data/financiar-data";
+import { studentEngagementData, timeSpentByCourseData } from "@/data/education";
+import { crmSalesFunnelData } from "@/data/crm-sales-funnel";
 import { AlertTriangle, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { CereriDeschise } from "@/app/(dashboards)/crypto/(components)/CereriDeschise";
@@ -16,7 +18,22 @@ import { PrognozaBarChart } from "@/app/(dashboards)/crypto/(components)/Prognoz
 import { PrognozaMicaChart } from "@/app/(dashboards)/crypto/(components)/PrognozaMicaChart";
 import { TopAgentiCard } from "@/app/(dashboards)/crypto/(components)/TopAgentiCard";
 import { VanzariDonut } from "@/app/(dashboards)/crypto/(components)/VanzariDonut";
+import { StudentEngagementChart } from "@/app/(dashboards)/education/(components)/StudentEngagementChart";
+import { TimeSpentChart } from "@/app/(dashboards)/education/(components)/TimeSpentChart";
 import { SectionCards } from "./SectionCards";
+
+const salesFunnelConfig: ChartConfig = {
+  leads:         { label: "Leads",         color: "var(--chart-1)" },
+  opportunities: { label: "Opportunities", color: "var(--chart-2)" },
+  negotiations:  { label: "Negotiations",  color: "var(--chart-3)" },
+  closedWon:     { label: "Closed Won",    color: "var(--chart-4)" },
+  closedLost:    { label: "Closed Lost",   color: "var(--chart-5)" },
+};
+
+const dealsConfig: ChartConfig = {
+  dealsCreated: { label: "Deals Created", color: "var(--chart-1)" },
+  dealsClosed:  { label: "Deals Closed",  color: "var(--chart-2)" },
+};
 
 const profitLossConfig: ChartConfig = {
   profit: {
@@ -159,6 +176,46 @@ export default function RenderPage() {
         <VanzariDonut title="Vanzari castigate dupa motiv" data={vanzariDupaMotiv} />
         <VanzariDonut title="Vanzari castigate dupa sursa" data={vanzariDupaSursa} />
         <PrognozaMicaChart />
+      </div>
+
+      {/* Student Engagement & Time Spent */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-card rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-1">Student Engagement</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Active learners per week over the past 12 weeks
+          </p>
+          <StudentEngagementChart data={studentEngagementData} />
+        </div>
+        <div className="bg-card rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-1">Time Spent on Platform</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Average time spent by course (in hours)
+          </p>
+          <TimeSpentChart data={timeSpentByCourseData} />
+        </div>
+      </div>
+
+      {/* Sales Funnel & Deals */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <SampleLineChart
+          data={crmSalesFunnelData}
+          title="Sales Funnel Performance"
+          description="Leads → Opportunities → Negotiations → Closed Won/Lost"
+          config={salesFunnelConfig}
+          dataKeys={["leads", "opportunities", "negotiations", "closedWon", "closedLost"]}
+          dateKey="date"
+          showTimeRange={true}
+        />
+        <SampleLineChart
+          data={crmSalesFunnelData}
+          title="Deals Created vs Closed"
+          description="Track deal velocity and pipeline health over time"
+          config={dealsConfig}
+          dataKeys={["dealsCreated", "dealsClosed"]}
+          dateKey="date"
+          showTimeRange={true}
+        />
       </div>
     </div>
   );
