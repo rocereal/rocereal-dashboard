@@ -39,10 +39,9 @@ const fmtRON = (v: number) =>
     style: "currency", currency: "RON", maximumFractionDigits: 0,
   }).format(v);
 
-const fmtMonth = (s: string) => {
-  const [y, m] = s.split("-");
-  const d = new Date(Number(y), Number(m) - 1, 1);
-  return d.toLocaleDateString("ro-RO", { month: "short", year: "numeric" });
+const fmtDay = (s: string) => {
+  const date = new Date(s);
+  return date.toLocaleDateString("ro-RO", { month: "short", day: "numeric" });
 };
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -140,14 +139,14 @@ export function EvolutiaVanzarilor({ dateRange }: Props) {
                 axisLine={false}
                 tickMargin={8}
                 minTickGap={32}
-                tickFormatter={fmtMonth}
+                tickFormatter={fmtDay}
               />
               <ChartTooltip
                 content={
                   <ChartTooltipContent
                     className="w-[180px]"
                     nameKey={activeKey}
-                    labelFormatter={(value) => fmtMonth(value as string)}
+                    labelFormatter={(value) => fmtDay(value as string)}
                   />
                 }
               />

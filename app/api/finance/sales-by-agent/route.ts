@@ -71,26 +71,26 @@ export async function GET(req: NextRequest) {
     orderBy: { issuedAt: "asc" },
   });
 
-  // 4. Group by month, split by agent
-  type MonthData = {
-    date: string;     // "YYYY-MM"
+  // 4. Group by day, split by agent
+  type DayData = {
+    date: string;     // "YYYY-MM-DD"
     cătălin: number;
     valentin: number;
     alteCanale: number;
     total: number;
   };
 
-  const monthMap = new Map<string, MonthData>();
+  const dayMap = new Map<string, DayData>();
 
   for (const inv of invoices) {
     const d = new Date(inv.issuedAt);
-    const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const day = d.toISOString().slice(0, 10); // "YYYY-MM-DD"
 
-    if (!monthMap.has(month)) {
-      monthMap.set(month, { date: month, cătălin: 0, valentin: 0, alteCanale: 0, total: 0 });
+    if (!dayMap.has(day)) {
+      dayMap.set(day, { date: day, cătălin: 0, valentin: 0, alteCanale: 0, total: 0 });
     }
 
-    const entry = monthMap.get(month)!;
+    const entry = dayMap.get(day)!;
     const amount = inv.paidAmount;
     const clientName = inv.client.trim().toUpperCase();
     const phone = clientPhoneMap.get(clientName);
@@ -108,7 +108,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Sort chronologically
-  const data = Array.from(monthMap.values()).sort((a, b) =>
+  const data = Array.from(dayMap.values()).sort((a, b) =>
     a.date.localeCompare(b.date)
   );
 
