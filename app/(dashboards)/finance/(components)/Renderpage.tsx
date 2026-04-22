@@ -7,9 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { financeCharts, financeMetrics, profitLossData } from "@/data/finance";
-import { chartData } from "@/data/charts";
-import { SampleBarChart } from "@/components/charts/SampleBarChart";
 import { financiarMetrics, vanzariDupaMotiv, vanzariDupaSursa } from "@/data/financiar-data";
+import { EvolutiaVanzarilor } from "./EvolutiaVanzarilor";
 import { studentEngagementData, timeSpentByCourseData } from "@/data/education";
 import { crmSalesFunnelData } from "@/data/crm-sales-funnel";
 import { AlertTriangle, TrendingUp } from "lucide-react";
@@ -130,13 +129,7 @@ export default function RenderPage() {
         onDateRangeChange={setDateRange}
       />
 
-      <SampleBarChart
-        data={chartData}
-        title="Website Traffic Analytics"
-        description="Desktop and mobile visitor statistics"
-        dataKeys={["desktop", "mobile"]}
-        dateKey="date"
-      />
+      <EvolutiaVanzarilor />
 
       <SectionCards metrics={financeMetrics} />
 

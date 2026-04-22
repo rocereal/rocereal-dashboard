@@ -1,0 +1,125 @@
+import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
+
+const agentMap: Record<string, string> = {
+  "0724547086": "Cătălin",
+  "0722647098": "Valentin",
+};
+
+function normalizePhone(raw: string | null | undefined): string {
+  if (!raw) return "";
+  let p = raw.replace(/[\s\-().]/g, "");
+  if (p.startsWith("+40")) p = "0" + p.slice(3);
+  if (p.startsWith("40") && p.length === 11) p = "0" + p.slice(2);
+  return p;
+}
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = req.nextUrl;
+  const fromParam = searchParams.get("from");
+  const toParam = searchParams.get("to");
+
+  const from = fromParam ? new Date(fromParam) : undefined;
+  // Set to end of day for `to` so the selected day is fully included
+  let to: Date | undefined;
+  if (toParam) {
+    to = new Date(toParam);
+    to.setHours(23, 59, 59, 999);
+  }
+
+  // 1. Build phone → agent map from CRM calls
+  const calls = await prisma.crmCall.findMany({
+    select: { caller: true, rawPayload: true },
+  });
+
+  const phoneAgentMap = new Map<string, string>();
+  for (const call of calls) {
+    const phone = normalizePhone(call.caller);
+    if (!phone) continue;
+    const raw = call.rawPayload as Record<string, unknown> | null;
+    const dest = raw?.destinationnumber as string | undefined;
+    const agent = agentMap[dest ?? ""];
+    // Only set if we have a known agent and haven't already set a better one
+    if (agent && !phoneAgentMap.has(phone)) {
+      phoneAgentMap.set(phone, agent);
+    }
+  }
+
+  // 2. Build clientName → normalizedPhone from SmartBill clients
+  const sbClients = await prisma.smartbillClient.findMany({
+    select: { name: true, phone: true },
+  });
+
+  const clientPhoneMap = new Map<string, string>(); // UPPERCASE name → normalizedPhone
+  for (const c of sbClients) {
+    const phone = normalizePhone(c.phone);
+    if (phone) clientPhoneMap.set(c.name.trim().toUpperCase(), phone);
+  }
+
+  // 3. Fetch paid invoices with optional date filter
+  const invoices = await prisma.smartbillInvoice.findMany({
+    where: {
+      paid: true,
+      issuedAt: {
+        ...(from ? { gte: from } : {}),
+        ...(to ? { lte: to } : {}),
+      },
+    },
+    select: { client: true, paidAmount: true, issuedAt: true },
+    orderBy: { issuedAt: "asc" },
+  });
+
+  // 4. Group by month, split by agent
+  type MonthData = {
+    date: string;     // "YYYY-MM"
+    cătălin: number;
+    valentin: number;
+    alteCanale: number;
+    total: number;
+  };
+
+  const monthMap = new Map<string, MonthData>();
+
+  for (const inv of invoices) {
+    const d = new Date(inv.issuedAt);
+    const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+
+    if (!monthMap.has(month)) {
+      monthMap.set(month, { date: month, cătălin: 0, valentin: 0, alteCanale: 0, total: 0 });
+    }
+
+    const entry = monthMap.get(month)!;
+    const amount = inv.paidAmount;
+    const clientName = inv.client.trim().toUpperCase();
+    const phone = clientPhoneMap.get(clientName);
+    const agent = phone ? phoneAgentMap.get(phone) : undefined;
+
+    entry.total += amount;
+
+    if (agent === "Cătălin") {
+      entry.cătălin += amount;
+    } else if (agent === "Valentin") {
+      entry.valentin += amount;
+    } else {
+      entry.alteCanale += amount;
+    }
+  }
+
+  // Sort chronologically
+  const data = Array.from(monthMap.values()).sort((a, b) =>
+    a.date.localeCompare(b.date)
+  );
+
+  // Round to 2 decimal places
+  const rounded = data.map((d) => ({
+    date: d.date,
+    cătălin: Math.round(d.cătălin * 100) / 100,
+    valentin: Math.round(d.valentin * 100) / 100,
+    alteCanale: Math.round(d.alteCanale * 100) / 100,
+    total: Math.round(d.total * 100) / 100,
+  }));
+
+  return NextResponse.json(rounded);
+}
