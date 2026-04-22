@@ -98,7 +98,8 @@ export function DashboardHeader({
               <DateTimeRangePicker
                 date={dateRange}
                 onDateChange={onDateRangeChange}
-                placeholder="Select date & time range"
+                placeholder="Selectează interval"
+                showTime={false}
                 className="flex w-full lg:w-auto items-center space-x-2"
               />
             )}

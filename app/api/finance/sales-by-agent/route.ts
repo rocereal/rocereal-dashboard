@@ -107,13 +107,29 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Sort chronologically
-  const data = Array.from(dayMap.values()).sort((a, b) =>
-    a.date.localeCompare(b.date)
-  );
+  // Fill every calendar day in the requested range with zeros if no invoices
+  const allDays: typeof dayMap extends Map<string, infer V> ? V[] : never[] = [];
+  if (from && to) {
+    const cursor = new Date(from);
+    cursor.setUTCHours(0, 0, 0, 0);
+    const end = new Date(to);
+    end.setUTCHours(0, 0, 0, 0);
+    while (cursor <= end) {
+      const key = cursor.toISOString().slice(0, 10);
+      allDays.push(
+        dayMap.get(key) ?? { date: key, cătălin: 0, valentin: 0, alteCanale: 0, total: 0 }
+      );
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+  } else {
+    // No range filter — just return days that have data, sorted
+    Array.from(dayMap.values())
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .forEach((v) => allDays.push(v));
+  }
 
   // Round to 2 decimal places
-  const rounded = data.map((d) => ({
+  const rounded = allDays.map((d) => ({
     date: d.date,
     cătălin: Math.round(d.cătălin * 100) / 100,
     valentin: Math.round(d.valentin * 100) / 100,

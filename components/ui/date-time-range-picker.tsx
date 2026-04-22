@@ -31,6 +31,7 @@ interface DateTimeRangePickerProps {
   onDateChange?: (date: DateTimeRange | undefined) => void;
   placeholder?: string;
   className?: string;
+  showTime?: boolean;
 }
 
 export function DateTimeRangePicker({
@@ -38,6 +39,7 @@ export function DateTimeRangePicker({
   onDateChange,
   placeholder = "Pick a date and time range",
   className,
+  showTime = false,
 }: DateTimeRangePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [tempRange, setTempRange] = React.useState<DateTimeRange | undefined>(
@@ -46,17 +48,23 @@ export function DateTimeRangePicker({
 
   const handleDateSelect = (range: DateRange | undefined) => {
     if (range?.from && range?.to) {
-      // When both dates are selected, set default times
       const fromDateTime = new Date(range.from);
-      fromDateTime.setHours(9, 0, 0, 0); // Default to 9:00 AM
+      fromDateTime.setHours(0, 0, 0, 0);
 
       const toDateTime = new Date(range.to);
-      toDateTime.setHours(17, 0, 0, 0); // Default to 5:00 PM
+      toDateTime.setHours(23, 59, 59, 999);
 
-      setTempRange({ from: fromDateTime, to: toDateTime });
+      const next = { from: fromDateTime, to: toDateTime };
+      setTempRange(next);
+
+      // When not showing time, apply immediately on full range selection
+      if (!showTime) {
+        onDateChange?.(next);
+        setIsOpen(false);
+      }
     } else if (range?.from) {
       const fromDateTime = new Date(range.from);
-      fromDateTime.setHours(9, 0, 0, 0);
+      fromDateTime.setHours(0, 0, 0, 0);
       setTempRange({ from: fromDateTime, to: tempRange?.to });
     } else {
       setTempRange(undefined);
@@ -98,7 +106,9 @@ export function DateTimeRangePicker({
 
   const formatDateTime = (dateTime?: Date) => {
     if (!dateTime) return "";
-    return format(dateTime, "MMM dd, yyyy 'at' h:mm a");
+    return showTime
+      ? format(dateTime, "MMM dd, yyyy 'at' h:mm a")
+      : format(dateTime, "dd MMM yyyy");
   };
 
   return (
@@ -149,7 +159,7 @@ export function DateTimeRangePicker({
             </div>
 
             {/* Time Selection */}
-            {(tempRange?.from || tempRange?.to) && (
+            {showTime && (tempRange?.from || tempRange?.to) && (
               <div className="space-y-4">
                 <h4 className="font-medium text-sm">Select Times</h4>
 
