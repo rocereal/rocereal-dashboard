@@ -118,7 +118,7 @@ export const menudata = {
       isSection: true,
     },
     {
-      title: "Changelog",
+      title: "Monitorizare sisteme",
       url: "/pages/changelog",
       icon: BookCheck,
     },
@@ -197,7 +197,7 @@ export const menudataMobile = {
     // Changelog
     // ======================
     {
-      title: "Changelog",
+      title: "Monitorizare sisteme",
       url: "/pages/changelog",
       icon: BookCheck,
     },
