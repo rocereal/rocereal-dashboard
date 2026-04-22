@@ -53,9 +53,11 @@ async function getInvoiceDetails(cif: string, series: string, number: number) {
     // SmartBill REST API response shape
     const inv = data.invoice ?? data;
     return {
-      client:  (inv.client?.name ?? inv.clientName ?? "") as string,
-      phone:   (inv.client?.phone ?? inv.clientPhone ?? "") as string,
-      dueDate: (inv.paymentDate ?? inv.dueDate ?? null) as string | null,
+      client:    (inv.client?.name ?? inv.clientName ?? "") as string,
+      phone:     (inv.client?.phone ?? inv.clientPhone ?? "") as string,
+      dueDate:   (inv.paymentDate ?? inv.dueDate ?? null) as string | null,
+      // SmartBill returns the issue date as issueDate or seriesDate
+      issueDate: (inv.issueDate ?? inv.issuedate ?? inv.seriesDate ?? inv.date ?? null) as string | null,
     };
   } catch {
     return null;
@@ -126,23 +128,27 @@ export async function GET() {
       const tax = parseFloat((total - net).toFixed(2));
       const invoiceKey = `${series}-${num}`;
       const detail = details[i];
-      const client  = detail?.client  ?? "";
-      const dueDate = detail?.dueDate ? new Date(detail.dueDate) : null;
+      const client    = detail?.client    ?? "";
+      const dueDate   = detail?.dueDate   ? new Date(detail.dueDate)   : null;
+      const issuedAt  = detail?.issueDate ? new Date(detail.issueDate) : null;
 
       await prisma.smartbillInvoice.upsert({
         where: { invoiceKey },
         update: {
           totalAmount: total, paidAmount: status.paidAmount, unpaidAmount: status.unpaidAmount,
           paid: status.paid, netAmount: net, taxAmount: tax,
-          ...(client  ? { client }  : {}),
-          ...(dueDate ? { dueDate } : {}),
+          ...(client   ? { client }   : {}),
+          ...(dueDate  ? { dueDate }  : {}),
+          ...(issuedAt ? { issuedAt } : {}),
           syncedAt: new Date(),
         },
         create: {
           invoiceKey, series, number: num,
           totalAmount: total, paidAmount: status.paidAmount, unpaidAmount: status.unpaidAmount,
           paid: status.paid, netAmount: net, taxAmount: tax,
-          client, dueDate, issuedAt: new Date(),
+          client, dueDate,
+          // Use real issue date from SmartBill; fall back to now only as last resort
+          issuedAt: issuedAt ?? new Date(),
         },
       });
       fetched++;
