@@ -115,7 +115,13 @@ function VandutCard() {
 }
 
 export default function RenderPage() {
-  const [dateRange, setDateRange] = useState<DateTimeRange | undefined>();
+  // Default: first day of current month → today
+  const defaultDateRange = (): DateTimeRange => {
+    const now = new Date();
+    const from = new Date(now.getFullYear(), now.getMonth(), 1);
+    return { from, to: now };
+  };
+  const [dateRange, setDateRange] = useState<DateTimeRange | undefined>(defaultDateRange);
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
@@ -129,7 +135,7 @@ export default function RenderPage() {
         onDateRangeChange={setDateRange}
       />
 
-      <EvolutiaVanzarilor />
+      <EvolutiaVanzarilor dateRange={dateRange} />
 
       <SectionCards metrics={financeMetrics} />
 
