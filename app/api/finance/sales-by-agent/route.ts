@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
         ...(to ? { lte: to } : {}),
       },
     },
-    select: { client: true, paidAmount: true, issuedAt: true },
+    select: { client: true, totalAmount: true, issuedAt: true },
     orderBy: { issuedAt: "asc" },
   });
 
@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
     }
 
     const entry = dayMap.get(day)!;
-    const amount = inv.paidAmount;
+    const amount = inv.totalAmount;
     const clientName = inv.client.trim().toUpperCase();
     const phone = clientPhoneMap.get(clientName);
     const agent = phone ? phoneAgentMap.get(phone) : undefined;
@@ -137,12 +137,13 @@ export async function GET(req: NextRequest) {
   }
 
   // Round to 2 decimal places
+  // Round values — use Math.round to avoid floating point accumulation errors
   const rounded = allDays.map((d) => ({
     date: d.date,
-    cătălin: Math.round(d.cătălin * 100) / 100,
-    valentin: Math.round(d.valentin * 100) / 100,
+    cătălin:    Math.round(d.cătălin    * 100) / 100,
+    valentin:   Math.round(d.valentin   * 100) / 100,
     alteCanale: Math.round(d.alteCanale * 100) / 100,
-    total: Math.round(d.total * 100) / 100,
+    total:      Math.round(d.total      * 100) / 100,
   }));
 
   return NextResponse.json(rounded);
