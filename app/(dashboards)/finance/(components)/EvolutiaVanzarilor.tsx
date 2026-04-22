@@ -57,9 +57,15 @@ export function EvolutiaVanzarilor({ dateRange }: Props) {
   const load = useCallback(async () => {
     setLoading(true);
     try {
+      const toLocalDate = (d: Date) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      };
       const params = new URLSearchParams();
-      if (dateRange?.from) params.set("from", dateRange.from.toISOString().slice(0, 10));
-      if (dateRange?.to) params.set("to", dateRange.to.toISOString().slice(0, 10));
+      if (dateRange?.from) params.set("from", toLocalDate(dateRange.from));
+      if (dateRange?.to) params.set("to", toLocalDate(dateRange.to));
       const qs = params.size > 0 ? `?${params}` : "";
       const res = await fetch(`/api/finance/sales-by-agent${qs}`, { cache: "no-store" });
       const json = await res.json();

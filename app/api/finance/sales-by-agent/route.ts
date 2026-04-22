@@ -84,7 +84,10 @@ export async function GET(req: NextRequest) {
 
   for (const inv of invoices) {
     const d = new Date(inv.issuedAt);
-    const day = d.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    const y = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const day = `${y}-${mo}-${dd}`;
 
     if (!dayMap.has(day)) {
       dayMap.set(day, { date: day, cătălin: 0, valentin: 0, alteCanale: 0, total: 0 });
@@ -110,16 +113,21 @@ export async function GET(req: NextRequest) {
   // Fill every calendar day in the requested range with zeros if no invoices
   const allDays: typeof dayMap extends Map<string, infer V> ? V[] : never[] = [];
   if (from && to) {
-    const cursor = new Date(from);
-    cursor.setUTCHours(0, 0, 0, 0);
-    const end = new Date(to);
-    end.setUTCHours(0, 0, 0, 0);
+    // Use local date arithmetic to avoid UTC offset shifting the day boundary
+    const toLocalKey = (d: Date) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+    const cursor = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+    const end = new Date(to.getFullYear(), to.getMonth(), to.getDate());
     while (cursor <= end) {
-      const key = cursor.toISOString().slice(0, 10);
+      const key = toLocalKey(cursor);
       allDays.push(
         dayMap.get(key) ?? { date: key, cătălin: 0, valentin: 0, alteCanale: 0, total: 0 }
       );
-      cursor.setUTCDate(cursor.getUTCDate() + 1);
+      cursor.setDate(cursor.getDate() + 1);
     }
   } else {
     // No range filter — just return days that have data, sorted

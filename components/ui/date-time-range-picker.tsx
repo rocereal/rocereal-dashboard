@@ -54,14 +54,7 @@ export function DateTimeRangePicker({
       const toDateTime = new Date(range.to);
       toDateTime.setHours(23, 59, 59, 999);
 
-      const next = { from: fromDateTime, to: toDateTime };
-      setTempRange(next);
-
-      // When not showing time, apply immediately on full range selection
-      if (!showTime) {
-        onDateChange?.(next);
-        setIsOpen(false);
-      }
+      setTempRange({ from: fromDateTime, to: toDateTime });
     } else if (range?.from) {
       const fromDateTime = new Date(range.from);
       fromDateTime.setHours(0, 0, 0, 0);
