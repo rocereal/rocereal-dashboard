@@ -12,6 +12,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, Loader2, RefreshCw, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface Client {
@@ -116,6 +117,7 @@ const columns: ColumnDef<Client>[] = [
 ];
 
 export function ClientsTable() {
+  const router = useRouter();
   const [data, setData] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastFetched, setLastFetched] = useState<Date | null>(null);
@@ -216,7 +218,11 @@ export function ClientsTable() {
               </TableRow>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  className="cursor-pointer hover:bg-muted/60 transition-colors"
+                  onClick={() => router.push(`/crm/client/${encodeURIComponent(row.original.phone)}`)}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
