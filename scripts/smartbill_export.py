@@ -62,14 +62,13 @@ def parse_date(value: str) -> datetime | None:
 def parse_invoice_number(raw: str):
     """
     Parses an invoice display string into (series, number, invoiceKey).
-    Handles series names that contain hyphens (e.g. "M-SSB"):
+    Series contains only letters and hyphens (no digits); number is the trailing digits.
       'SSB476'   → ('SSB',   476, 'SSB-476')
       'M-SSB476' → ('M-SSB', 476, 'M-SSB-476')
     """
-    m = re.match(r"^([A-Z][A-Z0-9\-]*)(\d+)$", raw.strip())
+    m = re.match(r"^([A-Z][A-Z\-]*)(\d+)$", raw.strip())
     if m:
         series, number = m.group(1), int(m.group(2))
-        # Strip any trailing hyphen left by the regex (e.g. "M-SSB-" edge case)
         series = series.rstrip("-")
         return series, number, f"{series}-{number}"
     return None, None, raw.strip()
