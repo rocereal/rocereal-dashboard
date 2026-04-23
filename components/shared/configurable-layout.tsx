@@ -74,10 +74,10 @@ export function ConfigurableLayout({
     return (
       <SidebarProvider>
         {sidebar}
-        <SidebarInset>
+        <SidebarInset className="overflow-x-hidden min-w-0">
           <div
             className={cn(
-              "flex flex-col min-h-screen bg-background font-sans antialiased overflow-x-hidden",
+              "flex flex-col min-h-svh bg-background font-sans antialiased",
               fontSizeClasses[config.fontSize],
               className
             )}
@@ -86,8 +86,8 @@ export function ConfigurableLayout({
             {config.headerVisible && header && header}
 
             {/* Main Content */}
-            <main className="flex-1 min-w-0">
-              <div className={cn("mx-auto px-4 py-8 sm:px-6 lg:px-8", maxWidthClasses[config.maxWidth])}>
+            <main className="flex-1 min-w-0 overflow-x-hidden">
+              <div className="w-full px-4 py-6 sm:px-6">
                 {children}
               </div>
             </main>
@@ -114,7 +114,7 @@ export function ConfigurableLayout({
     return (
       <div
         className={cn(
-          "flex flex-col min-h-screen bg-background font-sans antialiased overflow-x-hidden",
+          "flex flex-col min-h-svh bg-background font-sans antialiased overflow-x-hidden",
           fontSizeClasses[config.fontSize],
           className
         )}
@@ -123,8 +123,8 @@ export function ConfigurableLayout({
         {config.headerVisible && header && header}
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0">
-          <div className={cn("mx-auto px-4 py-8 sm:px-6 lg:px-8", maxWidthClasses[config.maxWidth])}>
+        <main className="flex-1 min-w-0 overflow-x-hidden">
+          <div className="w-full px-4 py-6 sm:px-6">
             {children}
           </div>
         </main>

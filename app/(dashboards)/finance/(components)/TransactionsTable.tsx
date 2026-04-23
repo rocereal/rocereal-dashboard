@@ -268,7 +268,7 @@ export function TransactionsTable() {
   );
 
   return (
-    <div className="bg-card rounded-lg border">
+    <div className="bg-card rounded-lg border overflow-hidden">
       {/* Sync status bar */}
       <div className="flex items-center justify-between px-6 pt-4 pb-2">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
