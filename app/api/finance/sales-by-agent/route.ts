@@ -58,10 +58,15 @@ export async function GET(req: NextRequest) {
     if (phone) clientPhoneMap.set(c.name.trim().toUpperCase(), phone);
   }
 
-  // 3. Fetch paid invoices with optional date filter
+  // 3. Fetch invoices: paid ones + credit notes (storno, totalAmount < 0).
+  // Credit notes are NOT marked paid=true in SmartBill but must be included
+  // as negative adjustments so the total matches SmartBill's net figure.
   const invoices = await prisma.smartbillInvoice.findMany({
     where: {
-      paid: true,
+      OR: [
+        { paid: true },
+        { totalAmount: { lt: 0 } },
+      ],
       issuedAt: {
         ...(from ? { gte: from } : {}),
         ...(to ? { lte: to } : {}),
