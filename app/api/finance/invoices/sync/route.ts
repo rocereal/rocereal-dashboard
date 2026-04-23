@@ -4,9 +4,10 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 const SMARTBILL_BASE = "https://ws.smartbill.ro/SBORO/api";
-const BATCH_SIZE = 6; // 6 per series × 3 series = 18 parallel calls, well under 30/10min limit
-const INITIAL_LOOKBACK = 30; // first run: last 30 per series (safe for rate limit)
-const COOLDOWN_MINUTES = 15; // don't sync more than once every 15 minutes
+const NEW_BATCH_SIZE = 6;      // new invoices per series per sync
+const INITIAL_LOOKBACK = 30;   // first run: look back 30 invoices per series
+const COOLDOWN_MINUTES = 15;   // don't sync more than once every 15 minutes
+const STATUS_BATCH = 20;       // unpaid invoices to recheck per sync call
 
 function smartbillAuth() {
   const email = process.env.SMARTBILL_EMAIL!;
@@ -50,13 +51,11 @@ async function getInvoiceDetails(cif: string, series: string, number: number) {
     if (!res.ok) return null;
     const data = await res.json();
     if (data.errorText) return null;
-    // SmartBill REST API response shape
     const inv = data.invoice ?? data;
     return {
       client:    (inv.client?.name ?? inv.clientName ?? "") as string,
       phone:     (inv.client?.phone ?? inv.clientPhone ?? "") as string,
       dueDate:   (inv.paymentDate ?? inv.dueDate ?? null) as string | null,
-      // SmartBill returns the issue date as issueDate or seriesDate
       issueDate: (inv.issueDate ?? inv.issuedate ?? inv.seriesDate ?? inv.date ?? null) as string | null,
     };
   } catch {
@@ -83,11 +82,11 @@ export async function GET() {
   const results: Record<string, unknown> = {};
   let totalFetched = 0;
 
+  // ── Step 1: Fetch new invoices per series ─────────────────────────────────
   for (const s of seriesList) {
     const { name: series, nextNumber } = s;
     const lastInvoice = nextNumber - 1;
 
-    // Load or initialize sync state
     let state = await prisma.smartbillSyncState.findUnique({ where: { series } });
     if (!state) {
       const startFrom = Math.max(1, lastInvoice - INITIAL_LOOKBACK + 1);
@@ -99,14 +98,13 @@ export async function GET() {
     }
 
     const fromNumber = state.lastSyncedNumber + 1;
-    const toNumber = Math.min(lastInvoice, fromNumber + BATCH_SIZE - 1);
+    const toNumber = Math.min(lastInvoice, fromNumber + NEW_BATCH_SIZE - 1);
 
     if (fromNumber > lastInvoice) {
       results[series] = { fetched: 0, message: "Up to date" };
       continue;
     }
 
-    // Fetch all numbers in this batch IN PARALLEL (payment status + invoice details)
     const numbers = Array.from({ length: toNumber - fromNumber + 1 }, (_, i) => fromNumber + i);
     const [statuses, details] = await Promise.all([
       Promise.all(numbers.map((n) => getPaymentStatus(cif, series, n))),
@@ -121,16 +119,16 @@ export async function GET() {
       const status = statuses[i];
       lastProcessed = num;
 
-      if (!status) continue; // gap or non-existent invoice
+      if (!status) continue;
 
       const total = status.invoiceTotalAmount;
       const net = parseFloat((total / 1.19).toFixed(2));
       const tax = parseFloat((total - net).toFixed(2));
       const invoiceKey = `${series}-${num}`;
       const detail = details[i];
-      const client    = detail?.client    ?? "";
-      const dueDate   = detail?.dueDate   ? new Date(detail.dueDate)   : null;
-      const issuedAt  = detail?.issueDate ? new Date(detail.issueDate) : null;
+      const client   = detail?.client    ?? "";
+      const dueDate  = detail?.dueDate   ? new Date(detail.dueDate)   : null;
+      const issuedAt = detail?.issueDate ? new Date(detail.issueDate) : null;
 
       await prisma.smartbillInvoice.upsert({
         where: { invoiceKey },
@@ -147,7 +145,6 @@ export async function GET() {
           totalAmount: total, paidAmount: status.paidAmount, unpaidAmount: status.unpaidAmount,
           paid: status.paid, netAmount: net, taxAmount: tax,
           client, dueDate,
-          // Use real issue date from SmartBill; fall back to now only as last resort
           issuedAt: issuedAt ?? new Date(),
         },
       });
@@ -163,5 +160,52 @@ export async function GET() {
     results[series] = { fetched, from: fromNumber, to: toNumber, remaining: Math.max(0, lastInvoice - toNumber) };
   }
 
-  return NextResponse.json({ ok: true, totalFetched, series: results });
+  // ── Step 2: Recheck payment status for unpaid invoices ────────────────────
+  // Fetches the oldest-synced unpaid invoices and updates their paid status.
+  // This ensures "Emisa" → "Incasata" transitions are reflected in real time.
+  const unpaidInvoices = await prisma.smartbillInvoice.findMany({
+    where: { paid: false },
+    select: { invoiceKey: true, series: true, number: true },
+    orderBy: { syncedAt: "asc" }, // oldest-synced first
+    take: STATUS_BATCH,
+  });
+
+  let statusUpdated = 0;
+  let statusNowPaid = 0;
+
+  if (unpaidInvoices.length > 0) {
+    const recheckStatuses = await Promise.all(
+      unpaidInvoices.map((inv) => getPaymentStatus(cif, inv.series, inv.number))
+    );
+
+    for (let i = 0; i < unpaidInvoices.length; i++) {
+      const inv = unpaidInvoices[i];
+      const st  = recheckStatuses[i];
+      if (!st) continue;
+
+      await prisma.smartbillInvoice.update({
+        where: { invoiceKey: inv.invoiceKey },
+        data: {
+          paid:         st.paid,
+          paidAmount:   st.paidAmount,
+          unpaidAmount: st.unpaidAmount,
+          syncedAt:     new Date(),
+        },
+      });
+
+      statusUpdated++;
+      if (st.paid) statusNowPaid++;
+    }
+  }
+
+  return NextResponse.json({
+    ok: true,
+    totalFetched,
+    series: results,
+    statusRecheck: {
+      checked: unpaidInvoices.length,
+      updated: statusUpdated,
+      nowPaid: statusNowPaid,
+    },
+  });
 }

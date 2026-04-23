@@ -3,6 +3,10 @@
 SmartBill sync via internal web API.
 Playwright is used ONLY for login + company/branch selection (to get session cookies).
 All invoice data is fetched via direct HTTP POST — no browser navigation needed.
+
+Supports multi-branch sync: each branch gets its own Playwright session so that
+series belonging to different sedii (e.g. M-SSB on Sediu principal, SSB on
+Sediu secundar) all receive correct issue dates.
 """
 
 import json
@@ -24,6 +28,14 @@ PASSWORD = os.environ.get("SMARTBILL_PASSWORD", "")
 DB_URL   = os.environ.get("DATABASE_URL_UNPOOLED", os.environ.get("DATABASE_URL", ""))
 HEADLESS = os.environ.get("HEADLESS", "true").lower() != "false"
 SCREENSHOT_DIR = Path("screenshots")
+
+# Comma-separated list of branch subtitles to sync.
+# Each entry must match the subtitle text shown in the SmartBill "Alege sediul" modal.
+# "Sediu secundar" = SUCURSALA SIBIU (series SSB)
+# "Sediu principal" = sediu principal (series M-SSB etc.)
+# Override via env: SMARTBILL_BRANCHES="Sediu principal,Sediu secundar"
+_branches_raw = os.environ.get("SMARTBILL_BRANCHES", "Sediu principal,Sediu secundar")
+BRANCHES: list[str] = [b.strip() for b in _branches_raw.split(",") if b.strip()]
 
 BASE_URL  = "https://cloud.smartbill.ro"
 AJAX_URL         = f"{BASE_URL}/raport/facturi/ajax/"
@@ -59,11 +71,15 @@ def parse_invoice_number(raw: str):
 
 
 # ── Step 1: Auth via Playwright ───────────────────────────────────────────────
-def get_session_cookies() -> dict:
+def get_session_cookies(branch_subtitle: str) -> dict:
     """
     Performs login + company + branch selection via Playwright.
+    branch_subtitle: the subtitle text of the branch shown in the "Alege sediul" modal,
+                     e.g. "Sediu principal" or "Sediu secundar".
     Returns the session cookies needed for direct API calls.
     """
+    slug = branch_subtitle.replace(" ", "_")
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=HEADLESS)
         context = browser.new_context()
@@ -71,11 +87,11 @@ def get_session_cookies() -> dict:
         page.set_default_timeout(30_000)
 
         # 1. Load login page
-        print("→ Login SmartBill...")
+        print(f"  → Login SmartBill ({branch_subtitle})...")
         response = page.goto(f"{BASE_URL}/auth/login/")
         page.wait_for_load_state("networkidle")
         page.wait_for_timeout(2_000)  # allow page JS to settle
-        screenshot(page, "01_login_page")
+        screenshot(page, f"{slug}_01_login_page")
 
         # Check for server errors (502, 503, etc.)
         if response and response.status >= 500:
@@ -90,54 +106,51 @@ def get_session_cookies() -> dict:
             cookie_btn = page.get_by_text("Accept toate cookie-urile", exact=False)
             cookie_btn.wait_for(timeout=8_000)
             cookie_btn.click()
-            # Wait until the popup overlay is gone
             cookie_btn.wait_for(state="hidden", timeout=8_000)
             page.wait_for_timeout(500)
-            print("  ✓ Cookie popup acceptat")
+            print("    ✓ Cookie popup acceptat")
         except PlaywrightTimeout:
-            print("  (cookie popup nu a aparut sau deja inchis)")
+            print("    (cookie popup nu a aparut sau deja inchis)")
 
-        screenshot(page, "02_before_login_form")
+        screenshot(page, f"{slug}_02_before_login")
 
-        # Fill credentials — wait for field to be visible first
+        # Fill credentials
         email_input = page.locator('input[placeholder="Email utilizator"]')
         email_input.wait_for(state="visible", timeout=15_000)
         email_input.fill(EMAIL)
         page.locator('input[placeholder="Parola"]').fill(PASSWORD)
         page.get_by_text("Intra in cont", exact=True).click()
         page.wait_for_load_state("networkidle")
-        screenshot(page, "03_after_login")
-        print("  ✓ Credentiale trimise")
+        screenshot(page, f"{slug}_03_after_login")
+        print("    ✓ Credentiale trimise")
 
         # 2. Select company: click by CIF (unique identifier, no diacritic issues)
-        print("→ Selectare companie RO CEREAL SA...")
+        print("    → Selectare companie RO CEREAL SA...")
         try:
             page.get_by_text("Alege compania", exact=False).wait_for(timeout=10_000)
             page.wait_for_timeout(800)
-            screenshot(page, "04_company_modal")
-            # CIF-ul RO18533200 apare doar in randul RO CEREAL SA
+            screenshot(page, f"{slug}_04_company_modal")
             page.get_by_text("RO18533200", exact=False).click(timeout=5_000)
             page.wait_for_load_state("networkidle")
-            screenshot(page, "05_company_selected")
-            print("  ✓ RO CEREAL SA selectata (via CIF)")
+            screenshot(page, f"{slug}_05_company_selected")
+            print("    ✓ RO CEREAL SA selectata (via CIF)")
         except PlaywrightTimeout:
-            screenshot(page, "04_no_company_modal")
-            print("  (modal companie nu a aparut — posibil deja selectata)")
+            screenshot(page, f"{slug}_04_no_company_modal")
+            print("    (modal companie nu a aparut — posibil deja selectata)")
 
-        # 3. Select branch: SUCURSALA SIBIU
-        print("→ Selectare sediu SUCURSALA SIBIU...")
+        # 3. Select branch by subtitle text
+        print(f"    → Selectare sediu: {branch_subtitle!r}...")
         try:
             page.get_by_text("Alege sediul", exact=False).wait_for(timeout=10_000)
             page.wait_for_timeout(800)
-            screenshot(page, "06_branch_modal")
-            # "Sediu secundar" este subtitlul unic al SUCURSALA SIBIU
-            page.get_by_text("Sediu secundar", exact=False).click(timeout=5_000)
+            screenshot(page, f"{slug}_06_branch_modal")
+            page.get_by_text(branch_subtitle, exact=False).click(timeout=5_000)
             page.wait_for_load_state("networkidle")
-            screenshot(page, "07_branch_selected")
-            print("  ✓ SUCURSALA SIBIU selectata (via 'Sediu secundar')")
+            screenshot(page, f"{slug}_07_branch_selected")
+            print(f"    ✓ Sediu selectat: {branch_subtitle!r}")
         except PlaywrightTimeout:
-            screenshot(page, "06_no_branch_modal")
-            print("  (modal sediu nu a aparut — posibil deja in cont)")
+            screenshot(page, f"{slug}_06_no_branch_modal")
+            print(f"    (modal sediu nu a aparut sau {branch_subtitle!r} nu gasit — continuam)")
 
         # 4. Dismiss security/info popups
         for popup_text in ["Activeaza mai tarziu", "Am inteles", "Am înțeles", "OK"]:
@@ -146,17 +159,17 @@ def get_session_cookies() -> dict:
                 btn.wait_for(timeout=3_000)
                 btn.click()
                 page.wait_for_load_state("networkidle")
-                print(f"  ✓ Popup inchis: '{popup_text}'")
+                print(f"    ✓ Popup inchis: '{popup_text}'")
                 break
             except PlaywrightTimeout:
                 continue
 
-        screenshot(page, "06_dashboard")
+        screenshot(page, f"{slug}_08_dashboard")
 
         # Extract and return cookies
         cookies = {c["name"]: c["value"] for c in context.cookies()}
         sid = cookies.get("sessionid", "N/A")[:8]
-        print(f"  ✓ Sesiune obtinuta (sessionid: {sid}...)")
+        print(f"    ✓ Sesiune obtinuta (sessionid: {sid}...)")
         browser.close()
 
     return cookies
@@ -399,6 +412,15 @@ def import_to_db(rows: list):
         print("  ⚠ Nicio factura valida!")
         return
 
+    # Dedup by invoice_key — last occurrence wins.
+    # Needed because the same invoice can appear in multiple branch fetches.
+    deduped: dict[str, dict] = {}
+    for r in records:
+        deduped[r["invoice_key"]] = r
+    if len(deduped) < len(records):
+        print(f"  (deduplicat: {len(records) - len(deduped)} duplicate eliminate)")
+    records = list(deduped.values())
+
     conn = psycopg2.connect(DB_URL)
     cur  = conn.cursor()
 
@@ -462,18 +484,27 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print("=== SmartBill Sync ===")
+    print(f"Sucursale de sincronizat: {BRANCHES}")
 
-    print("\n[1/4] Autentificare (Playwright)...")
-    cookies = get_session_cookies()
+    all_invoices: list = []
+    all_clients: list  = []
 
-    print(f"\n[2/4] Fetch facturi {DATE_FROM} → {DATE_TO}...")
-    invoices = fetch_all_invoices(cookies)
+    for idx, branch in enumerate(BRANCHES, 1):
+        print(f"\n[Branch {idx}/{len(BRANCHES)}] {branch}")
 
-    print("\n[3/4] Fetch clienti...")
-    clients = fetch_all_clients(cookies)
+        print(f"  [{idx}.1] Autentificare (Playwright)...")
+        cookies = get_session_cookies(branch)
 
-    print("\n[4/4] Import in DB...")
-    import_to_db(invoices)
-    import_clients_to_db(clients)
+        print(f"  [{idx}.2] Fetch facturi {DATE_FROM} → {DATE_TO}...")
+        invoices = fetch_all_invoices(cookies)
+        all_invoices.extend(invoices)
+
+        print(f"  [{idx}.3] Fetch clienti...")
+        clients = fetch_all_clients(cookies)
+        all_clients.extend(clients)
+
+    print(f"\n[Final] Import in DB ({len(all_invoices)} facturi, {len(all_clients)} clienti)...")
+    import_to_db(all_invoices)
+    import_clients_to_db(all_clients)
 
     print("\n✅ Gata!")
