@@ -87,7 +87,7 @@ export function ConfigurableLayout({
 
             {/* Main Content */}
             <main className="flex-1 min-w-0 overflow-x-hidden">
-              <div className="w-full">
+              <div className={cn("mx-auto px-4 py-8 sm:px-6 lg:px-8", maxWidthClasses[config.maxWidth])}>
                 {children}
               </div>
             </main>
