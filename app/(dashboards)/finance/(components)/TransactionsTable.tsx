@@ -290,7 +290,7 @@ export function TransactionsTable() {
         </Button>
       </div>
 
-      <div className="px-6 pb-6">
+      <div className="px-6 pb-6 overflow-x-auto">
         {loading ? (
           <div className="flex items-center justify-center py-12 text-muted-foreground">
             Se incarca facturile...

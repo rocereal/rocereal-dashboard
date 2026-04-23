@@ -102,7 +102,7 @@ export function EvolutiaVanzarilor({ dateRange }: Props) {
         </div>
 
         {/* Totals / tab buttons */}
-        <div className="flex">
+        <div className="flex overflow-x-auto">
           {DATA_KEYS.map((key) => (
             <button
               key={key}

@@ -77,35 +77,17 @@ export function ConfigurableLayout({
         <SidebarInset>
           <div
             className={cn(
-              "min-h-screen bg-background font-sans antialiased",
+              "flex flex-col min-h-screen bg-background font-sans antialiased overflow-x-hidden",
               fontSizeClasses[config.fontSize],
               className
             )}
           >
-            {/* Header */}
-            {config.headerVisible && header && (
-              <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div
-                  className={cn(
-                    "mx-auto px-4 sm:px-6 lg:px-8",
-                    maxWidthClasses[config.maxWidth]
-                  )}
-                >
-                  {header}
-                </div>
-              </header>
-            )}
+            {/* Header — full width, no extra wrapper */}
+            {config.headerVisible && header && header}
 
             {/* Main Content */}
-            <main className="flex-1">
-              <div
-                className={cn(
-                  "mx-auto px-4 py-8 sm:px-6 lg:px-8",
-                  maxWidthClasses[config.maxWidth]
-                )}
-              >
-                {children}
-              </div>
+            <main className="flex-1 min-w-0">
+              {children}
             </main>
 
             {/* Footer */}
@@ -130,35 +112,17 @@ export function ConfigurableLayout({
     return (
       <div
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "flex flex-col min-h-screen bg-background font-sans antialiased overflow-x-hidden",
           fontSizeClasses[config.fontSize],
           className
         )}
       >
-        {/* Header */}
-        {config.headerVisible && header && (
-          <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div
-              className={cn(
-                "mx-auto px-4 sm:px-6 lg:px-8",
-                maxWidthClasses[config.maxWidth]
-              )}
-            >
-              {header}
-            </div>
-          </header>
-        )}
+        {/* Header — full width, no extra wrapper */}
+        {config.headerVisible && header && header}
 
-        {/* Main Content - full width when no sidebar */}
-        <main className="flex-1">
-          <div
-            className={cn(
-              "mx-auto px-4 py-8 sm:px-6 lg:px-8",
-              maxWidthClasses[config.maxWidth]
-            )}
-          >
-            {children}
-          </div>
+        {/* Main Content */}
+        <main className="flex-1 min-w-0">
+          {children}
         </main>
 
         {/* Footer */}
