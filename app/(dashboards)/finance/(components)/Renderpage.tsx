@@ -6,7 +6,7 @@ import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/charts";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
-import { financeCharts, financeMetrics, profitLossData } from "@/data/finance";
+import { financeCharts, profitLossData } from "@/data/finance";
 import { financiarMetrics, vanzariDupaMotiv, vanzariDupaSursa } from "@/data/financiar-data";
 import { EvolutiaVanzarilor } from "./EvolutiaVanzarilor";
 import { studentEngagementData, timeSpentByCourseData } from "@/data/education";
@@ -21,7 +21,7 @@ import { TopAgentiCard } from "@/app/(dashboards)/crypto/(components)/TopAgentiC
 import { VanzariDonut } from "@/app/(dashboards)/crypto/(components)/VanzariDonut";
 import { StudentEngagementChart } from "@/app/(dashboards)/education/(components)/StudentEngagementChart";
 import { TimeSpentChart } from "@/app/(dashboards)/education/(components)/TimeSpentChart";
-import { SectionCards } from "./SectionCards";
+import { FinanceMetrics } from "./FinanceMetrics";
 
 const salesFunnelConfig: ChartConfig = {
   leads:         { label: "Leads",         color: "var(--chart-1)" },
@@ -137,7 +137,7 @@ export default function RenderPage() {
 
       <EvolutiaVanzarilor dateRange={dateRange} />
 
-      <SectionCards metrics={financeMetrics} />
+      <FinanceMetrics dateRange={dateRange} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="h-full">
