@@ -29,12 +29,10 @@ DB_URL   = os.environ.get("DATABASE_URL_UNPOOLED", os.environ.get("DATABASE_URL"
 HEADLESS = os.environ.get("HEADLESS", "true").lower() != "false"
 SCREENSHOT_DIR = Path("screenshots")
 
-# Comma-separated list of branch subtitles to sync.
-# Each entry must match the subtitle text shown in the SmartBill "Alege sediul" modal.
-# "Sediu secundar" = SUCURSALA SIBIU (series SSB)
-# "Sediu principal" = sediu principal (series M-SSB etc.)
-# Override via env: SMARTBILL_BRANCHES="Sediu principal,Sediu secundar"
-_branches_raw = os.environ.get("SMARTBILL_BRANCHES", "Sediu principal,Sediu secundar")
+# Branch subtitle to sync — must match the subtitle text in the SmartBill "Alege sediul" modal.
+# "Sediu secundar" = SUCURSALA SIBIU (all series: SSB, M-SSB, etc.)
+# Override via env: SMARTBILL_BRANCHES="Sediu secundar"
+_branches_raw = os.environ.get("SMARTBILL_BRANCHES", "Sediu secundar")
 BRANCHES: list[str] = [b.strip() for b in _branches_raw.split(",") if b.strip()]
 
 BASE_URL  = "https://cloud.smartbill.ro"
