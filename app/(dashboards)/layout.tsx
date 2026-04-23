@@ -16,7 +16,7 @@ export default function DashboardsLayout({
 }) {
   return (
     <ConfigurableLayout header={<AppHeader />} sidebar={<AppSidebar />}>
-      <div className="flex flex-col gap-4 p-4 pt-8">
+      <div className="flex flex-col gap-4 px-6 pt-8 pb-6">
         {children}
       </div>
     </ConfigurableLayout>
