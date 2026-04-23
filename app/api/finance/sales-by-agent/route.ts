@@ -58,15 +58,12 @@ export async function GET(req: NextRequest) {
     if (phone) clientPhoneMap.set(c.name.trim().toUpperCase(), phone);
   }
 
-  // 3. Fetch invoices: paid ones + credit notes (storno, totalAmount < 0).
-  // Credit notes are NOT marked paid=true in SmartBill but must be included
-  // as negative adjustments so the total matches SmartBill's net figure.
+  // 3. Fetch paid invoices only — paid=true means "Incasata" in SmartBill.
+  // Storno invoices (Stornata status) will have paid=false after daily sync
+  // and are correctly excluded here.
   const invoices = await prisma.smartbillInvoice.findMany({
     where: {
-      OR: [
-        { paid: true },
-        { totalAmount: { lt: 0 } },
-      ],
+      paid: true,
       issuedAt: {
         ...(from ? { gte: from } : {}),
         ...(to ? { lte: to } : {}),
