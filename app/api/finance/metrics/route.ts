@@ -24,17 +24,20 @@ async function getMetrics(from: Date, to: Date): Promise<{
 }> {
   const where = { issuedAt: { gte: from, lte: to } };
 
-  const [incasate, stornate, emise] = await Promise.all([
+  const [incasatePoz, stornate, emise] = await Promise.all([
+    // Paid invoices with positive amount
     prisma.smartbillInvoice.aggregate({
       where: { ...where, paid: true, totalAmount: { gt: 0 } },
       _count: { _all: true },
       _sum: { totalAmount: true },
     }),
+    // Credit notes (storno) — negative totalAmount
     prisma.smartbillInvoice.aggregate({
       where: { ...where, totalAmount: { lt: 0 } },
       _count: { _all: true },
       _sum: { totalAmount: true },
     }),
+    // Issued but unpaid
     prisma.smartbillInvoice.aggregate({
       where: { ...where, paid: false, totalAmount: { gt: 0 } },
       _count: { _all: true },
@@ -42,8 +45,12 @@ async function getMetrics(from: Date, to: Date): Promise<{
     }),
   ]);
 
+  // Net revenue = paid positives + storno negatives (matches Evoluția Vânzărilor "Total")
+  const netTotal = (incasatePoz._sum.totalAmount ?? 0) + (stornate._sum.totalAmount ?? 0);
+  const netCount = incasatePoz._count._all + stornate._count._all;
+
   return {
-    incasate: { count: incasate._count._all, total: incasate._sum.totalAmount ?? 0 },
+    incasate: { count: netCount,             total: netTotal },
     stornate: { count: stornate._count._all, total: Math.abs(stornate._sum.totalAmount ?? 0) },
     emise:    { count: emise._count._all,    total: emise._sum.totalAmount ?? 0 },
   };

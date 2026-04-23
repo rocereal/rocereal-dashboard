@@ -33,7 +33,7 @@ const fmtRON = (v: number) =>
 function TrendBadge({ pct, inverseColor = false }: { pct: number | null; inverseColor?: boolean }) {
   if (pct === null) {
     return (
-      <Badge variant="outline" className="text-xs flex items-center gap-1 bg-gray-50 text-gray-500 border-gray-200">
+      <Badge variant="outline" className="text-xs flex items-center gap-1 w-fit bg-gray-50 text-gray-500 border-gray-200">
         <Minus className="h-3 w-3" />
         Fără date anterioare
       </Badge>
@@ -48,7 +48,7 @@ function TrendBadge({ pct, inverseColor = false }: { pct: number | null; inverse
     <Badge
       variant="outline"
       className={cn(
-        "text-xs flex items-center gap-1",
+        "text-xs flex items-center gap-1 w-fit",
         isNeutral
           ? "bg-gray-50 text-gray-500 border-gray-200"
           : isGood
@@ -63,7 +63,7 @@ function TrendBadge({ pct, inverseColor = false }: { pct: number | null; inverse
       ) : (
         <TrendingDown className="h-3 w-3" />
       )}
-      {isNeutral ? "Nicio schimbare" : `${isPositive ? "+" : ""}${pct}% față de perioada anterioară`}
+      <span className="whitespace-nowrap">{isNeutral ? "Nicio schimbare" : `${isPositive ? "+" : ""}${pct}% față de perioada anterioară`}</span>
     </Badge>
   );
 }
@@ -76,6 +76,7 @@ function MetricCard({
   count,
   pctTotal,
   inverseColor = false,
+  hideTrend = false,
   loading,
 }: {
   title: string;
@@ -85,6 +86,7 @@ function MetricCard({
   count: number;
   pctTotal: number | null;
   inverseColor?: boolean;
+  hideTrend?: boolean;
   loading: boolean;
 }) {
   return (
@@ -112,11 +114,11 @@ function MetricCard({
             {count} {count === 1 ? "factură" : "facturi"}
           </p>
         )}
-        {loading ? (
+        {!hideTrend && (loading ? (
           <Skeleton className="h-5 w-40" />
         ) : (
           <TrendBadge pct={pctTotal} inverseColor={inverseColor} />
-        )}
+        ))}
       </CardContent>
     </Card>
   );
@@ -183,6 +185,7 @@ export function FinanceMetrics({ dateRange }: Props) {
         total={data?.emise.total ?? 0}
         count={data?.emise.count ?? 0}
         pctTotal={data?.emise.pctTotal ?? null}
+        hideTrend={true}
         loading={loading}
       />
     </div>
