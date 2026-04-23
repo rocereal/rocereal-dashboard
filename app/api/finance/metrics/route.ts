@@ -3,8 +3,8 @@
  *
  * Returns three KPI groups for the requested period and the equivalent
  * previous period (same duration, ending the day before `from`):
- *   - incasate  : paid invoices (paid=true, totalAmount > 0)
- *   - stornate  : credit notes  (totalAmount < 0)
+ *   - incasate  : net revenue = paid(>0) + storno(<0), regardless of paid flag
+ *   - stornate  : credit notes (totalAmount < 0)
  *   - emise     : issued but unpaid (paid=false, totalAmount > 0)
  */
 import { prisma } from "@/lib/prisma";
@@ -24,21 +24,20 @@ async function getMetrics(from: Date, to: Date): Promise<{
 }> {
   const where = { issuedAt: { gte: from, lte: to } };
 
-  const [incasate, stornate, emise] = await Promise.all([
-    // Incasate = paid=true (SmartBill "Incasata" status). After daily sync,
-    // storned invoices will correctly have paid=false and won't appear here.
+  const [incasatePoz, stornate, emise] = await Promise.all([
+    // Paid invoices with positive amount
     prisma.smartbillInvoice.aggregate({
-      where: { ...where, paid: true },
+      where: { ...where, paid: true, totalAmount: { gt: 0 } },
       _count: { _all: true },
       _sum: { totalAmount: true },
     }),
-    // Stornate = paid=false AND totalAmount < 0
+    // Credit notes (storno) — negative totalAmount, regardless of paid flag
     prisma.smartbillInvoice.aggregate({
-      where: { ...where, paid: false, totalAmount: { lt: 0 } },
+      where: { ...where, totalAmount: { lt: 0 } },
       _count: { _all: true },
       _sum: { totalAmount: true },
     }),
-    // Emise = issued but not yet paid, positive amount
+    // Issued but unpaid
     prisma.smartbillInvoice.aggregate({
       where: { ...where, paid: false, totalAmount: { gt: 0 } },
       _count: { _all: true },
@@ -46,8 +45,12 @@ async function getMetrics(from: Date, to: Date): Promise<{
     }),
   ]);
 
+  // Net revenue = paid positives + storno negatives (matches Evoluția Vânzărilor "Total")
+  const netTotal = (incasatePoz._sum.totalAmount ?? 0) + (stornate._sum.totalAmount ?? 0);
+  const netCount = incasatePoz._count._all + stornate._count._all;
+
   return {
-    incasate: { count: incasate._count._all, total: incasate._sum.totalAmount ?? 0 },
+    incasate: { count: netCount,             total: netTotal },
     stornate: { count: stornate._count._all, total: Math.abs(stornate._sum.totalAmount ?? 0) },
     emise:    { count: emise._count._all,    total: emise._sum.totalAmount ?? 0 },
   };
@@ -65,7 +68,7 @@ export async function GET(req: NextRequest) {
 
   // Previous period — same duration, ending the day before `from`
   const durationMs = to.getTime() - from.getTime();
-  const prevTo   = new Date(from.getTime() - 1);           // 1ms before `from`
+  const prevTo   = new Date(from.getTime() - 1);
   const prevFrom = new Date(prevTo.getTime() - durationMs);
 
   const [current, previous] = await Promise.all([
