@@ -250,7 +250,7 @@ function TrendProfitChart() {
             <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={42} />
             <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={42} />
             <Tooltip
-              formatter={(value: number | undefined, name: string) => [fmtRON(value ?? 0), name === "profitBrut" ? "Profit Brut" : "Investiție"] as [string, string]}
+              formatter={(value: number | undefined, name: string | undefined) => [fmtRON(value ?? 0), name === "profitBrut" ? "Profit Brut" : "Investiție"] as [string, string]}
               contentStyle={{ fontSize: 12, borderRadius: 6 }}
             />
             <Bar yAxisId="left" dataKey="profitBrut" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="Profit Brut" />
