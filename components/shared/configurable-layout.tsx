@@ -87,7 +87,9 @@ export function ConfigurableLayout({
 
             {/* Main Content */}
             <main className="flex-1 min-w-0">
-              {children}
+              <div className={cn("mx-auto px-4 py-8 sm:px-6 lg:px-8", maxWidthClasses[config.maxWidth])}>
+                {children}
+              </div>
             </main>
 
             {/* Footer */}
@@ -122,7 +124,9 @@ export function ConfigurableLayout({
 
         {/* Main Content */}
         <main className="flex-1 min-w-0">
-          {children}
+          <div className={cn("mx-auto px-4 py-8 sm:px-6 lg:px-8", maxWidthClasses[config.maxWidth])}>
+            {children}
+          </div>
         </main>
 
         {/* Footer */}
