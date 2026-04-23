@@ -11,32 +11,39 @@ export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const fromParam = searchParams.get("from");
   const toParam   = searchParams.get("to");
+  const keysParam = searchParams.get("keys"); // e.g. ?keys=SSB-425,SSB-427,SSB-445
 
+  // Mode 1: lookup specific invoiceKeys
+  if (keysParam) {
+    const keys = keysParam.split(",").map(k => k.trim());
+    const invoices = await prisma.smartbillInvoice.findMany({
+      where: { invoiceKey: { in: keys } },
+      select: {
+        invoiceKey: true, series: true, number: true, client: true,
+        totalAmount: true, paidAmount: true, unpaidAmount: true,
+        paid: true, issuedAt: true, dueDate: true, syncedAt: true,
+      },
+    });
+    return NextResponse.json({ keys, found: invoices.length, invoices });
+  }
+
+  // Mode 2: all invoices in date range (paid=true OR totalAmount<0)
   const from = fromParam ? new Date(fromParam) : new Date("2026-04-01");
   const to   = toParam   ? new Date(toParam + "T23:59:59Z") : new Date("2026-04-30T23:59:59Z");
 
   const invoices = await prisma.smartbillInvoice.findMany({
     where: {
-      paid: true,
+      OR: [{ paid: true }, { totalAmount: { lt: 0 } }],
       issuedAt: { gte: from, lte: to },
     },
     select: {
-      invoiceKey: true,
-      series: true,
-      number: true,
-      client: true,
-      totalAmount: true,
-      issuedAt: true,
-      dueDate: true,
-      paid: true,
-      syncedAt: true,
+      invoiceKey: true, series: true, number: true, client: true,
+      totalAmount: true, paid: true, issuedAt: true, syncedAt: true,
     },
     orderBy: { issuedAt: "asc" },
   });
 
   const total = invoices.reduce((s, i) => s + i.totalAmount, 0);
-
-  // Group by day
   const byDay: Record<string, { invoices: typeof invoices; dayTotal: number }> = {};
   for (const inv of invoices) {
     const y  = inv.issuedAt.getFullYear();
