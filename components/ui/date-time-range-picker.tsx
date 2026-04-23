@@ -147,6 +147,7 @@ export function DateTimeRangePicker({
                 }
                 onSelect={handleDateSelect}
                 numberOfMonths={2}
+                showOutsideDays={false}
                 className="rounded-md border-0"
               />
             </div>
