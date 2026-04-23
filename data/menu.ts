@@ -29,6 +29,14 @@ export const menudata = {
       isSection: true,
     },
     {
+      title: "Rapoarte Financiare",
+      url: "#",
+      icon: Banknote,
+      items: [
+        { title: "Rapoarte Financiare", url: "/finance" },
+      ],
+    },
+    {
       title: "Management Clienti",
       url: "#",
       icon: Users,
@@ -57,14 +65,6 @@ export const menudata = {
       items: [
         { title: "Canale Marketing", url: "/education" },
         { title: "Facebook Ads", url: "/education/facebook-ads" },
-      ],
-    },
-    {
-      title: "Rapoarte Financiare",
-      url: "#",
-      icon: Banknote,
-      items: [
-        { title: "Rapoarte Financiare", url: "/finance" },
       ],
     },
 
@@ -146,13 +146,13 @@ export const menudataMobile = {
       url: "#",
       icon: LayoutDashboard,
       items: [
+        { title: "Rapoarte Financiare", url: "/finance" },
         { title: "Raport Clienti", url: "/crm" },
         { title: "Tracking Mașini", url: "/tracking" },
         { title: "Canale Vanzare", url: "/ecommerce" },
         { title: "Magazine Online", url: "/ecommerce/magazine-online" },
         { title: "Canale Marketing", url: "/education" },
         { title: "Facebook Ads", url: "/education/facebook-ads" },
-        { title: "Rapoarte Financiare", url: "/finance" },
       ],
     },
     {
