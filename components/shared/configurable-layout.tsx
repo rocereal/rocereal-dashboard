@@ -87,7 +87,7 @@ export function ConfigurableLayout({
 
             {/* Main Content */}
             <main className="flex-1 min-w-0 overflow-x-hidden">
-              <div className="w-full px-4 py-6 sm:px-6">
+              <div className="w-full">
                 {children}
               </div>
             </main>

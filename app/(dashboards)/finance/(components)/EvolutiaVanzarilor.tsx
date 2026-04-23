@@ -93,7 +93,7 @@ export function EvolutiaVanzarilor({ dateRange }: Props) {
   return (
     <Card className="py-0 shadow-xs">
       {/* Header — same pattern as SampleBarChart */}
-      <CardHeader className="flex flex-col items-stretch border-b !p-0">
+      <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-4 pt-4 pb-3 sm:px-6">
           <CardTitle className="text-base sm:text-lg">Evoluția Vânzărilor</CardTitle>
           <CardDescription className="text-xs sm:text-sm">
@@ -101,13 +101,13 @@ export function EvolutiaVanzarilor({ dateRange }: Props) {
           </CardDescription>
         </div>
 
-        {/* Totals / tab buttons — 2×2 grid on mobile, single row on sm+ */}
-        <div className="grid grid-cols-2 sm:flex border-t sm:border-t-0">
+        {/* Totals / tab buttons — single row on sm+ */}
+        <div className="flex border-t sm:border-t-0">
           {DATA_KEYS.map((key) => (
             <button
               key={key}
               data-active={activeKey === key}
-              className="data-[active=true]:bg-muted/50 relative z-30 flex flex-1 flex-col justify-center gap-1 border-b sm:border-b-0 sm:border-t-0 sm:border-l px-4 py-3 text-left odd:border-r sm:odd:border-r-0 sm:px-6 sm:py-4"
+              className="data-[active=true]:bg-muted/50 relative z-30 flex flex-1 flex-col justify-center gap-1 border-l px-4 py-3 text-left sm:px-6 sm:py-4"
               onClick={() => setActiveKey(key)}
             >
               <span className="text-muted-foreground text-xs whitespace-nowrap">
