@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
-  Bar, BarChart, CartesianGrid, Cell, ComposedChart, Line,
+  Bar, CartesianGrid, Cell, ComposedChart, Line,
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
@@ -165,7 +165,7 @@ function ROIPeCanal() {
               ))}
             </Pie>
             <Tooltip
-              formatter={(v: number) => [`${v}x`, "ROI"]}
+              formatter={(v: number | undefined) => [`${v ?? 0}x`, "ROI"] as [string, string]}
               contentStyle={{ fontSize: 12, borderRadius: 6 }}
             />
           </PieChart>
@@ -250,7 +250,7 @@ function TrendProfitChart() {
             <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={42} />
             <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={42} />
             <Tooltip
-              formatter={(value: number, name: string) => [fmtRON(value), name === "profitBrut" ? "Profit Brut" : "Investiție"]}
+              formatter={(value: number | undefined, name: string) => [fmtRON(value ?? 0), name === "profitBrut" ? "Profit Brut" : "Investiție"] as [string, string]}
               contentStyle={{ fontSize: 12, borderRadius: 6 }}
             />
             <Bar yAxisId="left" dataKey="profitBrut" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="Profit Brut" />
