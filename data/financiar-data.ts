@@ -17,6 +17,12 @@ export const prognozaOwnerData = [
   { name: "Raphael D.", valoare: 280000 },
 ];
 
+export const profitabilitateCanalData = [
+  { canal: "Facebook", profitBrut: 25760, cost: 7850, roas: 3.28 },
+  { canal: "Google",   profitBrut: 45840, cost: 10450, roas: 4.39 },
+  { canal: "TikTok",  profitBrut: 21360, cost: 6450,  roas: 3.31 },
+];
+
 export const prognozaTrimestru = [
   { luna: "Ian 2024", actual: 950000, prognoza: 0 },
   { luna: "Feb 2024", actual: 1100000, prognoza: 0 },
