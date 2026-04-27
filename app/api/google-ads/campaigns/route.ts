@@ -85,8 +85,7 @@ export async function GET(req: NextRequest) {
           metrics.average_cpc,
           metrics.conversions,
           metrics.cost_per_conversion,
-          metrics.interaction_rate,
-          metrics.video_views
+          metrics.interaction_rate
         FROM campaign
         WHERE segments.date BETWEEN '${from}' AND '${to}'
           AND campaign.status != 'REMOVED'
@@ -126,7 +125,7 @@ export async function GET(req: NextRequest) {
         avgCpc:         Math.round(Number(m.averageCpc ?? 0) / 10000) / 100,
         conversions:    Math.round(Number(m.conversions ?? 0)),
         costPerConversion: Math.round(Number(m.costPerConversion ?? 0) / 10000) / 100,
-        videoViews:     Number(m.videoViews ?? 0),
+        videoViews:     0,
       };
     });
 
