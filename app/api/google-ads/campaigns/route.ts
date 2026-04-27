@@ -9,7 +9,7 @@ const DEVELOPER_TOKEN = process.env.GOOGLE_ADS_DEVELOPER_TOKEN!;
 const MANAGER_ID      = process.env.GOOGLE_ADS_MANAGER_CUSTOMER_ID!; // MCC
 const CUSTOMER_ID     = process.env.GOOGLE_ADS_CUSTOMER_ID!;         // client account
 
-const API_VERSION = "v18";
+const API_VERSION = "v17";
 
 async function getAccessToken(): Promise<string> {
   const res = await fetch("https://oauth2.googleapis.com/token", {
@@ -29,23 +29,25 @@ async function getAccessToken(): Promise<string> {
 }
 
 async function gaqlQuery(accessToken: string, query: string) {
-  const res = await fetch(
-    `https://googleads.googleapis.com/${API_VERSION}/customers/${CUSTOMER_ID}/googleAds:search`,
-    {
-      method: "POST",
-      headers: {
-        "Authorization":      `Bearer ${accessToken}`,
-        "developer-token":    DEVELOPER_TOKEN,
-        "login-customer-id":  MANAGER_ID,
-        "Content-Type":       "application/json",
-      },
-      body: JSON.stringify({ query }),
-      cache: "no-store",
-    }
-  );
+  const url = `https://googleads.googleapis.com/${API_VERSION}/customers/${CUSTOMER_ID}/googleAds:search`;
+  const headers: Record<string, string> = {
+    "Authorization":     `Bearer ${accessToken}`,
+    "developer-token":   DEVELOPER_TOKEN,
+    "Content-Type":      "application/json",
+  };
+  if (MANAGER_ID) headers["login-customer-id"] = MANAGER_ID;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ query }),
+    cache: "no-store",
+  });
+
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`Google Ads API error ${res.status}: ${err}`);
+    // Return structured error with URL so we can debug
+    throw new Error(`[${res.status}] ${url} → ${err.slice(0, 500)}`);
   }
   return res.json() as Promise<{ results?: Record<string, unknown>[] }>;
 }
