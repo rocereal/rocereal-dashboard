@@ -183,7 +183,7 @@ function FunnelGeneral({ data, loading }: { data: FunnelRow[]; loading: boolean 
 
 // ─── ROAS DONUT ───────────────────────────────────────────────────────────────
 
-interface RoasRow { name: string; value: number; color: string }
+interface RoasRow { name: string; value: number; color: string; [key: string]: unknown }
 
 function ROIPeCanal({ data, loading }: { data: RoasRow[]; loading: boolean }) {
   const visData = data.filter(d => d.value > 0);
