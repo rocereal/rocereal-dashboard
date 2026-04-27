@@ -81,14 +81,20 @@ const performanceRows = [
   },
 ];
 
+// 2026: Ian–Apr = date reale (aproximate), Mai–Dec = dummy
 const trendData = [
-  { luna: "Oct",  profitBrut: 142000, investitie: 18200 },
-  { luna: "Nov",  profitBrut: 168000, investitie: 21000 },
-  { luna: "Dec",  profitBrut: 195000, investitie: 24500 },
-  { luna: "Ian",  profitBrut: 138000, investitie: 19800 },
-  { luna: "Feb",  profitBrut: 176000, investitie: 22400 },
-  { luna: "Mar",  profitBrut: 212000, investitie: 26100 },
-  { luna: "Apr",  profitBrut: 189000, investitie: 24750 },
+  { luna: "Ian", venituriIncasate: 520000, investitie: 21400 },
+  { luna: "Feb", venituriIncasate: 487000, investitie: 19800 },
+  { luna: "Mar", venituriIncasate: 706821, investitie: 23600 },
+  { luna: "Apr", venituriIncasate: 271914, investitie: 24750 },
+  { luna: "Mai", venituriIncasate: null,   investitie: null },
+  { luna: "Iun", venituriIncasate: null,   investitie: null },
+  { luna: "Iul", venituriIncasate: null,   investitie: null },
+  { luna: "Aug", venituriIncasate: null,   investitie: null },
+  { luna: "Sep", venituriIncasate: null,   investitie: null },
+  { luna: "Oct", venituriIncasate: null,   investitie: null },
+  { luna: "Nov", venituriIncasate: null,   investitie: null },
+  { luna: "Dec", venituriIncasate: null,   investitie: null },
 ];
 
 const topAgenti = [
@@ -292,24 +298,27 @@ function PerformantaTable() {
 
 function TrendProfitChart() {
   return (
-    <Card className="shadow-xs h-full">
+    <Card className="shadow-xs">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">Trend – Profit Brut vs Investiție</CardTitle>
-        <CardDescription className="text-xs">Evoluție lunară comparativă</CardDescription>
+        <CardTitle className="text-base">Trend – Venituri Încasate vs Investiție Ads</CardTitle>
+        <CardDescription className="text-xs">Evoluție lunară 2026 — bare: Venituri Încasate · linie: Total Investiție Ads</CardDescription>
       </CardHeader>
       <CardContent className="px-2 pb-4">
-        <ResponsiveContainer width="100%" height={220}>
+        <ResponsiveContainer width="100%" height={240}>
           <ComposedChart data={trendData} margin={{ left: 8, right: 8 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="luna" tickLine={false} axisLine={false} tickMargin={8} style={{ fontSize: 11 }} />
-            <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={42} />
-            <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={42} />
+            <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={48} />
+            <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={44} />
             <Tooltip
-              formatter={(value: number | undefined, name: string | undefined) => [fmtRON(value ?? 0), name === "profitBrut" ? "Profit Brut" : "Investiție"] as [string, string]}
+              formatter={(value: number | undefined, name: string | undefined) => [
+                value != null ? fmtRON(value) : "—",
+                name === "venituriIncasate" ? "Venituri Încasate" : "Investiție Ads",
+              ] as [string, string]}
               contentStyle={{ fontSize: 12, borderRadius: 6 }}
             />
-            <Bar yAxisId="left" dataKey="profitBrut" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="Profit Brut" />
-            <Line yAxisId="right" type="monotone" dataKey="investitie" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="Investiție" />
+            <Bar yAxisId="left" dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
+            <Line yAxisId="right" type="monotone" dataKey="investitie" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitie" connectNulls={false} />
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>
@@ -384,17 +393,13 @@ export function MarketingPerformance() {
       {/* 3. Performance table */}
       <PerformantaTable />
 
-      {/* 4. Trend chart + Top agents + Metrics */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3">
-          <TrendProfitChart />
-        </div>
-        <div className="lg:col-span-2">
-          <TopAgentiTable />
-        </div>
-      </div>
+      {/* 4. Trend chart — full width */}
+      <TrendProfitChart />
 
-      {/* 5. Bottom metric cards */}
+      {/* 5. Top agents */}
+      <TopAgentiTable />
+
+      {/* 6. Bottom metric cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <MetricaMica
           label="Valoare Medie Oferte Atribuite"
