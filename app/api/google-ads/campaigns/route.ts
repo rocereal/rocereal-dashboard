@@ -9,7 +9,7 @@ const DEVELOPER_TOKEN = process.env.GOOGLE_ADS_DEVELOPER_TOKEN!;
 const MANAGER_ID      = process.env.GOOGLE_ADS_MANAGER_CUSTOMER_ID!; // MCC
 const CUSTOMER_ID     = process.env.GOOGLE_ADS_CUSTOMER_ID!;         // client account
 
-const API_VERSION = "v17";
+const API_VERSION = "v19";
 
 async function getAccessToken(): Promise<string> {
   const res = await fetch("https://oauth2.googleapis.com/token", {
