@@ -130,38 +130,64 @@ function ChannelKPICards() {
   );
 }
 
+// Each stage defines left/right inset (%) for top and bottom edges
+// so consecutive stages share the same edge → seamless funnel shape
+const FUNNEL_STAGES = [
+  { tl: 0,  tr: 100, bl: 12, br: 88 },
+  { tl: 12, tr: 88,  bl: 22, br: 78 },
+  { tl: 22, tr: 78,  bl: 30, br: 70 },
+  { tl: 30, tr: 70,  bl: 36, br: 64 },
+];
+const BAND_H   = 52; // px height per funnel band
+const PCT_H    = 20; // px height for percentage label row between bands
+const COLORS   = ["#1877f2", "#22c55e", "#f59e0b", "#ef4444"];
+
 function FunnelGeneral() {
+  const totalH = funnelData.length * BAND_H + (funnelData.length - 1) * PCT_H;
+
   return (
     <Card className="shadow-xs h-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Funnel General / Trade Channels</CardTitle>
         <CardDescription className="text-xs">Conversie vizitatori → vânzări atribuite</CardDescription>
       </CardHeader>
-      <CardContent className="px-4 pb-4">
-        {funnelData.map((item, i) => {
-          const widthPct = Math.max(30, 100 - i * 18);
-          const colors = ["#1877f2", "#22c55e", "#f59e0b", "#ef4444"];
-          return (
-            <div key={item.stage} className="flex items-center gap-3">
-              {/* bar */}
-              <div className="flex-1 flex justify-center">
+      <CardContent className="px-4 pt-2 pb-4">
+        <div className="relative w-full" style={{ height: totalH }}>
+          {funnelData.map((item, i) => {
+            const s = FUNNEL_STAGES[i];
+            const topPx = i * (BAND_H + PCT_H);
+            return (
+              <div key={item.stage} className="absolute w-full" style={{ top: topPx, height: BAND_H }}>
+                {/* trapezoid band */}
                 <div
-                  className="flex items-center justify-center text-white text-xs font-semibold py-3 w-full"
-                  style={{ maxWidth: `${widthPct}%`, backgroundColor: colors[i] }}
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{
+                    clipPath: `polygon(${s.tl}% 0%, ${s.tr}% 0%, ${s.br}% 100%, ${s.bl}% 100%)`,
+                    backgroundColor: COLORS[i],
+                  }}
                 >
-                  <span className="truncate px-2">{fmtK(item.value)} · {item.stage}</span>
+                  <span className="text-white text-xs font-semibold px-2 text-center leading-tight">
+                    {fmtK(item.value)} · {item.stage}
+                  </span>
                 </div>
-              </div>
-              {/* percentage to the right */}
-              <div className="w-12 text-right">
-                {i > 0 && (
-                  <span className="text-xs font-medium text-muted-foreground">{item.pct}%</span>
+
+                {/* percentage label centered between this band and the next */}
+                {i < funnelData.length - 1 && (
+                  <div
+                    className="absolute w-full flex items-center justify-center"
+                    style={{ top: BAND_H, height: PCT_H }}
+                  >
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {funnelData[i + 1].pct}%
+                    </span>
+                  </div>
                 )}
               </div>
-            </div>
-          );
-        })}
-        <div className="mt-3 pt-3 border-t grid grid-cols-2 gap-2">
+            );
+          })}
+        </div>
+
+        <div className="mt-4 pt-4 border-t grid grid-cols-2 gap-2 mb-1">
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Total Leads</p>
             <p className="text-sm font-bold">8.760</p>
