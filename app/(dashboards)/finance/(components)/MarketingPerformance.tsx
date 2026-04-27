@@ -6,6 +6,7 @@ import {
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { PrognozaBarChart } from "@/app/(dashboards)/crypto/(components)/PrognozaBarChart";
 
 // ─── Dummy data ────────────────────────────────────────────────────────────────
 
@@ -145,8 +146,8 @@ const FUNNEL_STAGES = [
   { tl: 20, tr:  80, bl: 27, br: 73 },
   { tl: 30, tr:  70, bl: 37, br: 63 },
 ];
-const BAND_H   = 56; // px height per funnel band
-const PCT_H    = 22; // px height for percentage label row between bands
+const BAND_H   = 44; // px height per funnel band
+const PCT_H    = 16; // px height for percentage label row between bands
 const COLORS   = ["#1877f2", "#22c55e", "#f59e0b", "#ef4444"];
 
 function FunnelGeneral() {
@@ -219,8 +220,8 @@ function ROIPeCanal() {
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-4">
         <div className="relative">
-          <PieChart width={200} height={180}>
-            <Pie data={roiData} cx={95} cy={85} innerRadius={52} outerRadius={82} dataKey="value" stroke="none">
+          <PieChart width={170} height={150}>
+            <Pie data={roiData} cx={80} cy={70} innerRadius={42} outerRadius={66} dataKey="value" stroke="none">
               {roiData.map((entry, i) => (
                 <Cell key={i} fill={entry.color} />
               ))}
@@ -384,8 +385,9 @@ export function MarketingPerformance() {
       {/* 1. Channel KPI cards */}
       <ChannelKPICards />
 
-      {/* 2. Funnel + ROI donut */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* 2. Profitabilitate + Funnel + ROI — one row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <PrognozaBarChart />
         <FunnelGeneral />
         <ROIPeCanal />
       </div>

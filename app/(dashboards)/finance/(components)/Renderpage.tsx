@@ -15,7 +15,6 @@ import { AlertTriangle, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { CereriDeschise } from "@/app/(dashboards)/crypto/(components)/CereriDeschise";
 import { GaugeCard } from "@/app/(dashboards)/crypto/(components)/GaugeCard";
-import { PrognozaBarChart } from "@/app/(dashboards)/crypto/(components)/PrognozaBarChart";
 import { PrognozaMicaChart } from "@/app/(dashboards)/crypto/(components)/PrognozaMicaChart";
 import { TopAgentiCard } from "@/app/(dashboards)/crypto/(components)/TopAgentiCard";
 import { VanzariDonut } from "@/app/(dashboards)/crypto/(components)/VanzariDonut";
@@ -175,10 +174,9 @@ export default function RenderPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="lg:col-span-1"><TopAgentiCard /></div>
-        <div className="lg:col-span-2"><PrognozaBarChart /></div>
-        <div className="lg:col-span-1"><GaugeCard value={36} /></div>
+        <div className="lg:col-span-2"><GaugeCard value={36} /></div>
         <div className="lg:col-span-1"><VandutCard /></div>
       </div>
 
