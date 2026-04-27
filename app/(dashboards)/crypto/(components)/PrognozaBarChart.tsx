@@ -9,6 +9,7 @@ import {
   LabelList,
   Legend,
   Line,
+  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -86,9 +87,10 @@ export function PrognozaBarChart() {
               label={{ value: "ROAS (x)", angle: 90, position: "insideRight", fontSize: 11, fill: "#94a3b8", dy: -30 }}
             />
             <Tooltip
-              formatter={(value: number, name: string) => {
-                if (name === "roas") return [`${value}x`, "ROAS"];
-                return [`${value.toLocaleString("ro-RO")} lei`, name === "profitBrut" ? "Profit brut" : "Cost"];
+              formatter={(value: number | undefined, name: string | undefined) => {
+                const v = value ?? 0;
+                if (name === "roas") return [`${v}x`, "ROAS"] as [string, string];
+                return [`${v.toLocaleString("ro-RO")} lei`, name === "profitBrut" ? "Profit brut" : "Cost"] as [string, string];
               }}
             />
             <Legend
