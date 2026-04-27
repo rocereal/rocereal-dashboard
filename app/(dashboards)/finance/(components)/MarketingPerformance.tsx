@@ -20,10 +20,10 @@ const channelKPIs = [
 ];
 
 const funnelData = [
-  { stage: "Impresii",              value: 1_248_650, convRate: null,  color: "#22c55e" },
-  { stage: "Clickuri",              value: 18_742,    convRate: "1.50%", color: "#86efac" },
-  { stage: "Apeluri către agenți",  value: 412,       convRate: "2.20%", color: "#fbbf24" },
-  { stage: "Vânzări atribute",      value: 28,        convRate: "6.80%", color: "#16a34a" },
+  { stage: "Vizitatori Unici",    value: 1_434_000, pct: 100 },
+  { stage: "Leads Generate",      value: 8_760,     pct: 0.61 },
+  { stage: "Oferte Trimise",      value: 2_190,     pct: 25.0 },
+  { stage: "Vânzări Atribuite",   value: 438,       pct: 20.0 },
 ];
 
 const roiData = [
@@ -104,54 +104,44 @@ function ChannelKPICards() {
   );
 }
 
-// Trapezoid offsets: each stage narrows by ~9% per side
-const FUNNEL_OFFSETS = [
-  { tl: 0,  tr: 100, bl: 9,  br: 91 },
-  { tl: 9,  tr: 91,  bl: 18, br: 82 },
-  { tl: 18, tr: 82,  bl: 27, br: 73 },
-  { tl: 27, tr: 73,  bl: 33, br: 67 },
-];
-const STAGE_H = 68; // px
-
 function FunnelGeneral() {
   return (
     <Card className="shadow-xs h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">Funnel General (Toate canalele)</CardTitle>
+        <CardTitle className="text-base">Funnel General / Trade Channels</CardTitle>
+        <CardDescription className="text-xs">Conversie vizitatori → vânzări atribuite</CardDescription>
       </CardHeader>
-      <CardContent className="px-4 pb-6">
-        <div className="relative" style={{ height: funnelData.length * STAGE_H }}>
-          {funnelData.map((item, i) => {
-            const o = FUNNEL_OFFSETS[i];
-            return (
-              <div
-                key={item.stage}
-                className="absolute w-full"
-                style={{ top: i * STAGE_H, height: STAGE_H }}
-              >
-                {/* Trapezoid */}
-                <div
-                  className="absolute inset-0 flex items-center justify-center"
-                  style={{
-                    clipPath: `polygon(${o.tl}% 0%, ${o.tr}% 0%, ${o.br}% 100%, ${o.bl}% 100%)`,
-                    backgroundColor: item.color,
-                  }}
-                >
-                  <div className="text-center text-white leading-tight">
-                    <div className="text-lg font-bold">{item.value.toLocaleString("ro-RO")}</div>
-                    <div className="text-xs opacity-90">{item.stage}</div>
-                  </div>
+      <CardContent className="flex flex-col gap-2 px-4 pb-4">
+        {funnelData.map((item, i) => {
+          const widthPct = Math.max(30, 100 - i * 18);
+          const colors = ["#1877f2", "#22c55e", "#f59e0b", "#ef4444"];
+          return (
+            <div key={item.stage} className="flex flex-col items-center gap-0.5">
+              {i > 0 && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground py-0.5">
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="font-medium text-green-600">{item.pct}%</span>
+                  <div className="h-px flex-1 bg-border" />
                 </div>
-
-                {/* Conversion rate label — right side, vertically centered */}
-                {item.convRate && (
-                  <div className="absolute right-0 inset-y-0 flex items-center">
-                    <span className="text-sm font-semibold text-muted-foreground">{item.convRate}</span>
-                  </div>
-                )}
+              )}
+              <div
+                className="flex items-center justify-center rounded text-white text-xs font-semibold py-3 w-full transition-all"
+                style={{ maxWidth: `${widthPct}%`, backgroundColor: colors[i] }}
+              >
+                <span className="truncate px-2">{fmtK(item.value)} · {item.stage}</span>
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
+        <div className="mt-3 pt-3 border-t grid grid-cols-2 gap-2">
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground">Total Leads</p>
+            <p className="text-sm font-bold">8.760</p>
+          </div>
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground">Cost / Lead</p>
+            <p className="text-sm font-bold">2,83 RON</p>
+          </div>
         </div>
       </CardContent>
     </Card>
