@@ -47,16 +47,16 @@ function ChannelLogo({ k }: { k: LogoKey }) {
 }
 
 const funnelData = [
-  { stage: "Vizitatori Unici",    value: 1_434_000, pct: 100 },
-  { stage: "Leads Generate",      value: 8_760,     pct: 0.61 },
-  { stage: "Oferte Trimise",      value: 2_190,     pct: 25.0 },
-  { stage: "Vânzări Atribuite",   value: 438,       pct: 20.0 },
+  { stage: "Vizitatori Unici", value: 1_434_000, pct: 100 },
+  { stage: "Leads Generate",   value: 8_760,     pct: 0.61 },
+  { stage: "Oferte Trimise",   value: 2_190,     pct: 25.0 },
+  { stage: "Vânzări",          value: 438,       pct: 20.0 },
 ];
 
 const roiData = [
-  { name: "Facebook", value: 4.2,  color: "#1877f2" },
-  { name: "Google",   value: 6.1,  color: "#ea4335" },
-  { name: "TikTok",   value: 3.76, color: "#010101" },
+  { name: "Facebook", value: 3.28, color: "#22c55e" },
+  { name: "Google",   value: 4.39, color: "#3b82f6" },
+  { name: "TikTok",   value: 3.31, color: "#1e293b" },
 ];
 
 const performanceRows = [
@@ -211,37 +211,41 @@ function FunnelGeneral() {
 }
 
 function ROIPeCanal() {
-  const avgROI = (roiData.reduce((s, d) => s + d.value, 0) / roiData.length).toFixed(2);
+  const avgROAS = (roiData.reduce((s, d) => s + d.value, 0) / roiData.length).toFixed(2);
   return (
     <Card className="shadow-xs h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">ROI pe Canal</CardTitle>
+        <CardTitle className="text-base">ROAS pe Canal</CardTitle>
         <CardDescription className="text-xs">Randamentul investiției per canal publicitar</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center gap-4">
-        <div className="relative">
-          <PieChart width={170} height={150}>
-            <Pie data={roiData} cx={80} cy={70} innerRadius={42} outerRadius={66} dataKey="value" stroke="none">
+      <CardContent className="flex items-center justify-center gap-4 py-3">
+        {/* Donut */}
+        <div className="relative flex-shrink-0">
+          <PieChart width={150} height={150}>
+            <Pie data={roiData} cx={70} cy={70} innerRadius={46} outerRadius={70} dataKey="value" stroke="none">
               {roiData.map((entry, i) => (
                 <Cell key={i} fill={entry.color} />
               ))}
             </Pie>
             <Tooltip
-              formatter={(v: number | undefined) => [`${v ?? 0}x`, "ROI"] as [string, string]}
+              formatter={(v: number | undefined) => [`${v ?? 0}x`, "ROAS"] as [string, string]}
               contentStyle={{ fontSize: 12, borderRadius: 6 }}
             />
           </PieChart>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-2xl font-bold">{avgROI}x</span>
-            <span className="text-xs text-muted-foreground">ROI mediu</span>
+            <span className="text-xl font-bold">{avgROAS}x</span>
+            <span className="text-xs text-muted-foreground">ROAS mediu</span>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-3 w-full">
+        {/* Legend right */}
+        <div className="flex flex-col gap-3">
           {roiData.map((item) => (
-            <div key={item.name} className="flex flex-col items-center gap-1">
-              <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-              <span className="text-xs text-muted-foreground">{item.name}</span>
-              <span className="text-sm font-bold">{item.value}x</span>
+            <div key={item.name} className="flex items-center gap-2">
+              <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+              <div>
+                <p className="text-xs text-muted-foreground leading-none">{item.name}</p>
+                <p className="text-sm font-bold leading-tight">{item.value}x</p>
+              </div>
             </div>
           ))}
         </div>
@@ -386,10 +390,10 @@ export function MarketingPerformance() {
       <ChannelKPICards />
 
       {/* 2. Profitabilitate + Funnel + ROI — one row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <PrognozaBarChart />
-        <FunnelGeneral />
-        <ROIPeCanal />
+      <div className="grid grid-cols-1 md:grid-cols-10 gap-4">
+        <div className="md:col-span-4"><PrognozaBarChart /></div>
+        <div className="md:col-span-3"><FunnelGeneral /></div>
+        <div className="md:col-span-3"><ROIPeCanal /></div>
       </div>
 
       {/* 3. Performance table */}
