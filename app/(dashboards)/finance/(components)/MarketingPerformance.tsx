@@ -130,16 +130,17 @@ function ChannelKPICards() {
   );
 }
 
-// Each stage defines left/right inset (%) for top and bottom edges
-// so consecutive stages share the same edge → seamless funnel shape
+// Uniform slope: band_change/BAND_H = gap_change/PCT_H → same angle everywhere
+// band_change = 7%, gap_change = 7/52*20 ≈ 2.7% → rounded to 3 for clean numbers
+// Resulting stages (top-left %, top-right %, bottom-left %, bottom-right %):
 const FUNNEL_STAGES = [
-  { tl: 0,  tr: 100, bl: 12, br: 88 },
-  { tl: 12, tr: 88,  bl: 22, br: 78 },
-  { tl: 22, tr: 78,  bl: 30, br: 70 },
-  { tl: 30, tr: 70,  bl: 36, br: 64 },
+  { tl:  0, tr: 100, bl:  7, br: 93 },
+  { tl: 10, tr:  90, bl: 17, br: 83 },
+  { tl: 20, tr:  80, bl: 27, br: 73 },
+  { tl: 30, tr:  70, bl: 37, br: 63 },
 ];
-const BAND_H   = 52; // px height per funnel band
-const PCT_H    = 20; // px height for percentage label row between bands
+const BAND_H   = 56; // px height per funnel band
+const PCT_H    = 22; // px height for percentage label row between bands
 const COLORS   = ["#1877f2", "#22c55e", "#f59e0b", "#ef4444"];
 
 function FunnelGeneral() {
