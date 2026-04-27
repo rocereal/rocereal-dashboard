@@ -65,6 +65,8 @@ export const menudata = {
       items: [
         { title: "Canale Marketing", url: "/education" },
         { title: "Facebook Ads", url: "/education/facebook-ads" },
+        { title: "TikTok Ads", url: "/education/tiktok-ads" },
+        { title: "Google Ads", url: "/education/google-ads" },
       ],
     },
 
@@ -153,6 +155,8 @@ export const menudataMobile = {
         { title: "Magazine Online", url: "/ecommerce/magazine-online" },
         { title: "Canale Marketing", url: "/education" },
         { title: "Facebook Ads", url: "/education/facebook-ads" },
+        { title: "TikTok Ads", url: "/education/tiktok-ads" },
+        { title: "Google Ads", url: "/education/google-ads" },
       ],
     },
     {
