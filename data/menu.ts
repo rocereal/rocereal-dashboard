@@ -60,14 +60,8 @@ export const menudata = {
     },
     {
       title: "Canale Marketing",
-      url: "#",
+      url: "/education",
       icon: Megaphone,
-      items: [
-        { title: "Canale Marketing", url: "/education" },
-        { title: "Facebook Ads", url: "/education/facebook-ads" },
-        { title: "TikTok Ads", url: "/education/tiktok-ads" },
-        { title: "Google Ads", url: "/education/google-ads" },
-      ],
     },
 
     // ======================
@@ -86,6 +80,8 @@ export const menudata = {
         { title: "Invox", url: "/crm/invox" },
         { title: "Smartbill", url: "/finance/smartbill" },
         { title: "Facebook Ads", url: "/education/facebook-ads" },
+        { title: "TikTok Ads", url: "/education/tiktok-ads" },
+        { title: "Google Ads", url: "/education/google-ads" },
       ],
     },
 
@@ -154,9 +150,6 @@ export const menudataMobile = {
         { title: "Canale Vanzare", url: "/ecommerce" },
         { title: "Magazine Online", url: "/ecommerce/magazine-online" },
         { title: "Canale Marketing", url: "/education" },
-        { title: "Facebook Ads", url: "/education/facebook-ads" },
-        { title: "TikTok Ads", url: "/education/tiktok-ads" },
-        { title: "Google Ads", url: "/education/google-ads" },
       ],
     },
     {
@@ -168,6 +161,8 @@ export const menudataMobile = {
         { title: "Invox", url: "/crm/invox" },
         { title: "Smartbill", url: "/finance/smartbill" },
         { title: "Facebook Ads", url: "/education/facebook-ads" },
+        { title: "TikTok Ads", url: "/education/tiktok-ads" },
+        { title: "Google Ads", url: "/education/google-ads" },
       ],
     },
 
