@@ -35,7 +35,8 @@ async function gaqlQuery(accessToken: string, query: string) {
     "developer-token":   DEVELOPER_TOKEN,
     "Content-Type":      "application/json",
   };
-  if (MANAGER_ID) headers["login-customer-id"] = MANAGER_ID;
+  // login-customer-id must always be set: use MCC if available, otherwise the customer itself
+  headers["login-customer-id"] = MANAGER_ID || CUSTOMER_ID;
 
   const res = await fetch(url, {
     method: "POST",
