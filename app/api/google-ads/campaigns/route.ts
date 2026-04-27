@@ -45,9 +45,12 @@ async function gaqlQuery(accessToken: string, query: string) {
   });
 
   if (!res.ok) {
+    const contentType = res.headers.get("content-type") ?? "";
     const err = await res.text();
-    // Return structured error with URL so we can debug
-    throw new Error(`[${res.status}] ${url} → ${err.slice(0, 500)}`);
+    if (contentType.includes("text/html")) {
+      throw new Error(`[${res.status}] Google Ads API not enabled or wrong endpoint. Enable "Google Ads API" at console.cloud.google.com/apis/library for your project. URL: ${url}`);
+    }
+    throw new Error(`[${res.status}] ${url} → ${err.slice(0, 800)}`);
   }
   return res.json() as Promise<{ results?: Record<string, unknown>[] }>;
 }
