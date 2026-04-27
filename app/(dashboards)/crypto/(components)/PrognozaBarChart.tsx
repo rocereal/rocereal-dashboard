@@ -53,11 +53,11 @@ function RoasLabel({ x, y, value }: { x?: number; y?: number; value?: number }) 
 
 export function PrognozaBarChart() {
   return (
-    <Card className="shadow-xs">
+    <Card className="shadow-xs h-full flex flex-col">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-semibold">Profitabilitate pe canal</CardTitle>
       </CardHeader>
-      <CardContent className="pb-3">
+      <CardContent className="pb-3 flex-1 flex flex-col justify-center">
         <ResponsiveContainer width="100%" height={220}>
           <ComposedChart
             data={profitabilitateCanalData}

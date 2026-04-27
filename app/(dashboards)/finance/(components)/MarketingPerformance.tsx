@@ -154,7 +154,7 @@ function FunnelGeneral() {
   const totalH = funnelData.length * BAND_H + (funnelData.length - 1) * PCT_H;
 
   return (
-    <Card className="shadow-xs">
+    <Card className="shadow-xs h-full flex flex-col">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Funnel General / Trade Channels</CardTitle>
         <CardDescription className="text-xs">Conversie vizitatori → vânzări atribuite</CardDescription>
@@ -213,16 +213,16 @@ function FunnelGeneral() {
 function ROIPeCanal() {
   const avgROAS = (roiData.reduce((s, d) => s + d.value, 0) / roiData.length).toFixed(2);
   return (
-    <Card className="shadow-xs">
-      <CardHeader className="pb-2">
+    <Card className="shadow-xs h-full flex flex-col">
+      <CardHeader className="pb-1">
         <CardTitle className="text-base">ROAS pe Canal</CardTitle>
-        <CardDescription className="text-xs">Randamentul investiției per canal publicitar</CardDescription>
+        <CardDescription className="text-xs">Randamentul investiției per canal</CardDescription>
       </CardHeader>
-      <CardContent className="flex items-center justify-center gap-4 py-3 pb-4">
+      <CardContent className="flex flex-col items-center justify-center flex-1 gap-3 pb-4">
         {/* Donut */}
         <div className="relative flex-shrink-0">
-          <PieChart width={150} height={150}>
-            <Pie data={roiData} cx={70} cy={70} innerRadius={46} outerRadius={70} dataKey="value" stroke="none">
+          <PieChart width={130} height={130}>
+            <Pie data={roiData} cx={60} cy={60} innerRadius={38} outerRadius={58} dataKey="value" stroke="none">
               {roiData.map((entry, i) => (
                 <Cell key={i} fill={entry.color} />
               ))}
@@ -233,19 +233,17 @@ function ROIPeCanal() {
             />
           </PieChart>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-xl font-bold">{avgROAS}x</span>
-            <span className="text-xs text-muted-foreground">ROAS mediu</span>
+            <span className="text-lg font-bold leading-none">{avgROAS}x</span>
+            <span className="text-[10px] text-muted-foreground">ROAS mediu</span>
           </div>
         </div>
-        {/* Legend right */}
-        <div className="flex flex-col gap-3">
+        {/* Legend bottom */}
+        <div className="flex flex-col gap-1.5 w-full">
           {roiData.map((item) => (
             <div key={item.name} className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-              <div>
-                <p className="text-xs text-muted-foreground leading-none">{item.name}</p>
-                <p className="text-sm font-bold leading-tight">{item.value}x</p>
-              </div>
+              <div className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+              <span className="text-xs text-muted-foreground flex-1">{item.name}</span>
+              <span className="text-xs font-bold">{item.value}x</span>
             </div>
           ))}
         </div>
@@ -390,11 +388,11 @@ export function MarketingPerformance() {
       <ChannelKPICards />
 
       {/* 2. Profitabilitate + Funnel + ROI */}
-      {/* Mobile: stacked | Tablet: chart full-width + funnel/roi side-by-side | Desktop: 3-col 4/3/3 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 gap-4 items-start">
-        <div className="md:col-span-2 lg:col-span-4"><PrognozaBarChart /></div>
-        <div className="md:col-span-1 lg:col-span-3"><FunnelGeneral /></div>
-        <div className="md:col-span-1 lg:col-span-3"><ROIPeCanal /></div>
+      {/* Mobile: stacked | Tablet: chart full-width + funnel/roi side-by-side | Desktop: 4/4/2 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 gap-4 items-stretch">
+        <div className="md:col-span-2 lg:col-span-4 h-full"><PrognozaBarChart /></div>
+        <div className="md:col-span-1 lg:col-span-4 h-full"><FunnelGeneral /></div>
+        <div className="md:col-span-1 lg:col-span-2 h-full"><ROIPeCanal /></div>
       </div>
 
       {/* 3. Performance table */}
