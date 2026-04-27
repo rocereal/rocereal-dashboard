@@ -141,10 +141,10 @@ function ChannelKPICards() {
 // band_change = 7%, gap_change = 7/52*20 ≈ 2.7% → rounded to 3 for clean numbers
 // Resulting stages (top-left %, top-right %, bottom-left %, bottom-right %):
 const FUNNEL_STAGES = [
-  { tl:  0, tr: 100, bl:  7, br: 93 },
-  { tl: 10, tr:  90, bl: 17, br: 83 },
-  { tl: 20, tr:  80, bl: 27, br: 73 },
-  { tl: 30, tr:  70, bl: 37, br: 63 },
+  { tl:  5, tr: 95, bl: 12, br: 88 },
+  { tl: 15, tr: 85, bl: 22, br: 78 },
+  { tl: 25, tr: 75, bl: 32, br: 68 },
+  { tl: 35, tr: 65, bl: 42, br: 58 },
 ];
 const BAND_H   = 44; // px height per funnel band
 const PCT_H    = 16; // px height for percentage label row between bands
