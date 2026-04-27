@@ -10,14 +10,40 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 // ─── Dummy data ────────────────────────────────────────────────────────────────
 
 const channelKPIs = [
-  { label: "Facebook",           value: "7.850 RON",  sub: "Investiție",         trend: +12.4, icon: "📘" },
-  { label: "Google",             value: "6.450 RON",  sub: "Investiție",         trend: -3.1,  icon: "🔍" },
-  { label: "TikTok",             value: "10.450 RON", sub: "Investiție",         trend: +28.6, icon: "🎵" },
-  { label: "Total Investiție",   value: "24.750 RON", sub: "Toate canalele",     trend: +8.2,  icon: "💰" },
-  { label: "Apeluri Generate",   value: "4.412",      sub: "din campanii",       trend: +5.7,  icon: "📞" },
-  { label: "Sesizări Atribuite", value: "28",         sub: "luna aceasta",       trend: -10.0, icon: "📋" },
-  { label: "Best ROI Canal",     value: "92.060 RON", sub: "Vânzări atribuite",  trend: +18.3, icon: "🏆" },
+  { label: "Facebook",           value: "7.850 RON",  sub: "Investiție",         trend: +12.4, logoKey: "facebook" as const },
+  { label: "Google",             value: "6.450 RON",  sub: "Investiție",         trend: -3.1,  logoKey: "google" as const },
+  { label: "TikTok",             value: "10.450 RON", sub: "Investiție",         trend: +28.6, logoKey: "tiktok" as const },
+  { label: "Total Investiție",   value: "24.750 RON", sub: "Toate canalele",     trend: +8.2,  logoKey: "total" as const },
+  { label: "Apeluri Generate",   value: "4.412",      sub: "din campanii",       trend: +5.7,  logoKey: "calls" as const },
+  { label: "Sesizări Atribuite", value: "28",         sub: "luna aceasta",       trend: -10.0, logoKey: "leads" as const },
+  { label: "Best ROI Canal",     value: "92.060 RON", sub: "Vânzări atribuite",  trend: +18.3, logoKey: "roi" as const },
 ];
+
+type LogoKey = "facebook" | "google" | "tiktok" | "total" | "calls" | "leads" | "roi";
+
+function ChannelLogo({ k }: { k: LogoKey }) {
+  if (k === "facebook") return (
+    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="#1877f2">
+      <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.93-1.956 1.885v2.288h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+    </svg>
+  );
+  if (k === "google") return (
+    <svg viewBox="0 0 24 24" className="h-6 w-6">
+      <path fill="#4285F4" d="M23.745 12.27c0-.79-.07-1.54-.19-2.27h-11.3v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
+      <path fill="#34A853" d="M12.255 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96h-3.98v3.09C3.515 21.3 7.615 24 12.255 24z"/>
+      <path fill="#FBBC05" d="M5.525 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62h-3.98a11.86 11.86 0 000 10.76l3.98-3.09z"/>
+      <path fill="#EA4335" d="M12.255 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C18.205 1.19 15.495 0 12.255 0c-4.64 0-8.74 2.7-10.71 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+    </svg>
+  );
+  if (k === "tiktok") return (
+    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.79a4.85 4.85 0 01-1.01-.1z"/>
+    </svg>
+  );
+  // fallback emoji-style for the rest
+  const emojis: Record<string, string> = { total: "💰", calls: "📞", leads: "📋", roi: "🏆" };
+  return <span className="text-xl">{emojis[k]}</span>;
+}
 
 const funnelData = [
   { stage: "Vizitatori Unici",    value: 1_434_000, pct: 100 },
@@ -89,7 +115,7 @@ function ChannelKPICards() {
       {channelKPIs.map((kpi) => (
         <Card key={kpi.label} className="shadow-xs">
           <CardContent className="pt-4 pb-3 px-4">
-            <p className="text-lg mb-1">{kpi.icon}</p>
+            <div className="mb-1.5"><ChannelLogo k={kpi.logoKey} /></div>
             <p className="text-xs text-muted-foreground truncate">{kpi.label}</p>
             <p className="text-lg font-bold leading-tight mt-0.5">{kpi.value}</p>
             <p className="text-xs text-muted-foreground truncate">{kpi.sub}</p>
@@ -111,24 +137,26 @@ function FunnelGeneral() {
         <CardTitle className="text-base">Funnel General / Trade Channels</CardTitle>
         <CardDescription className="text-xs">Conversie vizitatori → vânzări atribuite</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2 px-4 pb-4">
+      <CardContent className="px-4 pb-4">
         {funnelData.map((item, i) => {
           const widthPct = Math.max(30, 100 - i * 18);
           const colors = ["#1877f2", "#22c55e", "#f59e0b", "#ef4444"];
           return (
-            <div key={item.stage} className="flex flex-col items-center gap-0.5">
-              {i > 0 && (
-                <div className="flex items-center gap-2 text-xs text-muted-foreground py-0.5">
-                  <div className="h-px flex-1 bg-border" />
-                  <span className="font-medium text-green-600">{item.pct}%</span>
-                  <div className="h-px flex-1 bg-border" />
+            <div key={item.stage} className="flex items-center gap-3">
+              {/* bar */}
+              <div className="flex-1 flex justify-center">
+                <div
+                  className="flex items-center justify-center text-white text-xs font-semibold py-3 w-full"
+                  style={{ maxWidth: `${widthPct}%`, backgroundColor: colors[i] }}
+                >
+                  <span className="truncate px-2">{fmtK(item.value)} · {item.stage}</span>
                 </div>
-              )}
-              <div
-                className="flex items-center justify-center rounded text-white text-xs font-semibold py-3 w-full transition-all"
-                style={{ maxWidth: `${widthPct}%`, backgroundColor: colors[i] }}
-              >
-                <span className="truncate px-2">{fmtK(item.value)} · {item.stage}</span>
+              </div>
+              {/* percentage to the right */}
+              <div className="w-12 text-right">
+                {i > 0 && (
+                  <span className="text-xs font-medium text-muted-foreground">{item.pct}%</span>
+                )}
               </div>
             </div>
           );
