@@ -48,7 +48,15 @@ function RoasLabel({ x, y, value, compact }: { x?: number; y?: number; value?: n
   );
 }
 
-export function PrognozaBarChart() {
+interface ChannelProfitRow {
+  canal: string;
+  profitBrut: number;
+  cost: number;
+  roas: number;
+}
+
+export function PrognozaBarChart({ data: dataProp }: { data?: ChannelProfitRow[] }) {
+  const data = dataProp ?? profitabilitateCanalData;
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(500);
 
@@ -74,7 +82,7 @@ export function PrognozaBarChart() {
       </CardHeader>
       <CardContent className="pb-3 flex-1 flex flex-col justify-center" ref={containerRef}>
         <ResponsiveContainer width="100%" height={220}>
-          <ComposedChart data={profitabilitateCanalData} margin={chartMargin} barGap={4}>
+          <ComposedChart data={data} margin={chartMargin} barGap={4}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis dataKey="canal" tick={{ fontSize: compact ? 10 : 12 }} tickLine={false} axisLine={false} />
             <YAxis

@@ -139,7 +139,7 @@ export default function RenderPage() {
 
       <FinanceMetrics dateRange={dateRange} />
 
-      <MarketingPerformance />
+      <MarketingPerformance dateRange={dateRange} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="h-full">
