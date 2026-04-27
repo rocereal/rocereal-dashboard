@@ -154,7 +154,7 @@ function FunnelGeneral() {
   const totalH = funnelData.length * BAND_H + (funnelData.length - 1) * PCT_H;
 
   return (
-    <Card className="shadow-xs h-full">
+    <Card className="shadow-xs">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Funnel General / Trade Channels</CardTitle>
         <CardDescription className="text-xs">Conversie vizitatori → vânzări atribuite</CardDescription>
@@ -213,12 +213,12 @@ function FunnelGeneral() {
 function ROIPeCanal() {
   const avgROAS = (roiData.reduce((s, d) => s + d.value, 0) / roiData.length).toFixed(2);
   return (
-    <Card className="shadow-xs h-full">
+    <Card className="shadow-xs">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">ROAS pe Canal</CardTitle>
         <CardDescription className="text-xs">Randamentul investiției per canal publicitar</CardDescription>
       </CardHeader>
-      <CardContent className="flex items-center justify-center gap-4 py-3">
+      <CardContent className="flex items-center justify-center gap-4 py-3 pb-4">
         {/* Donut */}
         <div className="relative flex-shrink-0">
           <PieChart width={150} height={150}>
@@ -389,11 +389,12 @@ export function MarketingPerformance() {
       {/* 1. Channel KPI cards */}
       <ChannelKPICards />
 
-      {/* 2. Profitabilitate + Funnel + ROI — one row */}
-      <div className="grid grid-cols-1 md:grid-cols-10 gap-4">
-        <div className="md:col-span-4"><PrognozaBarChart /></div>
-        <div className="md:col-span-3"><FunnelGeneral /></div>
-        <div className="md:col-span-3"><ROIPeCanal /></div>
+      {/* 2. Profitabilitate + Funnel + ROI */}
+      {/* Mobile: stacked | Tablet: chart full-width + funnel/roi side-by-side | Desktop: 3-col 4/3/3 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 gap-4 items-start">
+        <div className="md:col-span-2 lg:col-span-4"><PrognozaBarChart /></div>
+        <div className="md:col-span-1 lg:col-span-3"><FunnelGeneral /></div>
+        <div className="md:col-span-1 lg:col-span-3"><ROIPeCanal /></div>
       </div>
 
       {/* 3. Performance table */}
