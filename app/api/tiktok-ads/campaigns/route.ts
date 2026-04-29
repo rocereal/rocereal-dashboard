@@ -6,17 +6,28 @@ const ACCESS_TOKEN   = process.env.TIKTOK_ACCESS_TOKEN!;
 const ADVERTISER_ID  = process.env.TIKTOK_ADVERTISER_ID!;
 const API_BASE       = "https://business-api.tiktok.com/open_api/v1.3";
 
-async function ttGet(endpoint: string, params: Record<string, string>) {
+type TikTokResponse = { code: number; message: string; data?: Record<string, unknown> };
+
+async function safeJson(res: Response): Promise<TikTokResponse> {
+  const ct = res.headers.get("content-type") ?? "";
+  if (!ct.includes("application/json")) {
+    const text = await res.text();
+    throw new Error(`[TikTok HTTP ${res.status}] Non-JSON response: ${text.slice(0, 300)}`);
+  }
+  return res.json() as Promise<TikTokResponse>;
+}
+
+async function ttGet(endpoint: string, params: Record<string, string>): Promise<TikTokResponse> {
   const url = new URL(`${API_BASE}${endpoint}`);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   const res = await fetch(url.toString(), {
     headers: { "Access-Token": ACCESS_TOKEN },
     cache: "no-store",
   });
-  return res.json() as Promise<{ code: number; message: string; data?: Record<string, unknown> }>;
+  return safeJson(res);
 }
 
-async function ttPost(endpoint: string, body: Record<string, unknown>) {
+async function ttPost(endpoint: string, body: Record<string, unknown>): Promise<TikTokResponse> {
   const res = await fetch(`${API_BASE}${endpoint}`, {
     method: "POST",
     headers: {
@@ -26,7 +37,7 @@ async function ttPost(endpoint: string, body: Record<string, unknown>) {
     body: JSON.stringify(body),
     cache: "no-store",
   });
-  return res.json() as Promise<{ code: number; message: string; data?: Record<string, unknown> }>;
+  return safeJson(res);
 }
 
 function fmt(d: Date) {
@@ -39,7 +50,6 @@ function startOfMonth() {
 }
 
 export async function GET(req: NextRequest) {
-  // Always return HTTP 200 — errors go in the JSON body to avoid Next.js error boundary
   if (!ACCESS_TOKEN) {
     return NextResponse.json({ error: "not_connected", message: "TIKTOK_ACCESS_TOKEN not set" });
   }
@@ -65,33 +75,34 @@ export async function GET(req: NextRequest) {
 
     const campaignList = (campaignsRes.data?.list ?? []) as Record<string, unknown>[];
 
-    // ── 2. Integrated report (campaign-level metrics) ────────────────────────────
-    const reportRes = await ttPost("/report/integrated/get/", {
-      advertiser_id: ADVERTISER_ID,
-      report_type:   "BASIC",
-      data_level:    "AUCTION_CAMPAIGN",
-      dimensions:    ["campaign_id"],
-      metrics:       [
-        "spend", "impressions", "clicks",
-        "conversion", "cost_per_conversion",
-        "ctr", "cpc", "cpm",
-      ],
-      start_date: from,
-      end_date:   to,
-      page_size:  100,
-    });
+    // ── 2. Integrated report (optional — if it fails we still show campaigns) ──
+    let metricsMap = new Map<string, Record<string, unknown>>();
+    try {
+      const reportRes = await ttPost("/report/integrated/get/", {
+        advertiser_id: ADVERTISER_ID,
+        report_type:   "BASIC",
+        data_level:    "AUCTION_CAMPAIGN",
+        dimensions:    ["campaign_id"],
+        metrics:       [
+          "spend", "impressions", "clicks",
+          "conversion", "cost_per_conversion",
+          "ctr", "cpc", "cpm",
+        ],
+        start_date: from,
+        end_date:   to,
+        page_size:  100,
+      });
 
-    if (reportRes.code !== 0) {
-      return NextResponse.json({ error: `[TikTok report ${reportRes.code}] ${reportRes.message}` });
-    }
-
-    // Build metrics map by campaign_id
-    const metricsMap = new Map<string, Record<string, unknown>>();
-    const reportRows = (reportRes.data?.list ?? []) as Record<string, unknown>[];
-    for (const row of reportRows) {
-      const dim = row.dimensions as Record<string, string>;
-      const met = row.metrics    as Record<string, unknown>;
-      metricsMap.set(dim.campaign_id, met);
+      if (reportRes.code === 0) {
+        const reportRows = (reportRes.data?.list ?? []) as Record<string, unknown>[];
+        for (const row of reportRows) {
+          const dim = row.dimensions as Record<string, string>;
+          const met = row.metrics    as Record<string, unknown>;
+          metricsMap.set(dim.campaign_id, met);
+        }
+      }
+    } catch {
+      // Report failed — campaigns will show with zero metrics
     }
 
     // ── 3. Merge campaigns + metrics ─────────────────────────────────────────────
