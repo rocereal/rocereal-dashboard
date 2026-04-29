@@ -27,18 +27,6 @@ async function ttGet(endpoint: string, params: Record<string, string>): Promise<
   return safeJson(res);
 }
 
-async function ttPost(endpoint: string, body: Record<string, unknown>): Promise<TikTokResponse> {
-  const res = await fetch(`${API_BASE}${endpoint}`, {
-    method: "POST",
-    headers: {
-      "Access-Token":  ACCESS_TOKEN,
-      "Content-Type":  "application/json",
-    },
-    body: JSON.stringify(body),
-    cache: "no-store",
-  });
-  return safeJson(res);
-}
 
 function fmt(d: Date) {
   return d.toISOString().slice(0, 10);
@@ -79,16 +67,16 @@ export async function GET(req: NextRequest) {
     let metricsMap = new Map<string, Record<string, unknown>>();
     let reportWarning: string | null = null;
     try {
-      const reportRes = await ttPost("/report/integrated/get/", {
+      const reportRes = await ttGet("/report/integrated/get/", {
         advertiser_id: ADVERTISER_ID,
         report_type:   "BASIC",
         data_level:    "AUCTION_CAMPAIGN",
-        dimensions:    ["campaign_id"],
-        metrics:       ["spend", "impressions", "clicks", "ctr", "cpc", "cpm"],
+        dimensions:    JSON.stringify(["campaign_id"]),
+        metrics:       JSON.stringify(["spend", "impressions", "clicks", "ctr", "cpc", "cpm"]),
         start_date:    from,
         end_date:      to,
-        page:          1,
-        page_size:     100,
+        page:          "1",
+        page_size:     "100",
       });
 
       if (reportRes.code === 0) {
