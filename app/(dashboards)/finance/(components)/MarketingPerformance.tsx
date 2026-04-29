@@ -311,7 +311,9 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
 
 function ChannelKPICards({ liveData }: { liveData: LiveData }) {
   const { google, facebook, tiktok, totalRevenue, loading } = liveData;
-  const totalSpend = google.spend + facebook.spend + tiktok.spend;
+  const totalSpend       = google.spend + facebook.spend + tiktok.spend;
+  const totalImpressions = google.impressions + facebook.impressions + tiktok.impressions;
+  const totalConversions = google.conversions + facebook.conversions + tiktok.conversions;
 
   const bestROAS = Math.max(
     google.spend > 0 ? totalRevenue / google.spend : 0,
@@ -321,10 +323,10 @@ function ChannelKPICards({ liveData }: { liveData: LiveData }) {
   const kpis = [
     { label: "Facebook",           value: loading ? "—" : fmtRON(facebook.spend),    sub: "Investiție",        logoKey: "facebook" as LogoKey },
     { label: "Google",             value: loading ? "—" : fmtRON(google.spend),      sub: "Investiție",        logoKey: "google"   as LogoKey },
-    { label: "TikTok",             value: "N/A",                                      sub: "În curând",         logoKey: "tiktok"   as LogoKey },
+    { label: "TikTok",             value: loading ? "—" : tiktok.spend > 0 ? fmtRON(tiktok.spend) : "N/A", sub: tiktok.spend > 0 ? "Investiție" : "Neconectat", logoKey: "tiktok" as LogoKey },
     { label: "Total Investiție",   value: loading ? "—" : fmtRON(totalSpend),         sub: "Toate canalele",    logoKey: "total"    as LogoKey },
-    { label: "Impresii Total",     value: loading ? "—" : fmtK(google.impressions + facebook.impressions), sub: "Reclame afișate", logoKey: "calls" as LogoKey },
-    { label: "Conversii Total",    value: loading ? "—" : fmtNum(google.conversions + facebook.conversions), sub: "din campanii", logoKey: "leads" as LogoKey },
+    { label: "Impresii Total",     value: loading ? "—" : fmtK(totalImpressions),      sub: "Reclame afișate",   logoKey: "calls"    as LogoKey },
+    { label: "Conversii Total",    value: loading ? "—" : fmtNum(totalConversions),    sub: "din campanii",      logoKey: "leads"    as LogoKey },
     { label: "ROAS Mediu",         value: loading || totalSpend === 0 ? "—" : `${(totalRevenue / totalSpend).toFixed(2)}x`, sub: bestROAS > 0 ? `Best: ${bestROAS.toFixed(2)}x` : "—", logoKey: "roi" as LogoKey },
   ];
 
@@ -440,10 +442,11 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     const from = toISO(dateRange.from);
     const to   = toISO(dateRange.to);
 
-    const [gRes, fbRes, finRes] = await Promise.allSettled([
+    const [gRes, fbRes, finRes, ttRes] = await Promise.allSettled([
       fetch(`/api/google-ads/campaigns?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
       fetch(`/api/education/facebook-ads?level=campaign&from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
       fetch(`/api/finance/metrics?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`/api/tiktok-ads/campaigns?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
     ]);
 
     // Google Ads
@@ -467,11 +470,20 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       conversions: fbRows.reduce((s, r) => s + (Number(r.conversions) || 0), 0),
     };
 
+    // TikTok Ads
+    const ttData = ttRes.status === "fulfilled" && !ttRes.value?.error ? ttRes.value : null;
+    const tiktok: ChannelStats = {
+      spend:       ttData?.overview?.spend       ?? 0,
+      impressions: ttData?.overview?.impressions ?? 0,
+      clicks:      ttData?.overview?.clicks      ?? 0,
+      conversions: ttData?.overview?.conversions ?? 0,
+    };
+
     // Finance metrics → total revenue
     const finData = finRes.status === "fulfilled" ? finRes.value : null;
     const totalRevenue: number = finData?.incasate?.total ?? 0;
 
-    setLiveData({ google, facebook, tiktok: ZERO, totalRevenue, loading: false });
+    setLiveData({ google, facebook, tiktok, totalRevenue, loading: false });
   }, [dateRange]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
@@ -479,8 +491,8 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
   // ─── Derived values ─────────────────────────────────────────────────────────
   const { google, facebook, tiktok, totalRevenue, loading } = liveData;
   const totalSpend       = google.spend + facebook.spend + tiktok.spend;
-  const totalImpressions = google.impressions + facebook.impressions;
-  const totalConversions = google.conversions + facebook.conversions;
+  const totalImpressions = google.impressions + facebook.impressions + tiktok.impressions;
+  const totalConversions = google.conversions + facebook.conversions + tiktok.conversions;
 
   // Funnel: impressions → conversions → estimated offers → estimated sales
   const offers = Math.round(totalConversions * 0.25);
@@ -499,14 +511,14 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
   const profitData = [
     { canal: "Facebook", profitBrut: totalRevenue, cost: facebook.spend, roas: roas(facebook, totalRevenue) },
     { canal: "Google",   profitBrut: totalRevenue, cost: google.spend,   roas: roas(google, totalRevenue) },
-    { canal: "TikTok",   profitBrut: 0,            cost: 0,              roas: 0 },
+    { canal: "TikTok",   profitBrut: totalRevenue, cost: tiktok.spend,  roas: roas(tiktok, totalRevenue) },
   ];
 
   // ROAS donut
   const roasData: RoasRow[] = [
     { name: "Facebook", value: roas(facebook, totalRevenue), color: "#22c55e" },
     { name: "Google",   value: roas(google, totalRevenue),   color: "#3b82f6" },
-    { name: "TikTok",   value: 0,                            color: "#1e293b" },
+    { name: "TikTok",   value: roas(tiktok, totalRevenue),   color: "#1e293b" },
   ];
 
   // Performance table rows
@@ -536,8 +548,16 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       live:        google.spend > 0,
     },
     {
-      canal: "TikTok", investitie: 0, impressions: 0, clicks: 0,
-      ctr: "—", conversions: 0, costPerConv: 0, venituri: 0, roas: null, live: false,
+      canal:       "TikTok",
+      investitie:  tiktok.spend,
+      impressions: tiktok.impressions,
+      clicks:      tiktok.clicks,
+      ctr:         ctrPct(tiktok),
+      conversions: tiktok.conversions,
+      costPerConv: costPerConv(tiktok),
+      venituri:    attrRevenue(tiktok, totalSpend, totalRevenue),
+      roas:        tiktok.spend > 0 ? roas(tiktok, totalRevenue) : null,
+      live:        tiktok.spend > 0,
     },
   ];
 
