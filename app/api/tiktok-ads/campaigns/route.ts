@@ -39,11 +39,12 @@ function startOfMonth() {
 }
 
 export async function GET(req: NextRequest) {
+  // Always return HTTP 200 — errors go in the JSON body to avoid Next.js error boundary
   if (!ACCESS_TOKEN) {
-    return NextResponse.json({ error: "not_connected", message: "TIKTOK_ACCESS_TOKEN not set" }, { status: 503 });
+    return NextResponse.json({ error: "not_connected", message: "TIKTOK_ACCESS_TOKEN not set" });
   }
   if (!ADVERTISER_ID) {
-    return NextResponse.json({ error: "not_connected", message: "TIKTOK_ADVERTISER_ID not set" }, { status: 503 });
+    return NextResponse.json({ error: "not_connected", message: "TIKTOK_ADVERTISER_ID not set" });
   }
 
   const { searchParams } = req.nextUrl;
@@ -54,12 +55,12 @@ export async function GET(req: NextRequest) {
     // ── 1. Campaign list ────────────────────────────────────────────────────────
     const campaignsRes = await ttGet("/campaign/get/", {
       advertiser_id: ADVERTISER_ID,
-      fields:        JSON.stringify(["campaign_id", "campaign_name", "status", "objective_type"]),
+      fields:        JSON.stringify(["campaign_id", "campaign_name", "secondary_status", "objective_type"]),
       page_size:     "100",
     });
 
     if (campaignsRes.code !== 0) {
-      throw new Error(`[TikTok ${campaignsRes.code}] ${campaignsRes.message}`);
+      return NextResponse.json({ error: `[TikTok ${campaignsRes.code}] ${campaignsRes.message}` });
     }
 
     const campaignList = (campaignsRes.data?.list ?? []) as Record<string, unknown>[];
@@ -71,10 +72,9 @@ export async function GET(req: NextRequest) {
       data_level:    "AUCTION_CAMPAIGN",
       dimensions:    ["campaign_id"],
       metrics:       [
-        "spend", "impressions", "clicks", "reach",
+        "spend", "impressions", "clicks",
         "conversion", "cost_per_conversion",
         "ctr", "cpc", "cpm",
-        "video_play_actions", "profile_visits",
       ],
       start_date: from,
       end_date:   to,
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (reportRes.code !== 0) {
-      throw new Error(`[TikTok report ${reportRes.code}] ${reportRes.message}`);
+      return NextResponse.json({ error: `[TikTok report ${reportRes.code}] ${reportRes.message}` });
     }
 
     // Build metrics map by campaign_id
@@ -107,17 +107,17 @@ export async function GET(req: NextRequest) {
       const costPerConv = parseFloat(m.cost_per_conversion as string) || 0;
 
       return {
-        id:             c.campaign_id  as string,
-        name:           c.campaign_name as string,
-        status:         c.status        as string,
-        objective:      c.objective_type as string,
-        spend:          Math.round(spend * 100) / 100,
+        id:          c.campaign_id      as string,
+        name:        c.campaign_name    as string,
+        status:      (c.secondary_status ?? c.campaign_status ?? "UNKNOWN") as string,
+        objective:   c.objective_type   as string,
+        spend:       Math.round(spend * 100) / 100,
         impressions,
         clicks,
         conversions,
-        ctr:            Math.round(ctr * 10000) / 100,   // to %
-        cpc:            Math.round(cpc * 100) / 100,
-        cpm:            Math.round(cpm * 100) / 100,
+        ctr:         Math.round(ctr * 10000) / 100,
+        cpc:         Math.round(cpc * 100) / 100,
+        cpm:         Math.round(cpm * 100) / 100,
         costPerConversion: Math.round(costPerConv * 100) / 100,
       };
     }).sort((a, b) => b.spend - a.spend);
@@ -150,6 +150,6 @@ export async function GET(req: NextRequest) {
 
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message });
   }
 }
