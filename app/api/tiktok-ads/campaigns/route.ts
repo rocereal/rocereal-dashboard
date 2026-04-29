@@ -77,20 +77,18 @@ export async function GET(req: NextRequest) {
 
     // ── 2. Integrated report (optional — if it fails we still show campaigns) ──
     let metricsMap = new Map<string, Record<string, unknown>>();
+    let reportWarning: string | null = null;
     try {
       const reportRes = await ttPost("/report/integrated/get/", {
         advertiser_id: ADVERTISER_ID,
         report_type:   "BASIC",
         data_level:    "AUCTION_CAMPAIGN",
         dimensions:    ["campaign_id"],
-        metrics:       [
-          "spend", "impressions", "clicks",
-          "conversion", "cost_per_conversion",
-          "ctr", "cpc", "cpm",
-        ],
-        start_date: from,
-        end_date:   to,
-        page_size:  100,
+        metrics:       ["spend", "impressions", "clicks", "ctr", "cpc", "cpm"],
+        start_date:    from,
+        end_date:      to,
+        page:          1,
+        page_size:     100,
       });
 
       if (reportRes.code === 0) {
@@ -100,9 +98,11 @@ export async function GET(req: NextRequest) {
           const met = row.metrics    as Record<string, unknown>;
           metricsMap.set(dim.campaign_id, met);
         }
+      } else {
+        reportWarning = `[TikTok raport ${reportRes.code}] ${reportRes.message}`;
       }
-    } catch {
-      // Report failed — campaigns will show with zero metrics
+    } catch (err) {
+      reportWarning = err instanceof Error ? err.message : String(err);
     }
 
     // ── 3. Merge campaigns + metrics ─────────────────────────────────────────────
@@ -157,6 +157,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       overview: { ...overview, ctr: totalCtr, avgCpc, costPerConversion },
       campaigns,
+      ...(reportWarning ? { reportWarning } : {}),
     });
 
   } catch (err) {

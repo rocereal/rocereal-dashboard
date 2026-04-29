@@ -126,11 +126,12 @@ export default function RenderPage() {
     to: new Date(),
   });
 
-  const [overview, setOverview]       = useState<Overview | null>(null);
-  const [campaigns, setCampaigns]     = useState<Campaign[]>([]);
-  const [loading, setLoading]         = useState(true);
+  const [overview, setOverview]         = useState<Overview | null>(null);
+  const [campaigns, setCampaigns]       = useState<Campaign[]>([]);
+  const [loading, setLoading]           = useState(true);
   const [notConnected, setNotConnected] = useState(false);
-  const [error, setError]             = useState<string | null>(null);
+  const [error, setError]               = useState<string | null>(null);
+  const [reportWarning, setReportWarning] = useState<string | null>(null);
 
   const toISO = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -146,6 +147,7 @@ export default function RenderPage() {
         error?: string;
         overview?: Overview;
         campaigns?: Campaign[];
+        reportWarning?: string;
       };
       if (data.error === "not_connected") {
         setNotConnected(true);
@@ -154,6 +156,7 @@ export default function RenderPage() {
       } else {
         setOverview(data.overview ?? null);
         setCampaigns(data.campaigns ?? []);
+        setReportWarning(data.reportWarning ?? null);
         setNotConnected(false);
       }
     } catch (e) {
@@ -189,6 +192,15 @@ export default function RenderPage() {
             <Button variant="outline" size="sm" className="mt-3" onClick={load}>
               <RefreshCw className="h-3 w-3 mr-2" /> Reîncearcă
             </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {!notConnected && !error && reportWarning && (
+        <Card className="shadow-xs border-amber-200">
+          <CardContent className="pt-3 pb-3 px-4">
+            <p className="text-xs text-amber-700 font-medium">Metrici indisponibile (campanii afișate fără date):</p>
+            <p className="text-xs text-muted-foreground mt-0.5 font-mono">{reportWarning}</p>
           </CardContent>
         </Card>
       )}
