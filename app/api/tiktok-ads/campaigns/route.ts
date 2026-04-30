@@ -121,16 +121,28 @@ export async function GET(req: NextRequest) {
       };
     }).sort((a, b) => b.spend - a.spend);
 
-    // ── 4. Overview totals ───────────────────────────────────────────────────────
-    const overview = campaigns.reduce(
-      (acc, c) => ({
-        spend:       Math.round((acc.spend + c.spend) * 100) / 100,
-        impressions: acc.impressions + c.impressions,
-        clicks:      acc.clicks      + c.clicks,
-        conversions: acc.conversions + c.conversions,
+    // ── 4. Overview totals — derived from report (includes deleted campaigns) ─────
+    const rawOverview = Array.from(metricsMap.values()).reduce(
+      (acc, m) => ({
+        spend:       acc.spend       + (parseFloat(m.spend       as string) || 0),
+        impressions: acc.impressions + (parseInt  (m.impressions as string) || 0),
+        clicks:      acc.clicks      + (parseInt  (m.clicks      as string) || 0),
+        conversions: acc.conversions + (parseInt  (m.conversion  as string) || 0),
       }),
       { spend: 0, impressions: 0, clicks: 0, conversions: 0 }
     );
+    // Fall back to summing the campaign list if the report was unavailable (metricsMap empty)
+    const overview = metricsMap.size > 0
+      ? { ...rawOverview, spend: Math.round(rawOverview.spend * 100) / 100 }
+      : campaigns.reduce(
+          (acc, c) => ({
+            spend:       Math.round((acc.spend + c.spend) * 100) / 100,
+            impressions: acc.impressions + c.impressions,
+            clicks:      acc.clicks      + c.clicks,
+            conversions: acc.conversions + c.conversions,
+          }),
+          { spend: 0, impressions: 0, clicks: 0, conversions: 0 }
+        );
 
     const totalCtr = overview.impressions > 0
       ? Math.round((overview.clicks / overview.impressions) * 10000) / 100
