@@ -38,6 +38,7 @@ interface LiveData {
   tiktok:       ChannelStats;
   totalRevenue: number;
   attribution:  AttributionData;
+  callStats:    { total: number; answered: number };
   loading:      boolean;
 }
 
@@ -46,6 +47,7 @@ const ZERO_ATTR: ChannelAttribution = { conversions: 0, revenue: 0 };
 const INIT: LiveData = {
   google: ZERO, facebook: ZERO, tiktok: ZERO, totalRevenue: 0,
   attribution: { facebook: ZERO_ATTR, tiktok: ZERO_ATTR, google: ZERO_ATTR },
+  callStats: { total: 0, answered: 0 },
   loading: true,
 };
 
@@ -460,12 +462,13 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     const from = toISO(dateRange.from);
     const to   = toISO(dateRange.to);
 
-    const [gRes, fbRes, finRes, ttRes, attrRes] = await Promise.allSettled([
+    const [gRes, fbRes, finRes, ttRes, attrRes, callsRes] = await Promise.allSettled([
       fetch(`/api/google-ads/campaigns?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
       fetch(`/api/education/facebook-ads?level=campaign&from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
       fetch(`/api/finance/metrics?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
       fetch(`/api/tiktok-ads/campaigns?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
       fetch(`/api/finance/attribution?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`/api/crm/calls?counts=1&from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
     ]);
 
     // Google Ads
@@ -513,27 +516,32 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       google:   { conversions: attrRaw?.google?.conversions   ?? 0, revenue: attrRaw?.google?.revenue   ?? 0 },
     };
 
-    setLiveData({ google, facebook, tiktok, totalRevenue, attribution, loading: false });
+    // Invox call counts for funnel
+    const callsRaw = callsRes.status === "fulfilled" && !callsRes.value?.error ? callsRes.value : null;
+    const callStats = {
+      total:    callsRaw?.total    ?? 0,
+      answered: callsRaw?.answered ?? 0,
+    };
+
+    setLiveData({ google, facebook, tiktok, totalRevenue, attribution, callStats, loading: false });
   }, [dateRange]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
   // ─── Derived values ─────────────────────────────────────────────────────────
-  const { google, facebook, tiktok, totalRevenue, attribution, loading } = liveData;
-  const totalImpressions = google.impressions + facebook.impressions + tiktok.impressions;
-  const totalConversions = google.conversions + facebook.conversions + tiktok.conversions;
+  const { google, facebook, tiktok, totalRevenue, attribution, callStats, loading } = liveData;
+  const totalReach      = google.reach + facebook.reach + tiktok.reach;
+  const attrConversions = attribution.facebook.conversions + attribution.tiktok.conversions + attribution.google.conversions;
 
-  // Funnel: impressions → conversions → estimated offers → estimated sales
-  const offers = Math.round(totalConversions * 0.25);
-  const sales  = Math.round(offers * 0.20);
-  const convPct = totalImpressions > 0
-    ? parseFloat(((totalConversions / totalImpressions) * 100).toFixed(2))
-    : 0;
+  // Funnel — real data from reach / Invox / attribution
+  const leadsToReachPct    = totalReach > 0         ? parseFloat(((callStats.total    / totalReach)          * 100).toFixed(2)) : 0;
+  const answeredToLeadsPct = callStats.total > 0    ? parseFloat(((callStats.answered / callStats.total)     * 100).toFixed(2)) : 0;
+  const salesToAnsweredPct = callStats.answered > 0 ? parseFloat(((attrConversions    / callStats.answered)  * 100).toFixed(2)) : 0;
   const funnelData: FunnelRow[] = [
-    { stage: "Reclamă afișată", value: totalImpressions, pct: 100 },
-    { stage: "Leads Generate",  value: totalConversions, pct: convPct },
-    { stage: "Oferte Trimise",  value: offers,           pct: totalConversions > 0 ? 25 : 0 },
-    { stage: "Vânzări",         value: sales,            pct: offers > 0 ? 20 : 0 },
+    { stage: "Reclamă afișată",      value: totalReach,         pct: 100 },
+    { stage: "Leads Generate",       value: callStats.total,    pct: leadsToReachPct },
+    { stage: "Apeluri receptionate", value: callStats.answered, pct: answeredToLeadsPct },
+    { stage: "Vânzări",              value: attrConversions,    pct: salesToAnsweredPct },
   ];
 
   // Profitabilitate data
