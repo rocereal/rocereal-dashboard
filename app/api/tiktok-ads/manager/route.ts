@@ -161,7 +161,43 @@ export async function GET(req: NextRequest) {
         costPerResult: 0,
         frequency:     0,
       };
-    }).sort((a, b) => b.spend - a.spend);
+    });
+
+    // ── 4. Ghost rows — campaigns in the report but missing from the entity list ─
+    // Deleted campaigns are excluded from /campaign/get/ by default but still appear
+    // in the integrated report. Add them so the table total matches the KPI.
+    if (level === "campaign") {
+      const knownIds = new Set(rows.map((r) => r.entityId));
+      for (const [id, m] of metricsMap.entries()) {
+        if (knownIds.has(id)) continue;
+        rows.push({
+          entityId:      id,
+          entityName:    "Campanie ștearsă",
+          campaignId:    id,
+          campaignName:  null,
+          adsetId:       null,
+          adsetName:     null,
+          status:        "DELETED",
+          objective:     null,
+          budget:        null,
+          budgetType:    null,
+          impressions:   parseInt(m.impressions as string) || 0,
+          clicks:        parseInt(m.clicks      as string) || 0,
+          spend:         parseFloat(m.spend     as string) || 0,
+          reach:         0,
+          conversions:   0,
+          resultType:    "",
+          ctr:           parseFloat(m.ctr       as string) || 0,
+          cpc:           parseFloat(m.cpc       as string) || 0,
+          cpm:           parseFloat(m.cpm       as string) || 0,
+          purchaseRoas:  null,
+          costPerResult: 0,
+          frequency:     0,
+        });
+      }
+    }
+
+    rows.sort((a, b) => b.spend - a.spend);
 
     return NextResponse.json(rows);
   } catch (err) {
