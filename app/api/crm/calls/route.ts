@@ -41,18 +41,23 @@ export async function GET(req: NextRequest) {
       select: { source: true, status: true },
     });
 
-    const channels = { facebook: 0, tiktok: 0, google: 0 };
+    const channels         = { facebook: 0, tiktok: 0, google: 0 };
+    const channelsAnswered = { facebook: 0, tiktok: 0, google: 0 };
     let total = 0, answered = 0;
     for (const { source, status } of rows) {
       total++;
-      if (status === "Answered") answered++;
+      const isAnswered = status === "Answered";
+      if (isAnswered) answered++;
       const s = (source ?? "").toLowerCase();
-      if (s.includes("meta") || s.includes("facebook")) channels.facebook++;
-      else if (s.includes("tik tok") || s.includes("tiktok")) channels.tiktok++;
-      else if (s.includes("google")) channels.google++;
+      type Ch = keyof typeof channels;
+      let ch: Ch | null = null;
+      if (s.includes("meta") || s.includes("facebook")) ch = "facebook";
+      else if (s.includes("tik tok") || s.includes("tiktok")) ch = "tiktok";
+      else if (s.includes("google")) ch = "google";
+      if (ch) { channels[ch]++; if (isAnswered) channelsAnswered[ch]++; }
     }
 
-    return NextResponse.json({ total, answered, channels });
+    return NextResponse.json({ total, answered, channels, channelsAnswered });
   }
 
   const calls = await prisma.crmCall.findMany({

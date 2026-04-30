@@ -38,7 +38,11 @@ interface LiveData {
   tiktok:       ChannelStats;
   totalRevenue: number;
   attribution:  AttributionData;
-  callStats:    { total: number; answered: number; channels: { facebook: number; tiktok: number; google: number } };
+  callStats: {
+    total: number; answered: number;
+    channels:         { facebook: number; tiktok: number; google: number };
+    channelsAnswered: { facebook: number; tiktok: number; google: number };
+  };
   loading:      boolean;
 }
 
@@ -47,7 +51,7 @@ const ZERO_ATTR: ChannelAttribution = { conversions: 0, revenue: 0 };
 const INIT: LiveData = {
   google: ZERO, facebook: ZERO, tiktok: ZERO, totalRevenue: 0,
   attribution: { facebook: ZERO_ATTR, tiktok: ZERO_ATTR, google: ZERO_ATTR },
-  callStats: { total: 0, answered: 0, channels: { facebook: 0, tiktok: 0, google: 0 } },
+  callStats: { total: 0, answered: 0, channels: { facebook: 0, tiktok: 0, google: 0 }, channelsAnswered: { facebook: 0, tiktok: 0, google: 0 } },
   loading: true,
 };
 
@@ -268,6 +272,7 @@ interface PerfRow {
   clicks: number;
   ctr: string;
   calls: number;
+  costPerCall: number | null;
   conversions: number;
   venituri: number;
   roas: number | null;
@@ -288,7 +293,7 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
-                {["Canal", "Investiție", "Vizualizări", "Clicuri", "Rată click", "Apeluri generate", "Conversii Atribuite", "Venituri Atribuite", "ROAS"].map((h) => (
+                {["Canal", "Investiție", "Vizualizări", "Clicuri", "Rată click", "Apeluri generate", "Cost / Apel", "Conversii Atribuite", "Venituri Atribuite", "ROAS"].map((h) => (
                   <th key={h} className="text-left text-xs font-semibold text-muted-foreground px-4 py-2.5 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -296,7 +301,7 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-sm text-muted-foreground">Se încarcă...</td>
+                  <td colSpan={10} className="px-4 py-8 text-center text-sm text-muted-foreground">Se încarcă...</td>
                 </tr>
               ) : (
                 rows.map((row, i) => (
@@ -312,6 +317,7 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
                     <td className="px-4 py-2.5">{row.clicks > 0 ? fmtNum(row.clicks) : "—"}</td>
                     <td className="px-4 py-2.5">{row.ctr}</td>
                     <td className="px-4 py-2.5">{row.calls > 0 ? fmtNum(row.calls) : "—"}</td>
+                    <td className="px-4 py-2.5 text-muted-foreground">{row.costPerCall !== null ? fmtRON(row.costPerCall) : "—"}</td>
                     <td className="px-4 py-2.5 font-semibold">{row.conversions > 0 ? fmtNum(row.conversions) : "—"}</td>
                     <td className="px-4 py-2.5 font-medium text-green-700 dark:text-green-400">{row.venituri > 0 ? fmtRON(row.venituri) : "—"}</td>
                     <td className="px-4 py-2.5">
@@ -416,8 +422,7 @@ function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
             <ComposedChart data={chartData} margin={{ left: 8, right: 8 }}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis dataKey="luna" tickLine={false} axisLine={false} tickMargin={8} style={{ fontSize: 11 }} />
-              <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={48} />
-              <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={44} />
+              <YAxis tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={52} />
               <Tooltip
                 formatter={(value: number | undefined, name: string | undefined) => [
                   value != null ? fmtRON(value) : "—",
@@ -425,8 +430,8 @@ function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
                 ] as [string, string]}
                 contentStyle={{ fontSize: 12, borderRadius: 6 }}
               />
-              <Bar yAxisId="left" dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
-              <Line yAxisId="right" type="monotone" dataKey="investitie" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitie" connectNulls={false} />
+              <Bar dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
+              <Line type="monotone" dataKey="investitie" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitie" connectNulls={false} />
             </ComposedChart>
           </ResponsiveContainer>
         )}
@@ -608,6 +613,11 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
         tiktok:   callsRaw?.channels?.tiktok   ?? 0,
         google:   callsRaw?.channels?.google   ?? 0,
       },
+      channelsAnswered: {
+        facebook: callsRaw?.channelsAnswered?.facebook ?? 0,
+        tiktok:   callsRaw?.channelsAnswered?.tiktok   ?? 0,
+        google:   callsRaw?.channelsAnswered?.google   ?? 0,
+      },
     };
 
     setLiveData({ google, facebook, tiktok, totalRevenue, attribution, callStats, loading: false });
@@ -657,6 +667,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       clicks:      facebook.clicks,
       ctr:         ctrPct(facebook),
       calls:       callStats.channels.facebook,
+      costPerCall: callStats.channelsAnswered.facebook > 0 ? Math.round((facebook.spend / callStats.channelsAnswered.facebook) * 100) / 100 : null,
       conversions: attribution.facebook.conversions,
       venituri:    attribution.facebook.revenue,
       roas:        attrRoas(facebook.spend, attribution.facebook.revenue),
@@ -669,6 +680,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       clicks:      google.clicks,
       ctr:         ctrPct(google),
       calls:       callStats.channels.google,
+      costPerCall: callStats.channelsAnswered.google > 0 ? Math.round((google.spend / callStats.channelsAnswered.google) * 100) / 100 : null,
       conversions: attribution.google.conversions,
       venituri:    attribution.google.revenue,
       roas:        attrRoas(google.spend, attribution.google.revenue),
@@ -681,6 +693,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       clicks:      tiktok.clicks,
       ctr:         ctrPct(tiktok),
       calls:       callStats.channels.tiktok,
+      costPerCall: callStats.channelsAnswered.tiktok > 0 ? Math.round((tiktok.spend / callStats.channelsAnswered.tiktok) * 100) / 100 : null,
       conversions: attribution.tiktok.conversions,
       venituri:    attribution.tiktok.revenue,
       roas:        attrRoas(tiktok.spend, attribution.tiktok.revenue),
@@ -720,22 +733,6 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
 
       {/* 5. Top agents */}
       <TopAgentiTable dateRange={dateRange} />
-
-      {/* 6. Bottom metric cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <MetricaMica
-          label="Valoare Medie Oferte Atribuite"
-          value="8.782 RON"
-          sub="per ofertă trimisă"
-          trend={+6.4}
-        />
-        <MetricaMica
-          label="Cost Mediu / Atrizare"
-          value="56,54 RON"
-          sub="per lead atras"
-          trend={-4.1}
-        />
-      </div>
     </div>
   );
 }
