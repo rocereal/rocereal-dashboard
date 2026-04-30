@@ -63,11 +63,13 @@ export async function GET(req: NextRequest) {
 
     const campaignList = (campaignsRes.data?.list ?? []) as Record<string, unknown>[];
 
-    // ── 2. Integrated report (optional — if it fails we still show campaigns) ──
+    // ── 2. Integrated report + account-level reach (parallel) ─────────────────
     let metricsMap = new Map<string, Record<string, unknown>>();
     let reportWarning: string | null = null;
-    try {
-      const reportRes = await ttGet("/report/integrated/get/", {
+    let accountReach = 0;
+
+    const [campaignReportResult, accountReachResult] = await Promise.allSettled([
+      ttGet("/report/integrated/get/", {
         advertiser_id: ADVERTISER_ID,
         report_type:   "BASIC",
         data_level:    "AUCTION_CAMPAIGN",
@@ -77,8 +79,23 @@ export async function GET(req: NextRequest) {
         end_date:      to,
         page:          "1",
         page_size:     "100",
-      });
+      }),
+      // Account-level reach — deduplicated across all campaigns (avoids summing per-campaign reaches)
+      ttGet("/report/integrated/get/", {
+        advertiser_id: ADVERTISER_ID,
+        report_type:   "BASIC",
+        data_level:    "AUCTION_ADVERTISER",
+        dimensions:    JSON.stringify(["advertiser_id"]),
+        metrics:       JSON.stringify(["reach"]),
+        start_date:    from,
+        end_date:      to,
+        page:          "1",
+        page_size:     "1",
+      }),
+    ]);
 
+    if (campaignReportResult.status === "fulfilled") {
+      const reportRes = campaignReportResult.value;
       if (reportRes.code === 0) {
         const reportRows = (reportRes.data?.list ?? []) as Record<string, unknown>[];
         for (const row of reportRows) {
@@ -89,8 +106,21 @@ export async function GET(req: NextRequest) {
       } else {
         reportWarning = `[TikTok raport ${reportRes.code}] ${reportRes.message}`;
       }
-    } catch (err) {
-      reportWarning = err instanceof Error ? err.message : String(err);
+    } else {
+      reportWarning = campaignReportResult.reason instanceof Error
+        ? campaignReportResult.reason.message
+        : String(campaignReportResult.reason);
+    }
+
+    if (accountReachResult.status === "fulfilled") {
+      const r = accountReachResult.value;
+      if (r.code === 0) {
+        const rows = (r.data?.list ?? []) as Record<string, unknown>[];
+        if (rows.length > 0) {
+          const met = rows[0].metrics as Record<string, unknown>;
+          accountReach = parseInt(met.reach as string) || 0;
+        }
+      }
     }
 
     // ── 3. Merge campaigns + metrics ─────────────────────────────────────────────
@@ -125,20 +155,19 @@ export async function GET(req: NextRequest) {
 
     // ── 4. Overview totals — derived from report (includes deleted campaigns) ─────
     const rawOverview = Array.from(metricsMap.values()).reduce<{
-      spend: number; impressions: number; reach: number; clicks: number; conversions: number;
+      spend: number; impressions: number; clicks: number; conversions: number;
     }>(
       (acc, m) => ({
         spend:       acc.spend       + (parseFloat(m.spend       as string) || 0),
         impressions: acc.impressions + (parseInt  (m.impressions as string) || 0),
-        reach:       acc.reach       + (parseInt  (m.reach       as string) || 0),
         clicks:      acc.clicks      + (parseInt  (m.clicks      as string) || 0),
         conversions: acc.conversions + (parseInt  (m.conversion  as string) || 0),
       }),
-      { spend: 0, impressions: 0, reach: 0, clicks: 0, conversions: 0 }
+      { spend: 0, impressions: 0, clicks: 0, conversions: 0 }
     );
     // Fall back to summing the campaign list if the report was unavailable (metricsMap empty)
     const overview = metricsMap.size > 0
-      ? { ...rawOverview, spend: Math.round(rawOverview.spend * 100) / 100 }
+      ? { ...rawOverview, spend: Math.round(rawOverview.spend * 100) / 100, reach: accountReach }
       : campaigns.reduce(
           (acc, c) => ({
             spend:       Math.round((acc.spend + c.spend) * 100) / 100,
