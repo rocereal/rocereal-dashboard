@@ -122,7 +122,9 @@ export async function GET(req: NextRequest) {
     }).sort((a, b) => b.spend - a.spend);
 
     // ── 4. Overview totals — derived from report (includes deleted campaigns) ─────
-    const rawOverview = Array.from(metricsMap.values()).reduce(
+    const rawOverview = Array.from(metricsMap.values()).reduce<{
+      spend: number; impressions: number; clicks: number; conversions: number;
+    }>(
       (acc, m) => ({
         spend:       acc.spend       + (parseFloat(m.spend       as string) || 0),
         impressions: acc.impressions + (parseInt  (m.impressions as string) || 0),
