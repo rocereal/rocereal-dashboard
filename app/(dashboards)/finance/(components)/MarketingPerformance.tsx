@@ -16,8 +16,20 @@ import { PrognozaBarChart } from "@/app/(dashboards)/crypto/(components)/Prognoz
 interface ChannelStats {
   spend: number;
   impressions: number;
+  reach: number;
   clicks: number;
   conversions: number;
+}
+
+interface ChannelAttribution {
+  conversions: number;
+  revenue: number;
+}
+
+interface AttributionData {
+  facebook: ChannelAttribution;
+  tiktok:   ChannelAttribution;
+  google:   ChannelAttribution;
 }
 
 interface LiveData {
@@ -25,11 +37,17 @@ interface LiveData {
   facebook:     ChannelStats;
   tiktok:       ChannelStats;
   totalRevenue: number;
+  attribution:  AttributionData;
   loading:      boolean;
 }
 
-const ZERO: ChannelStats = { spend: 0, impressions: 0, clicks: 0, conversions: 0 };
-const INIT: LiveData = { google: ZERO, facebook: ZERO, tiktok: ZERO, totalRevenue: 0, loading: true };
+const ZERO: ChannelStats = { spend: 0, impressions: 0, reach: 0, clicks: 0, conversions: 0 };
+const ZERO_ATTR: ChannelAttribution = { conversions: 0, revenue: 0 };
+const INIT: LiveData = {
+  google: ZERO, facebook: ZERO, tiktok: ZERO, totalRevenue: 0,
+  attribution: { facebook: ZERO_ATTR, tiktok: ZERO_ATTR, google: ZERO_ATTR },
+  loading: true,
+};
 
 // ─── Static / fallback data ───────────────────────────────────────────────────
 
@@ -75,11 +93,6 @@ const roas = (ch: ChannelStats, totalRevenue: number) =>
 const ctrPct = (ch: ChannelStats) =>
   ch.impressions > 0 ? `${((ch.clicks / ch.impressions) * 100).toFixed(2)}%` : "—";
 
-const costPerConv = (ch: ChannelStats) =>
-  ch.conversions > 0 ? ch.spend / ch.conversions : 0;
-
-const attrRevenue = (ch: ChannelStats, totalSpend: number, totalRevenue: number) =>
-  totalSpend > 0 && ch.spend > 0 ? totalRevenue * (ch.spend / totalSpend) : 0;
 
 const toISO = (d: Date) => format(d, "yyyy-MM-dd");
 
@@ -242,11 +255,10 @@ function ROIPeCanal({ data, loading }: { data: RoasRow[]; loading: boolean }) {
 interface PerfRow {
   canal: string;
   investitie: number;
-  impressions: number;
+  reach: number;
   clicks: number;
   ctr: string;
   conversions: number;
-  costPerConv: number;
   venituri: number;
   roas: number | null;
   live: boolean;
@@ -257,14 +269,16 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
     <Card className="shadow-xs">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Performanță și Profitabilitate pe Canal</CardTitle>
-        <CardDescription className="text-xs">Investiție, impresii și venituri atribuite per canal de marketing</CardDescription>
+        <CardDescription className="text-xs">
+          Conversii = apeluri răspunse (Invox) cu factură achitată asociată (SmartBill) · Venituri = suma facturilor atribuite
+        </CardDescription>
       </CardHeader>
       <CardContent className="px-0 pb-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
-                {["Canal", "Investiție", "Impresii", "Clicks", "CTR", "Conversii", "Cost/Conv.", "Venituri Atrib.", "ROAS"].map((h) => (
+                {["Canal", "Investiție", "Vizualizări", "Clicuri", "Rată click", "Conversii Atribuite", "Venituri Atribuite", "ROAS"].map((h) => (
                   <th key={h} className="text-left text-xs font-semibold text-muted-foreground px-4 py-2.5 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -272,7 +286,7 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-sm text-muted-foreground">Se încarcă...</td>
+                  <td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">Se încarcă...</td>
                 </tr>
               ) : (
                 rows.map((row, i) => (
@@ -284,15 +298,14 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
                       </div>
                     </td>
                     <td className="px-4 py-2.5 text-muted-foreground">{row.investitie > 0 ? fmtRON(row.investitie) : "—"}</td>
-                    <td className="px-4 py-2.5">{row.impressions > 0 ? fmtNum(row.impressions) : "—"}</td>
+                    <td className="px-4 py-2.5">{row.reach > 0 ? fmtNum(row.reach) : "—"}</td>
                     <td className="px-4 py-2.5">{row.clicks > 0 ? fmtNum(row.clicks) : "—"}</td>
                     <td className="px-4 py-2.5">{row.ctr}</td>
-                    <td className="px-4 py-2.5">{row.conversions > 0 ? fmtNum(row.conversions) : "—"}</td>
-                    <td className="px-4 py-2.5">{row.costPerConv > 0 ? fmtRON(row.costPerConv) : "—"}</td>
-                    <td className="px-4 py-2.5 font-medium">{row.venituri > 0 ? fmtRON(row.venituri) : "—"}</td>
+                    <td className="px-4 py-2.5 font-semibold">{row.conversions > 0 ? fmtNum(row.conversions) : "—"}</td>
+                    <td className="px-4 py-2.5 font-medium text-green-700 dark:text-green-400">{row.venituri > 0 ? fmtRON(row.venituri) : "—"}</td>
                     <td className="px-4 py-2.5">
                       {row.roas !== null && row.roas > 0 ? (
-                        <span className={`font-semibold ${row.roas >= 5 ? "text-green-600" : row.roas >= 2 ? "text-yellow-600" : "text-red-500"}`}>
+                        <span className={`font-semibold ${row.roas >= 10 ? "text-green-600" : row.roas >= 5 ? "text-yellow-600" : "text-red-500"}`}>
                           {row.roas.toFixed(2)}x
                         </span>
                       ) : "—"}
@@ -443,11 +456,12 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     const from = toISO(dateRange.from);
     const to   = toISO(dateRange.to);
 
-    const [gRes, fbRes, finRes, ttRes] = await Promise.allSettled([
+    const [gRes, fbRes, finRes, ttRes, attrRes] = await Promise.allSettled([
       fetch(`/api/google-ads/campaigns?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
       fetch(`/api/education/facebook-ads?level=campaign&from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
       fetch(`/api/finance/metrics?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
       fetch(`/api/tiktok-ads/campaigns?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`/api/finance/attribution?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
     ]);
 
     // Google Ads
@@ -455,6 +469,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     const google: ChannelStats = {
       spend:       gData?.overview?.spend       ?? 0,
       impressions: gData?.overview?.impressions ?? 0,
+      reach:       gData?.overview?.impressions ?? 0, // Google Ads nu are reach separat
       clicks:      gData?.overview?.clicks      ?? 0,
       conversions: gData?.overview?.conversions ?? 0,
     };
@@ -467,6 +482,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     const facebook: ChannelStats = {
       spend:       fbRows.reduce((s, r) => s + (Number(r.spend)       || 0), 0),
       impressions: fbRows.reduce((s, r) => s + (Number(r.impressions) || 0), 0),
+      reach:       fbRows.reduce((s, r) => s + (Number(r.reach)       || 0), 0),
       clicks:      fbRows.reduce((s, r) => s + (Number(r.clicks)      || 0), 0),
       conversions: fbRows.reduce((s, r) => s + (Number(r.conversions) || 0), 0),
     };
@@ -476,6 +492,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     const tiktok: ChannelStats = {
       spend:       ttData?.overview?.spend       ?? 0,
       impressions: ttData?.overview?.impressions ?? 0,
+      reach:       ttData?.overview?.impressions ?? 0, // TikTok nu returnează reach separat
       clicks:      ttData?.overview?.clicks      ?? 0,
       conversions: ttData?.overview?.conversions ?? 0,
     };
@@ -484,13 +501,21 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     const finData = finRes.status === "fulfilled" ? finRes.value : null;
     const totalRevenue: number = finData?.incasate?.total ?? 0;
 
-    setLiveData({ google, facebook, tiktok, totalRevenue, loading: false });
+    // Attribution (Invox calls → SmartBill invoices)
+    const attrRaw = attrRes.status === "fulfilled" && !attrRes.value?.error ? attrRes.value : null;
+    const attribution: AttributionData = {
+      facebook: { conversions: attrRaw?.facebook?.conversions ?? 0, revenue: attrRaw?.facebook?.revenue ?? 0 },
+      tiktok:   { conversions: attrRaw?.tiktok?.conversions   ?? 0, revenue: attrRaw?.tiktok?.revenue   ?? 0 },
+      google:   { conversions: attrRaw?.google?.conversions   ?? 0, revenue: attrRaw?.google?.revenue   ?? 0 },
+    };
+
+    setLiveData({ google, facebook, tiktok, totalRevenue, attribution, loading: false });
   }, [dateRange]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
   // ─── Derived values ─────────────────────────────────────────────────────────
-  const { google, facebook, tiktok, totalRevenue, loading } = liveData;
+  const { google, facebook, tiktok, totalRevenue, attribution, loading } = liveData;
   const totalSpend       = google.spend + facebook.spend + tiktok.spend;
   const totalImpressions = google.impressions + facebook.impressions + tiktok.impressions;
   const totalConversions = google.conversions + facebook.conversions + tiktok.conversions;
@@ -522,42 +547,42 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     { name: "TikTok",   value: roas(tiktok, totalRevenue),   color: "#1e293b" },
   ];
 
-  // Performance table rows
+  const attrRoas = (spend: number, revenue: number) =>
+    spend > 0 && revenue > 0 ? Math.round((revenue / spend) * 100) / 100 : null;
+
+  // Performance table rows — conversions & revenue come from Invox→SmartBill attribution
   const perfRows: PerfRow[] = [
     {
       canal:       "Facebook",
       investitie:  facebook.spend,
-      impressions: facebook.impressions,
+      reach:       facebook.reach,
       clicks:      facebook.clicks,
       ctr:         ctrPct(facebook),
-      conversions: facebook.conversions,
-      costPerConv: costPerConv(facebook),
-      venituri:    attrRevenue(facebook, totalSpend, totalRevenue),
-      roas:        roas(facebook, totalRevenue),
+      conversions: attribution.facebook.conversions,
+      venituri:    attribution.facebook.revenue,
+      roas:        attrRoas(facebook.spend, attribution.facebook.revenue),
       live:        facebook.spend > 0,
     },
     {
       canal:       "Google",
       investitie:  google.spend,
-      impressions: google.impressions,
+      reach:       google.reach,
       clicks:      google.clicks,
       ctr:         ctrPct(google),
-      conversions: google.conversions,
-      costPerConv: costPerConv(google),
-      venituri:    attrRevenue(google, totalSpend, totalRevenue),
-      roas:        roas(google, totalRevenue),
+      conversions: attribution.google.conversions,
+      venituri:    attribution.google.revenue,
+      roas:        attrRoas(google.spend, attribution.google.revenue),
       live:        google.spend > 0,
     },
     {
       canal:       "TikTok",
       investitie:  tiktok.spend,
-      impressions: tiktok.impressions,
+      reach:       tiktok.reach,
       clicks:      tiktok.clicks,
       ctr:         ctrPct(tiktok),
-      conversions: tiktok.conversions,
-      costPerConv: costPerConv(tiktok),
-      venituri:    attrRevenue(tiktok, totalSpend, totalRevenue),
-      roas:        tiktok.spend > 0 ? roas(tiktok, totalRevenue) : null,
+      conversions: attribution.tiktok.conversions,
+      venituri:    attribution.tiktok.revenue,
+      roas:        attrRoas(tiktok.spend, attribution.tiktok.revenue),
       live:        tiktok.spend > 0,
     },
   ];
