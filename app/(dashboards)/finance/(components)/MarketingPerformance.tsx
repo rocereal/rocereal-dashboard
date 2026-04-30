@@ -38,7 +38,7 @@ interface LiveData {
   tiktok:       ChannelStats;
   totalRevenue: number;
   attribution:  AttributionData;
-  callStats:    { total: number; answered: number };
+  callStats:    { total: number; answered: number; channels: { facebook: number; tiktok: number; google: number } };
   loading:      boolean;
 }
 
@@ -47,7 +47,7 @@ const ZERO_ATTR: ChannelAttribution = { conversions: 0, revenue: 0 };
 const INIT: LiveData = {
   google: ZERO, facebook: ZERO, tiktok: ZERO, totalRevenue: 0,
   attribution: { facebook: ZERO_ATTR, tiktok: ZERO_ATTR, google: ZERO_ATTR },
-  callStats: { total: 0, answered: 0 },
+  callStats: { total: 0, answered: 0, channels: { facebook: 0, tiktok: 0, google: 0 } },
   loading: true,
 };
 
@@ -260,6 +260,7 @@ interface PerfRow {
   reach: number;
   clicks: number;
   ctr: string;
+  calls: number;
   conversions: number;
   venituri: number;
   roas: number | null;
@@ -280,7 +281,7 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
-                {["Canal", "Investiție", "Vizualizări", "Clicuri", "Rată click", "Conversii Atribuite", "Venituri Atribuite", "ROAS"].map((h) => (
+                {["Canal", "Investiție", "Vizualizări", "Clicuri", "Rată click", "Apeluri generate", "Conversii Atribuite", "Venituri Atribuite", "ROAS"].map((h) => (
                   <th key={h} className="text-left text-xs font-semibold text-muted-foreground px-4 py-2.5 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -288,7 +289,7 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">Se încarcă...</td>
+                  <td colSpan={9} className="px-4 py-8 text-center text-sm text-muted-foreground">Se încarcă...</td>
                 </tr>
               ) : (
                 rows.map((row, i) => (
@@ -303,6 +304,7 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
                     <td className="px-4 py-2.5">{row.reach > 0 ? fmtNum(row.reach) : "—"}</td>
                     <td className="px-4 py-2.5">{row.clicks > 0 ? fmtNum(row.clicks) : "—"}</td>
                     <td className="px-4 py-2.5">{row.ctr}</td>
+                    <td className="px-4 py-2.5">{row.calls > 0 ? fmtNum(row.calls) : "—"}</td>
                     <td className="px-4 py-2.5 font-semibold">{row.conversions > 0 ? fmtNum(row.conversions) : "—"}</td>
                     <td className="px-4 py-2.5 font-medium text-green-700 dark:text-green-400">{row.venituri > 0 ? fmtRON(row.venituri) : "—"}</td>
                     <td className="px-4 py-2.5">
@@ -516,11 +518,16 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       google:   { conversions: attrRaw?.google?.conversions   ?? 0, revenue: attrRaw?.google?.revenue   ?? 0 },
     };
 
-    // Invox call counts for funnel
+    // Invox call counts for funnel + per-channel breakdown
     const callsRaw = callsRes.status === "fulfilled" && !callsRes.value?.error ? callsRes.value : null;
     const callStats = {
       total:    callsRaw?.total    ?? 0,
       answered: callsRaw?.answered ?? 0,
+      channels: {
+        facebook: callsRaw?.channels?.facebook ?? 0,
+        tiktok:   callsRaw?.channels?.tiktok   ?? 0,
+        google:   callsRaw?.channels?.google   ?? 0,
+      },
     };
 
     setLiveData({ google, facebook, tiktok, totalRevenue, attribution, callStats, loading: false });
@@ -569,6 +576,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       reach:       facebook.reach,
       clicks:      facebook.clicks,
       ctr:         ctrPct(facebook),
+      calls:       callStats.channels.facebook,
       conversions: attribution.facebook.conversions,
       venituri:    attribution.facebook.revenue,
       roas:        attrRoas(facebook.spend, attribution.facebook.revenue),
@@ -580,6 +588,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       reach:       google.reach,
       clicks:      google.clicks,
       ctr:         ctrPct(google),
+      calls:       callStats.channels.google,
       conversions: attribution.google.conversions,
       venituri:    attribution.google.revenue,
       roas:        attrRoas(google.spend, attribution.google.revenue),
@@ -591,6 +600,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       reach:       tiktok.reach,
       clicks:      tiktok.clicks,
       ctr:         ctrPct(tiktok),
+      calls:       callStats.channels.tiktok,
       conversions: attribution.tiktok.conversions,
       venituri:    attribution.tiktok.revenue,
       roas:        attrRoas(tiktok.spend, attribution.tiktok.revenue),

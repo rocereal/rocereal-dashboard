@@ -36,11 +36,23 @@ export async function GET(req: NextRequest) {
   const dateWhere = Object.keys(dateFilter).length ? { date: dateFilter } : {};
 
   if (counts === "1") {
-    const [total, answered] = await Promise.all([
-      prisma.crmCall.count({ where: dateWhere }),
-      prisma.crmCall.count({ where: { status: "Answered", ...dateWhere } }),
-    ]);
-    return NextResponse.json({ total, answered });
+    const rows = await prisma.crmCall.findMany({
+      where: dateWhere,
+      select: { source: true, status: true },
+    });
+
+    const channels = { facebook: 0, tiktok: 0, google: 0 };
+    let total = 0, answered = 0;
+    for (const { source, status } of rows) {
+      total++;
+      if (status === "Answered") answered++;
+      const s = (source ?? "").toLowerCase();
+      if (s.includes("meta") || s.includes("facebook")) channels.facebook++;
+      else if (s.includes("tik tok") || s.includes("tiktok")) channels.tiktok++;
+      else if (s.includes("google")) channels.google++;
+    }
+
+    return NextResponse.json({ total, answered, channels });
   }
 
   const calls = await prisma.crmCall.findMany({
