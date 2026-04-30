@@ -401,32 +401,43 @@ function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
   }, [dateRange]);
 
   const maxRevenue = Math.max(...chartData.map((d) => d.venituriIncasate ?? 0), 1);
+  // Normalize investment per month: position line at (investitie / venituriIncasate) * maxRevenue
+  // so it appears proportional to that month's bar (e.g. 20% spend → line at 20% of bar height)
+  const enrichedData = chartData.map((d) => ({
+    ...d,
+    investitieNorm:
+      d.venituriIncasate && d.venituriIncasate > 0 && d.investitie != null
+        ? (d.investitie / d.venituriIncasate) * maxRevenue
+        : null,
+  }));
 
   return (
     <Card className="shadow-xs">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Trend – Venituri Încasate vs Investiție Ads</CardTitle>
-        <CardDescription className="text-xs">Evoluție lunară — bare: Venituri Încasate (SmartBill) · linie: Investiție Ads (estimat)</CardDescription>
+        <CardDescription className="text-xs">Evoluție lunară — bare: Venituri Încasate (SmartBill) · linie: Investiție Ads (% din venituri)</CardDescription>
       </CardHeader>
       <CardContent className="px-2 pb-4">
         {chartLoading ? (
           <div className="flex items-center justify-center h-[240px] text-sm text-muted-foreground">Se încarcă...</div>
         ) : (
           <ResponsiveContainer width="100%" height={240}>
-            <ComposedChart data={chartData} margin={{ left: 8, right: 8 }}>
+            <ComposedChart data={enrichedData} margin={{ left: 8, right: 8 }}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis dataKey="luna" tickLine={false} axisLine={false} tickMargin={8} style={{ fontSize: 11 }} />
-              <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={48} />
-              <YAxis yAxisId="right" orientation="right" domain={[0, maxRevenue]} hide />
+              <YAxis tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={48} />
               <Tooltip
-                formatter={(value: number | undefined, name: string | undefined) => [
-                  value != null ? fmtRON(value) : "—",
-                  name === "venituriIncasate" ? "Venituri Încasate" : "Investiție Ads",
-                ] as [string, string]}
+                formatter={(value: number | undefined, name: string | undefined, props: { payload?: { investitie?: number | null } }) => {
+                  if (name === "investitieNorm") {
+                    const real = props.payload?.investitie;
+                    return [real != null ? fmtRON(real) : "—", "Investiție Ads"] as [string, string];
+                  }
+                  return [value != null ? fmtRON(value) : "—", "Venituri Încasate"] as [string, string];
+                }}
                 contentStyle={{ fontSize: 12, borderRadius: 6 }}
               />
-              <Bar yAxisId="left" dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
-              <Line yAxisId="right" type="monotone" dataKey="investitie" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitie" connectNulls={false} />
+              <Bar dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
+              <Line type="monotone" dataKey="investitieNorm" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitieNorm" connectNulls={false} />
             </ComposedChart>
           </ResponsiveContainer>
         )}
