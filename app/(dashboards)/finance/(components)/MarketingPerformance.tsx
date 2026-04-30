@@ -400,6 +400,8 @@ function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
       .finally(() => setChartLoading(false));
   }, [dateRange]);
 
+  const maxRevenue = Math.max(...chartData.map((d) => d.venituriIncasate ?? 0), 1);
+
   return (
     <Card className="shadow-xs">
       <CardHeader className="pb-2">
@@ -415,7 +417,7 @@ function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis dataKey="luna" tickLine={false} axisLine={false} tickMargin={8} style={{ fontSize: 11 }} />
               <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={48} />
-              <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={44} />
+              <YAxis yAxisId="right" orientation="right" domain={[0, maxRevenue]} hide />
               <Tooltip
                 formatter={(value: number | undefined, name: string | undefined) => [
                   value != null ? fmtRON(value) : "—",
