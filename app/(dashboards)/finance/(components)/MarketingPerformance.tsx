@@ -5,7 +5,7 @@ import {
   Bar, CartesianGrid, Cell, ComposedChart, Line,
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
-import { TrendingDown, TrendingUp } from "lucide-react";
+import { Banknote, Eye, Target, TrendingDown, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
@@ -324,24 +324,28 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
 // ─── KPI CARDS ────────────────────────────────────────────────────────────────
 
 function ChannelKPICards({ liveData }: { liveData: LiveData }) {
-  const { google, facebook, tiktok, totalRevenue, loading } = liveData;
-  const totalSpend       = google.spend + facebook.spend + tiktok.spend;
-  const totalImpressions = google.impressions + facebook.impressions + tiktok.impressions;
-  const totalConversions = google.conversions + facebook.conversions + tiktok.conversions;
+  const { google, facebook, tiktok, attribution, loading } = liveData;
+  const totalSpend = google.spend + facebook.spend + tiktok.spend;
+  const totalReach = google.reach + facebook.reach + tiktok.reach;
+  const attrConversions =
+    attribution.facebook.conversions + attribution.tiktok.conversions + attribution.google.conversions;
 
-  const bestROAS = Math.max(
-    google.spend > 0 ? totalRevenue / google.spend : 0,
-    facebook.spend > 0 ? totalRevenue / facebook.spend : 0,
-  );
+  const channelRoasValues = [
+    facebook.spend > 0 && attribution.facebook.revenue > 0 ? attribution.facebook.revenue / facebook.spend : null,
+    google.spend   > 0 && attribution.google.revenue   > 0 ? attribution.google.revenue   / google.spend   : null,
+    tiktok.spend   > 0 && attribution.tiktok.revenue   > 0 ? attribution.tiktok.revenue   / tiktok.spend   : null,
+  ].filter((v): v is number => v !== null);
+  const avgAttrROAS  = channelRoasValues.length > 0 ? channelRoasValues.reduce((s, v) => s + v, 0) / channelRoasValues.length : 0;
+  const bestAttrROAS = channelRoasValues.length > 0 ? Math.max(...channelRoasValues) : 0;
 
-  const kpis = [
-    { label: "Facebook",           value: loading ? "—" : fmtRON(facebook.spend),    sub: "Investiție",        logoKey: "facebook" as LogoKey },
-    { label: "Google",             value: loading ? "—" : fmtRON(google.spend),      sub: "Investiție",        logoKey: "google"   as LogoKey },
-    { label: "TikTok",             value: loading ? "—" : tiktok.spend > 0 ? fmtRON(tiktok.spend) : "N/A", sub: tiktok.spend > 0 ? "Investiție" : "Neconectat", logoKey: "tiktok" as LogoKey },
-    { label: "Total Investiție",   value: loading ? "—" : fmtRON(totalSpend),         sub: "Toate canalele",    logoKey: "total"    as LogoKey },
-    { label: "Impresii Total",     value: loading ? "—" : fmtK(totalImpressions),      sub: "Reclame afișate",   logoKey: "calls"    as LogoKey },
-    { label: "Conversii Total",    value: loading ? "—" : fmtNum(totalConversions),    sub: "din campanii",      logoKey: "leads"    as LogoKey },
-    { label: "ROAS Mediu",         value: loading || totalSpend === 0 ? "—" : `${(totalRevenue / totalSpend).toFixed(2)}x`, sub: bestROAS > 0 ? `Best: ${bestROAS.toFixed(2)}x` : "—", logoKey: "roi" as LogoKey },
+  const kpis: { label: string; value: string; sub: string; icon: React.ReactNode }[] = [
+    { label: "Facebook",          value: loading ? "—" : fmtRON(facebook.spend), sub: "Investiție",              icon: <ChannelLogo k="facebook" /> },
+    { label: "Google",            value: loading ? "—" : fmtRON(google.spend),   sub: "Investiție",              icon: <ChannelLogo k="google" /> },
+    { label: "TikTok",            value: loading ? "—" : tiktok.spend > 0 ? fmtRON(tiktok.spend) : "N/A", sub: tiktok.spend > 0 ? "Investiție" : "Neconectat", icon: <ChannelLogo k="tiktok" /> },
+    { label: "Total Investiție",  value: loading ? "—" : fmtRON(totalSpend),     sub: "Toate canalele",          icon: <Banknote className="h-6 w-6 text-muted-foreground" /> },
+    { label: "Vizualizări Total", value: loading ? "—" : fmtK(totalReach),       sub: "Reach unic agregat",      icon: <Eye     className="h-6 w-6 text-muted-foreground" /> },
+    { label: "Conversii Total",   value: loading ? "—" : fmtNum(attrConversions), sub: "Atribuite Invox→SmartBill", icon: <Target  className="h-6 w-6 text-muted-foreground" /> },
+    { label: "ROAS Mediu",        value: loading || avgAttrROAS === 0 ? "—" : `${avgAttrROAS.toFixed(2)}x`, sub: bestAttrROAS > 0 ? `Best: ${bestAttrROAS.toFixed(2)}x` : "—", icon: <TrendingUp className="h-6 w-6 text-muted-foreground" /> },
   ];
 
   return (
@@ -349,7 +353,7 @@ function ChannelKPICards({ liveData }: { liveData: LiveData }) {
       {kpis.map((kpi) => (
         <Card key={kpi.label} className="shadow-xs">
           <CardContent className="pt-4 pb-3 px-4">
-            <div className="mb-1.5"><ChannelLogo k={kpi.logoKey} /></div>
+            <div className="mb-1.5">{kpi.icon}</div>
             <p className="text-xs text-muted-foreground truncate">{kpi.label}</p>
             <p className="text-lg font-bold leading-tight mt-0.5">{kpi.value}</p>
             <p className="text-xs text-muted-foreground truncate">{kpi.sub}</p>
