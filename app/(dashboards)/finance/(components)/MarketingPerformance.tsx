@@ -7,6 +7,7 @@ import {
 } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { format } from "date-fns";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { PrognozaBarChart } from "@/app/(dashboards)/crypto/(components)/PrognozaBarChart";
 
@@ -80,7 +81,7 @@ const costPerConv = (ch: ChannelStats) =>
 const attrRevenue = (ch: ChannelStats, totalSpend: number, totalRevenue: number) =>
   totalSpend > 0 && ch.spend > 0 ? totalRevenue * (ch.spend / totalSpend) : 0;
 
-const toISO = (d: Date) => d.toISOString().slice(0, 10);
+const toISO = (d: Date) => format(d, "yyyy-MM-dd");
 
 // ─── Logos ────────────────────────────────────────────────────────────────────
 

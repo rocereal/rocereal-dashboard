@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Eye, MousePointerClick, TrendingUp, TrendingDown, Banknote, Target, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { format } from "date-fns";
 import { TikTokAdsManagerTable } from "./TikTokAdsManagerTable";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -102,7 +103,7 @@ export default function RenderPage() {
   const [notConnected, setNotConnected]   = useState(false);
   const [error, setError]                 = useState<string | null>(null);
 
-  const toISO = (d: Date) => d.toISOString().slice(0, 10);
+  const toISO = (d: Date) => format(d, "yyyy-MM-dd");
 
   const load = useCallback(async () => {
     setLoading(true);
