@@ -5,7 +5,7 @@ import {
   Bar, CartesianGrid, Cell, ComposedChart, Line,
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
-import { Banknote, Eye, Target, TrendingDown, TrendingUp } from "lucide-react";
+import { Banknote, Eye, Target, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
 import { DateTimeRange } from "@/components/ui/date-time-range-picker";
@@ -71,14 +71,6 @@ const trendData = [
   { luna: "Oct", venituriIncasate: null,   investitie: null },
   { luna: "Nov", venituriIncasate: null,   investitie: null },
   { luna: "Dec", venituriIncasate: null,   investitie: null },
-];
-
-const topAgenti = [
-  { nume: "Mihai Ionescu",   vanzari: 187400, atrib: 24 },
-  { nume: "Andra Popescu",   vanzari: 154200, atrib: 19 },
-  { nume: "Bogdan Matei",    vanzari: 142800, atrib: 17 },
-  { nume: "Cristina Stan",   vanzari: 128600, atrib: 15 },
-  { nume: "Vlad Constantin", vanzari: 98300,  atrib: 11 },
 ];
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
@@ -422,7 +414,8 @@ function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
             <ComposedChart data={chartData} margin={{ left: 8, right: 8 }}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis dataKey="luna" tickLine={false} axisLine={false} tickMargin={8} style={{ fontSize: 11 }} />
-              <YAxis tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={52} />
+              <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={48} />
+              <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={44} />
               <Tooltip
                 formatter={(value: number | undefined, name: string | undefined) => [
                   value != null ? fmtRON(value) : "—",
@@ -430,8 +423,8 @@ function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
                 ] as [string, string]}
                 contentStyle={{ fontSize: 12, borderRadius: 6 }}
               />
-              <Bar dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
-              <Line type="monotone" dataKey="investitie" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitie" connectNulls={false} />
+              <Bar yAxisId="left" dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
+              <Line yAxisId="right" type="monotone" dataKey="investitie" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitie" connectNulls={false} />
             </ComposedChart>
           </ResponsiveContainer>
         )}
@@ -514,23 +507,6 @@ function TopAgentiTable({ dateRange }: { dateRange?: DateTimeRange }) {
               ))}
             </tbody>
           </table>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function MetricaMica({ label, value, sub, trend }: { label: string; value: string; sub: string; trend: number }) {
-  const pos = trend >= 0;
-  return (
-    <Card className="shadow-xs flex-1">
-      <CardContent className="pt-4 pb-3 px-4">
-        <p className="text-xs text-muted-foreground mb-1">{label}</p>
-        <p className="text-2xl font-bold">{value}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
-        <div className={`flex items-center gap-0.5 mt-1 text-xs font-medium ${pos ? "text-green-600" : "text-red-500"}`}>
-          {pos ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-          {pos ? "+" : ""}{trend}% față de luna trecută
         </div>
       </CardContent>
     </Card>
