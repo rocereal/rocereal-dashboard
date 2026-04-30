@@ -89,9 +89,6 @@ const fmtK = (v: number) =>
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const roas = (ch: ChannelStats, totalRevenue: number) =>
-  ch.spend > 0 ? parseFloat((totalRevenue / ch.spend).toFixed(2)) : 0;
-
 const ctrPct = (ch: ChannelStats) =>
   ch.impressions > 0 ? `${((ch.clicks / ch.impressions) * 100).toFixed(2)}%` : "—";
 
@@ -138,10 +135,20 @@ const COLORS = ["#1877f2", "#22c55e", "#f59e0b", "#ef4444"];
 
 interface FunnelRow { stage: string; value: number; pct: number }
 
-function FunnelGeneral({ data, loading }: { data: FunnelRow[]; loading: boolean }) {
+function FunnelGeneral({ data, loading, totalSpend, answeredCalls, attrConversions }: {
+  data: FunnelRow[];
+  loading: boolean;
+  totalSpend: number;
+  answeredCalls: number;
+  attrConversions: number;
+}) {
   const totalH = data.length * BAND_H + (data.length - 1) * PCT_H;
-  const leads  = data[1]?.value ?? 0;
-  const costLead = data[0]?.value > 0 ? "—" : "—"; // would need spend
+  const convRate  = answeredCalls > 0
+    ? `${((attrConversions / answeredCalls) * 100).toFixed(1)}%`
+    : "—";
+  const costPerCall = answeredCalls > 0
+    ? fmtRON(totalSpend / answeredCalls)
+    : "—";
 
   return (
     <Card className="shadow-xs h-full flex flex-col">
@@ -182,12 +189,12 @@ function FunnelGeneral({ data, loading }: { data: FunnelRow[]; loading: boolean 
             </div>
             <div className="mt-4 pt-4 border-t grid grid-cols-2 gap-2">
               <div className="text-center">
-                <p className="text-xs text-muted-foreground">Total Leads</p>
-                <p className="text-sm font-bold">{fmtNum(leads)}</p>
+                <p className="text-xs text-muted-foreground">Rata de conversie</p>
+                <p className="text-sm font-bold">{convRate}</p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-muted-foreground">Cost / Lead</p>
-                <p className="text-sm font-bold">{costLead}</p>
+                <p className="text-xs text-muted-foreground">Cost / Apel Receptionat</p>
+                <p className="text-sm font-bold">{costPerCall}</p>
               </div>
             </div>
           </>
@@ -370,31 +377,59 @@ function ChannelKPICards({ liveData }: { liveData: LiveData }) {
 
 // ─── TREND CHART ──────────────────────────────────────────────────────────────
 
-function TrendProfitChart() {
+// Static monthly ad investment estimates (updated manually; real-time per-month
+// platform spend would require 36+ API calls and is not fetched dynamically)
+const STATIC_INVESTMENT: (number | null)[] = [21400, 19800, 23600, 24750, null, null, null, null, null, null, null, null];
+
+function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
+  const [chartData, setChartData] = useState<{ luna: string; venituriIncasate: number | null; investitie: number | null }[]>(
+    trendData.map((d) => ({ ...d }))
+  );
+  const [chartLoading, setChartLoading] = useState(true);
+
+  useEffect(() => {
+    const year = dateRange?.from
+      ? new Date(dateRange.from).getFullYear()
+      : new Date().getFullYear();
+
+    setChartLoading(true);
+    fetch(`/api/finance/trend?year=${year}`, { cache: "no-store" })
+      .then((r) => r.json())
+      .then((rows: { luna: string; venituriIncasate: number | null }[]) => {
+        setChartData(rows.map((r, i) => ({ ...r, investitie: STATIC_INVESTMENT[i] ?? null })));
+      })
+      .catch(() => {/* keep static data on error */})
+      .finally(() => setChartLoading(false));
+  }, [dateRange]);
+
   return (
     <Card className="shadow-xs">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Trend – Venituri Încasate vs Investiție Ads</CardTitle>
-        <CardDescription className="text-xs">Evoluție lunară 2026 — bare: Venituri Încasate · linie: Total Investiție Ads</CardDescription>
+        <CardDescription className="text-xs">Evoluție lunară — bare: Venituri Încasate (SmartBill) · linie: Investiție Ads (estimat)</CardDescription>
       </CardHeader>
       <CardContent className="px-2 pb-4">
-        <ResponsiveContainer width="100%" height={240}>
-          <ComposedChart data={trendData} margin={{ left: 8, right: 8 }}>
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis dataKey="luna" tickLine={false} axisLine={false} tickMargin={8} style={{ fontSize: 11 }} />
-            <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={48} />
-            <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={44} />
-            <Tooltip
-              formatter={(value: number | undefined, name: string | undefined) => [
-                value != null ? fmtRON(value) : "—",
-                name === "venituriIncasate" ? "Venituri Încasate" : "Investiție Ads",
-              ] as [string, string]}
-              contentStyle={{ fontSize: 12, borderRadius: 6 }}
-            />
-            <Bar yAxisId="left" dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
-            <Line yAxisId="right" type="monotone" dataKey="investitie" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitie" connectNulls={false} />
-          </ComposedChart>
-        </ResponsiveContainer>
+        {chartLoading ? (
+          <div className="flex items-center justify-center h-[240px] text-sm text-muted-foreground">Se încarcă...</div>
+        ) : (
+          <ResponsiveContainer width="100%" height={240}>
+            <ComposedChart data={chartData} margin={{ left: 8, right: 8 }}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="luna" tickLine={false} axisLine={false} tickMargin={8} style={{ fontSize: 11 }} />
+              <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={48} />
+              <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(v) => fmtK(v)} style={{ fontSize: 11 }} width={44} />
+              <Tooltip
+                formatter={(value: number | undefined, name: string | undefined) => [
+                  value != null ? fmtRON(value) : "—",
+                  name === "venituriIncasate" ? "Venituri Încasate" : "Investiție Ads",
+                ] as [string, string]}
+                contentStyle={{ fontSize: 12, borderRadius: 6 }}
+              />
+              <Bar yAxisId="left" dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
+              <Line yAxisId="right" type="monotone" dataKey="investitie" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitie" connectNulls={false} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );
@@ -402,34 +437,79 @@ function TrendProfitChart() {
 
 // ─── TOP AGENȚI ───────────────────────────────────────────────────────────────
 
-function TopAgentiTable() {
+interface AgentRow {
+  name: string;
+  callsTotal: number;
+  callsAnswered: number;
+  avgDurationSec: number;
+  revenue: number;
+  conversions: number;
+  conversionRate: number;
+}
+
+function fmtDuration(sec: number): string {
+  if (sec <= 0) return "—";
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return m > 0 ? `${m}m ${s}s` : `${s}s`;
+}
+
+function TopAgentiTable({ dateRange }: { dateRange?: DateTimeRange }) {
+  const [agents, setAgents]   = useState<AgentRow[]>([]);
+  const [agLoading, setAgLoading] = useState(true);
+
+  useEffect(() => {
+    if (!dateRange?.from || !dateRange?.to) return;
+    setAgLoading(true);
+    const from = format(dateRange.from, "yyyy-MM-dd");
+    const to   = format(dateRange.to,   "yyyy-MM-dd");
+    fetch(`/api/finance/agent-stats?from=${from}&to=${to}`, { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data)) setAgents(data); })
+      .catch(() => {})
+      .finally(() => setAgLoading(false));
+  }, [dateRange]);
+
   return (
-    <Card className="shadow-xs h-full">
+    <Card className="shadow-xs">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">Top Agenți după Circuit Atribuite</CardTitle>
-        <CardDescription className="text-xs">Luna curentă</CardDescription>
+        <CardTitle className="text-base">Performanță Agenți</CardTitle>
+        <CardDescription className="text-xs">Apeluri, durată medie, conversii și venituri atribuite per agent · perioadă selectată</CardDescription>
       </CardHeader>
       <CardContent className="px-0 pb-0">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/40">
-              <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-2">#</th>
-              <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-2">Agent</th>
-              <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-2">Vânzări</th>
-              <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-2">Circuit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {topAgenti.map((a, i) => (
-              <tr key={i} className="border-b last:border-0 hover:bg-muted/30">
-                <td className="px-4 py-2.5 text-muted-foreground font-medium">{i + 1}</td>
-                <td className="px-4 py-2.5 font-medium whitespace-nowrap">{a.nume}</td>
-                <td className="px-4 py-2.5 text-right text-green-600 font-semibold">{fmtRON(a.vanzari)}</td>
-                <td className="px-4 py-2.5 text-right font-medium">{a.atrib}</td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/40">
+                {["#", "Agent", "Apeluri", "Răspunse", "Durată medie", "Conversii", "Rată conversie", "Venituri Atribuite"].map((h) => (
+                  <th key={h} className="text-left text-xs font-semibold text-muted-foreground px-4 py-2.5 whitespace-nowrap">{h}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {agLoading ? (
+                <tr><td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">Se încarcă...</td></tr>
+              ) : agents.length === 0 ? (
+                <tr><td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">Nicio dată disponibilă</td></tr>
+              ) : agents.map((a, i) => (
+                <tr key={i} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-2.5 text-muted-foreground font-medium">{i + 1}</td>
+                  <td className="px-4 py-2.5 font-semibold whitespace-nowrap">{a.name}</td>
+                  <td className="px-4 py-2.5">{fmtNum(a.callsTotal)}</td>
+                  <td className="px-4 py-2.5">{fmtNum(a.callsAnswered)}</td>
+                  <td className="px-4 py-2.5">{fmtDuration(a.avgDurationSec)}</td>
+                  <td className="px-4 py-2.5 font-semibold">{a.conversions > 0 ? fmtNum(a.conversions) : "—"}</td>
+                  <td className="px-4 py-2.5">
+                    <span className={`font-medium ${a.conversionRate >= 30 ? "text-green-600" : a.conversionRate >= 15 ? "text-yellow-600" : "text-muted-foreground"}`}>
+                      {a.conversionRate > 0 ? `${a.conversionRate}%` : "—"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2.5 font-medium text-green-700 dark:text-green-400">{a.revenue > 0 ? fmtRON(a.revenue) : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </CardContent>
     </Card>
   );
@@ -536,7 +616,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
   // ─── Derived values ─────────────────────────────────────────────────────────
-  const { google, facebook, tiktok, totalRevenue, attribution, callStats, loading } = liveData;
+  const { google, facebook, tiktok, attribution, callStats, loading } = liveData;
   const totalReach      = google.reach + facebook.reach + tiktok.reach;
   const attrConversions = attribution.facebook.conversions + attribution.tiktok.conversions + attribution.google.conversions;
 
@@ -551,22 +631,22 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     { stage: "Vânzări",              value: attrConversions,    pct: salesToAnsweredPct },
   ];
 
-  // Profitabilitate data
-  const profitData = [
-    { canal: "Facebook", profitBrut: totalRevenue, cost: facebook.spend, roas: roas(facebook, totalRevenue) },
-    { canal: "Google",   profitBrut: totalRevenue, cost: google.spend,   roas: roas(google, totalRevenue) },
-    { canal: "TikTok",   profitBrut: totalRevenue, cost: tiktok.spend,  roas: roas(tiktok, totalRevenue) },
-  ];
-
-  // ROAS donut
-  const roasData: RoasRow[] = [
-    { name: "Facebook", value: roas(facebook, totalRevenue), color: "#22c55e" },
-    { name: "Google",   value: roas(google, totalRevenue),   color: "#3b82f6" },
-    { name: "TikTok",   value: roas(tiktok, totalRevenue),   color: "#1e293b" },
-  ];
-
   const attrRoas = (spend: number, revenue: number) =>
     spend > 0 && revenue > 0 ? Math.round((revenue / spend) * 100) / 100 : null;
+
+  // Profitabilitate data — uses attributed revenue from Invox→SmartBill
+  const profitData = [
+    { canal: "Facebook", profitBrut: attribution.facebook.revenue, cost: facebook.spend, roas: attrRoas(facebook.spend, attribution.facebook.revenue) ?? 0 },
+    { canal: "Google",   profitBrut: attribution.google.revenue,   cost: google.spend,   roas: attrRoas(google.spend,   attribution.google.revenue)   ?? 0 },
+    { canal: "TikTok",   profitBrut: attribution.tiktok.revenue,   cost: tiktok.spend,   roas: attrRoas(tiktok.spend,   attribution.tiktok.revenue)   ?? 0 },
+  ];
+
+  // ROAS donut — attributed ROAS per channel
+  const roasData: RoasRow[] = [
+    { name: "Facebook", value: attrRoas(facebook.spend, attribution.facebook.revenue) ?? 0, color: "#22c55e" },
+    { name: "Google",   value: attrRoas(google.spend,   attribution.google.revenue)   ?? 0, color: "#3b82f6" },
+    { name: "TikTok",   value: attrRoas(tiktok.spend,   attribution.tiktok.revenue)   ?? 0, color: "#1e293b" },
+  ];
 
   // Performance table rows — conversions & revenue come from Invox→SmartBill attribution
   const perfRows: PerfRow[] = [
@@ -619,7 +699,13 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
           <PrognozaBarChart data={loading ? undefined : profitData} />
         </div>
         <div className="md:col-span-1 lg:col-span-4 h-full">
-          <FunnelGeneral data={funnelData} loading={loading} />
+          <FunnelGeneral
+            data={funnelData}
+            loading={loading}
+            totalSpend={google.spend + facebook.spend + tiktok.spend}
+            answeredCalls={callStats.answered}
+            attrConversions={attrConversions}
+          />
         </div>
         <div className="md:col-span-1 lg:col-span-2 h-full">
           <ROIPeCanal data={roasData} loading={loading} />
@@ -630,10 +716,10 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       <PerformantaTable rows={perfRows} loading={loading} />
 
       {/* 4. Trend chart — full width */}
-      <TrendProfitChart />
+      <TrendProfitChart dateRange={dateRange} />
 
       {/* 5. Top agents */}
-      <TopAgentiTable />
+      <TopAgentiTable dateRange={dateRange} />
 
       {/* 6. Bottom metric cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
