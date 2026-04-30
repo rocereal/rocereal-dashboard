@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
         report_type:   "BASIC",
         data_level:    "AUCTION_CAMPAIGN",
         dimensions:    JSON.stringify(["campaign_id"]),
-        metrics:       JSON.stringify(["spend", "impressions", "clicks", "ctr", "cpc", "cpm"]),
+        metrics:       JSON.stringify(["spend", "impressions", "reach", "clicks", "ctr", "cpc", "cpm"]),
         start_date:    from,
         end_date:      to,
         page:          "1",
@@ -98,6 +98,7 @@ export async function GET(req: NextRequest) {
       const m = metricsMap.get(c.campaign_id as string) ?? {};
       const spend       = parseFloat(m.spend       as string) || 0;
       const impressions = parseInt  (m.impressions as string) || 0;
+      const reach       = parseInt  (m.reach       as string) || 0;
       const clicks      = parseInt  (m.clicks      as string) || 0;
       const conversions = parseInt  (m.conversion  as string) || 0;
       const ctr         = parseFloat(m.ctr         as string) || 0;
@@ -112,6 +113,7 @@ export async function GET(req: NextRequest) {
         objective:   c.objective_type   as string,
         spend:       Math.round(spend * 100) / 100,
         impressions,
+        reach,
         clicks,
         conversions,
         ctr:         Math.round(ctr * 10000) / 100,
@@ -123,15 +125,16 @@ export async function GET(req: NextRequest) {
 
     // ── 4. Overview totals — derived from report (includes deleted campaigns) ─────
     const rawOverview = Array.from(metricsMap.values()).reduce<{
-      spend: number; impressions: number; clicks: number; conversions: number;
+      spend: number; impressions: number; reach: number; clicks: number; conversions: number;
     }>(
       (acc, m) => ({
         spend:       acc.spend       + (parseFloat(m.spend       as string) || 0),
         impressions: acc.impressions + (parseInt  (m.impressions as string) || 0),
+        reach:       acc.reach       + (parseInt  (m.reach       as string) || 0),
         clicks:      acc.clicks      + (parseInt  (m.clicks      as string) || 0),
         conversions: acc.conversions + (parseInt  (m.conversion  as string) || 0),
       }),
-      { spend: 0, impressions: 0, clicks: 0, conversions: 0 }
+      { spend: 0, impressions: 0, reach: 0, clicks: 0, conversions: 0 }
     );
     // Fall back to summing the campaign list if the report was unavailable (metricsMap empty)
     const overview = metricsMap.size > 0
@@ -140,10 +143,11 @@ export async function GET(req: NextRequest) {
           (acc, c) => ({
             spend:       Math.round((acc.spend + c.spend) * 100) / 100,
             impressions: acc.impressions + c.impressions,
+            reach:       acc.reach       + c.reach,
             clicks:      acc.clicks      + c.clicks,
             conversions: acc.conversions + c.conversions,
           }),
-          { spend: 0, impressions: 0, clicks: 0, conversions: 0 }
+          { spend: 0, impressions: 0, reach: 0, clicks: 0, conversions: 0 }
         );
 
     const totalCtr = overview.impressions > 0

@@ -492,7 +492,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     const tiktok: ChannelStats = {
       spend:       ttData?.overview?.spend       ?? 0,
       impressions: ttData?.overview?.impressions ?? 0,
-      reach:       ttData?.overview?.impressions ?? 0, // TikTok nu returnează reach separat
+      reach:       ttData?.overview?.reach       ?? ttData?.overview?.impressions ?? 0,
       clicks:      ttData?.overview?.clicks      ?? 0,
       conversions: ttData?.overview?.conversions ?? 0,
     };
@@ -516,7 +516,6 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
 
   // ─── Derived values ─────────────────────────────────────────────────────────
   const { google, facebook, tiktok, totalRevenue, attribution, loading } = liveData;
-  const totalSpend       = google.spend + facebook.spend + tiktok.spend;
   const totalImpressions = google.impressions + facebook.impressions + tiktok.impressions;
   const totalConversions = google.conversions + facebook.conversions + tiktok.conversions;
 
