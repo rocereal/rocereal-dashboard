@@ -285,7 +285,7 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
-                {["Canal", "Investiție", "Venituri Atribuite", "Vizualizări", "Clicuri", "Rată click", "Apeluri generate", "Cost / Apel", "Conversii Atribuite", "ROAS"].map((h) => (
+                {["Canal", "Investiție", "Venituri Atribuite", "Cost / Apel", "Vizualizări", "Clicuri", "Rată click", "Apeluri generate", "Conversii Atribuite", "ROAS"].map((h) => (
                   <th key={h} className="text-left text-xs font-semibold text-muted-foreground px-4 py-2.5 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -306,11 +306,11 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
                     </td>
                     <td className="px-4 py-2.5 text-muted-foreground">{row.investitie > 0 ? fmtRON(row.investitie) : "—"}</td>
                     <td className="px-4 py-2.5 font-medium text-green-700 dark:text-green-400">{row.venituri > 0 ? fmtRON(row.venituri) : "—"}</td>
+                    <td className="px-4 py-2.5 text-muted-foreground">{row.costPerCall !== null ? fmtRON(row.costPerCall) : "—"}</td>
                     <td className="px-4 py-2.5">{row.reach > 0 ? fmtNum(row.reach) : "—"}</td>
                     <td className="px-4 py-2.5">{row.clicks > 0 ? fmtNum(row.clicks) : "—"}</td>
                     <td className="px-4 py-2.5">{row.ctr}</td>
                     <td className="px-4 py-2.5">{row.calls > 0 ? fmtNum(row.calls) : "—"}</td>
-                    <td className="px-4 py-2.5 text-muted-foreground">{row.costPerCall !== null ? fmtRON(row.costPerCall) : "—"}</td>
                     <td className="px-4 py-2.5 font-semibold">{row.conversions > 0 ? fmtNum(row.conversions) : "—"}</td>
                     <td className="px-4 py-2.5">
                       {row.roas !== null && row.roas > 0 ? (
