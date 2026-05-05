@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     await prisma.leadCall.upsert({
       where:  { externalId: uniqueid },
-      update: { status, duration: Number(duration) || null, endedAt: callend ? new Date(callend) : null, recordingUrl: recording ?? null, rawPayload: payload },
+      update: { status, duration: Number(duration) || null, endedAt: callend ? new Date(callend) : null, recordingUrl: recording ?? null, rawPayload: payload as Prisma.InputJsonValue },
       create: {
         provider:    "daktela",
         externalId:  uniqueid,
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
         tags:        [],
         startedAt:   callstart ? new Date(callstart) : new Date(),
         endedAt:     callend   ? new Date(callend)   : null,
-        rawPayload:  payload,
+        rawPayload:  payload as Prisma.InputJsonValue,
       },
     });
 
