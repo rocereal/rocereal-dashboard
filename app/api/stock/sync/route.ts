@@ -3,17 +3,20 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-interface SmartBillStockItem {
-  name:        string;
-  measuringUnitName?: string;
-  quantity:    number;
-  buyingPrice?: number;
-  code?:       string;
-  productCategory?: string;
+interface SmartBillProduct {
+  productName:    string;
+  productCode?:   string;
+  measuringUnit?: string;
+  quantity:       number;
 }
 
-interface SmartBillStockResponse {
-  list?:      SmartBillStockItem[];
+interface SmartBillWarehouseEntry {
+  warehouse: { warehouseName: string; warehouseType?: string };
+  products:  SmartBillProduct[];
+}
+
+interface SmartBillStocksResponse {
+  list?:      SmartBillWarehouseEntry[];
   errorText?: string;
 }
 
@@ -34,9 +37,9 @@ export async function POST() {
   }
 
   try {
-    const auth    = `Basic ${Buffer.from(`${email}:${token}`).toString("base64")}`;
-    const today   = new Date().toISOString().slice(0, 10);
-    const url     = `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}&warehouseName=${encodeURIComponent(warehouse)}`;
+    const auth  = `Basic ${Buffer.from(`${email}:${token}`).toString("base64")}`;
+    const today = new Date().toISOString().slice(0, 10);
+    const url   = `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}&warehouseName=${encodeURIComponent(warehouse)}`;
 
     const res = await fetch(url, {
       headers: { Authorization: auth, Accept: "application/json" },
@@ -47,27 +50,31 @@ export async function POST() {
       return NextResponse.json({ error: `SmartBill API ${res.status}: ${res.statusText}` }, { status: 502 });
     }
 
-    const data = await res.json() as SmartBillStockResponse;
+    const data = await res.json() as SmartBillStocksResponse;
     if (data.errorText) {
       return NextResponse.json({ error: data.errorText }, { status: 502 });
     }
 
-    const items = data.list ?? [];
-    if (items.length === 0) {
-      return NextResponse.json({ ok: true, created: 0, updated: 0, total: 0, message: "Niciun produs returnat de SmartBill" });
+    // Find the warehouse entry matching our warehouse name
+    const warehouseEntry = (data.list ?? []).find(
+      e => e.warehouse?.warehouseName === warehouse
+    );
+
+    const products = warehouseEntry?.products ?? [];
+
+    if (products.length === 0) {
+      return NextResponse.json({ ok: true, created: 0, updated: 0, total: 0, message: "Niciun produs găsit în gestiunea specificată" });
     }
 
     let created = 0, updated = 0;
     const now = new Date();
 
-    for (const item of items) {
-      const qty        = Number(item.quantity) || 0;
-      const unitPrice  = Number(item.buyingPrice) || 0;
-      const totalValue = qty * unitPrice;
+    for (const product of products) {
+      const qty        = Number(product.quantity) || 0;
       const status     = determineStatus(qty);
 
       const existing = await prisma.productStock.findFirst({
-        where: { name: item.name, warehouse },
+        where: { name: product.productName, warehouse },
       });
 
       if (existing) {
@@ -75,12 +82,9 @@ export async function POST() {
           where: { id: existing.id },
           data:  {
             quantity:     qty,
-            unitPrice,
-            totalValue,
             status,
-            unit:         item.measuringUnitName ?? existing.unit,
-            sku:          item.code              ?? existing.sku,
-            category:     item.productCategory   ?? existing.category,
+            unit:         product.measuringUnit ?? existing.unit,
+            sku:          product.productCode   ?? existing.sku,
             lastSyncedAt: now,
           },
         });
@@ -88,13 +92,12 @@ export async function POST() {
       } else {
         await prisma.productStock.create({
           data: {
-            name:         item.name,
-            sku:          item.code,
-            category:     item.productCategory,
+            name:         product.productName,
+            sku:          product.productCode,
             quantity:     qty,
-            unitPrice,
-            totalValue,
-            unit:         item.measuringUnitName,
+            unitPrice:    0,
+            totalValue:   0,
+            unit:         product.measuringUnit,
             status,
             warehouse,
             lastSyncedAt: now,
@@ -104,7 +107,7 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({ ok: true, created, updated, total: items.length });
+    return NextResponse.json({ ok: true, created, updated, total: products.length });
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
   }
