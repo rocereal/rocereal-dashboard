@@ -26,7 +26,7 @@ export function SalesTargetWidget() {
   const [targetInput, setTargetInput] = useState("");
   const [saving, setSaving]   = useState(false);
 
-  const { from, to, params, period } = currentMonthParams();
+  const { params, period } = currentMonthParams();
 
   const load = () => {
     setLoading(true);
