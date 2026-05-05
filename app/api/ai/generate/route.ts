@@ -23,38 +23,55 @@ interface InsightDraft {
   action:   string | null;
 }
 
+interface FbAd {
+  entityName:  string | null;
+  campaignName: string | null;
+  adsetName:   string | null;
+  spend:       number;
+  impressions: number;
+  clicks:      number;
+  conversions: number;
+  status:      string | null;
+}
+
+interface StockItem {
+  name:       string;
+  quantity:   number;
+  status:     string;
+  category:   string | null;
+  totalValue: number;
+}
+
 async function fetchSharedData() {
-  const now    = new Date();
-  const from   = new Date(now.getFullYear(), now.getMonth(), 1);
+  const now     = new Date();
+  const from    = new Date(now.getFullYear(), now.getMonth(), 1);
   const fromISO = from.toISOString();
 
-  const [calls, sbClients, invoices, fbAds, stockItems, agentStats] = await Promise.all([
+  const [calls, sbClients, invoices, fbAds, stockItems] = await Promise.all([
     prisma.crmCall.findMany({
-      where: { date: { gte: from } },
-      select: { caller: true, source: true, status: true, duration: true, date: true, agent: true },
+      where:  { date: { gte: from } },
+      select: { caller: true, source: true, status: true, duration: true, date: true },
     }),
     prisma.smartbillClient.findMany({ select: { name: true, phone: true } }),
     prisma.smartbillInvoice.findMany({
-      where: { paid: true, totalAmount: { gt: 0 } },
-      select: { client: true, totalAmount: true, invoiceKey: true, issueDate: true, products: true },
+      where:   { paid: true, totalAmount: { gt: 0 } },
+      select:  { client: true, totalAmount: true, invoiceKey: true },
       orderBy: { totalAmount: "desc" },
-      take: 200,
+      take:    200,
     }),
     prisma.facebookAdInsight.findMany({
-      where: { level: "ad", dateStart: { gte: from } },
-      select: { entityName: true, campaignName: true, adsetName: true, spend: true, impressions: true, clicks: true, conversions: true, status: true },
+      where:   { level: "ad", dateStart: { gte: from } },
+      select:  { entityName: true, campaignName: true, adsetName: true, spend: true, impressions: true, clicks: true, conversions: true, status: true },
       orderBy: { spend: "desc" },
-      take: 100,
-    }),
-    prisma.stockItem.findMany({
-      select: { name: true, quantity: true, status: true, category: true, totalValue: true },
+      take:    100,
+    }) as Promise<FbAd[]>,
+    prisma.productStock.findMany({
+      select:  { name: true, quantity: true, status: true, category: true, totalValue: true },
       orderBy: { totalValue: "desc" },
-      take: 50,
-    }).catch(() => [] as { name: string; quantity: number; status: string; category: string | null; totalValue: number }[]),
-    prisma.salesAgent.findMany({ select: { name: true, phone: true } }).catch(() => [] as { name: string; phone: string }[]),
+      take:    50,
+    }).catch(() => [] as StockItem[]),
   ]);
 
-  // Build phone→client and client→revenue
   const phoneToClient = new Map<string, string>();
   for (const c of sbClients) {
     const n = normalizePhone(c.phone);
@@ -67,65 +84,39 @@ async function fetchSharedData() {
     clientRevMap.set(key, (clientRevMap.get(key) ?? 0) + Number(inv.totalAmount));
   }
 
-  const totalRevenue = Array.from(clientRevMap.values()).reduce((s, v) => s + v, 0);
-  const totalCalls = calls.length;
-  const answeredCalls = calls.filter(c => c.status === "Answered").length;
-
-  const fbTotalSpend = fbAds.reduce((s, a) => s + (a.spend ?? 0), 0);
-  const fbTotalConversions = fbAds.reduce((s, a) => s + (a.conversions ?? 0), 0);
-  const zeroConvAds = fbAds.filter(a => (a.spend ?? 0) > 50 && (a.conversions ?? 0) === 0);
-
-  const daysElapsed = now.getDate();
-  const daysTotal   = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  const forecast    = daysElapsed > 0 ? Math.round((totalRevenue / daysElapsed) * daysTotal) : 0;
-  const roas        = fbTotalSpend > 0 ? (totalRevenue / fbTotalSpend).toFixed(2) : "N/A";
+  const totalRevenue     = Array.from(clientRevMap.values()).reduce((s: number, v: number) => s + v, 0);
+  const totalCalls       = calls.length;
+  const answeredCalls    = calls.filter((c: { status: string | null }) => c.status === "Answered").length;
+  const fbTotalSpend     = fbAds.reduce((s: number, a: FbAd) => s + (a.spend ?? 0), 0);
+  const fbTotalConversions = fbAds.reduce((s: number, a: FbAd) => s + (a.conversions ?? 0), 0);
+  const zeroConvAds      = fbAds.filter((a: FbAd) => (a.spend ?? 0) > 50 && (a.conversions ?? 0) === 0);
+  const daysElapsed      = now.getDate();
+  const daysTotal        = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const forecast         = daysElapsed > 0 ? Math.round((totalRevenue / daysElapsed) * daysTotal) : 0;
+  const roas             = fbTotalSpend > 0 ? (totalRevenue / fbTotalSpend).toFixed(2) : "N/A";
 
   return {
-    fromISO,
-    now,
-    calls,
-    invoices,
-    fbAds,
-    stockItems,
-    agentStats,
-    phoneToClient,
-    clientRevMap,
-    totalRevenue,
-    totalCalls,
-    answeredCalls,
-    fbTotalSpend,
-    fbTotalConversions,
-    zeroConvAds,
-    daysElapsed,
-    daysTotal,
-    forecast,
-    roas,
+    fromISO, now, calls, invoices, fbAds, stockItems,
+    phoneToClient, clientRevMap,
+    totalRevenue, totalCalls, answeredCalls,
+    fbTotalSpend, fbTotalConversions, zeroConvAds,
+    daysElapsed, daysTotal, forecast, roas,
   };
 }
 
-function buildPrompt(employee: { role: string; dailyTasks: string; autonomyRule: string; slug: string }, data: Awaited<ReturnType<typeof fetchSharedData>>): string {
-  const {
-    totalRevenue, totalCalls, answeredCalls, fbTotalSpend, fbTotalConversions,
-    zeroConvAds, fbAds, stockItems, calls, invoices, daysElapsed, daysTotal, forecast, roas,
-  } = data;
+function buildPrompt(
+  employee: { role: string; dailyTasks: string; autonomyRule: string },
+  data: Awaited<ReturnType<typeof fetchSharedData>>
+): string {
+  const { totalRevenue, totalCalls, answeredCalls, fbTotalSpend, fbTotalConversions,
+          zeroConvAds, fbAds, stockItems, invoices, daysElapsed, daysTotal, forecast, roas } = data;
 
-  const answerRate = totalCalls > 0 ? Math.round((answeredCalls / totalCalls) * 100) : 0;
-  const topAds = fbAds.slice(0, 10).map(a => `${a.entityName ?? "N/A"} | spend:${a.spend?.toFixed(0)} | clicks:${a.clicks} | conv:${a.conversions ?? 0}`).join("\n");
-  const zeroAdsStr = zeroConvAds.slice(0, 8).map(a => `${a.entityName ?? "N/A"} | spend:${a.spend?.toFixed(0)} | clicks:${a.clicks}`).join("\n");
-  const outOfStock = stockItems.filter(s => s.status === "out_of_stock").map(s => s.name).slice(0, 10).join(", ");
-  const lowStock   = stockItems.filter(s => s.status === "low_stock").map(s => s.name).slice(0, 10).join(", ");
-  const topInvoices = invoices.slice(0, 8).map(i => `${i.client} — ${Number(i.totalAmount).toFixed(0)} RON`).join("\n");
-
-  const agentCallBreakdown = (() => {
-    const map: Record<string, { total: number; answered: number }> = {};
-    for (const c of calls) {
-      const agent = c.agent ?? "Necunoscut";
-      if (!map[agent]) map[agent] = { total: 0, answered: 0 };
-      map[agent].total++;
-      if (c.status === "Answered") map[agent].answered++;
-    }
-    return Object.entries(map).map(([a, v]) => `${a}: ${v.answered}/${v.total} (${Math.round((v.answered / Math.max(v.total, 1)) * 100)}%)`).join(", ");
-  })();
+  const answerRate  = totalCalls > 0 ? Math.round((answeredCalls / totalCalls) * 100) : 0;
+  const topAds      = fbAds.slice(0, 10).map((a: FbAd) => `${a.entityName ?? "N/A"} | spend:${a.spend?.toFixed(0)} | clicks:${a.clicks} | conv:${a.conversions ?? 0}`).join("\n");
+  const zeroAdsStr  = zeroConvAds.slice(0, 8).map((a: FbAd) => `${a.entityName ?? "N/A"} | spend:${a.spend?.toFixed(0)} | clicks:${a.clicks}`).join("\n");
+  const outOfStock  = (stockItems as StockItem[]).filter((s: StockItem) => s.status === "out_of_stock").map((s: StockItem) => s.name).slice(0, 10).join(", ");
+  const lowStock    = (stockItems as StockItem[]).filter((s: StockItem) => s.status === "low_stock").map((s: StockItem) => s.name).slice(0, 10).join(", ");
+  const topInvoices = invoices.slice(0, 8).map((i: { client: string; totalAmount: unknown }) => `${i.client} — ${Number(i.totalAmount).toFixed(0)} RON`).join("\n");
 
   const contextBlock = `
 ## Date luna curentă (${daysElapsed}/${daysTotal} zile)
@@ -142,9 +133,6 @@ ${topAds || "Nicio reclamă disponibilă"}
 
 ## Reclame cu 0 conversii (spend>50):
 ${zeroAdsStr || "Niciuna"}
-
-## Performanță agenți:
-${agentCallBreakdown || "Date indisponibile"}
 
 ## Stoc epuizat: ${outOfStock || "—"}
 ## Stoc redus: ${lowStock || "—"}
@@ -178,15 +166,13 @@ async function generateForEmployee(
   data: Awaited<ReturnType<typeof fetchSharedData>>,
   type: "daily" | "weekly"
 ): Promise<number> {
-  const prompt = buildPrompt(employee, data);
-
   const msg = await anthropic.messages.create({
-    model:      "claude-haiku-4-5-20251001",
+    model:    "claude-haiku-4-5-20251001",
     max_tokens: 1024,
-    messages:   [{ role: "user", content: prompt }],
+    messages: [{ role: "user", content: buildPrompt(employee, data) }],
   });
 
-  const raw = msg.content[0].type === "text" ? msg.content[0].text.trim() : "";
+  const raw       = msg.content[0].type === "text" ? msg.content[0].text.trim() : "";
   const jsonMatch = raw.match(/\[[\s\S]*\]/);
   if (!jsonMatch) return 0;
 
@@ -197,7 +183,7 @@ async function generateForEmployee(
   const from = new Date(now.getFullYear(), now.getMonth(), 1);
 
   await prisma.aiInsight.createMany({
-    data: drafts.map(d => ({
+    data: drafts.map((d: InsightDraft) => ({
       employeeId: employee.id,
       type,
       category:   d.category ?? "executive",
@@ -224,7 +210,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const employees = await prisma.aiEmployee.findMany({
-      where: body.slug ? { slug: body.slug } : undefined,
+      where:   body.slug ? { slug: body.slug } : undefined,
       orderBy: { createdAt: "asc" },
     });
 
@@ -232,7 +218,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Niciun angajat AI găsit" }, { status: 404 });
     }
 
-    const data = await fetchSharedData();
+    const data    = await fetchSharedData();
     const results: { slug: string; name: string; insightsCreated: number; error?: string }[] = [];
 
     for (const emp of employees) {
@@ -244,7 +230,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const totalCreated = results.reduce((s, r) => s + r.insightsCreated, 0);
+    const totalCreated = results.reduce((s: number, r: { insightsCreated: number }) => s + r.insightsCreated, 0);
     return NextResponse.json({ ok: true, type, totalCreated, employees: results });
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
