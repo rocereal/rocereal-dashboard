@@ -14,19 +14,13 @@ export async function GET(req: NextRequest) {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? `https://${req.headers.get("host")}`;
 
-    const [stockRes, pricesRes] = await Promise.all([
-      fetch(`${baseUrl}/api/stock/sync`,        { method: "POST" }),
-      fetch(`${baseUrl}/api/stock/sync-prices`, { method: "POST" }),
-    ]);
-
-    const stockJson  = await stockRes.json()  as Record<string, unknown>;
-    const pricesJson = await pricesRes.json() as Record<string, unknown>;
+    const stockRes  = await fetch(`${baseUrl}/api/stock/sync`, { method: "POST" });
+    const stockJson = await stockRes.json() as Record<string, unknown>;
 
     return NextResponse.json({
       ok: true,
       triggeredAt: new Date().toISOString(),
-      stock:  stockJson,
-      prices: pricesJson,
+      ...stockJson,
     });
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
