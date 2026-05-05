@@ -48,10 +48,28 @@ export default function RenderPage() {
       setSyncing(true);
       await fetch("/api/stock/sync", { method: "POST" });
       setSyncing(false);
-      // Reload after sync
       const res2  = await fetch("/api/stock", { cache: "no-store" });
       const json2 = await res2.json() as StockResponse;
       setData(json2);
+      // Backfill prices from invoices if all are 0
+      const allZero = json2.items.every(i => i.unitPrice === 0);
+      if (allZero && json2.total > 0) {
+        setSyncing(true);
+        await fetch("/api/stock/sync-prices", { method: "POST" });
+        setSyncing(false);
+        const res3  = await fetch("/api/stock", { cache: "no-store" });
+        const json3 = await res3.json() as StockResponse;
+        setData(json3);
+      }
+    } else if (triggerSyncIfEmpty && json.total > 0) {
+      // Prices not yet populated → backfill silently
+      const allZero = json.items.every(i => i.unitPrice === 0);
+      if (allZero) {
+        await fetch("/api/stock/sync-prices", { method: "POST" });
+        const res2  = await fetch("/api/stock", { cache: "no-store" });
+        const json2 = await res2.json() as StockResponse;
+        setData(json2);
+      }
     }
   };
 

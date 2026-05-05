@@ -16,11 +16,20 @@ export async function GET() {
   const today = new Date().toISOString().slice(0, 10);
 
   const endpoints = [
+    // Original — confirmed working, no pricing
     `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}&warehouseName=${encodeURIComponent(warehouse)}`,
+    // All warehouses — maybe different structure
     `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}`,
-    `https://ws.smartbill.ro/SBORO/api/stock?cif=${encodeURIComponent(cif)}&date=${today}&warehouseName=${encodeURIComponent(warehouse)}`,
+    // Product catalog — might have prices
     `https://ws.smartbill.ro/SBORO/api/products?cif=${encodeURIComponent(cif)}`,
-    `https://ws.smartbill.ro/SBORO/api/series?cif=${encodeURIComponent(cif)}&type=f`,
+    // Product catalog with limit
+    `https://ws.smartbill.ro/SBORO/api/products?cif=${encodeURIComponent(cif)}&count=5&offset=0`,
+    // Warehouses list
+    `https://ws.smartbill.ro/SBORO/api/warehouses?cif=${encodeURIComponent(cif)}`,
+    // Stock with type=gestiune param
+    `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}&type=gestiune`,
+    // Stock valoric report
+    `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}&warehouseName=${encodeURIComponent(warehouse)}&type=valoric`,
   ];
 
   const results: Record<string, unknown>[] = [];
