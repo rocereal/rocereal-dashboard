@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
           tags:        c.tags ?? [],
           startedAt:   new Date(c.callstart),
           endedAt:     c.callend ? new Date(c.callend) : null,
-          rawPayload:  c as unknown as Record<string, unknown>,
+          rawPayload:  JSON.parse(JSON.stringify(c)) as Prisma.InputJsonValue,
         },
       });
       created++;
