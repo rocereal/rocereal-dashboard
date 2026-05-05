@@ -1,3 +1,4 @@
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -12,39 +13,31 @@ export async function GET() {
     return NextResponse.json({ error: "Credențiale SmartBill lipsesc din env" }, { status: 503 });
   }
 
-  const auth  = `Basic ${Buffer.from(`${email}:${token}`).toString("base64")}`;
-  const today = new Date().toISOString().slice(0, 10);
+  const auth = `Basic ${Buffer.from(`${email}:${token}`).toString("base64")}`;
 
-  const endpoints = [
-    // Original — confirmed working, no pricing
-    `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}&warehouseName=${encodeURIComponent(warehouse)}`,
-    // All warehouses — maybe different structure
-    `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}`,
-    // Product catalog — might have prices
-    `https://ws.smartbill.ro/SBORO/api/products?cif=${encodeURIComponent(cif)}`,
-    // Product catalog with limit
-    `https://ws.smartbill.ro/SBORO/api/products?cif=${encodeURIComponent(cif)}&count=5&offset=0`,
-    // Warehouses list
-    `https://ws.smartbill.ro/SBORO/api/warehouses?cif=${encodeURIComponent(cif)}`,
-    // Stock with type=gestiune param
-    `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}&type=gestiune`,
-    // Stock valoric report
-    `https://ws.smartbill.ro/SBORO/api/stocks?cif=${encodeURIComponent(cif)}&date=${today}&warehouseName=${encodeURIComponent(warehouse)}&type=valoric`,
-  ];
+  // Fetch one real paid invoice from DB to probe its detail endpoint
+  const sampleInvoice = await prisma.smartbillInvoice.findFirst({
+    where:   { paid: true },
+    orderBy: { issuedAt: "desc" },
+    select:  { series: true, number: true, invoiceKey: true },
+  });
 
-  const results: Record<string, unknown>[] = [];
-
-  for (const url of endpoints) {
+  let invoiceDetail: unknown = null;
+  if (sampleInvoice) {
     try {
+      const url = `https://ws.smartbill.ro/SBORO/api/invoice?cif=${encodeURIComponent(cif)}&seriesname=${encodeURIComponent(sampleInvoice.series)}&number=${sampleInvoice.number}`;
       const res  = await fetch(url, { headers: { Authorization: auth, Accept: "application/json" }, cache: "no-store" });
       const text = await res.text();
-      let body: unknown;
-      try { body = JSON.parse(text); } catch { body = text.slice(0, 500); }
-      results.push({ url, status: res.status, ok: res.ok, body });
+      try { invoiceDetail = JSON.parse(text); } catch { invoiceDetail = text.slice(0, 2000); }
     } catch (e) {
-      results.push({ url, error: e instanceof Error ? e.message : String(e) });
+      invoiceDetail = { error: e instanceof Error ? e.message : String(e) };
     }
   }
 
-  return NextResponse.json({ cif, warehouse, today, results });
+  return NextResponse.json({
+    cif,
+    warehouse,
+    sampleInvoice,
+    invoiceDetail,
+  });
 }
