@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { AlertTriangle } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -12,23 +11,24 @@ const fmtRON = (v: number) =>
   new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON", maximumFractionDigits: 0 }).format(v);
 const fmtNum = (v: number) => new Intl.NumberFormat("ro-RO").format(v);
 
-export function ZeroConversionAds({ dateRange }: { dateRange?: DateTimeRange }) {
+function currentMonthParams() {
+  const now  = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+  const to   = now.toISOString().slice(0, 10);
+  return `from=${from}&to=${to}`;
+}
+
+export function ZeroConversionAds() {
   const [ads, setAds]         = useState<ZeroAd[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const from = dateRange?.from?.toISOString().slice(0, 10);
-  const to   = dateRange?.to?.toISOString().slice(0, 10);
-
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (from) params.set("from", from);
-    if (to)   params.set("to", to);
-    fetch(`/api/finance/ai-analysis?${params}`, { cache: "no-store" })
+    fetch(`/api/finance/ai-analysis?${currentMonthParams()}`, { cache: "no-store" })
       .then(r => r.json())
       .then((d: Analysis) => setAds(d.zeroConversionAds ?? []))
       .finally(() => setLoading(false));
-  }, [from, to]);
+  }, []);
 
   if (!loading && ads.length === 0) return null;
 
@@ -38,7 +38,7 @@ export function ZeroConversionAds({ dateRange }: { dateRange?: DateTimeRange }) 
         <CardTitle className="text-base flex items-center gap-2 text-orange-600 dark:text-orange-400">
           <AlertTriangle className="h-4 w-4" /> Reclame cu Spend Mare și Zero Conversii
         </CardTitle>
-        <CardDescription className="text-xs">Facebook Ads — spend &gt; 50 RON, 0 conversii raportate în period</CardDescription>
+        <CardDescription className="text-xs">Facebook Ads — spend &gt; 50 RON, 0 conversii — luna curentă</CardDescription>
       </CardHeader>
       <CardContent>
         {loading ? (

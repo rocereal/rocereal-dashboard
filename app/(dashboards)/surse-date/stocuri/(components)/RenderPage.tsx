@@ -68,7 +68,7 @@ export default function RenderPage() {
     if (fileRef.current) fileRef.current.value = "";
   };
 
-  const items = (data?.items ?? []).filter(i =>
+const items = (data?.items ?? []).filter(i =>
     !filter || i.name.toLowerCase().includes(filter.toLowerCase()) || (i.sku ?? "").toLowerCase().includes(filter.toLowerCase())
   );
 

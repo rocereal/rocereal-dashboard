@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { AlertTriangle, Target, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -13,30 +12,31 @@ interface Analysis {
 const fmtRON = (v: number) =>
   new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON", maximumFractionDigits: 0 }).format(v);
 
-export function SalesTargetWidget({ dateRange }: { dateRange?: DateTimeRange }) {
+function currentMonthParams() {
+  const now  = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+  const to   = now.toISOString().slice(0, 10);
+  return { from, to, params: `from=${from}&to=${to}`, period: now.toISOString().slice(0, 7) };
+}
+
+export function SalesTargetWidget() {
   const [data, setData]       = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [targetInput, setTargetInput] = useState("");
   const [saving, setSaving]   = useState(false);
 
-  const period = dateRange?.from
-    ? new Date(dateRange.from).toISOString().slice(0, 7)
-    : new Date().toISOString().slice(0, 7);
+  const { from, to, params, period } = currentMonthParams();
 
-  const from = dateRange?.from?.toISOString().slice(0, 10);
-  const to   = dateRange?.to?.toISOString().slice(0, 10);
-
-  useEffect(() => {
+  const load = () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (from) params.set("from", from);
-    if (to)   params.set("to", to);
     fetch(`/api/finance/ai-analysis?${params}`, { cache: "no-store" })
       .then(r => r.json())
       .then((d: Analysis) => { setData(d); setTargetInput(String(d.forecast.targetRON ?? "")); })
       .finally(() => setLoading(false));
-  }, [from, to]);
+  };
+
+  useEffect(load, []);
 
   const saveTarget = async () => {
     const val = parseFloat(targetInput);
@@ -49,12 +49,7 @@ export function SalesTargetWidget({ dateRange }: { dateRange?: DateTimeRange }) 
     });
     setSaving(false);
     setEditing(false);
-    // refresh
-    const params = new URLSearchParams();
-    if (from) params.set("from", from);
-    if (to)   params.set("to", to);
-    const d = await fetch(`/api/finance/ai-analysis?${params}`, { cache: "no-store" }).then(r => r.json());
-    setData(d);
+    load();
   };
 
   if (loading) return <div className="h-32 flex items-center justify-center text-sm text-muted-foreground">Se încarcă analiza...</div>;
@@ -65,7 +60,6 @@ export function SalesTargetWidget({ dateRange }: { dateRange?: DateTimeRange }) 
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* Target + progress */}
       <Card className="col-span-2 shadow-xs">
         <CardHeader className="pb-2 flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">
@@ -115,7 +109,6 @@ export function SalesTargetWidget({ dateRange }: { dateRange?: DateTimeRange }) 
         </CardContent>
       </Card>
 
-      {/* Forecast */}
       <Card className="shadow-xs">
         <CardHeader className="pb-1"><CardTitle className="text-xs font-semibold text-muted-foreground flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Forecast luna curentă</CardTitle></CardHeader>
         <CardContent>
@@ -124,7 +117,6 @@ export function SalesTargetWidget({ dateRange }: { dateRange?: DateTimeRange }) 
         </CardContent>
       </Card>
 
-      {/* Unattributed */}
       <Card className="shadow-xs">
         <CardHeader className="pb-1"><CardTitle className="text-xs font-semibold text-muted-foreground">Venituri neatribuite</CardTitle></CardHeader>
         <CardContent>

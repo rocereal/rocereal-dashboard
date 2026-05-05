@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { BrainCircuit, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -101,7 +100,7 @@ function EmployeeCard({ emp }: { emp: Employee }) {
   );
 }
 
-export function AiEmployeesSection({ dateRange }: { dateRange?: DateTimeRange }) {
+export function AiEmployeesSection() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading]     = useState(true);
 
@@ -113,7 +112,7 @@ export function AiEmployeesSection({ dateRange }: { dateRange?: DateTimeRange })
       .finally(() => setLoading(false));
   };
 
-  useEffect(loadEmployees, [dateRange]);
+  useEffect(loadEmployees, []);
 
   return (
     <div className="space-y-4">

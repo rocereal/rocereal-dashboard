@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { DateTimeRange } from "@/components/ui/date-time-range-picker";
 import { useEffect, useState } from "react";
 
 interface ChannelData { conversions: number; revenue: number; calls: number; answered: number }
@@ -21,42 +20,42 @@ const CHANNELS: { key: string; label: string; color: string }[] = [
   { key: "google",   label: "Google",    color: "bg-green-500"  },
 ];
 
-export function AttributionPanel({ dateRange }: { dateRange?: DateTimeRange }) {
+function currentMonthParams() {
+  const now  = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+  const to   = now.toISOString().slice(0, 10);
+  return `from=${from}&to=${to}`;
+}
+
+export function AttributionPanel() {
   const [data, setData]       = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const from = dateRange?.from?.toISOString().slice(0, 10);
-  const to   = dateRange?.to?.toISOString().slice(0, 10);
-
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (from) params.set("from", from);
-    if (to)   params.set("to", to);
-    fetch(`/api/finance/ai-analysis?${params}`, { cache: "no-store" })
+    fetch(`/api/finance/ai-analysis?${currentMonthParams()}`, { cache: "no-store" })
       .then(r => r.json())
       .then(setData)
       .finally(() => setLoading(false));
-  }, [from, to]);
+  }, []);
 
   return (
     <Card className="shadow-xs">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Atribuire Venituri per Canal</CardTitle>
-        <CardDescription className="text-xs">Apeluri Invox → SmartBill clienți → Facturi plătite</CardDescription>
+        <CardDescription className="text-xs">Apeluri Invox/Daktela → SmartBill clienți → Facturi plătite — luna curentă</CardDescription>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="h-24 flex items-center justify-center text-sm text-muted-foreground">Se încarcă...</div>
         ) : !data ? null : (
           <div className="space-y-4">
-            {/* Summary row */}
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 text-center">
               {[
                 { label: "Venituri totale SmartBill", value: fmtRON(data.totals.totalSmartbillRevenue), sub: `${fmtNum(data.totals.totalInvoices)} facturi` },
                 { label: "Venituri atribuite",        value: fmtRON(data.totals.attributedRevenue),     sub: `${data.totals.attributedInvoices} facturi`, cls: "text-green-600" },
                 { label: "Venituri neatribuite",      value: fmtRON(data.totals.unattributedRevenue),   sub: `${data.totals.unattributedInvoices} facturi`, cls: "text-orange-500" },
-                { label: "Total apeluri",             value: fmtNum(data.totals.totalCalls),            sub: "indiferent de status" },
+                { label: "Total apeluri",             value: fmtNum(data.totals.totalCalls),            sub: "luna curentă" },
                 { label: "Apeluri receptionate",      value: fmtNum(data.totals.answeredCalls),         sub: pct(data.totals.answeredCalls, data.totals.totalCalls) + " rată răspuns" },
               ].map(m => (
                 <div key={m.label} className="bg-muted/40 rounded-lg p-3">
@@ -67,7 +66,6 @@ export function AttributionPanel({ dateRange }: { dateRange?: DateTimeRange }) {
               ))}
             </div>
 
-            {/* Per channel table */}
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
