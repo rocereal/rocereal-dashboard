@@ -104,8 +104,6 @@ function EmployeeCard({ emp }: { emp: Employee }) {
 export function AiEmployeesSection({ dateRange }: { dateRange?: DateTimeRange }) {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading]     = useState(true);
-  const [generating, setGenerating] = useState(false);
-  const [genMsg, setGenMsg]         = useState<{ ok: boolean; text: string } | null>(null);
 
   const loadEmployees = () => {
     setLoading(true);
@@ -117,53 +115,18 @@ export function AiEmployeesSection({ dateRange }: { dateRange?: DateTimeRange })
 
   useEffect(loadEmployees, [dateRange]);
 
-  const handleGenerate = async () => {
-    setGenerating(true);
-    setGenMsg(null);
-    try {
-      const res  = await fetch("/api/ai/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "daily" }) });
-      const json = await res.json() as { ok?: boolean; totalCreated?: number; error?: string };
-      if (json.ok) {
-        setGenMsg({ ok: true, text: `${json.totalCreated} insight-uri generate cu succes` });
-        loadEmployees();
-      } else {
-        setGenMsg({ ok: false, text: json.error ?? "Eroare la generare" });
-      }
-    } catch (e) {
-      setGenMsg({ ok: false, text: e instanceof Error ? e.message : "Eroare necunoscută" });
-    } finally {
-      setGenerating(false);
-    }
-  };
-
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <BrainCircuit className="h-5 w-5 text-primary" />
           <h2 className="text-base font-semibold">Echipa AI — 7 Angajați</h2>
-          <span className="text-xs text-muted-foreground">Insights generate din date reale</span>
+          <span className="text-xs text-muted-foreground">Actualizat zilnic la miezul nopții</span>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={loadEmployees} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground border rounded px-2 py-1">
-            <RefreshCw className="h-3 w-3" /> Reîncarcă
-          </button>
-          <button
-            onClick={handleGenerate}
-            disabled={generating}
-            className="flex items-center gap-1.5 bg-primary text-primary-foreground rounded px-3 py-1.5 text-sm hover:bg-primary/90 disabled:opacity-60"
-          >
-            <BrainCircuit className="h-3.5 w-3.5" />
-            {generating ? "Se generează..." : "Generează Insights AI"}
-          </button>
-        </div>
+        <button onClick={loadEmployees} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+          <RefreshCw className="h-3 w-3" /> Reîncarcă
+        </button>
       </div>
-
-      {genMsg && (
-        <div className={`text-xs px-3 py-2 rounded ${genMsg.ok ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400" : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"}`}>
-          {genMsg.text}
-        </div>
-      )}
 
       {loading ? (
         <div className="h-40 flex items-center justify-center text-sm text-muted-foreground">Se încarcă angajații AI...</div>
@@ -172,10 +135,6 @@ export function AiEmployeesSection({ dateRange }: { dateRange?: DateTimeRange })
           {employees.map(emp => <EmployeeCard key={emp.id} emp={emp} />)}
         </div>
       )}
-
-      <p className="text-xs text-muted-foreground text-center">
-        Insight-urile sunt generate de Claude pe baza datelor reale din Facebook Ads, Invox/Daktela și SmartBill.
-      </p>
     </div>
   );
 }

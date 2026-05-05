@@ -219,16 +219,17 @@ export async function POST(req: NextRequest) {
     }
 
     const data    = await fetchSharedData();
-    const results: { slug: string; name: string; insightsCreated: number; error?: string }[] = [];
 
-    for (const emp of employees) {
-      try {
-        const count = await generateForEmployee(emp, data, type);
-        results.push({ slug: emp.slug, name: emp.name, insightsCreated: count });
-      } catch (e) {
-        results.push({ slug: emp.slug, name: emp.name, insightsCreated: 0, error: e instanceof Error ? e.message : String(e) });
-      }
-    }
+    const results = await Promise.all(
+      employees.map(async emp => {
+        try {
+          const count = await generateForEmployee(emp, data, type);
+          return { slug: emp.slug, name: emp.name, insightsCreated: count };
+        } catch (e) {
+          return { slug: emp.slug, name: emp.name, insightsCreated: 0, error: e instanceof Error ? e.message : String(e) };
+        }
+      })
+    );
 
     const totalCreated = results.reduce((s: number, r: { insightsCreated: number }) => s + r.insightsCreated, 0);
     return NextResponse.json({ ok: true, type, totalCreated, employees: results });
