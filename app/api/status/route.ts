@@ -255,6 +255,33 @@ async function checkGitHubActions(): Promise<ServiceResult> {
   }
 }
 
+async function checkDaktela(): Promise<ServiceResult> {
+  const base: Omit<ServiceResult, "status" | "message"> = { id: "daktela", name: "Daktela" };
+  const apiUrl   = process.env.DAKTELA_API_URL;
+  const apiToken = process.env.DAKTELA_API_TOKEN;
+
+  if (!apiUrl || !apiToken) {
+    return { ...base, status: "unknown", message: "DAKTELA_API_URL / DAKTELA_API_TOKEN lipsesc din variabilele de mediu" };
+  }
+
+  const t0 = Date.now();
+  try {
+    const url = new URL(`${apiUrl}/api/v5/users.json`);
+    url.searchParams.set("accessToken", apiToken);
+    url.searchParams.set("limit", "1");
+    const res = await fetch(url.toString(), { cache: "no-store" });
+    const latencyMs = Date.now() - t0;
+    if (!res.ok) return { ...base, status: "down", message: `API răspunde cu ${res.status}`, latencyMs };
+    const data = await res.json() as { result?: unknown; error?: string };
+    if (data.error) return { ...base, status: "degraded", message: data.error, latencyMs };
+
+    const callCount = await prisma.leadCall.count({ where: { provider: "daktela" } });
+    return { ...base, status: "operational", message: `Conectat — ${callCount.toLocaleString("ro-RO")} apeluri importate`, latencyMs, meta: { callsInDB: callCount } };
+  } catch (e) {
+    return { ...base, status: "down", message: `Eroare: ${e instanceof Error ? e.message : String(e)}`, latencyMs: Date.now() - t0 };
+  }
+}
+
 async function checkDatabase(): Promise<ServiceResult> {
   const base: Omit<ServiceResult, "status" | "message"> = { id: "database", name: "Bază de date (Neon)" };
   const t0 = Date.now();
@@ -273,16 +300,17 @@ async function checkDatabase(): Promise<ServiceResult> {
 }
 
 export async function GET() {
-  const [db, ga, invox, smartbill, fbAds, ghActions] = await Promise.allSettled([
+  const [db, ga, invox, daktela, smartbill, fbAds, ghActions] = await Promise.allSettled([
     checkDatabase(),
     checkGoogleAnalytics(),
     checkInvox(),
+    checkDaktela(),
     checkSmartBill(),
     checkFacebookAds(),
     checkGitHubActions(),
   ]);
 
-  const results = [db, ga, invox, smartbill, fbAds, ghActions].map(r =>
+  const results = [db, ga, invox, daktela, smartbill, fbAds, ghActions].map(r =>
     r.status === "fulfilled" ? r.value : { id: "error", name: "Eroare", status: "down" as ServiceStatus, message: String(r.reason) }
   );
 

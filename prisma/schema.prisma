@@ -144,4 +144,282 @@ model CrmCall {
   summary         String?
   rawPayload      Json?
   createdAt       DateTime @default(now())
+  provider        String   @default("invox") // "invox" | "daktela"
+  daktelaId       String?  @unique
+}
+
+// ─── Integration Providers ────────────────────────────────────────────────────
+
+model IntegrationProvider {
+  id          String   @id @default(cuid())
+  name        String   @unique // "invox" | "daktela" | "smartbill" | etc.
+  enabled     Boolean  @default(false)
+  config      Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  healthChecks IntegrationHealthCheck[]
+}
+
+model IntegrationHealthCheck {
+  id           String   @id @default(cuid())
+  providerId   String
+  status       String   // "operational" | "degraded" | "down" | "unknown"
+  message      String
+  latencyMs    Int?
+  meta         Json?
+  checkedAt    DateTime @default(now())
+
+  provider IntegrationProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId, checkedAt])
+}
+
+// ─── Product Stock ─────────────────────────────────────────────────────────────
+
+model ProductStock {
+  id            String   @id @default(cuid())
+  sku           String?
+  name          String
+  category      String?
+  warehouse     String   @default("GESTIUNE PARC SIBIU- VESTEM")
+  quantity      Float    @default(0)
+  unitPrice     Float    @default(0)
+  totalValue    Float    @default(0)
+  unit          String?
+  status        String   @default("in_stock") // "in_stock" | "low_stock" | "out_of_stock"
+  lastSyncedAt  DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([warehouse])
+  @@index([status])
+}
+
+// ─── AI Employees ─────────────────────────────────────────────────────────────
+
+model AiEmployee {
+  id           String   @id @default(cuid())
+  slug         String   @unique // "andrei-popescu", "ioana-ionescu", etc.
+  name         String
+  title        String
+  skills       String[] // ["paid-ads", "analytics-tracking", ...]
+  role         String   @db.Text
+  dailyTasks   String   @db.Text
+  weeklyTasks  String   @db.Text
+  autonomyRule String   @db.Text
+  avatarColor  String   @default("#6366f1")
+  createdAt    DateTime @default(now())
+
+  tasks    AiEmployeeTask[]
+  insights AiInsight[]
+}
+
+model AiEmployeeTask {
+  id           String   @id @default(cuid())
+  employeeId   String
+  type         String   // "daily" | "weekly"
+  title        String
+  status       String   @default("pending") // "pending" | "running" | "done" | "failed"
+  result       String?  @db.Text
+  scheduledFor DateTime
+  completedAt  DateTime?
+  createdAt    DateTime @default(now())
+
+  employee AiEmployee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, type])
+  @@index([scheduledFor])
+}
+
+model AiInsight {
+  id         String   @id @default(cuid())
+  employeeId String
+  type       String   // "daily" | "weekly"
+  category   String   // "ads" | "attribution" | "copy" | "cro" | "sales" | "stock" | "executive"
+  priority   String   @default("medium") // "high" | "medium" | "low"
+  title      String
+  body       String   @db.Text
+  action     String?  // "scale" | "stop" | "test" | "investigate" | "monitor"
+  dataFrom   DateTime
+  dataTo     DateTime
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  employee AiEmployee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, type])
+  @@index([createdAt])
+  @@index([priority])
+}
+
+// ─── Marketing Attribution ────────────────────────────────────────────────────
+
+model MarketingAttribution {
+  id             String   @id @default(cuid())
+  channel        String   // "facebook" | "tiktok" | "google" | "organic" | "unknown"
+  campaignId     String?
+  campaignName   String?
+  adsetId        String?
+  adsetName      String?
+  adId           String?
+  adName         String?
+  callerPhone    String
+  callDate       DateTime
+  invoiceKey     String?
+  invoiceAmount  Float?
+  clientName     String?
+  confidenceScore Float   @default(0) // 0.0–1.0
+  matchMethod    String?  // "phone_exact" | "phone_normalized" | "name_fuzzy"
+  period         String   // "YYYY-MM"
+  createdAt      DateTime @default(now())
+
+  @@index([channel, period])
+  @@index([callerPhone])
+  @@index([invoiceKey])
+}
+
+model AdPerformanceDaily {
+  id           String   @id @default(cuid())
+  platform     String   // "facebook" | "tiktok" | "google"
+  adId         String
+  adName       String
+  adsetId      String?
+  adsetName    String?
+  campaignId   String?
+  campaignName String?
+  date         DateTime
+  spend        Float    @default(0)
+  impressions  Int      @default(0)
+  clicks       Int      @default(0)
+  reach        Int      @default(0)
+  conversions  Int      @default(0)
+  revenue      Float    @default(0) // attributed revenue
+  roas         Float?
+  ctr          Float?
+  cpc          Float?
+  cpm          Float?
+  syncedAt     DateTime @default(now())
+
+  @@unique([platform, adId, date])
+  @@index([platform, date])
+  @@index([campaignId])
+}
+
+model CampaignPerformanceDaily {
+  id           String   @id @default(cuid())
+  platform     String
+  campaignId   String
+  campaignName String
+  date         DateTime
+  spend        Float    @default(0)
+  impressions  Int      @default(0)
+  clicks       Int      @default(0)
+  reach        Int      @default(0)
+  conversions  Int      @default(0)
+  revenue      Float    @default(0)
+  roas         Float?
+  syncedAt     DateTime @default(now())
+
+  @@unique([platform, campaignId, date])
+  @@index([platform, date])
+}
+
+// ─── CRM / Lead Management ────────────────────────────────────────────────────
+
+model SalesAgent {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String   @unique
+  email       String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  calls LeadCall[]
+}
+
+model Lead {
+  id          String   @id @default(cuid())
+  fullName    String?
+  company     String?
+  email       String?
+  source      String?  // "facebook" | "tiktok" | "google" | "organic" | ...
+  campaign    String?
+  status      String   @default("new") // "new" | "contacted" | "qualified" | "lost" | "won"
+  provider    String   @default("invox") // "invox" | "daktela"
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  phones        LeadPhone[]
+  calls         LeadCall[]
+  invoiceMatches LeadInvoiceMatch[]
+}
+
+model LeadPhone {
+  id        String   @id @default(cuid())
+  leadId    String
+  phone     String
+  normalized String
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@unique([leadId, normalized])
+  @@index([normalized])
+}
+
+model LeadCall {
+  id           String    @id @default(cuid())
+  leadId       String?
+  agentId      String?
+  provider     String    @default("invox") // "invox" | "daktela"
+  externalId   String    @unique // invoxId or daktelaId
+  callerPhone  String
+  calledPhone  String?
+  direction    String?   // "inbound" | "outbound"
+  status       String?   // "Answered" | "Missed" | ...
+  duration     Int?      // seconds
+  recordingUrl String?
+  campaign     String?
+  queue        String?
+  tags         String[]
+  startedAt    DateTime
+  endedAt      DateTime?
+  rawPayload   Json?
+  createdAt    DateTime  @default(now())
+
+  lead  Lead?       @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  agent SalesAgent? @relation(fields: [agentId], references: [id], onDelete: SetNull)
+
+  @@index([callerPhone])
+  @@index([startedAt])
+  @@index([provider])
+}
+
+model LeadInvoiceMatch {
+  id             String   @id @default(cuid())
+  leadId         String
+  invoiceKey     String
+  invoiceAmount  Float
+  matchMethod    String   // "phone_exact" | "phone_normalized" | "name_fuzzy"
+  confidenceScore Float
+  matchedAt      DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@unique([leadId, invoiceKey])
+  @@index([invoiceKey])
+}
+
+// ─── Sales Targets ────────────────────────────────────────────────────────────
+
+model MonthlySalesTarget {
+  id         String   @id @default(cuid())
+  period     String   @unique // "YYYY-MM"
+  targetRON  Float
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

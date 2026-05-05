@@ -44,20 +44,22 @@ interface StatusData {
 // ─── icon map ────────────────────────────────────────────────────────────────
 const SERVICE_ICONS: Record<string, React.ElementType> = {
   "google-analytics": BarChart3,
-  "invox": Phone,
-  "smartbill": Receipt,
-  "facebook-ads": Megaphone,
-  "github-actions": GitBranch,
-  "database": Database,
+  "invox":            Phone,
+  "daktela":          Phone,
+  "smartbill":        Receipt,
+  "facebook-ads":     Megaphone,
+  "github-actions":   GitBranch,
+  "database":         Database,
 };
 
 const SERVICE_COLORS: Record<string, string> = {
   "google-analytics": "bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400",
-  "invox": "bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400",
-  "smartbill": "bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400",
-  "facebook-ads": "bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400",
-  "github-actions": "bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400",
-  "database": "bg-cyan-100 dark:bg-cyan-950 text-cyan-600 dark:text-cyan-400",
+  "invox":            "bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400",
+  "daktela":          "bg-violet-100 dark:bg-violet-950 text-violet-600 dark:text-violet-400",
+  "smartbill":        "bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400",
+  "facebook-ads":     "bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400",
+  "github-actions":   "bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400",
+  "database":         "bg-cyan-100 dark:bg-cyan-950 text-cyan-600 dark:text-cyan-400",
 };
 
 // ─── status helpers ───────────────────────────────────────────────────────────
@@ -234,6 +236,75 @@ function StatRow({ services }: { services: ServiceResult[] }) {
   );
 }
 
+// ─── Provider toggle (Invox ↔ Daktela exclusive) ─────────────────────────────
+interface IntegrationProvider { id: string; name: string; enabled: boolean }
+
+function ProviderToggle() {
+  const [providers, setProviders] = useState<IntegrationProvider[]>([]);
+  const [toggling, setToggling]   = useState(false);
+
+  useEffect(() => {
+    fetch("/api/integrations/provider", { cache: "no-store" })
+      .then(r => r.json())
+      .then((data: IntegrationProvider[]) => setProviders(data))
+      .catch(() => {});
+  }, []);
+
+  const toggle = async (name: string, enabled: boolean) => {
+    setToggling(true);
+    const res = await fetch("/api/integrations/provider", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, enabled }),
+    });
+    const updated = await res.json() as IntegrationProvider[];
+    setProviders(updated);
+    setToggling(false);
+  };
+
+  const invox   = providers.find(p => p.name === "invox");
+  const daktela = providers.find(p => p.name === "daktela");
+  if (!invox && !daktela) return null;
+
+  return (
+    <Card className="shadow-xs border-primary/20">
+      <CardHeader className="pb-2">
+        <div className="flex items-center gap-2">
+          <Phone className="h-4 w-4 text-primary" />
+          <span className="text-sm font-semibold">Provider Apeluri Telefon</span>
+          <Badge variant="outline" className="text-[10px]">Exclusiv — un singur provider activ</Badge>
+        </div>
+        <p className="text-xs text-muted-foreground">Activarea unui provider îl dezactivează automat pe celălalt. Rapoartele și atribuirea folosesc doar providerul activ.</p>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[
+            { p: invox,   label: "Invox",   desc: "Webhook activ, date istorice importate", color: "border-blue-200 dark:border-blue-800" },
+            { p: daktela, label: "Daktela", desc: "API v5 REST — înlocuiește treptat Invox", color: "border-violet-200 dark:border-violet-800" },
+          ].map(({ p, label, desc, color }) => {
+            if (!p) return null;
+            return (
+              <div key={p.name} className={`flex items-center justify-between rounded-lg border p-3 ${p.enabled ? color : "border-border"} ${p.enabled ? "bg-primary/5" : ""}`}>
+                <div>
+                  <p className="text-sm font-medium">{label}</p>
+                  <p className="text-xs text-muted-foreground">{desc}</p>
+                </div>
+                <button
+                  disabled={toggling}
+                  onClick={() => toggle(p.name, !p.enabled)}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none ${p.enabled ? "bg-primary" : "bg-muted"} ${toggling ? "opacity-50" : ""}`}
+                >
+                  <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition-transform ${p.enabled ? "translate-x-4" : "translate-x-0"}`} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function RenderPage() {
   const [data, setData] = useState<StatusData | null>(null);
@@ -254,7 +325,6 @@ export default function RenderPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  // Auto-refresh every 60 seconds
   useEffect(() => {
     const id = setInterval(load, 60_000);
     return () => clearInterval(id);
@@ -277,6 +347,8 @@ export default function RenderPage() {
           onClick: loading ? undefined : load,
         }}
       />
+
+      <ProviderToggle />
 
       {loading && !data ? (
         <div className="flex flex-col items-center justify-center h-64 gap-3 text-muted-foreground">
