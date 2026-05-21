@@ -2,6 +2,15 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+// Build DD.MM.YYYY manually to avoid Node.js ICU locale differences across environments
+function todayRO(): string {
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}.${mm}.${yyyy}`;
+}
+
 export async function GET() {
   const sessionId = process.env.SMARTBILL_SESSION_ID;
   if (!sessionId) {
@@ -18,10 +27,9 @@ export async function GET() {
   });
   const csrfValue = csrfCookie.split("=")[1] ?? "";
 
-  // Include srvid + sip which SmartBill uses for server routing / session context
   const cookieHeader = `${csrfCookie}; sessionid=${sessionId}; srvid=2; sip=true`;
 
-  const today   = new Date().toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const today   = todayRO();
   const sSearch = JSON.stringify({
     date: today, warehouse: "-1", vat_code: "-1", vat_included: "-1",
     show_products_with_multiple_vatcodes: false, vatCodeIncluded: "-1",
@@ -44,11 +52,13 @@ export async function GET() {
 
   const text = await priceRes.text();
   let body: unknown;
-  try { body = JSON.parse(text); } catch { body = text.slice(0, 500); }
+  try { body = JSON.parse(text); } catch { body = text.slice(0, 2000); }
 
   return NextResponse.json({
     status:    priceRes.status,
     csrfFound: !!csrfValue,
+    today,
+    sSearchSent: sSearch,
     cookies:   `sessionid=...${sessionId.slice(-6)}; srvid=2; sip=true; csrftoken=...${csrfValue.slice(-6)}`,
     body,
   });
