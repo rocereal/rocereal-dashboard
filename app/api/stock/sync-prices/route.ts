@@ -149,3 +149,6 @@ export async function POST() {
 
   return NextResponse.json({ ok: true, updated, pricesFound: priceMap.size, totalInSmartBill: data.totalCount });
 }
+
+// GET handler so the sync can be triggered directly from a browser URL
+export { POST as GET };
