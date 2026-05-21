@@ -27,7 +27,10 @@ export async function GET() {
   });
   const csrfValue = csrfCookie.split("=")[1] ?? "";
 
-  const cookieHeader = `${csrfCookie}; sessionid=${sessionId}; srvid=2; sip=true`;
+  // SMARTBILL_EXTRA_COOKIES = any additional cookies from browser (e.g. "cif=RO12345; company_id=42")
+  const extraCookies  = process.env.SMARTBILL_EXTRA_COOKIES ?? "";
+  const cookieHeader  = [csrfCookie, `sessionid=${sessionId}`, "srvid=2", "sip=true", extraCookies]
+    .filter(Boolean).join("; ");
 
   const today   = todayRO();
   const sSearch = JSON.stringify({
@@ -59,7 +62,7 @@ export async function GET() {
     csrfFound: !!csrfValue,
     today,
     sSearchSent: sSearch,
-    cookies:   `sessionid=...${sessionId.slice(-6)}; srvid=2; sip=true; csrftoken=...${csrfValue.slice(-6)}`,
+    cookies:   `sessionid=...${sessionId.slice(-6)}; srvid=2; sip=true; csrftoken=...${csrfValue.slice(-6)}${extraCookies ? `; ${extraCookies}` : ""}`,
     body,
   });
 }
