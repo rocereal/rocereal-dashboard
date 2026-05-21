@@ -725,3 +725,115 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     </div>
   );
 }
+
+// ─── Marketing Report Section (used by /finance/raport-marketing) ─────────────
+// Renders only TrendProfitChart + PerformantaTable with the same data fetching
+
+export function MarketingReportSection({ dateRange }: { dateRange?: DateTimeRange }) {
+  const [liveData, setLiveData] = useState<LiveData>(INIT);
+
+  const fetchAll = useCallback(async () => {
+    if (!dateRange?.from || !dateRange?.to) return;
+    setLiveData((d) => ({ ...d, loading: true }));
+
+    const from = toISO(dateRange.from);
+    const to   = toISO(dateRange.to);
+
+    const [gRes, fbRes, finRes, ttRes, attrRes, callsRes] = await Promise.allSettled([
+      fetch(`/api/google-ads/campaigns?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`/api/education/facebook-ads?level=campaign&from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`/api/finance/metrics?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`/api/tiktok-ads/campaigns?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`/api/finance/attribution?from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
+      fetch(`/api/crm/calls?counts=1&from=${from}&to=${to}`, { cache: "no-store" }).then((r) => r.json()),
+    ]);
+
+    const gData  = gRes.status  === "fulfilled" ? gRes.value  : null;
+    const google: ChannelStats = {
+      spend:       gData?.overview?.spend       ?? 0,
+      impressions: gData?.overview?.impressions ?? 0,
+      reach:       gData?.overview?.impressions ?? 0,
+      clicks:      gData?.overview?.clicks      ?? 0,
+      conversions: gData?.overview?.conversions ?? 0,
+    };
+
+    const fbData = fbRes.status === "fulfilled" ? fbRes.value : null;
+    const fbRows: Record<string, unknown>[] = Array.isArray(fbData)
+      ? fbData
+      : (Array.isArray(fbData?.campaigns) ? fbData.campaigns : (Array.isArray(fbData?.data) ? fbData.data : []));
+    const facebook: ChannelStats = {
+      spend:       fbRows.reduce((s, r) => s + (Number(r.spend)       || 0), 0),
+      impressions: fbRows.reduce((s, r) => s + (Number(r.impressions) || 0), 0),
+      reach:       fbRows.reduce((s, r) => s + (Number(r.reach)       || 0), 0),
+      clicks:      fbRows.reduce((s, r) => s + (Number(r.clicks)      || 0), 0),
+      conversions: fbRows.reduce((s, r) => s + (Number(r.conversions) || 0), 0),
+    };
+
+    const ttData = ttRes.status === "fulfilled" && !ttRes.value?.error ? ttRes.value : null;
+    const tiktok: ChannelStats = {
+      spend:       ttData?.overview?.spend       ?? 0,
+      impressions: ttData?.overview?.impressions ?? 0,
+      reach:       ttData?.overview?.reach       ?? ttData?.overview?.impressions ?? 0,
+      clicks:      ttData?.overview?.clicks      ?? 0,
+      conversions: ttData?.overview?.conversions ?? 0,
+    };
+
+    const finData = finRes.status === "fulfilled" ? finRes.value : null;
+    const totalRevenue: number = finData?.incasate?.total ?? 0;
+
+    const attrRaw = attrRes.status === "fulfilled" && !attrRes.value?.error ? attrRes.value : null;
+    const attribution: AttributionData = {
+      facebook: { conversions: attrRaw?.facebook?.conversions ?? 0, revenue: attrRaw?.facebook?.revenue ?? 0 },
+      tiktok:   { conversions: attrRaw?.tiktok?.conversions   ?? 0, revenue: attrRaw?.tiktok?.revenue   ?? 0 },
+      google:   { conversions: attrRaw?.google?.conversions   ?? 0, revenue: attrRaw?.google?.revenue   ?? 0 },
+    };
+
+    const callsRaw = callsRes.status === "fulfilled" && !callsRes.value?.error ? callsRes.value : null;
+    const callStats = {
+      total:    callsRaw?.total    ?? 0,
+      answered: callsRaw?.answered ?? 0,
+      channels:         { facebook: callsRaw?.channels?.facebook         ?? 0, tiktok: callsRaw?.channels?.tiktok         ?? 0, google: callsRaw?.channels?.google         ?? 0 },
+      channelsAnswered: { facebook: callsRaw?.channelsAnswered?.facebook ?? 0, tiktok: callsRaw?.channelsAnswered?.tiktok ?? 0, google: callsRaw?.channelsAnswered?.google ?? 0 },
+    };
+
+    setLiveData({ google, facebook, tiktok, totalRevenue, attribution, callStats, loading: false });
+  }, [dateRange]);
+
+  useEffect(() => { fetchAll(); }, [fetchAll]);
+
+  const { google, facebook, tiktok, attribution, callStats, loading } = liveData;
+
+  const attrRoas = (spend: number, revenue: number) =>
+    spend > 0 && revenue > 0 ? Math.round((revenue / spend) * 100) / 100 : null;
+
+  const perfRows: PerfRow[] = [
+    {
+      canal: "Facebook", investitie: facebook.spend, reach: facebook.reach, clicks: facebook.clicks,
+      ctr: ctrPct(facebook), calls: callStats.channels.facebook,
+      costPerCall: callStats.channelsAnswered.facebook > 0 ? Math.round((facebook.spend / callStats.channelsAnswered.facebook) * 100) / 100 : null,
+      conversions: attribution.facebook.conversions, venituri: attribution.facebook.revenue,
+      roas: attrRoas(facebook.spend, attribution.facebook.revenue), live: facebook.spend > 0,
+    },
+    {
+      canal: "Google", investitie: google.spend, reach: google.reach, clicks: google.clicks,
+      ctr: ctrPct(google), calls: callStats.channels.google,
+      costPerCall: callStats.channelsAnswered.google > 0 ? Math.round((google.spend / callStats.channelsAnswered.google) * 100) / 100 : null,
+      conversions: attribution.google.conversions, venituri: attribution.google.revenue,
+      roas: attrRoas(google.spend, attribution.google.revenue), live: google.spend > 0,
+    },
+    {
+      canal: "TikTok", investitie: tiktok.spend, reach: tiktok.reach, clicks: tiktok.clicks,
+      ctr: ctrPct(tiktok), calls: callStats.channels.tiktok,
+      costPerCall: callStats.channelsAnswered.tiktok > 0 ? Math.round((tiktok.spend / callStats.channelsAnswered.tiktok) * 100) / 100 : null,
+      conversions: attribution.tiktok.conversions, venituri: attribution.tiktok.revenue,
+      roas: attrRoas(tiktok.spend, attribution.tiktok.revenue), live: tiktok.spend > 0,
+    },
+  ];
+
+  return (
+    <div className="flex flex-col gap-6">
+      <TrendProfitChart dateRange={dateRange} />
+      <PerformantaTable rows={perfRows} loading={loading} />
+    </div>
+  );
+}
