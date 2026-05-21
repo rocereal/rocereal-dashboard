@@ -2,13 +2,21 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-// Build DD.MM.YYYY manually to avoid Node.js ICU locale differences across environments
 function todayRO(): string {
   const d = new Date();
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd   = String(d.getDate()).padStart(2, "0");
+  const mm   = String(d.getMonth() + 1).padStart(2, "0");
   const yyyy = d.getFullYear();
   return `${dd}.${mm}.${yyyy}`;
+}
+
+async function fetchFreshCsrf(): Promise<{ cookie: string; value: string }> {
+  const res = await fetch("https://cloud.smartbill.ro/auth/login/", { redirect: "follow", cache: "no-store" });
+  let cookie = "";
+  res.headers.forEach((v, k) => {
+    if (k.toLowerCase() === "set-cookie" && v.includes("csrftoken")) cookie = v.split(";")[0];
+  });
+  return { cookie, value: cookie.split("=")[1] ?? "" };
 }
 
 export async function GET() {
@@ -17,20 +25,20 @@ export async function GET() {
     return NextResponse.json({ error: "SMARTBILL_SESSION_ID lipsește din env" }, { status: 503 });
   }
 
-  // Get fresh CSRF token
-  const loginRes = await fetch("https://cloud.smartbill.ro/auth/login/", { redirect: "follow", cache: "no-store" });
-  let csrfCookie = "";
-  loginRes.headers.forEach((value, key) => {
-    if (key.toLowerCase() === "set-cookie" && value.includes("csrftoken")) {
-      csrfCookie = value.split(";")[0];
-    }
-  });
-  const csrfValue = csrfCookie.split("=")[1] ?? "";
+  // If SMARTBILL_CSRF_TOKEN is set, use it directly (avoids cross-session CSRF mismatch)
+  const envCsrf   = process.env.SMARTBILL_CSRF_TOKEN ?? "";
+  const csrfValue = envCsrf || (await fetchFreshCsrf()).value;
 
-  // SMARTBILL_EXTRA_COOKIES = any additional cookies from browser (e.g. "cif=RO12345; company_id=42")
-  const extraCookies  = process.env.SMARTBILL_EXTRA_COOKIES ?? "";
-  const cookieHeader  = [csrfCookie, `sessionid=${sessionId}`, "srvid=2", "sip=true", extraCookies]
-    .filter(Boolean).join("; ");
+  // SMARTBILL_EXTRA_COOKIES = space for additional browser cookies, e.g. "sblsd=...; sb=..."
+  const extraCookies = process.env.SMARTBILL_EXTRA_COOKIES ?? "";
+
+  const cookieHeader = [
+    `csrftoken=${csrfValue}`,
+    `sessionid=${sessionId}`,
+    "srvid=2",
+    "sip=true",
+    extraCookies,
+  ].filter(Boolean).join("; ");
 
   const today   = todayRO();
   const sSearch = JSON.stringify({
@@ -58,11 +66,10 @@ export async function GET() {
   try { body = JSON.parse(text); } catch { body = text.slice(0, 2000); }
 
   return NextResponse.json({
-    status:    priceRes.status,
-    csrfFound: !!csrfValue,
+    status:      priceRes.status,
+    csrfSource:  envCsrf ? "env" : "fresh-fetch",
     today,
-    sSearchSent: sSearch,
-    cookies:   `sessionid=...${sessionId.slice(-6)}; srvid=2; sip=true; csrftoken=...${csrfValue.slice(-6)}${extraCookies ? `; ${extraCookies}` : ""}`,
+    extraCookiesSet: !!extraCookies,
     body,
   });
 }
