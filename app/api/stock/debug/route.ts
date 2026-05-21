@@ -13,42 +13,59 @@ function todayRO(): string {
 const BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 
 export async function GET() {
-  const sessionId  = process.env.SMARTBILL_SESSION_ID;
-  const envCsrf    = process.env.SMARTBILL_CSRF_TOKEN ?? "";
+  const sessionId    = process.env.SMARTBILL_SESSION_ID;
   const extraCookies = process.env.SMARTBILL_EXTRA_COOKIES ?? "";
 
   if (!sessionId) {
     return NextResponse.json({ error: "SMARTBILL_SESSION_ID lipsește din env" }, { status: 503 });
   }
-  if (!envCsrf) {
-    return NextResponse.json({ error: "SMARTBILL_CSRF_TOKEN lipsește din env" }, { status: 503 });
-  }
 
-  const cookieHeader = [
-    `csrftoken=${envCsrf}`,
+  // Stored CSRF is used ONLY for the initial page load cookie jar
+  const storedCsrf = process.env.SMARTBILL_CSRF_TOKEN ?? "";
+
+  const baseCookies = [
+    storedCsrf ? `csrftoken=${storedCsrf}` : "",
     `sessionid=${sessionId}`,
     "srvid=2",
     "sip=true",
     extraCookies,
   ].filter(Boolean).join("; ");
 
-  // Step 1: GET the page to verify session is valid
+  // Step 1: GET the page exactly as the browser does, capture fresh csrftoken from Set-Cookie
   const pageRes = await fetch("https://cloud.smartbill.ro/nomenclator/lista_preturi/", {
     method:  "GET",
     headers: {
-      Cookie:     cookieHeader,
+      Cookie:       baseCookies,
       "User-Agent": BROWSER_UA,
-      Accept:     "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      Accept:       "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      Referer:      "https://cloud.smartbill.ro/",
     },
     redirect: "manual",
     cache:    "no-store",
   });
 
-  const pageStatus   = pageRes.status;
-  const pageLocation = pageRes.headers.get("location") ?? "";
-  const pageBodySnip = (await pageRes.text()).slice(0, 300);
+  // Extract any updated cookies from the page response (SmartBill may refresh csrftoken)
+  let freshCsrf = storedCsrf;
+  const setCookieHeaders: string[] = [];
+  pageRes.headers.forEach((value, key) => {
+    if (key.toLowerCase() === "set-cookie") {
+      setCookieHeaders.push(value);
+      if (value.includes("csrftoken")) {
+        const match = value.match(/csrftoken=([^;]+)/);
+        if (match) freshCsrf = match[1];
+      }
+    }
+  });
 
-  // Step 2: POST to AJAX endpoint
+  // Step 2: POST AJAX with the fresh CSRF from Step 1
+  const ajaxCookies = [
+    `csrftoken=${freshCsrf}`,
+    `sessionid=${sessionId}`,
+    "srvid=2",
+    "sip=true",
+    extraCookies,
+  ].filter(Boolean).join("; ");
+
   const today   = todayRO();
   const sSearch = JSON.stringify({
     date: today, warehouse: "-1", vat_code: "-1", vat_included: "-1",
@@ -60,8 +77,8 @@ export async function GET() {
     method:  "POST",
     headers: {
       "Content-Type":     "application/x-www-form-urlencoded; charset=UTF-8",
-      Cookie:             cookieHeader,
-      "X-CSRFToken":      envCsrf,
+      Cookie:             ajaxCookies,
+      "X-CSRFToken":      freshCsrf,
       "X-Requested-With": "XMLHttpRequest",
       "User-Agent":       BROWSER_UA,
       Accept:             "application/json, text/javascript, */*; q=0.01",
@@ -77,8 +94,10 @@ export async function GET() {
   try { ajaxBody = JSON.parse(ajaxText); } catch { ajaxBody = ajaxText.slice(0, 1000); }
 
   return NextResponse.json({
-    page:  { status: pageStatus, location: pageLocation, bodySnip: pageBodySnip },
-    ajax:  { status: ajaxRes.status, body: ajaxBody },
+    pageStatus:    pageRes.status,
+    csrfRotated:   freshCsrf !== storedCsrf,
+    setCookies:    setCookieHeaders.map(c => c.split(";")[0]),
+    ajax:          { status: ajaxRes.status, body: ajaxBody },
     today,
   });
 }
