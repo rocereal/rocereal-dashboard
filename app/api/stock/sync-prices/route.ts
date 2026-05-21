@@ -5,79 +5,106 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 interface ProductPriceInfo {
-  productCode:      string;
-  priceWithVat:     number;
-  priceWithoutVat:  number;
-  stockQuantity:    number;
-  warehouseName:    string;
+  productCode:     string;
+  priceWithVat:    number;
+  priceWithoutVat: number;
+  stockQuantity:   number;
+  warehouseName:   string;
 }
 
 interface PriceListResponse {
   successfully?:      boolean;
   csrf_fails?:        boolean;
   productPriceInfos?: ProductPriceInfo[];
+  totalCount?:        number;
 }
 
-async function getFreshCsrfToken(): Promise<{ csrfCookie: string; csrfValue: string } | null> {
+const BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+
+async function getAuthenticatedCsrf(cookies: string): Promise<string | null> {
   try {
-    const res = await fetch("https://cloud.smartbill.ro/auth/login/", {
-      redirect: "follow",
+    const res = await fetch("https://cloud.smartbill.ro/nomenclator/lista_preturi/", {
+      method:   "GET",
+      headers:  { Cookie: cookies, "User-Agent": BROWSER_UA, Accept: "text/html,*/*" },
+      redirect: "manual",
       cache:    "no-store",
     });
-    // Extract csrftoken cookie
-    let csrfCookie = "";
+    if (res.status !== 200) return null;
+    let csrf = "";
     res.headers.forEach((value, key) => {
       if (key.toLowerCase() === "set-cookie" && value.includes("csrftoken")) {
-        csrfCookie = value.split(";")[0]; // "csrftoken=XXXX"
+        const match = value.match(/csrftoken=([^;]+)/);
+        if (match) csrf = match[1];
       }
     });
-    const csrfValue = csrfCookie.split("=")[1] ?? "";
-    if (!csrfValue) return null;
-    return { csrfCookie, csrfValue };
+    return csrf || null;
   } catch {
     return null;
   }
 }
 
 export async function POST() {
-  const sessionId = process.env.SMARTBILL_SESSION_ID;
+  const sessionId    = process.env.SMARTBILL_SESSION_ID;
+  const storedCsrf   = process.env.SMARTBILL_CSRF_TOKEN ?? "";
+  const extraCookies = process.env.SMARTBILL_EXTRA_COOKIES ?? "";
+
   if (!sessionId) {
     return NextResponse.json({ error: "SMARTBILL_SESSION_ID lipsește din env" }, { status: 503 });
   }
 
-  // Get a fresh CSRF token (public endpoint, no auth needed)
-  const csrf = await getFreshCsrfToken();
-  if (!csrf) {
-    return NextResponse.json({ error: "Nu s-a putut obține CSRF token de la SmartBill" }, { status: 502 });
+  const baseCookies = [
+    storedCsrf ? `csrftoken=${storedCsrf}` : "",
+    `sessionid=${sessionId}`,
+    "srvid=2",
+    "sip=true",
+    extraCookies,
+  ].filter(Boolean).join("; ");
+
+  // Get a CSRF token from an authenticated page (NOT the public login page)
+  const freshCsrf = await getAuthenticatedCsrf(baseCookies);
+  if (!freshCsrf) {
+    return NextResponse.json({ error: "Sesiune SmartBill expirată — actualizează SMARTBILL_SESSION_ID în Vercel" }, { status: 401 });
   }
 
-  const cookieHeader = `${csrf.csrfCookie}; sessionid=${sessionId}`;
-  const today        = new Date().toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" });
-  const sSearch      = JSON.stringify({
-    date:                                today,
-    warehouse:                           "-1",
-    vat_code:                            "-1",
-    vat_included:                        "-1",
+  const ajaxCookies = [
+    `csrftoken=${freshCsrf}`,
+    `sessionid=${sessionId}`,
+    "srvid=2",
+    "sip=true",
+    extraCookies,
+  ].filter(Boolean).join("; ");
+
+  // NOTE: omitting "date" field — it causes a 500 on SmartBill's server when sent from outside a browser
+  const sSearch = JSON.stringify({
+    warehouse:                            "-1",
+    vat_code:                             "-1",
+    vat_included:                         "-1",
     show_products_with_multiple_vatcodes: false,
-    vatCodeIncluded:                     "-1",
-    search_products_ids:                 [],
-    page:                                1,
-    results_per_page:                    "1000",
+    vatCodeIncluded:                      "-1",
+    search_products_ids:                  [],
+    page:                                 1,
+    results_per_page:                     "1000",
   });
 
   const priceRes = await fetch("https://cloud.smartbill.ro/nomenclator/lista_preturi/ajax/", {
     method:  "POST",
     headers: {
-      "Content-Type":     "application/x-www-form-urlencoded",
-      Cookie:             cookieHeader,
-      "X-CSRFToken":      csrf.csrfValue,
+      "Content-Type":     "application/x-www-form-urlencoded; charset=UTF-8",
+      Cookie:             ajaxCookies,
+      "X-CSRFToken":      freshCsrf,
       "X-Requested-With": "XMLHttpRequest",
+      "User-Agent":       BROWSER_UA,
       Accept:             "application/json, text/javascript, */*; q=0.01",
+      Origin:             "https://cloud.smartbill.ro",
       Referer:            "https://cloud.smartbill.ro/nomenclator/lista_preturi/",
     },
     body:  new URLSearchParams({ sSearch }).toString(),
     cache: "no-store",
   });
+
+  if (!priceRes.ok) {
+    return NextResponse.json({ error: `SmartBill a returnat ${priceRes.status}` }, { status: 502 });
+  }
 
   const data = await priceRes.json() as PriceListResponse;
 
@@ -103,7 +130,6 @@ export async function POST() {
     return NextResponse.json({ ok: true, updated: 0, message: "Niciun produs cu preț ≠ 0 în SmartBill" });
   }
 
-  // Update ProductStock where sku matches
   const stocks = await prisma.productStock.findMany({
     select: { id: true, sku: true, quantity: true },
   });
@@ -121,5 +147,5 @@ export async function POST() {
     updated++;
   }
 
-  return NextResponse.json({ ok: true, updated, pricesFound: priceMap.size });
+  return NextResponse.json({ ok: true, updated, pricesFound: priceMap.size, totalInSmartBill: data.totalCount });
 }
