@@ -9,8 +9,8 @@ export async function GET() {
   }
 
   // Get fresh CSRF token
-  const loginRes    = await fetch("https://cloud.smartbill.ro/auth/login/", { redirect: "follow", cache: "no-store" });
-  let csrfCookie    = "";
+  const loginRes = await fetch("https://cloud.smartbill.ro/auth/login/", { redirect: "follow", cache: "no-store" });
+  let csrfCookie = "";
   loginRes.headers.forEach((value, key) => {
     if (key.toLowerCase() === "set-cookie" && value.includes("csrftoken")) {
       csrfCookie = value.split(";")[0];
@@ -18,15 +18,17 @@ export async function GET() {
   });
   const csrfValue = csrfCookie.split("=")[1] ?? "";
 
-  const cookieHeader = `${csrfCookie}; sessionid=${sessionId}`;
-  const today        = new Date().toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" });
-  const sSearch      = JSON.stringify({
+  // Include srvid + sip which SmartBill uses for server routing / session context
+  const cookieHeader = `${csrfCookie}; sessionid=${sessionId}; srvid=2; sip=true`;
+
+  const today   = new Date().toLocaleDateString("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const sSearch = JSON.stringify({
     date: today, warehouse: "-1", vat_code: "-1", vat_included: "-1",
     show_products_with_multiple_vatcodes: false, vatCodeIncluded: "-1",
-    search_products_ids: [], page: 1, results_per_page: "10",
+    search_products_ids: [], page: 1, results_per_page: "5",
   });
 
-  const priceRes  = await fetch("https://cloud.smartbill.ro/nomenclator/lista_preturi/ajax/", {
+  const priceRes = await fetch("https://cloud.smartbill.ro/nomenclator/lista_preturi/ajax/", {
     method:  "POST",
     headers: {
       "Content-Type":     "application/x-www-form-urlencoded",
@@ -44,5 +46,10 @@ export async function GET() {
   let body: unknown;
   try { body = JSON.parse(text); } catch { body = text.slice(0, 500); }
 
-  return NextResponse.json({ status: priceRes.status, csrfFound: !!csrfValue, body });
+  return NextResponse.json({
+    status:    priceRes.status,
+    csrfFound: !!csrfValue,
+    cookies:   `sessionid=...${sessionId.slice(-6)}; srvid=2; sip=true; csrftoken=...${csrfValue.slice(-6)}`,
+    body,
+  });
 }
