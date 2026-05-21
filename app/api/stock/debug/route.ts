@@ -10,36 +10,45 @@ function todayRO(): string {
   return `${dd}.${mm}.${yyyy}`;
 }
 
-async function fetchFreshCsrf(): Promise<{ cookie: string; value: string }> {
-  const res = await fetch("https://cloud.smartbill.ro/auth/login/", { redirect: "follow", cache: "no-store" });
-  let cookie = "";
-  res.headers.forEach((v, k) => {
-    if (k.toLowerCase() === "set-cookie" && v.includes("csrftoken")) cookie = v.split(";")[0];
-  });
-  return { cookie, value: cookie.split("=")[1] ?? "" };
-}
+const BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 
 export async function GET() {
-  const sessionId = process.env.SMARTBILL_SESSION_ID;
+  const sessionId  = process.env.SMARTBILL_SESSION_ID;
+  const envCsrf    = process.env.SMARTBILL_CSRF_TOKEN ?? "";
+  const extraCookies = process.env.SMARTBILL_EXTRA_COOKIES ?? "";
+
   if (!sessionId) {
     return NextResponse.json({ error: "SMARTBILL_SESSION_ID lipsește din env" }, { status: 503 });
   }
-
-  // If SMARTBILL_CSRF_TOKEN is set, use it directly (avoids cross-session CSRF mismatch)
-  const envCsrf   = process.env.SMARTBILL_CSRF_TOKEN ?? "";
-  const csrfValue = envCsrf || (await fetchFreshCsrf()).value;
-
-  // SMARTBILL_EXTRA_COOKIES = space for additional browser cookies, e.g. "sblsd=...; sb=..."
-  const extraCookies = process.env.SMARTBILL_EXTRA_COOKIES ?? "";
+  if (!envCsrf) {
+    return NextResponse.json({ error: "SMARTBILL_CSRF_TOKEN lipsește din env" }, { status: 503 });
+  }
 
   const cookieHeader = [
-    `csrftoken=${csrfValue}`,
+    `csrftoken=${envCsrf}`,
     `sessionid=${sessionId}`,
     "srvid=2",
     "sip=true",
     extraCookies,
   ].filter(Boolean).join("; ");
 
+  // Step 1: GET the page to verify session is valid
+  const pageRes = await fetch("https://cloud.smartbill.ro/nomenclator/lista_preturi/", {
+    method:  "GET",
+    headers: {
+      Cookie:     cookieHeader,
+      "User-Agent": BROWSER_UA,
+      Accept:     "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    },
+    redirect: "manual",
+    cache:    "no-store",
+  });
+
+  const pageStatus   = pageRes.status;
+  const pageLocation = pageRes.headers.get("location") ?? "";
+  const pageBodySnip = (await pageRes.text()).slice(0, 300);
+
+  // Step 2: POST to AJAX endpoint
   const today   = todayRO();
   const sSearch = JSON.stringify({
     date: today, warehouse: "-1", vat_code: "-1", vat_included: "-1",
@@ -47,29 +56,29 @@ export async function GET() {
     search_products_ids: [], page: 1, results_per_page: "5",
   });
 
-  const priceRes = await fetch("https://cloud.smartbill.ro/nomenclator/lista_preturi/ajax/", {
+  const ajaxRes = await fetch("https://cloud.smartbill.ro/nomenclator/lista_preturi/ajax/", {
     method:  "POST",
     headers: {
-      "Content-Type":     "application/x-www-form-urlencoded",
+      "Content-Type":     "application/x-www-form-urlencoded; charset=UTF-8",
       Cookie:             cookieHeader,
-      "X-CSRFToken":      csrfValue,
+      "X-CSRFToken":      envCsrf,
       "X-Requested-With": "XMLHttpRequest",
+      "User-Agent":       BROWSER_UA,
       Accept:             "application/json, text/javascript, */*; q=0.01",
+      Origin:             "https://cloud.smartbill.ro",
       Referer:            "https://cloud.smartbill.ro/nomenclator/lista_preturi/",
     },
     body:  new URLSearchParams({ sSearch }).toString(),
     cache: "no-store",
   });
 
-  const text = await priceRes.text();
-  let body: unknown;
-  try { body = JSON.parse(text); } catch { body = text.slice(0, 2000); }
+  const ajaxText = await ajaxRes.text();
+  let ajaxBody: unknown;
+  try { ajaxBody = JSON.parse(ajaxText); } catch { ajaxBody = ajaxText.slice(0, 1000); }
 
   return NextResponse.json({
-    status:      priceRes.status,
-    csrfSource:  envCsrf ? "env" : "fresh-fetch",
+    page:  { status: pageStatus, location: pageLocation, bodySnip: pageBodySnip },
+    ajax:  { status: ajaxRes.status, body: ajaxBody },
     today,
-    extraCookiesSet: !!extraCookies,
-    body,
   });
 }
