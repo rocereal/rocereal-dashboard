@@ -173,44 +173,42 @@ function buildWeeklyByCategory(
 function ProductStockTable({ items, loading }: { items: StockItem[]; loading: boolean }) {
   return (
     <Card className="shadow-xs flex flex-col">
-      <CardHeader className="rounded-t-lg bg-[#1e3a5f] text-white pb-3 pt-3 px-4">
+      <CardHeader className="rounded-t-lg bg-[#1e3a5f] text-white pb-2 pt-2.5 px-3">
         <CardTitle className="text-sm font-bold tracking-wide">1. STOCURI PE PRODUSE (LA ZI)</CardTitle>
       </CardHeader>
       <CardContent className="p-0 flex-1">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="bg-[#1e3a5f]/10 border-b">
-                {["Nume produs", "Categorie", "Buc. în stoc", "Valoare totală (RON)", "Preț unitar (RON)"].map(h => (
-                  <th key={h} className="text-left font-semibold text-[#1e3a5f] px-3 py-2 whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">Se încarcă...</td></tr>
-              ) : items.filter(i => i.quantity > 0).map((item) => (
-                <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30">
-                  <td className="px-3 py-1.5 font-medium max-w-[180px]">
-                    <p className="truncate" title={item.name}>{item.name}</p>
-                  </td>
-                  <td className="px-3 py-1.5 text-muted-foreground">{item.category ?? "—"}</td>
-                  <td className={`px-3 py-1.5 font-bold ${item.status === "out_of_stock" ? "text-red-500" : item.status === "low_stock" ? "text-yellow-600" : "text-green-700"}`}>
-                    {fmtNum(item.quantity)} {item.unit ?? ""}
-                  </td>
-                  <td className="px-3 py-1.5">{item.totalValue > 0 ? fmtRON(item.totalValue) : "—"}</td>
-                  <td className="px-3 py-1.5">{item.unitPrice > 0 ? fmtRON(item.unitPrice) : "—"}</td>
-                </tr>
+        <table className="w-full text-[11px]">
+          <thead>
+            <tr className="bg-[#1e3a5f]/10 border-b">
+              {["Produs", "Cat.", "Buc.", "Valoare (RON)"].map(h => (
+                <th key={h} className="text-left font-semibold text-[#1e3a5f] px-2 py-1.5 whitespace-nowrap">{h}</th>
               ))}
-              <tr className="bg-[#1e3a5f]/5 font-bold border-t-2">
-                <td className="px-3 py-2 font-bold" colSpan={2}>TOTAL</td>
-                <td className="px-3 py-2">{fmtNum(items.reduce((s, i) => s + i.quantity, 0))}</td>
-                <td className="px-3 py-2">{fmtRON(items.reduce((s, i) => s + i.totalValue, 0))}</td>
-                <td className="px-3 py-2">—</td>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={4} className="px-2 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
+            ) : items.filter(i => i.quantity > 0).map((item) => (
+              <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30">
+                <td className="px-2 py-1 font-medium max-w-[140px]">
+                  <p className="truncate" title={item.name}>{item.name}</p>
+                </td>
+                <td className="px-2 py-1 text-muted-foreground max-w-[80px]">
+                  <p className="truncate" title={item.category ?? "—"}>{item.category ?? "—"}</p>
+                </td>
+                <td className={`px-2 py-1 font-bold whitespace-nowrap ${item.status === "out_of_stock" ? "text-red-500" : item.status === "low_stock" ? "text-yellow-600" : "text-green-700"}`}>
+                  {fmtNum(item.quantity)}{item.unit ? ` ${item.unit}` : ""}
+                </td>
+                <td className="px-2 py-1 whitespace-nowrap">{item.totalValue > 0 ? fmtRON(item.totalValue) : "—"}</td>
               </tr>
-            </tbody>
-          </table>
-        </div>
+            ))}
+            <tr className="bg-[#1e3a5f]/5 font-bold border-t-2">
+              <td className="px-2 py-1.5 font-bold" colSpan={2}>TOTAL</td>
+              <td className="px-2 py-1.5">{fmtNum(items.reduce((s, i) => s + i.quantity, 0))}</td>
+              <td className="px-2 py-1.5">{fmtRON(items.reduce((s, i) => s + i.totalValue, 0))}</td>
+            </tr>
+          </tbody>
+        </table>
       </CardContent>
     </Card>
   );
@@ -243,7 +241,7 @@ function DailySalesByCategoryTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#2d6a4f] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">2. VÂNZĂRI ZILNICE (NR. BUCĂȚI) – PE CATEGORII</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">2. VÂNZĂRI ZILNICE (BUC.) – PE CATEGORII</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -306,7 +304,7 @@ function DailySalesByProductTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#2d6a4f] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">2B. VÂNZĂRI ZILNICE – PE PRODUSE (TOP 15)</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">3. VÂNZĂRI ZILNICE – PE PRODUSE (TOP 15)</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -381,7 +379,7 @@ function WeeklySalesByCategoryTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#1a4b8c] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">3. VÂNZĂRI SĂPTĂMÂNALE – PE CATEGORII</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">4. VÂNZĂRI SĂPTĂMÂNALE – PE CATEGORII</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -451,7 +449,7 @@ function SalesByCategoryTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#5c2d8c] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">4. VÂNZĂRI PE CATEGORIE</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">5. VÂNZĂRI PE CATEGORIE</CardTitle>
         <p className="text-[11px] text-white/70 mt-0.5">Comenzi și cantități vândute per categorie · Apeluri totale: atribuite per canal</p>
       </CardHeader>
       <CardContent className="p-0">
@@ -547,7 +545,7 @@ function MarketingInvestmentCard({ metrics, prevMetrics, totalSpend, prevSpend, 
   return (
     <Card className="shadow-xs h-full">
       <CardHeader className="rounded-t-lg bg-[#c0392b] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">5. INVESTIȚIE MARKETING VS. CIFRA DE AFACERI</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">6. INVESTIȚIE MARKETING VS. CIFRA DE AFACERI</CardTitle>
       </CardHeader>
       <CardContent className="pt-3 pb-3 px-4">
         {loading ? <p className="text-sm text-muted-foreground py-4 text-center">Se încarcă...</p> : (
@@ -576,70 +574,55 @@ interface ChannelRow {
 function ChannelPerformanceTable({ rows, loading }: { rows: ChannelRow[]; loading: boolean }) {
   const tot = rows.reduce((acc, r) => ({
     ...acc, spend: acc.spend + r.spend, calls: acc.calls + r.calls,
-    leads: acc.leads + r.leads, conversions: acc.conversions + r.conversions, revenue: acc.revenue + r.revenue,
-  }), { spend: 0, calls: 0, leads: 0, conversions: 0, revenue: 0 });
+    conversions: acc.conversions + r.conversions, revenue: acc.revenue + r.revenue,
+  }), { spend: 0, calls: 0, conversions: 0, revenue: 0 });
 
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#2c3e50] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">6. MARKETING – PERFORMANȚĂ CANALE (TOTAL)</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">7. MARKETING – PERFORMANȚĂ CANALE (TOTAL)</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="bg-[#2c3e50]/10 border-b">
-                {["Canal", "Spend (RON)", "Apeluri generate", "Cost / apel", "Lead-uri", "CPL", "Comenzi", "Cost / comandă", "Vânzări (RON)", "ROAS"].map(h => (
-                  <th key={h} className="text-left font-semibold text-[#2c3e50] px-3 py-2 whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={10} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
-              ) : (
-                <>
-                  {rows.map(r => (
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="bg-[#2c3e50]/10 border-b">
+              {["Canal", "Spend (RON)", "Apeluri", "Cost / apel", "Comenzi", "Vânzări (RON)", "% din CA"].map(h => (
+                <th key={h} className="text-left font-semibold text-[#2c3e50] px-3 py-2 whitespace-nowrap">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={7} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
+            ) : (
+              <>
+                {rows.map(r => {
+                  const pctCA = r.revenue > 0 && r.spend > 0 ? ((r.spend / r.revenue) * 100).toFixed(1) + "%" : "—";
+                  return (
                     <tr key={r.canal} className="border-b last:border-0 hover:bg-muted/30">
                       <td className="px-3 py-2 font-medium">{r.canal}</td>
                       <td className="px-3 py-2">{r.spend > 0 ? fmtRON(r.spend) : "—"}</td>
                       <td className="px-3 py-2">{r.calls > 0 ? fmtNum(r.calls) : "—"}</td>
                       <td className="px-3 py-2">{r.costPerCall !== null ? fmtRON(r.costPerCall) : "—"}</td>
-                      <td className="px-3 py-2">{r.leads > 0 ? fmtNum(r.leads) : "—"}</td>
-                      <td className="px-3 py-2">{r.cpl !== null ? fmtRON(r.cpl) : "—"}</td>
                       <td className="px-3 py-2 font-semibold">{r.conversions > 0 ? fmtNum(r.conversions) : "—"}</td>
-                      <td className="px-3 py-2">{r.costPerConv !== null ? fmtRON(r.costPerConv) : "—"}</td>
                       <td className="px-3 py-2 font-semibold text-green-700 dark:text-green-400">{r.revenue > 0 ? fmtRON(r.revenue) : "—"}</td>
-                      <td className="px-3 py-2">
-                        {r.roas !== null && r.roas > 0 ? (
-                          <span className={`font-bold ${r.roas >= 8 ? "text-green-600" : r.roas >= 4 ? "text-yellow-600" : "text-red-500"}`}>{r.roas.toFixed(2)}x</span>
-                        ) : "—"}
-                      </td>
+                      <td className="px-3 py-2 font-semibold text-[#2c3e50]">{pctCA}</td>
                     </tr>
-                  ))}
-                  <tr className="bg-[#2c3e50]/5 font-bold border-t-2">
-                    <td className="px-3 py-2">TOTAL</td>
-                    <td className="px-3 py-2">{tot.spend > 0 ? fmtRON(tot.spend) : "—"}</td>
-                    <td className="px-3 py-2">{tot.calls > 0 ? fmtNum(tot.calls) : "—"}</td>
-                    <td className="px-3 py-2">{tot.calls > 0 && tot.spend > 0 ? fmtRON(tot.spend / tot.calls) : "—"}</td>
-                    <td className="px-3 py-2">{tot.leads > 0 ? fmtNum(tot.leads) : "—"}</td>
-                    <td className="px-3 py-2">{tot.leads > 0 && tot.spend > 0 ? fmtRON(tot.spend / tot.leads) : "—"}</td>
-                    <td className="px-3 py-2">{tot.conversions > 0 ? fmtNum(tot.conversions) : "—"}</td>
-                    <td className="px-3 py-2">{tot.conversions > 0 && tot.spend > 0 ? fmtRON(tot.spend / tot.conversions) : "—"}</td>
-                    <td className="px-3 py-2">{tot.revenue > 0 ? fmtRON(tot.revenue) : "—"}</td>
-                    <td className="px-3 py-2">
-                      {tot.spend > 0 && tot.revenue > 0 ? (
-                        <span className={`font-bold ${(tot.revenue/tot.spend) >= 8 ? "text-green-600" : (tot.revenue/tot.spend) >= 4 ? "text-yellow-600" : "text-red-500"}`}>
-                          {(tot.revenue / tot.spend).toFixed(2)}x
-                        </span>
-                      ) : "—"}
-                    </td>
-                  </tr>
-                </>
-              )}
-            </tbody>
-          </table>
-        </div>
+                  );
+                })}
+                <tr className="bg-[#2c3e50]/5 font-bold border-t-2">
+                  <td className="px-3 py-2">TOTAL</td>
+                  <td className="px-3 py-2">{tot.spend > 0 ? fmtRON(tot.spend) : "—"}</td>
+                  <td className="px-3 py-2">{tot.calls > 0 ? fmtNum(tot.calls) : "—"}</td>
+                  <td className="px-3 py-2">{tot.calls > 0 && tot.spend > 0 ? fmtRON(tot.spend / tot.calls) : "—"}</td>
+                  <td className="px-3 py-2">{tot.conversions > 0 ? fmtNum(tot.conversions) : "—"}</td>
+                  <td className="px-3 py-2">{tot.revenue > 0 ? fmtRON(tot.revenue) : "—"}</td>
+                  <td className="px-3 py-2">{tot.revenue > 0 && tot.spend > 0 ? ((tot.spend / tot.revenue) * 100).toFixed(1) + "%" : "—"}</td>
+                </tr>
+              </>
+            )}
+          </tbody>
+        </table>
       </CardContent>
     </Card>
   );
@@ -690,7 +673,7 @@ function NotesCard({ stockItems, products, catMap, prevProducts, channelRows, me
   return (
     <Card className="shadow-xs h-full">
       <CardHeader className="rounded-t-lg bg-[#b8860b] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">7. OBSERVAȚII / NOTE</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">8. OBSERVAȚII / NOTE</CardTitle>
       </CardHeader>
       <CardContent className="pt-3 pb-3 px-4">
         {loading ? <p className="text-sm text-muted-foreground py-4 text-center">Se generează...</p> : (
@@ -946,17 +929,15 @@ export default function RenderPage() {
         {kpis.map(k => <KpiCard key={k.label} {...k} />)}
       </div>
 
-      {/* Stock (left) + Daily sales (right) */}
+      {/* Stock (left) + Daily + Weekly sales (right) */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <div className="lg:col-span-2"><ProductStockTable items={filteredStockItems} loading={loading} /></div>
         <div className="lg:col-span-3 flex flex-col gap-4">
           <DailySalesByCategoryTable products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
           <DailySalesByProductTable  products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
+          <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} loading={loading} />
         </div>
       </div>
-
-      {/* Weekly sales by category */}
-      <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} loading={loading} />
 
       {/* Sales by category + Marketing investment */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
