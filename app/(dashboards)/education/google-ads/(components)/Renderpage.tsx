@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown, MousePointerClick, Eye, Banknote, Target, RefreshCw, Link } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -121,6 +121,46 @@ function NotConnected() {
   );
 }
 
+// ── Internal name dropdown cell ───────────────────────────────────────────────
+function InternalNameCell({
+  campaignId, campaignName, labels, categories, onSaved,
+}: {
+  campaignId: string;
+  campaignName: string;
+  labels: Record<string, string | null>;
+  categories: string[];
+  onSaved: (campaignId: string, internalName: string | null) => void;
+}) {
+  const [saving, setSaving] = useState(false);
+  const current = labels[campaignId] ?? "";
+
+  const handleChange = async (value: string) => {
+    setSaving(true);
+    const res = await fetch("/api/campaigns/labels", {
+      method:  "PUT",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ platform: "google", campaignId, campaignName, internalName: value || null }),
+    });
+    if (res.ok) {
+      const json = await res.json() as { internalName: string | null };
+      onSaved(campaignId, json.internalName);
+    }
+    setSaving(false);
+  };
+
+  return (
+    <select
+      value={current}
+      onChange={e => handleChange(e.target.value)}
+      disabled={saving}
+      className="text-sm border rounded px-2 py-0.5 w-44 focus:outline-none focus:ring-1 focus:ring-primary bg-background disabled:opacity-50"
+    >
+      <option value="">— Selectează —</option>
+      {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+    </select>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function RenderPage() {
@@ -136,6 +176,9 @@ export default function RenderPage() {
   const [loading, setLoading] = useState(true);
   const [notConnected, setNotConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [labels, setLabels] = useState<Record<string, string | null>>({});
+  const [categories, setCategories] = useState<string[]>([]);
+  const labelsLoaded = useRef(false);
 
   const toLocal = (d: Date) => d.toISOString().slice(0, 10);
 
@@ -169,6 +212,22 @@ export default function RenderPage() {
   }, [dateRange]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    if (labelsLoaded.current) return;
+    labelsLoaded.current = true;
+    Promise.all([
+      fetch("/api/campaigns/labels?platform=google").then(r => r.json()),
+      fetch("/api/stock/categories").then(r => r.json()),
+    ]).then(([lbs, cats]) => {
+      setLabels(lbs as Record<string, string | null>);
+      setCategories(cats as string[]);
+    });
+  }, []);
+
+  const handleLabelSaved = (campaignId: string, internalName: string | null) => {
+    setLabels(prev => ({ ...prev, [campaignId]: internalName }));
+  };
 
   return (
     <div className="flex flex-col space-y-6">
@@ -239,7 +298,7 @@ export default function RenderPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b bg-muted/40">
-                        {["Campanie", "Status", "Tip", "Impresii", "Clickuri", "CTR", "Cost", "CPC", "Conversii", "Cost/Conv."].map((h) => (
+                        {["Campanie", "Nume intern", "Status", "Tip", "Impresii", "Clickuri", "CTR", "Cost", "CPC", "Conversii", "Cost/Conv."].map((h) => (
                           <th key={h} className="text-left text-xs font-semibold text-muted-foreground px-4 py-2.5 whitespace-nowrap">{h}</th>
                         ))}
                       </tr>
@@ -248,6 +307,15 @@ export default function RenderPage() {
                       {campaigns.map((c) => (
                         <tr key={c.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                           <td className="px-4 py-2.5 font-medium max-w-[220px] truncate">{c.name}</td>
+                          <td className="px-4 py-2.5">
+                            <InternalNameCell
+                              campaignId={c.id}
+                              campaignName={c.name}
+                              labels={labels}
+                              categories={categories}
+                              onSaved={handleLabelSaved}
+                            />
+                          </td>
                           <td className="px-4 py-2.5">
                             <Badge variant="outline" className={statusColor(c.status)}>
                               {statusLabel(c.status)}

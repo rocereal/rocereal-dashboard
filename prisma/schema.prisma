@@ -413,6 +413,20 @@ model LeadInvoiceMatch {
   @@index([invoiceKey])
 }
 
+// ─── Campaign Labels (internal name mapping per platform) ────────────────────
+
+model CampaignLabel {
+  id           String   @id @default(cuid())
+  platform     String   // "facebook" | "tiktok" | "google"
+  campaignId   String
+  campaignName String   @default("")
+  internalName String?
+  updatedAt    DateTime @updatedAt
+
+  @@unique([platform, campaignId])
+  @@index([platform])
+}
+
 // ─── Sales Targets ────────────────────────────────────────────────────────────
 
 model MonthlySalesTarget {

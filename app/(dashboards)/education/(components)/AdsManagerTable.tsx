@@ -34,7 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowUpDown, ChevronRight, Columns, Filter, Loader2, RefreshCw } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { format } from "date-fns";
 
 type Level = "campaign" | "adset" | "ad";
@@ -74,6 +74,46 @@ interface DrillState {
 
 const EMPTY_DRILL: DrillState = { campaignIds: [], campaignName: null, adsetIds: [], adsetName: null };
 
+// ── Internal name dropdown cell ───────────────────────────────────────────────
+function InternalNameCell({
+  campaignId, campaignName, labels, categories, onSaved,
+}: {
+  campaignId: string;
+  campaignName: string;
+  labels: Record<string, string | null>;
+  categories: string[];
+  onSaved: (campaignId: string, internalName: string | null) => void;
+}) {
+  const [saving, setSaving] = useState(false);
+  const current = labels[campaignId] ?? "";
+
+  const handleChange = async (value: string) => {
+    setSaving(true);
+    const res = await fetch("/api/campaigns/labels", {
+      method:  "PUT",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ platform: "facebook", campaignId, campaignName, internalName: value || null }),
+    });
+    if (res.ok) {
+      const json = await res.json() as { internalName: string | null };
+      onSaved(campaignId, json.internalName);
+    }
+    setSaving(false);
+  };
+
+  return (
+    <select
+      value={current}
+      onChange={e => handleChange(e.target.value)}
+      disabled={saving}
+      className="text-sm border rounded px-2 py-0.5 w-44 focus:outline-none focus:ring-1 focus:ring-primary bg-background disabled:opacity-50"
+    >
+      <option value="">— Selectează —</option>
+      {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+    </select>
+  );
+}
+
 const formatRON = (v: number) =>
   new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON", minimumFractionDigits: 2 }).format(v);
 
@@ -91,7 +131,13 @@ const StatusBadge = ({ status }: { status: string | null }) => {
   return <Badge variant="outline" className={color}>{status}</Badge>;
 };
 
-function buildColumns(level: Level, onDrillDown: (row: AdRow) => void): ColumnDef<AdRow>[] {
+function buildColumns(
+  level: Level,
+  onDrillDown: (row: AdRow) => void,
+  labels: Record<string, string | null>,
+  categories: string[],
+  onLabelSaved: (campaignId: string, internalName: string | null) => void,
+): ColumnDef<AdRow>[] {
   const nameHeader = level === "campaign" ? "Campanie" : level === "adset" ? "Ad Set" : "Ad";
   const canDrill   = level !== "ad";
 
@@ -147,6 +193,20 @@ function buildColumns(level: Level, onDrillDown: (row: AdRow) => void): ColumnDe
       ),
       enableHiding: false,
     },
+    ...(level === "campaign" ? [{
+      id: "internalName",
+      header: "Nume intern",
+      enableSorting: false,
+      cell: ({ row }: { row: { original: AdRow } }) => (
+        <InternalNameCell
+          campaignId={row.original.entityId}
+          campaignName={row.original.entityName}
+          labels={labels}
+          categories={categories}
+          onSaved={onLabelSaved}
+        />
+      ),
+    } as ColumnDef<AdRow>] : []),
     {
       accessorKey: "status",
       header: "Status",
@@ -266,6 +326,9 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(HIDDEN_BY_DEFAULT);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  const [labels, setLabels]         = useState<Record<string, string | null>>({});
+  const [categories, setCategories] = useState<string[]>([]);
+  const labelsLoaded                = useRef(false);
 
   const buildParams = (lvl: Level, dr: DrillState) => {
     const params = new URLSearchParams({ level: lvl });
@@ -296,6 +359,18 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
     reload();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level, drill, dateRange]);
+
+  useEffect(() => {
+    if (labelsLoaded.current) return;
+    labelsLoaded.current = true;
+    Promise.all([
+      fetch("/api/campaigns/labels?platform=facebook").then(r => r.json()),
+      fetch("/api/stock/categories").then(r => r.json()),
+    ]).then(([lbs, cats]) => {
+      setLabels(lbs as Record<string, string | null>);
+      setCategories(cats as string[]);
+    });
+  }, []);
 
   // Click on name → drill into children
   const handleDrillDown = (row: AdRow) => {
@@ -341,13 +416,17 @@ export function AdsManagerTable({ dateRange }: AdsManagerTableProps) {
     setRowSelection({});
   };
 
+  const handleLabelSaved = (campaignId: string, internalName: string | null) => {
+    setLabels(prev => ({ ...prev, [campaignId]: internalName }));
+  };
+
   // Apply status filter client-side — memoized to avoid new array ref on every render
   const filteredData = useMemo(
     () => statusFilter === "ALL" ? data : data.filter((r) => r.status === statusFilter),
     [data, statusFilter]
   );
 
-  const columns = buildColumns(level, handleDrillDown);
+  const columns = buildColumns(level, handleDrillDown, labels, categories, handleLabelSaved);
 
   const table = useReactTable({
     data: filteredData,
