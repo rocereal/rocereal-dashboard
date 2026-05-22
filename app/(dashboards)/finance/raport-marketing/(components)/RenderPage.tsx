@@ -431,81 +431,70 @@ function WeeklySalesByCategoryTable({
   );
 }
 
-// ─── 4. Sales by category (proxy for calls by category) ──────────────────────
+// ─── 5. Calls by channel ──────────────────────────────────────────────────────
 
-function SalesByCategoryTable({
-  products, catMap, prevProducts, calls, loading,
-}: {
-  products: ProductSaleItem[]; catMap: Map<string, string>; prevProducts: ProductSaleItem[];
-  calls: CallsData | null; loading: boolean;
-}) {
-  const cur  = buildWeeklyByCategory(products, catMap);
-  const prev = buildWeeklyByCategory(prevProducts, catMap);
-  const categories = Array.from(cur.keys()).filter(c => (cur.get(c)?.orders ?? 0) > 0);
-  const totalOrders = Array.from(cur.values()).reduce((s, v) => s + v.orders, 0);
-  const totalCalls  = calls?.total ?? 0;
-  const totalAnswered = calls?.answered ?? 0;
+function CallsByChannelTable({ calls, loading }: { calls: CallsData | null; loading: boolean }) {
+  const ch  = calls?.channels         ?? { facebook: 0, tiktok: 0, google: 0 };
+  const cha = calls?.channelsAnswered  ?? { facebook: 0, tiktok: 0, google: 0 };
+  const totalKnown   = ch.facebook  + ch.tiktok  + ch.google;
+  const answeredKnown = cha.facebook + cha.tiktok + cha.google;
+  const organicTotal   = Math.max(0, (calls?.total    ?? 0) - totalKnown);
+  const organicAnswered = Math.max(0, (calls?.answered ?? 0) - answeredKnown);
+
+  const rows = [
+    { canal: "Facebook Ads", total: ch.facebook,  answered: cha.facebook  },
+    { canal: "TikTok Ads",   total: ch.tiktok,    answered: cha.tiktok    },
+    { canal: "Google Ads",   total: ch.google,    answered: cha.google    },
+    { canal: "Organic / Direct", total: organicTotal, answered: organicAnswered },
+  ];
+
+  const grandTotal   = calls?.total    ?? 0;
+  const grandAnswered = calls?.answered ?? 0;
+  const grandRate    = grandTotal > 0 ? (grandAnswered / grandTotal) * 100 : null;
 
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#5c2d8c] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">5. VÂNZĂRI PE CATEGORIE</CardTitle>
-        <p className="text-[11px] text-white/70 mt-0.5">Comenzi și cantități vândute per categorie · Apeluri totale: atribuite per canal</p>
+        <CardTitle className="text-sm font-bold tracking-wide">5. APELURI (PE CANAL)</CardTitle>
+        <p className="text-[11px] text-white/70 mt-0.5">Distribuția apelurilor primite pe canalul de proveniență · săptămâna curentă</p>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="bg-[#5c2d8c]/10 border-b">
-                {["Categorie", "Comenzi săpt.", "Comenzi prec.", "Var. %", "Buc. vândute", "Valoare (RON)", "% din total vânzări"].map(h => (
-                  <th key={h} className="text-left font-semibold text-[#5c2d8c] px-3 py-2 whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={7} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
-              ) : categories.length === 0 ? (
-                <tr><td colSpan={7} className="px-3 py-4 text-center text-muted-foreground">Nicio vânzare în această perioadă</td></tr>
-              ) : (
-                <>
-                  {categories.map(cat => {
-                    const c      = cur.get(cat)  ?? { qty: 0, val: 0, orders: 0 };
-                    const p      = prev.get(cat) ?? { qty: 0, val: 0, orders: 0 };
-                    const totalVal = Array.from(cur.values()).reduce((s, v) => s + v.val, 0);
-                    const pctVal   = totalVal > 0 ? ((c.val / totalVal) * 100).toFixed(1) : "—";
-                    return (
-                      <tr key={cat} className="border-b last:border-0 hover:bg-muted/30">
-                        <td className="px-3 py-2 font-medium">{cat}</td>
-                        <td className="px-3 py-2 font-semibold">{c.orders > 0 ? fmtNum(c.orders) : "—"}</td>
-                        <td className="px-3 py-2 text-muted-foreground">{p.orders > 0 ? fmtNum(p.orders) : "—"}</td>
-                        <td className="px-3 py-2"><VariationBadge pct={pctChg(c.orders, p.orders)} /></td>
-                        <td className="px-3 py-2">{c.qty > 0 ? fmtNum(c.qty) : "—"}</td>
-                        <td className="px-3 py-2 font-semibold text-green-700 dark:text-green-400">{c.val > 0 ? fmtRON(c.val) : "—"}</td>
-                        <td className="px-3 py-2">{pctVal !== "—" ? `${pctVal}%` : "—"}</td>
-                      </tr>
-                    );
-                  })}
-                  <tr className="bg-[#5c2d8c]/5 font-bold border-t-2">
-                    <td className="px-3 py-2">TOTAL</td>
-                    <td className="px-3 py-2">{totalOrders > 0 ? fmtNum(totalOrders) : "—"}</td>
-                    <td className="px-3 py-2">—</td><td className="px-3 py-2">—</td>
-                    <td className="px-3 py-2">{fmtNum(Array.from(cur.values()).reduce((s, v) => s + v.qty, 0))}</td>
-                    <td className="px-3 py-2">{fmtRON(Array.from(cur.values()).reduce((s, v) => s + v.val, 0))}</td>
-                    <td className="px-3 py-2">100%</td>
-                  </tr>
-                </>
-              )}
-            </tbody>
-          </table>
-        </div>
-        {totalCalls > 0 && (
-          <div className="px-4 py-2 border-t bg-muted/30 flex gap-4 text-xs text-muted-foreground">
-            <span>Apeluri totale: <b className="text-foreground">{fmtNum(totalCalls)}</b></span>
-            <span>Răspunse: <b className="text-foreground">{fmtNum(totalAnswered)}</b></span>
-            <span className="text-[11px] italic">Distribuția apelurilor pe categorie necesită tagging în CRM</span>
-          </div>
-        )}
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="bg-[#5c2d8c]/10 border-b">
+              {["Canal", "Apeluri totale", "Apeluri răspunse", "Lead-uri calificate", "Rată conversie"].map(h => (
+                <th key={h} className="text-left font-semibold text-[#5c2d8c] px-3 py-2 whitespace-nowrap">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={5} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
+            ) : (
+              <>
+                {rows.map(r => {
+                  const rate = r.total > 0 ? ((r.answered / r.total) * 100).toFixed(1) + "%" : "—";
+                  return (
+                    <tr key={r.canal} className="border-b last:border-0 hover:bg-muted/30">
+                      <td className="px-3 py-2 font-medium">{r.canal}</td>
+                      <td className="px-3 py-2 font-semibold">{r.total > 0 ? fmtNum(r.total) : "—"}</td>
+                      <td className="px-3 py-2">{r.answered > 0 ? fmtNum(r.answered) : "—"}</td>
+                      <td className="px-3 py-2 text-muted-foreground">—</td>
+                      <td className="px-3 py-2 font-semibold text-[#5c2d8c]">{rate}</td>
+                    </tr>
+                  );
+                })}
+                <tr className="bg-[#5c2d8c]/5 font-bold border-t-2">
+                  <td className="px-3 py-2">TOTAL</td>
+                  <td className="px-3 py-2">{grandTotal > 0 ? fmtNum(grandTotal) : "—"}</td>
+                  <td className="px-3 py-2">{grandAnswered > 0 ? fmtNum(grandAnswered) : "—"}</td>
+                  <td className="px-3 py-2">—</td>
+                  <td className="px-3 py-2">{grandRate !== null ? grandRate.toFixed(1) + "%" : "—"}</td>
+                </tr>
+              </>
+            )}
+          </tbody>
+        </table>
       </CardContent>
     </Card>
   );
@@ -939,10 +928,10 @@ export default function RenderPage() {
         </div>
       </div>
 
-      {/* Sales by category + Marketing investment */}
+      {/* Calls by channel + Marketing investment */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <div className="lg:col-span-3">
-          <SalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} calls={calls} loading={loading} />
+          <CallsByChannelTable calls={calls} loading={loading} />
         </div>
         <div className="lg:col-span-2">
           <MarketingInvestmentCard metrics={metrics} prevMetrics={prevMetrics} totalSpend={totalSpend} prevSpend={prevTotalSpend} monthRevenue={monthRevenue} monthSpend={monthSpend} loading={loading} />
