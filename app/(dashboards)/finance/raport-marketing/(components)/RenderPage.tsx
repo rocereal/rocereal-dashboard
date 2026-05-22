@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { format, startOfWeek, endOfWeek, subWeeks, addDays } from "date-fns";
 import { ro } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -144,7 +144,7 @@ function buildDailyByProduct(
         const cur = days.get(day) ?? { qty: 0, val: 0 };
         days.set(day, { qty: cur.qty + doc.quantity, val: cur.val + doc.value });
       }
-      return { code: p.productCode, name: p.productName, cat: catMap.get(p.productCode) ?? "—", days, total: p.quantity };
+      return { code: p.productCode, name: p.productName, cat: catMap.get(p.productCode) ?? "Necategorizat", days, total: p.quantity };
     })
     .sort((a, b) => b.total - a.total)
     .slice(0, 15);
@@ -299,7 +299,7 @@ function DailySalesByProductTable({
   const dayLabels = weekDays.map(d => capitalize(format(d, "EEE d", { locale: ro })));
   const rows      = buildDailyByProduct(products, catMap);
   const prevMap   = new Map(prevProducts.map(p => [p.productCode, p.quantity]));
-  const totals    = dayIsos.map((iso, i) => rows.reduce((s, r) => s + (r.days.get(iso)?.qty ?? 0), 0));
+  const totals    = dayIsos.map(iso => rows.reduce((s, r) => s + (r.days.get(iso)?.qty ?? 0), 0));
   const grandTotal = rows.reduce((s, r) => s + r.total, 0);
   const grandPrev  = prevProducts.filter(p => rows.some(r => r.code === p.productCode)).reduce((s, p) => s + p.quantity, 0);
 
@@ -707,6 +707,59 @@ function NotesCard({ stockItems, products, catMap, prevProducts, channelRows, me
   );
 }
 
+// ─── Category filter bar ──────────────────────────────────────────────────────
+
+const STORAGE_KEY = "raport-mktg-excluded-cats";
+
+function CategoryFilterBar({
+  all, excluded, onToggle, onSelectAll, onSelectNone,
+}: {
+  all: string[];
+  excluded: Set<string>;
+  onToggle: (cat: string) => void;
+  onSelectAll: () => void;
+  onSelectNone: () => void;
+}) {
+  if (all.length === 0) return null;
+  return (
+    <div className="flex items-center gap-2 flex-wrap bg-muted/40 rounded-lg px-3 py-2.5 border">
+      <span className="text-xs font-semibold text-muted-foreground shrink-0">Categorii vizibile:</span>
+      <button
+        onClick={onSelectAll}
+        className="text-xs px-2 py-0.5 rounded border border-primary/40 hover:bg-primary/10 text-primary font-medium transition-colors"
+      >
+        Toate
+      </button>
+      <button
+        onClick={onSelectNone}
+        className="text-xs px-2 py-0.5 rounded border border-muted-foreground/30 hover:bg-muted text-muted-foreground font-medium transition-colors"
+      >
+        Niciuna
+      </button>
+      <div className="h-4 w-px bg-border shrink-0" />
+      {all.map(cat => {
+        const isActive = !excluded.has(cat);
+        return (
+          <button
+            key={cat}
+            onClick={() => onToggle(cat)}
+            title={isActive ? `Ascunde „${cat}"` : `Afișează „${cat}"`}
+            className={`text-xs px-2.5 py-0.5 rounded-full border font-medium transition-all ${
+              isActive
+                ? cat === "Necategorizat"
+                  ? "bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300"
+                  : "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/40 dark:text-blue-300"
+                : "bg-muted text-muted-foreground border-muted-foreground/20 opacity-40 line-through"
+            }`}
+          >
+            {cat}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── Main RenderPage ──────────────────────────────────────────────────────────
 
 export default function RenderPage() {
@@ -727,6 +780,15 @@ export default function RenderPage() {
   const [ttAds,           setTtAds]           = useState<AdsData>({ spend: 0, impressions: 0, clicks: 0, conversions: 0 });
   const [prevTotalSpend,  setPrevTotalSpend]  = useState(0);
   const [loading,         setLoading]         = useState(true);
+
+  // ── Category filter (persisted in localStorage) ────────────────────────────
+  const [excluded, setExcluded] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) return new Set(JSON.parse(saved) as string[]);
+    } catch {}
+    return new Set<string>();
+  });
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
@@ -785,7 +847,36 @@ export default function RenderPage() {
 
   // ─── Derived ────────────────────────────────────────────────────────────────
 
-  const catMap          = buildCategoryMap(stockItems);
+  const catMap = useMemo(() => buildCategoryMap(stockItems), [stockItems]);
+
+  const allCategories = useMemo(() => {
+    const cats = new Set<string>(["Necategorizat"]);
+    for (const i of stockItems) if (i.category) cats.add(i.category);
+    return Array.from(cats).sort((a, b) =>
+      a === "Necategorizat" ? 1 : b === "Necategorizat" ? -1 : a.localeCompare(b, "ro")
+    );
+  }, [stockItems]);
+
+  const toggleCategory = (cat: string) =>
+    setExcluded(prev => {
+      const next = new Set(prev);
+      if (next.has(cat)) next.delete(cat); else next.add(cat);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(next))); } catch {}
+      return next;
+    });
+
+  const filteredStockItems = useMemo(
+    () => stockItems.filter(i => !excluded.has(i.category ?? "Necategorizat")),
+    [stockItems, excluded]
+  );
+  const filteredCurProducts = useMemo(
+    () => curProducts.filter(p => !excluded.has(catMap.get(p.productCode) ?? "Necategorizat")),
+    [curProducts, catMap, excluded]
+  );
+  const filteredPrevProducts = useMemo(
+    () => prevProducts.filter(p => !excluded.has(catMap.get(p.productCode) ?? "Necategorizat")),
+    [prevProducts, catMap, excluded]
+  );
   const totalSpend      = fbAds.spend + gAds.spend + ttAds.spend;
   const totalRevenue    = metrics?.incasate.total ?? 0;
   const prevRevenue     = prevMetrics?.incasate.total ?? 0;
@@ -824,6 +915,15 @@ export default function RenderPage() {
         </div>
       </div>
 
+      {/* Category filter bar */}
+      <CategoryFilterBar
+        all={allCategories}
+        excluded={excluded}
+        onToggle={toggleCategory}
+        onSelectAll={() => { setExcluded(new Set()); try { localStorage.setItem(STORAGE_KEY, "[]"); } catch {} }}
+        onSelectNone={() => { setExcluded(new Set(allCategories)); try { localStorage.setItem(STORAGE_KEY, JSON.stringify(allCategories)); } catch {} }}
+      />
+
       {/* KPI row */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {kpis.map(k => <KpiCard key={k.label} {...k} />)}
@@ -831,20 +931,20 @@ export default function RenderPage() {
 
       {/* Stock (left) + Daily sales (right) */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
-        <div className="lg:col-span-2"><ProductStockTable items={stockItems} loading={loading} /></div>
+        <div className="lg:col-span-2"><ProductStockTable items={filteredStockItems} loading={loading} /></div>
         <div className="lg:col-span-3 flex flex-col gap-4">
-          <DailySalesByCategoryTable products={curProducts} catMap={catMap} weekDays={weekDays} prevProducts={prevProducts} loading={loading} />
-          <DailySalesByProductTable  products={curProducts} catMap={catMap} weekDays={weekDays} prevProducts={prevProducts} loading={loading} />
+          <DailySalesByCategoryTable products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
+          <DailySalesByProductTable  products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
         </div>
       </div>
 
       {/* Weekly sales by category */}
-      <WeeklySalesByCategoryTable products={curProducts} catMap={catMap} prevProducts={prevProducts} metrics={metrics} prevMetrics={prevMetrics} fbAds={fbAds} gAds={gAds} ttAds={ttAds} prevTotalSpend={prevTotalSpend} loading={loading} />
+      <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} metrics={metrics} prevMetrics={prevMetrics} fbAds={fbAds} gAds={gAds} ttAds={ttAds} prevTotalSpend={prevTotalSpend} loading={loading} />
 
       {/* Sales by category + Marketing investment */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <div className="lg:col-span-3">
-          <SalesByCategoryTable products={curProducts} catMap={catMap} prevProducts={prevProducts} calls={calls} loading={loading} />
+          <SalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} calls={calls} loading={loading} />
         </div>
         <div className="lg:col-span-2">
           <MarketingInvestmentCard metrics={metrics} prevMetrics={prevMetrics} totalSpend={totalSpend} prevSpend={prevTotalSpend} loading={loading} />
@@ -857,7 +957,7 @@ export default function RenderPage() {
           <ChannelPerformanceTable rows={channelRows} loading={loading} />
         </div>
         <div className="lg:col-span-2">
-          <NotesCard stockItems={stockItems} products={curProducts} catMap={catMap} prevProducts={prevProducts} channelRows={channelRows} metrics={metrics} prevMetrics={prevMetrics} loading={loading} />
+          <NotesCard stockItems={filteredStockItems} products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} channelRows={channelRows} metrics={metrics} prevMetrics={prevMetrics} loading={loading} />
         </div>
       </div>
     </div>
