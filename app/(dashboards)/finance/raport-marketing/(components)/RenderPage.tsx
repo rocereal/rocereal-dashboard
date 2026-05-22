@@ -363,55 +363,54 @@ function DailySalesByProductTable({
 // ─── 3. Weekly sales by category ─────────────────────────────────────────────
 
 function WeeklySalesByCategoryTable({
-  products, catMap, prevProducts, metrics, prevMetrics, fbAds, gAds, ttAds, prevTotalSpend, loading,
+  products, catMap, prevProducts, loading,
 }: {
-  products: ProductSaleItem[]; catMap: Map<string, string>; prevProducts: ProductSaleItem[];
-  metrics: MetricsData | null; prevMetrics: MetricsData | null;
-  fbAds: AdsData; gAds: AdsData; ttAds: AdsData; prevTotalSpend: number; loading: boolean;
+  products: ProductSaleItem[]; catMap: Map<string, string>;
+  prevProducts: ProductSaleItem[]; loading: boolean;
 }) {
   const cur  = buildWeeklyByCategory(products, catMap);
   const prev = buildWeeklyByCategory(prevProducts, catMap);
-  const categories = Array.from(new Set([...cur.keys(), ...prev.keys()]));
-  const totalSpend = fbAds.spend + gAds.spend + ttAds.spend;
+  const categories  = Array.from(new Set([...cur.keys(), ...prev.keys()]));
+  const totalCurVal = Array.from(cur.values()).reduce((s, v) => s + v.val, 0);
 
   const grandCurQty  = Array.from(cur.values()).reduce((s, v) => s + v.qty, 0);
   const grandPrevQty = Array.from(prev.values()).reduce((s, v) => s + v.qty, 0);
-  const grandCurVal  = metrics?.incasate.total ?? 0;
-  const grandPrevVal = prevMetrics?.incasate.total ?? 0;
+  const grandCurVal  = totalCurVal;
+  const grandPrevVal = Array.from(prev.values()).reduce((s, v) => s + v.val, 0);
 
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#1a4b8c] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">3. VÂNZĂRI SĂPTĂMÂNALE (VALOARE + BUGET MARKETING) – PE CATEGORII</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">3. VÂNZĂRI SĂPTĂMÂNALE – PE CATEGORII</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-[#1a4b8c]/10 border-b">
-                {["Categorie", "Buc. cur.", "Buc. prec.", "Var. %", "Val. cur. (RON)", "Val. prec. (RON)", "Var. %", "Buget mktg cur.", "Buget mktg prec.", "Var. %"].map(h => (
+                {["Categorie", "Buc. cur.", "Buc. prec.", "Val. cur. (RON)", "Val. prec. (RON)", "Var. %", "% din total"].map(h => (
                   <th key={h} className="text-left font-semibold text-[#1a4b8c] px-3 py-2 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={10} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
+                <tr><td colSpan={7} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
               ) : (
                 <>
                   {categories.map(cat => {
-                    const c = cur.get(cat)  ?? { qty: 0, val: 0, orders: 0 };
-                    const p = prev.get(cat) ?? { qty: 0, val: 0, orders: 0 };
+                    const c      = cur.get(cat)  ?? { qty: 0, val: 0, orders: 0 };
+                    const p      = prev.get(cat) ?? { qty: 0, val: 0, orders: 0 };
+                    const pctVal = totalCurVal > 0 ? ((c.val / totalCurVal) * 100).toFixed(1) + "%" : "—";
                     return (
                       <tr key={cat} className="border-b last:border-0 hover:bg-muted/30">
                         <td className="px-3 py-1.5 font-medium">{cat}</td>
                         <td className="px-3 py-1.5">{c.qty > 0 ? fmtNum(c.qty) : "—"}</td>
                         <td className="px-3 py-1.5 text-muted-foreground">{p.qty > 0 ? fmtNum(p.qty) : "—"}</td>
-                        <td className="px-3 py-1.5"><VariationBadge pct={pctChg(c.qty, p.qty)} /></td>
-                        <td className="px-3 py-1.5">{c.val > 0 ? fmtRON(c.val) : "—"}</td>
+                        <td className="px-3 py-1.5 font-semibold">{c.val > 0 ? fmtRON(c.val) : "—"}</td>
                         <td className="px-3 py-1.5 text-muted-foreground">{p.val > 0 ? fmtRON(p.val) : "—"}</td>
                         <td className="px-3 py-1.5"><VariationBadge pct={pctChg(c.val, p.val)} /></td>
-                        <td className="px-3 py-1.5 text-muted-foreground" colSpan={3}>— atribuit per total</td>
+                        <td className="px-3 py-1.5 font-semibold text-[#1a4b8c]">{pctVal}</td>
                       </tr>
                     );
                   })}
@@ -419,13 +418,10 @@ function WeeklySalesByCategoryTable({
                     <td className="px-3 py-2">TOTAL</td>
                     <td className="px-3 py-2">{grandCurQty > 0 ? fmtNum(grandCurQty) : "—"}</td>
                     <td className="px-3 py-2">{grandPrevQty > 0 ? fmtNum(grandPrevQty) : "—"}</td>
-                    <td className="px-3 py-2"><VariationBadge pct={pctChg(grandCurQty, grandPrevQty)} /></td>
                     <td className="px-3 py-2">{grandCurVal > 0 ? fmtRON(grandCurVal) : "—"}</td>
                     <td className="px-3 py-2">{grandPrevVal > 0 ? fmtRON(grandPrevVal) : "—"}</td>
                     <td className="px-3 py-2"><VariationBadge pct={pctChg(grandCurVal, grandPrevVal)} /></td>
-                    <td className="px-3 py-2">{totalSpend > 0 ? fmtRON(totalSpend) : "—"}</td>
-                    <td className="px-3 py-2">{prevTotalSpend > 0 ? fmtRON(prevTotalSpend) : "—"}</td>
-                    <td className="px-3 py-2"><VariationBadge pct={pctChg(totalSpend, prevTotalSpend)} invertColor /></td>
+                    <td className="px-3 py-2">100%</td>
                   </tr>
                 </>
               )}
@@ -519,14 +515,17 @@ function SalesByCategoryTable({
 
 // ─── 5. MarketingInvestmentCard ───────────────────────────────────────────────
 
-function MarketingInvestmentCard({ metrics, prevMetrics, totalSpend, prevSpend, loading }: {
+function MarketingInvestmentCard({ metrics, prevMetrics, totalSpend, prevSpend, monthRevenue, monthSpend, loading }: {
   metrics: MetricsData | null; prevMetrics: MetricsData | null;
-  totalSpend: number; prevSpend: number; loading: boolean;
+  totalSpend: number; prevSpend: number;
+  monthRevenue: number; monthSpend: number;
+  loading: boolean;
 }) {
   const ca        = metrics?.incasate.total     ?? 0;
   const prevCa    = prevMetrics?.incasate.total ?? 0;
-  const pondCur   = ca > 0     ? (totalSpend / ca) * 100     : 0;
-  const pondPrev  = prevCa > 0 ? (prevSpend  / prevCa) * 100 : 0;
+  const pondCur   = ca > 0          ? (totalSpend  / ca)          * 100 : 0;
+  const pondPrev  = prevCa > 0      ? (prevSpend   / prevCa)      * 100 : 0;
+  const pondMonth = monthRevenue > 0 ? (monthSpend  / monthRevenue) * 100 : 0;
   const delta     = pondCur > 0 && pondPrev > 0 ? +(pondCur - pondPrev).toFixed(1) : null;
 
   const rows = [
@@ -534,8 +533,9 @@ function MarketingInvestmentCard({ metrics, prevMetrics, totalSpend, prevSpend, 
     { label: "Investiție totală marketing (toate canalele)",      value: totalSpend > 0 ? fmtRON(totalSpend) : "—" },
     { label: "Pondere investiție marketing din cifra de afaceri", value: pondCur > 0 ? `${pondCur.toFixed(1)}%` : "—" },
     { label: "Săptămâna precedentă",                             value: pondPrev > 0 ? `${pondPrev.toFixed(1)}%` : "—" },
+    { label: "Luna curentă (invest. / CA lunară)",               value: pondMonth > 0 ? `${pondMonth.toFixed(1)}%` : "—" },
     {
-      label: "Variație (puncte procentuale)",
+      label: "Variație săpt. (puncte procentuale)",
       value: delta !== null
         ? <span className={delta > 0 ? "text-red-500 font-bold" : "text-green-600 font-bold"}>
             {delta > 0 ? "▲" : "▼"} {Math.abs(delta)} pp
@@ -779,6 +779,8 @@ export default function RenderPage() {
   const [gAds,            setGAds]            = useState<AdsData>({ spend: 0, impressions: 0, clicks: 0, conversions: 0 });
   const [ttAds,           setTtAds]           = useState<AdsData>({ spend: 0, impressions: 0, clicks: 0, conversions: 0 });
   const [prevTotalSpend,  setPrevTotalSpend]  = useState(0);
+  const [monthRevenue,    setMonthRevenue]    = useState(0);
+  const [monthSpend,      setMonthSpend]      = useState(0);
   const [loading,         setLoading]         = useState(true);
 
   // ── Category filter (persisted in localStorage) ────────────────────────────
@@ -794,11 +796,14 @@ export default function RenderPage() {
     setLoading(true);
     const cf = toISO(curWeek.from),  ct = toISO(curWeek.to);
     const pf = toISO(prevWeek.from), pt = toISO(prevWeek.to);
+    const mf = toISO(new Date(now.getFullYear(), now.getMonth(), 1));
+    const mt = toISO(now);
 
     const [
       stockRes, metricsRes, prevMetricsRes, callsRes, attrRes,
       fbRes, gRes, ttRes, prevFbRes, prevGRes, prevTtRes,
       curSalesRes, prevSalesRes,
+      monthMetricsRes, monthFbRes, monthGRes, monthTtRes,
     ] = await Promise.allSettled([
       fetch("/api/stock",                                                                             { cache: "no-store" }).then(r => r.json()),
       fetch(`/api/finance/metrics?from=${cf}&to=${ct}`,                                               { cache: "no-store" }).then(r => r.json()),
@@ -813,6 +818,10 @@ export default function RenderPage() {
       fetch(`/api/tiktok-ads/campaigns?from=${pf}&to=${pt}`,                                          { cache: "no-store" }).then(r => r.json()),
       fetch(`/api/smartbill/product-sales?from=${cf}&to=${ct}`,                                       { cache: "no-store" }).then(r => r.json()),
       fetch(`/api/smartbill/product-sales?from=${pf}&to=${pt}`,                                       { cache: "no-store" }).then(r => r.json()),
+      fetch(`/api/finance/metrics?from=${mf}&to=${mt}`,                                               { cache: "no-store" }).then(r => r.json()),
+      fetch(`/api/education/facebook-ads?level=campaign&from=${mf}&to=${mt}`,                         { cache: "no-store" }).then(r => r.json()),
+      fetch(`/api/google-ads/campaigns?from=${mf}&to=${mt}`,                                          { cache: "no-store" }).then(r => r.json()),
+      fetch(`/api/tiktok-ads/campaigns?from=${mf}&to=${mt}`,                                          { cache: "no-store" }).then(r => r.json()),
     ]);
 
     if (stockRes.status      === "fulfilled") setStockItems((stockRes.value as { items: StockItem[] }).items ?? []);
@@ -839,6 +848,14 @@ export default function RenderPage() {
     const pG  = prevGRes.status  === "fulfilled" ? parseG(prevGRes.value).spend   : 0;
     const pTt = prevTtRes.status === "fulfilled" ? parseTt(prevTtRes.value).spend  : 0;
     setPrevTotalSpend(pFb + pG + pTt);
+
+    const mFb = monthFbRes.status === "fulfilled" ? parseFb(monthFbRes.value).spend : 0;
+    const mG  = monthGRes.status  === "fulfilled" ? parseG(monthGRes.value).spend   : 0;
+    const mTt = monthTtRes.status === "fulfilled" ? parseTt(monthTtRes.value).spend : 0;
+    setMonthSpend(mFb + mG + mTt);
+    if (monthMetricsRes.status === "fulfilled")
+      setMonthRevenue((monthMetricsRes.value as MetricsData)?.incasate?.total ?? 0);
+
     setLoading(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -939,7 +956,7 @@ export default function RenderPage() {
       </div>
 
       {/* Weekly sales by category */}
-      <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} metrics={metrics} prevMetrics={prevMetrics} fbAds={fbAds} gAds={gAds} ttAds={ttAds} prevTotalSpend={prevTotalSpend} loading={loading} />
+      <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} loading={loading} />
 
       {/* Sales by category + Marketing investment */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
@@ -947,7 +964,7 @@ export default function RenderPage() {
           <SalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} calls={calls} loading={loading} />
         </div>
         <div className="lg:col-span-2">
-          <MarketingInvestmentCard metrics={metrics} prevMetrics={prevMetrics} totalSpend={totalSpend} prevSpend={prevTotalSpend} loading={loading} />
+          <MarketingInvestmentCard metrics={metrics} prevMetrics={prevMetrics} totalSpend={totalSpend} prevSpend={prevTotalSpend} monthRevenue={monthRevenue} monthSpend={monthSpend} loading={loading} />
         </div>
       </div>
 
