@@ -30,6 +30,66 @@ const fmtRON = (v: number) =>
   new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON", maximumFractionDigits: 0 }).format(v);
 const fmtNum = (v: number) => new Intl.NumberFormat("ro-RO", { maximumFractionDigits: 2 }).format(v);
 
+// ── Inline category cell ───────────────────────────────────────────────────────
+function CategoryCell({ item, onSaved }: { item: StockItem; onSaved: (id: string, category: string | null) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue]     = useState("");
+  const [saving, setSaving]   = useState(false);
+  const inputRef              = useRef<HTMLInputElement>(null);
+
+  const startEdit = () => {
+    setValue(item.category ?? "");
+    setEditing(true);
+    setTimeout(() => inputRef.current?.select(), 0);
+  };
+
+  const save = async () => {
+    setSaving(true);
+    const res = await fetch(`/api/stock/${item.id}`, {
+      method:  "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ category: value.trim() }),
+    });
+    if (res.ok) {
+      const json = await res.json() as { category: string | null };
+      onSaved(item.id, json.category);
+    }
+    setSaving(false);
+    setEditing(false);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter")  save();
+    if (e.key === "Escape") setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <input
+        ref={inputRef}
+        autoFocus
+        className="border rounded px-2 py-0.5 text-sm w-36 focus:outline-none focus:ring-1 focus:ring-primary"
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        onBlur={save}
+        onKeyDown={onKeyDown}
+        disabled={saving}
+        placeholder="Ex: Tractoare electrice"
+      />
+    );
+  }
+
+  return (
+    <button
+      onClick={startEdit}
+      className={`text-left hover:underline decoration-dashed underline-offset-2 ${item.category ? "" : "text-muted-foreground"}`}
+      title="Click pentru a edita categoria"
+    >
+      {item.category ?? "—"}
+    </button>
+  );
+}
+
 // ── Inline price cell ──────────────────────────────────────────────────────────
 function PriceCell({ item, onSaved }: { item: StockItem; onSaved: (id: string, unitPrice: number, totalValue: number) => void }) {
   const [editing, setEditing] = useState(false);
@@ -117,13 +177,11 @@ export default function RenderPage() {
   };
 
   const handlePriceSaved = (id: string, unitPrice: number, totalValue: number) => {
-    setData(prev => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        items: prev.items.map(i => i.id === id ? { ...i, unitPrice, totalValue } : i),
-      };
-    });
+    setData(prev => prev ? { ...prev, items: prev.items.map(i => i.id === id ? { ...i, unitPrice, totalValue } : i) } : prev);
+  };
+
+  const handleCategorySaved = (id: string, category: string | null) => {
+    setData(prev => prev ? { ...prev, items: prev.items.map(i => i.id === id ? { ...i, category } : i) } : prev);
   };
 
   useEffect(() => { load(true); }, []);
@@ -174,8 +232,8 @@ export default function RenderPage() {
                 {syncing
                   ? "Se sincronizează cu SmartBill..."
                   : data?.syncedAt
-                    ? `Ultimul sync: ${new Date(data.syncedAt).toLocaleString("ro-RO")}${totalValue > 0 ? ` · Valoare totală: ${fmtRON(totalValue)}` : " · Click pe preț pentru a-l edita"}`
-                    : "Sincronizare automată zilnică la 06:00 · Click pe preț pentru a-l edita"}
+                    ? `Ultimul sync: ${new Date(data.syncedAt).toLocaleString("ro-RO")}${totalValue > 0 ? ` · Valoare totală: ${fmtRON(totalValue)}` : ""} · Click pe preț sau categorie pentru a edita`
+                    : "Sincronizare automată zilnică la 06:00 · Click pe preț sau categorie pentru a edita"}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -220,7 +278,9 @@ export default function RenderPage() {
                           <p className="truncate" title={item.name}>{item.name}</p>
                         </td>
                         <td className="px-4 py-2.5 text-muted-foreground">{item.sku ?? "—"}</td>
-                        <td className="px-4 py-2.5 text-muted-foreground">{item.category ?? "—"}</td>
+                        <td className="px-4 py-2.5">
+                          <CategoryCell item={item} onSaved={handleCategorySaved} />
+                        </td>
                         <td className="px-4 py-2.5 font-semibold">{fmtNum(item.quantity)} {item.unit ?? ""}</td>
                         <td className="px-4 py-2.5">
                           <PriceCell item={item} onSaved={handlePriceSaved} />
