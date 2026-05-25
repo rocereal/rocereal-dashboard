@@ -175,7 +175,7 @@ function ProductStockTable({ items, loading }: { items: StockItem[]; loading: bo
   return (
     <Card className="shadow-xs flex flex-col">
       <CardHeader className="rounded-t-lg bg-[#1e3a5f] text-white pb-2 pt-2.5 px-3">
-        <CardTitle className="text-sm font-bold tracking-wide">3. STOCURI PE PRODUSE (LA ZI)</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">4. STOCURI PE PRODUSE (LA ZI)</CardTitle>
       </CardHeader>
       <CardContent className="p-0 flex-1">
         <table className="w-full text-[11px]">
@@ -242,7 +242,7 @@ function DailySalesByCategoryTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#2d6a4f] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">4. VÂNZĂRI ZILNICE (BUC.) – PE CATEGORII</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">5. VÂNZĂRI ZILNICE (BUC.) – PE CATEGORII</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -305,7 +305,7 @@ function DailySalesByProductTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#2d6a4f] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">5. VÂNZĂRI ZILNICE – PE PRODUSE (TOP 15)</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">6. VÂNZĂRI ZILNICE – PE PRODUSE (TOP 15)</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -389,7 +389,7 @@ function WeeklySalesByCategoryTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#1a4b8c] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">6. VÂNZĂRI SĂPTĂMÂNALE – PE CATEGORII</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">3. VÂNZĂRI SĂPTĂMÂNALE – PE CATEGORII</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -964,7 +964,10 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
         </div>
       </div>
 
-      {/* Sections 3+4+5: Stock (left) + Daily by category + Daily by product + Notes (right) */}
+      {/* Section 3: Weekly sales — full width */}
+      <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} spendByCategory={spendByCategory} callsByCategory={callsByCategory} loading={loading} />
+
+      {/* Sections 4+5+6: Stock (left) + Daily by category + Daily by product + Notes (right) */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <div className="lg:col-span-2"><ProductStockTable items={filteredStockItems} loading={loading} /></div>
         <div className="lg:col-span-3 flex flex-col gap-4">
@@ -973,9 +976,6 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
           <NotesCard stockItems={filteredStockItems} products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} channelRows={channelRows} metrics={metrics} prevMetrics={prevMetrics} loading={loading} />
         </div>
       </div>
-
-      {/* Section 6: Weekly sales — full width */}
-      <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} spendByCategory={spendByCategory} callsByCategory={callsByCategory} loading={loading} />
     </div>
   );
 }
