@@ -175,7 +175,7 @@ function ProductStockTable({ items, loading }: { items: StockItem[]; loading: bo
   return (
     <Card className="shadow-xs flex flex-col">
       <CardHeader className="rounded-t-lg bg-[#1e3a5f] text-white pb-2 pt-2.5 px-3">
-        <CardTitle className="text-sm font-bold tracking-wide">1. STOCURI PE PRODUSE (LA ZI)</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">3. STOCURI PE PRODUSE (LA ZI)</CardTitle>
       </CardHeader>
       <CardContent className="p-0 flex-1">
         <table className="w-full text-[11px]">
@@ -242,7 +242,7 @@ function DailySalesByCategoryTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#2d6a4f] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">2. VÂNZĂRI ZILNICE (BUC.) – PE CATEGORII</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">4. VÂNZĂRI ZILNICE (BUC.) – PE CATEGORII</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -305,7 +305,7 @@ function DailySalesByProductTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#2d6a4f] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">3. VÂNZĂRI ZILNICE – PE PRODUSE (TOP 15)</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">5. VÂNZĂRI ZILNICE – PE PRODUSE (TOP 15)</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -389,7 +389,7 @@ function WeeklySalesByCategoryTable({
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#1a4b8c] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">4. VÂNZĂRI SĂPTĂMÂNALE – PE CATEGORII</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">6. VÂNZĂRI SĂPTĂMÂNALE – PE CATEGORII</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -492,7 +492,7 @@ function MarketingInvestmentCard({ metrics, prevMetrics, totalSpend, prevSpend, 
   return (
     <Card className="shadow-xs h-full">
       <CardHeader className="rounded-t-lg bg-[#c0392b] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">5. INVESTIȚIE MARKETING VS. CIFRA DE AFACERI</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">1. INVESTIȚIE MARKETING VS. CIFRA DE AFACERI</CardTitle>
       </CardHeader>
       <CardContent className="pt-3 pb-3 px-4">
         {loading ? <p className="text-sm text-muted-foreground py-4 text-center">Se încarcă...</p> : (
@@ -528,7 +528,7 @@ function ChannelPerformanceTable({ rows, loading }: { rows: ChannelRow[]; loadin
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#2c3e50] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">6. MARKETING – PERFORMANȚĂ CANALE (TOTAL)</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">2. MARKETING – PERFORMANȚĂ CANALE (TOTAL)</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
@@ -628,7 +628,7 @@ function NotesCard({ stockItems, products, catMap, prevProducts, channelRows, me
   return (
     <Card className="shadow-xs h-full">
       <CardHeader className="rounded-t-lg bg-[#b8860b] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">7. OBSERVAȚII / NOTE</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">OBSERVAȚII / NOTE</CardTitle>
       </CardHeader>
       <CardContent className="pt-3 pb-3 px-4">
         {loading ? <p className="text-sm text-muted-foreground py-4 text-center">Se generează...</p> : (
@@ -954,28 +954,28 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
         {kpis.map(k => <KpiCard key={k.label} {...k} />)}
       </div>
 
-      {/* Stock (left) + Daily sales (right) */}
+      {/* Sections 1+2: Investment + Channel performance */}
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 items-start">
+        <div className="lg:col-span-2">
+          <MarketingInvestmentCard metrics={metrics} prevMetrics={prevMetrics} totalSpend={totalSpend} prevSpend={prevTotalSpend} monthRevenue={monthRevenue} monthSpend={monthSpend} loading={loading} />
+        </div>
+        <div className="lg:col-span-4">
+          <ChannelPerformanceTable rows={channelRows} loading={loading} />
+        </div>
+      </div>
+
+      {/* Sections 3+4+5: Stock (left) + Daily by category + Daily by product + Notes (right) */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <div className="lg:col-span-2"><ProductStockTable items={filteredStockItems} loading={loading} /></div>
         <div className="lg:col-span-3 flex flex-col gap-4">
           <DailySalesByCategoryTable products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
           <DailySalesByProductTable  products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
-        </div>
-      </div>
-
-      {/* Weekly sales — full width */}
-      <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} spendByCategory={spendByCategory} callsByCategory={callsByCategory} loading={loading} />
-
-      {/* Channel performance (wider) | Marketing investment + Notes (narrower, stacked) */}
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 items-start">
-        <div className="lg:col-span-4">
-          <ChannelPerformanceTable rows={channelRows} loading={loading} />
-        </div>
-        <div className="lg:col-span-2 flex flex-col gap-4">
-          <MarketingInvestmentCard metrics={metrics} prevMetrics={prevMetrics} totalSpend={totalSpend} prevSpend={prevTotalSpend} monthRevenue={monthRevenue} monthSpend={monthSpend} loading={loading} />
           <NotesCard stockItems={filteredStockItems} products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} channelRows={channelRows} metrics={metrics} prevMetrics={prevMetrics} loading={loading} />
         </div>
       </div>
+
+      {/* Section 6: Weekly sales — full width */}
+      <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} spendByCategory={spendByCategory} callsByCategory={callsByCategory} loading={loading} />
     </div>
   );
 }
