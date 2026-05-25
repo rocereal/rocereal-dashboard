@@ -954,28 +954,28 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
         {kpis.map(k => <KpiCard key={k.label} {...k} />)}
       </div>
 
-      {/* Stock (left) + Daily + Weekly sales (right) */}
+      {/* Stock (left) + Daily sales (right) */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <div className="lg:col-span-2"><ProductStockTable items={filteredStockItems} loading={loading} /></div>
         <div className="lg:col-span-3 flex flex-col gap-4">
           <DailySalesByCategoryTable products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
           <DailySalesByProductTable  products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
-          <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} spendByCategory={spendByCategory} callsByCategory={callsByCategory} loading={loading} />
         </div>
       </div>
 
-      {/* Channel performance + Marketing investment */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
-        <div className="lg:col-span-3">
+      {/* Weekly sales — full width */}
+      <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} spendByCategory={spendByCategory} callsByCategory={callsByCategory} loading={loading} />
+
+      {/* Channel performance (wider) | Marketing investment + Notes (narrower, stacked) */}
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-4 items-start">
+        <div className="lg:col-span-4">
           <ChannelPerformanceTable rows={channelRows} loading={loading} />
         </div>
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 flex flex-col gap-4">
           <MarketingInvestmentCard metrics={metrics} prevMetrics={prevMetrics} totalSpend={totalSpend} prevSpend={prevTotalSpend} monthRevenue={monthRevenue} monthSpend={monthSpend} loading={loading} />
+          <NotesCard stockItems={filteredStockItems} products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} channelRows={channelRows} metrics={metrics} prevMetrics={prevMetrics} loading={loading} />
         </div>
       </div>
-
-      {/* Notes */}
-      <NotesCard stockItems={filteredStockItems} products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} channelRows={channelRows} metrics={metrics} prevMetrics={prevMetrics} loading={loading} />
     </div>
   );
 }
