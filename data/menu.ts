@@ -33,9 +33,10 @@ export const menudata = {
       url: "#",
       icon: Banknote,
       items: [
-        { title: "Rapoarte Financiare", url: "/finance" },
-        { title: "Analiza AI",          url: "/finance/analiza-ai" },
-        { title: "Raport marketing",    url: "/finance/raport-marketing" },
+        { title: "Rapoarte Financiare",       url: "/finance" },
+        { title: "Analiza AI",                url: "/finance/analiza-ai" },
+        { title: "Raport vânzări live",       url: "/finance/raport-marketing" },
+        { title: "Raport vânzări săptămânal", url: "/finance/raport-saptamanal" },
       ],
     },
     {
@@ -148,9 +149,10 @@ export const menudataMobile = {
       url: "#",
       icon: LayoutDashboard,
       items: [
-        { title: "Rapoarte Financiare", url: "/finance" },
-        { title: "Analiza AI",          url: "/finance/analiza-ai" },
-        { title: "Raport marketing",    url: "/finance/raport-marketing" },
+        { title: "Rapoarte Financiare",       url: "/finance" },
+        { title: "Analiza AI",                url: "/finance/analiza-ai" },
+        { title: "Raport vânzări live",       url: "/finance/raport-marketing" },
+        { title: "Raport vânzări săptămânal", url: "/finance/raport-saptamanal" },
         { title: "Raport Clienti",      url: "/crm" },
         { title: "Tracking Mașini",     url: "/tracking" },
         { title: "Canale Vanzare",      url: "/ecommerce" },

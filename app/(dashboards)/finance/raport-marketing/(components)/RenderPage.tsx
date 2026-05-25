@@ -734,10 +734,11 @@ function CategoryFilterBar({
 
 // ─── Main RenderPage ──────────────────────────────────────────────────────────
 
-export default function RenderPage() {
-  const now     = new Date();
-  const curWeek = getWeekRange(now);
-  const prevWeek = getWeekRange(subWeeks(now, 1));
+export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) {
+  const now      = new Date();
+  const base     = weekOffset > 0 ? subWeeks(now, weekOffset) : now;
+  const curWeek  = getWeekRange(base);
+  const prevWeek = getWeekRange(subWeeks(base, 1));
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(curWeek.from, i));
 
   const [stockItems,      setStockItems]      = useState<StockItem[]>([]);
@@ -896,8 +897,12 @@ export default function RenderPage() {
     <div className="flex flex-col gap-5 pb-10">
       {/* Header */}
       <div className="rounded-xl border bg-gradient-to-r from-[#0f2a4a] to-[#1a4b8c] text-white px-6 py-5">
-        <p className="text-xs font-semibold tracking-widest uppercase opacity-70 mb-1">Dashboard săptămânal</p>
-        <h1 className="text-2xl font-black tracking-tight">RETROSPECTIVĂ SĂPTĂMÂNALĂ – MARKETING</h1>
+        <p className="text-xs font-semibold tracking-widest uppercase opacity-70 mb-1">
+          {weekOffset > 0 ? "Raport săptămânal" : "Dashboard live"}
+        </p>
+        <h1 className="text-2xl font-black tracking-tight">
+          {weekOffset > 0 ? "RAPORT VÂNZĂRI SĂPTĂMÂNAL" : "RAPORT VÂNZĂRI LIVE"}
+        </h1>
         <div className="mt-2 flex flex-col sm:flex-row gap-3 text-xs opacity-80">
           <span><b>Săptămâna:</b> {capitalize(weekLabel(curWeek.from, curWeek.to))}</span>
           <span><b>Data raport:</b> {capitalize(format(now, "d MMMM yyyy (EEEE)", { locale: ro }))}</span>
