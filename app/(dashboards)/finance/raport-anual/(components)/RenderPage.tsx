@@ -573,8 +573,8 @@ export default function RenderPage() {
                   <YAxis yAxisId="left"  tick={{ fontSize: 10 }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
                   <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
                   <Tooltip
-                    formatter={(value: number, name: string) => [
-                      fmtRON(value),
+                    formatter={(value: number | undefined, name: string) => [
+                      fmtRON(value ?? 0),
                       name === "revenue" ? `CA ${year}` : name === "prevRevenue" ? `CA ${year - 1}` : "Marketing",
                     ]}
                     labelStyle={{ fontSize: 11 }}
