@@ -95,6 +95,7 @@ interface CallsData {
   channelsAnswered: { facebook: number; tiktok: number; google: number };
 }
 interface AdsData { spend: number; impressions: number; clicks: number; conversions: number }
+interface CampaignSpend { id: string; spend: number }
 interface AttributionData {
   facebook: { conversions: number; revenue: number };
   tiktok:   { conversions: number; revenue: number };
@@ -361,10 +362,13 @@ function DailySalesByProductTable({
 // ─── 3. Weekly sales by category ─────────────────────────────────────────────
 
 function WeeklySalesByCategoryTable({
-  products, catMap, prevProducts, loading,
+  products, catMap, prevProducts, spendByCategory, callsByCategory, loading,
 }: {
   products: ProductSaleItem[]; catMap: Map<string, string>;
-  prevProducts: ProductSaleItem[]; loading: boolean;
+  prevProducts: ProductSaleItem[];
+  spendByCategory: Map<string, number>;
+  callsByCategory: Map<string, { total: number; answered: number }>;
+  loading: boolean;
 }) {
   const cur  = buildWeeklyByCategory(products, catMap);
   const prev = buildWeeklyByCategory(prevProducts, catMap);
@@ -375,6 +379,12 @@ function WeeklySalesByCategoryTable({
   const grandPrevQty = Array.from(prev.values()).reduce((s, v) => s + v.qty, 0);
   const grandCurVal  = totalCurVal;
   const grandPrevVal = Array.from(prev.values()).reduce((s, v) => s + v.val, 0);
+  const grandSpend   = Array.from(spendByCategory.values()).reduce((s, v) => s + v, 0);
+  const grandCallsT  = Math.round(Array.from(callsByCategory.values()).reduce((s, v) => s + v.total, 0));
+  const grandCallsA  = Math.round(Array.from(callsByCategory.values()).reduce((s, v) => s + v.answered, 0));
+  const grandOrders  = Array.from(cur.values()).reduce((s, v) => s + v.orders, 0);
+
+  const COLS = ["Categorie", "Buc. cur.", "Buc. prec.", "Investiție mktg", "Apeluri totale", "Apeluri răspunse", "Cost/apel", "Comenzi", "Rată conversie", "Val. cur. (RON)", "Val. prec. (RON)", "Var. %", "% din total"];
 
   return (
     <Card className="shadow-xs">
@@ -386,25 +396,36 @@ function WeeklySalesByCategoryTable({
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-[#1a4b8c]/10 border-b">
-                {["Categorie", "Buc. cur.", "Buc. prec.", "Val. cur. (RON)", "Val. prec. (RON)", "Var. %", "% din total"].map(h => (
+                {COLS.map(h => (
                   <th key={h} className="text-left font-semibold text-[#1a4b8c] px-3 py-2 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={7} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
+                <tr><td colSpan={COLS.length} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
               ) : (
                 <>
                   {categories.map(cat => {
-                    const c      = cur.get(cat)  ?? { qty: 0, val: 0, orders: 0 };
-                    const p      = prev.get(cat) ?? { qty: 0, val: 0, orders: 0 };
-                    const pctVal = totalCurVal > 0 ? ((c.val / totalCurVal) * 100).toFixed(1) + "%" : "—";
+                    const c       = cur.get(cat)  ?? { qty: 0, val: 0, orders: 0 };
+                    const p       = prev.get(cat) ?? { qty: 0, val: 0, orders: 0 };
+                    const spend   = spendByCategory.get(cat) ?? 0;
+                    const callsT  = Math.round(callsByCategory.get(cat)?.total    ?? 0);
+                    const callsA  = Math.round(callsByCategory.get(cat)?.answered ?? 0);
+                    const cpa     = callsT > 0 && spend > 0 ? spend / callsT : null;
+                    const rate    = callsT > 0 ? (callsA / callsT) * 100 : null;
+                    const pctVal  = totalCurVal > 0 ? ((c.val / totalCurVal) * 100).toFixed(1) + "%" : "—";
                     return (
                       <tr key={cat} className="border-b last:border-0 hover:bg-muted/30">
                         <td className="px-3 py-1.5 font-medium">{cat}</td>
                         <td className="px-3 py-1.5">{c.qty > 0 ? fmtNum(c.qty) : "—"}</td>
                         <td className="px-3 py-1.5 text-muted-foreground">{p.qty > 0 ? fmtNum(p.qty) : "—"}</td>
+                        <td className="px-3 py-1.5 font-semibold text-orange-700">{spend > 0 ? fmtRON(spend) : "—"}</td>
+                        <td className="px-3 py-1.5">{callsT > 0 ? fmtNum(callsT) : "—"}</td>
+                        <td className="px-3 py-1.5">{callsA > 0 ? fmtNum(callsA) : "—"}</td>
+                        <td className="px-3 py-1.5">{cpa !== null ? fmtRON(cpa) : "—"}</td>
+                        <td className="px-3 py-1.5 font-semibold">{c.orders > 0 ? fmtNum(c.orders) : "—"}</td>
+                        <td className="px-3 py-1.5 font-semibold text-[#5c2d8c]">{rate !== null ? rate.toFixed(1) + "%" : "—"}</td>
                         <td className="px-3 py-1.5 font-semibold">{c.val > 0 ? fmtRON(c.val) : "—"}</td>
                         <td className="px-3 py-1.5 text-muted-foreground">{p.val > 0 ? fmtRON(p.val) : "—"}</td>
                         <td className="px-3 py-1.5"><VariationBadge pct={pctChg(c.val, p.val)} /></td>
@@ -416,6 +437,12 @@ function WeeklySalesByCategoryTable({
                     <td className="px-3 py-2">TOTAL</td>
                     <td className="px-3 py-2">{grandCurQty > 0 ? fmtNum(grandCurQty) : "—"}</td>
                     <td className="px-3 py-2">{grandPrevQty > 0 ? fmtNum(grandPrevQty) : "—"}</td>
+                    <td className="px-3 py-2 text-orange-700">{grandSpend > 0 ? fmtRON(grandSpend) : "—"}</td>
+                    <td className="px-3 py-2">{grandCallsT > 0 ? fmtNum(grandCallsT) : "—"}</td>
+                    <td className="px-3 py-2">{grandCallsA > 0 ? fmtNum(grandCallsA) : "—"}</td>
+                    <td className="px-3 py-2">{grandCallsT > 0 && grandSpend > 0 ? fmtRON(grandSpend / grandCallsT) : "—"}</td>
+                    <td className="px-3 py-2">{grandOrders > 0 ? fmtNum(grandOrders) : "—"}</td>
+                    <td className="px-3 py-2">{grandCallsT > 0 ? ((grandCallsA / grandCallsT) * 100).toFixed(1) + "%" : "—"}</td>
                     <td className="px-3 py-2">{grandCurVal > 0 ? fmtRON(grandCurVal) : "—"}</td>
                     <td className="px-3 py-2">{grandPrevVal > 0 ? fmtRON(grandPrevVal) : "—"}</td>
                     <td className="px-3 py-2"><VariationBadge pct={pctChg(grandCurVal, grandPrevVal)} /></td>
@@ -694,6 +721,12 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
   const [monthRevenue,    setMonthRevenue]    = useState(0);
   const [monthSpend,      setMonthSpend]      = useState(0);
   const [loading,         setLoading]         = useState(true);
+  const [fbCampaigns, setFbCampaigns] = useState<CampaignSpend[]>([]);
+  const [gCampaigns,  setGCampaigns]  = useState<CampaignSpend[]>([]);
+  const [ttCampaigns, setTtCampaigns] = useState<CampaignSpend[]>([]);
+  const [fbLabels, setFbLabels] = useState<Record<string, string | null>>({});
+  const [gLabels,  setGLabels]  = useState<Record<string, string | null>>({});
+  const [ttLabels, setTtLabels] = useState<Record<string, string | null>>({});
 
   // ── Category filter (persisted in localStorage) ────────────────────────────
   const [excluded, setExcluded] = useState<Set<string>>(() => {
@@ -716,6 +749,7 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
       fbRes, gRes, ttRes, prevFbRes, prevGRes, prevTtRes,
       curSalesRes, prevSalesRes,
       monthMetricsRes, monthFbRes, monthGRes, monthTtRes,
+      fbLabelsRes, gLabelsRes, ttLabelsRes,
     ] = await Promise.allSettled([
       fetch("/api/stock",                                                                             { cache: "no-store" }).then(r => r.json()),
       fetch(`/api/finance/metrics?from=${cf}&to=${ct}`,                                               { cache: "no-store" }).then(r => r.json()),
@@ -734,6 +768,9 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
       fetch(`/api/education/facebook-ads?level=campaign&from=${mf}&to=${mt}`,                         { cache: "no-store" }).then(r => r.json()),
       fetch(`/api/google-ads/campaigns?from=${mf}&to=${mt}`,                                          { cache: "no-store" }).then(r => r.json()),
       fetch(`/api/tiktok-ads/campaigns?from=${mf}&to=${mt}`,                                          { cache: "no-store" }).then(r => r.json()),
+      fetch("/api/campaigns/labels?platform=facebook",                                                 { cache: "no-store" }).then(r => r.json()),
+      fetch("/api/campaigns/labels?platform=google",                                                   { cache: "no-store" }).then(r => r.json()),
+      fetch("/api/campaigns/labels?platform=tiktok",                                                   { cache: "no-store" }).then(r => r.json()),
     ]);
 
     if (stockRes.status      === "fulfilled") setStockItems((stockRes.value as { items: StockItem[] }).items ?? []);
@@ -755,6 +792,20 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
     const g   = gRes.status   === "fulfilled" ? parseG(gRes.value)    : { spend: 0, impressions: 0, clicks: 0, conversions: 0 };
     const tt  = ttRes.status  === "fulfilled" ? parseTt(ttRes.value)  : { spend: 0, impressions: 0, clicks: 0, conversions: 0 };
     setFbAds(fb); setGAds(g); setTtAds(tt);
+
+    // Per-campaign spend for category attribution
+    const extractFb = (v: unknown): CampaignSpend[] => {
+      const rows: Record<string, unknown>[] = Array.isArray(v) ? v : Array.isArray((v as Record<string, unknown>)?.campaigns) ? (v as Record<string, unknown[]>).campaigns as Record<string, unknown>[] : Array.isArray((v as Record<string, unknown>)?.data) ? (v as Record<string, unknown[]>).data as Record<string, unknown>[] : [];
+      return rows.map(r => ({ id: String(r.id ?? r.campaign_id ?? ""), spend: Number(r.spend) || 0 })).filter(c => c.id);
+    };
+    const extractG  = (v: unknown): CampaignSpend[] => ((v as Record<string, unknown>)?.campaigns as Record<string, unknown>[] ?? []).map(r => ({ id: String(r.id ?? ""), spend: Number(r.spend) || 0 })).filter(c => c.id);
+    const extractTt = (v: unknown): CampaignSpend[] => { const d = (v && !(v as Record<string, unknown>).error) ? v : null; return ((d as Record<string, unknown>)?.campaigns as Record<string, unknown>[] ?? []).map(r => ({ id: String(r.id ?? ""), spend: Number(r.spend) || 0 })).filter(c => c.id); };
+    if (fbRes.status === "fulfilled") setFbCampaigns(extractFb(fbRes.value));
+    if (gRes.status  === "fulfilled") setGCampaigns(extractG(gRes.value));
+    if (ttRes.status === "fulfilled") setTtCampaigns(extractTt(ttRes.value));
+    if (fbLabelsRes.status === "fulfilled") setFbLabels(fbLabelsRes.value as Record<string, string | null>);
+    if (gLabelsRes.status  === "fulfilled") setGLabels(gLabelsRes.value  as Record<string, string | null>);
+    if (ttLabelsRes.status === "fulfilled") setTtLabels(ttLabelsRes.value as Record<string, string | null>);
 
     const pFb = prevFbRes.status === "fulfilled" ? parseFb(prevFbRes.value).spend : 0;
     const pG  = prevGRes.status  === "fulfilled" ? parseG(prevGRes.value).spend   : 0;
@@ -806,6 +857,43 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
     () => prevProducts.filter(p => !excluded.has(catMap.get(p.productCode) ?? "Necategorizat")),
     [prevProducts, catMap, excluded]
   );
+  const spendByCategory = useMemo(() => {
+    const map = new Map<string, number>();
+    const add = (campaigns: CampaignSpend[], labels: Record<string, string | null>) => {
+      for (const c of campaigns) {
+        if (c.spend <= 0) continue;
+        const cat = labels[c.id] ?? "Necategorizat";
+        map.set(cat, (map.get(cat) ?? 0) + c.spend);
+      }
+    };
+    add(fbCampaigns, fbLabels);
+    add(gCampaigns,  gLabels);
+    add(ttCampaigns, ttLabels);
+    return map;
+  }, [fbCampaigns, gCampaigns, ttCampaigns, fbLabels, gLabels, ttLabels]);
+
+  const callsByCategory = useMemo(() => {
+    const map = new Map<string, { total: number; answered: number }>();
+    const distribute = (
+      campaigns: CampaignSpend[], labels: Record<string, string | null>,
+      chTotal: number, chAnswered: number,
+    ) => {
+      const chSpend = campaigns.reduce((s, c) => s + c.spend, 0);
+      if (chSpend === 0 || chTotal === 0) return;
+      for (const c of campaigns) {
+        if (c.spend <= 0) continue;
+        const cat = labels[c.id] ?? "Necategorizat";
+        const ratio = c.spend / chSpend;
+        const cur = map.get(cat) ?? { total: 0, answered: 0 };
+        map.set(cat, { total: cur.total + chTotal * ratio, answered: cur.answered + chAnswered * ratio });
+      }
+    };
+    distribute(fbCampaigns, fbLabels, calls?.channels.facebook ?? 0, calls?.channelsAnswered.facebook ?? 0);
+    distribute(gCampaigns,  gLabels,  calls?.channels.google   ?? 0, calls?.channelsAnswered.google   ?? 0);
+    distribute(ttCampaigns, ttLabels, calls?.channels.tiktok   ?? 0, calls?.channelsAnswered.tiktok   ?? 0);
+    return map;
+  }, [fbCampaigns, gCampaigns, ttCampaigns, fbLabels, gLabels, ttLabels, calls]);
+
   const totalSpend      = fbAds.spend + gAds.spend + ttAds.spend;
   const totalRevenue    = metrics?.incasate.total ?? 0;
   const prevRevenue     = prevMetrics?.incasate.total ?? 0;
@@ -872,7 +960,7 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
         <div className="lg:col-span-3 flex flex-col gap-4">
           <DailySalesByCategoryTable products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
           <DailySalesByProductTable  products={filteredCurProducts} catMap={catMap} weekDays={weekDays} prevProducts={filteredPrevProducts} loading={loading} />
-          <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} loading={loading} />
+          <WeeklySalesByCategoryTable products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} spendByCategory={spendByCategory} callsByCategory={callsByCategory} loading={loading} />
         </div>
       </div>
 
