@@ -431,75 +431,6 @@ function WeeklySalesByCategoryTable({
   );
 }
 
-// ─── 5. Calls by channel ──────────────────────────────────────────────────────
-
-function CallsByChannelTable({ calls, loading }: { calls: CallsData | null; loading: boolean }) {
-  const ch  = calls?.channels         ?? { facebook: 0, tiktok: 0, google: 0 };
-  const cha = calls?.channelsAnswered  ?? { facebook: 0, tiktok: 0, google: 0 };
-  const totalKnown   = ch.facebook  + ch.tiktok  + ch.google;
-  const answeredKnown = cha.facebook + cha.tiktok + cha.google;
-  const organicTotal   = Math.max(0, (calls?.total    ?? 0) - totalKnown);
-  const organicAnswered = Math.max(0, (calls?.answered ?? 0) - answeredKnown);
-
-  const rows = [
-    { canal: "Facebook Ads", total: ch.facebook,  answered: cha.facebook  },
-    { canal: "TikTok Ads",   total: ch.tiktok,    answered: cha.tiktok    },
-    { canal: "Google Ads",   total: ch.google,    answered: cha.google    },
-    { canal: "Organic / Direct", total: organicTotal, answered: organicAnswered },
-  ];
-
-  const grandTotal   = calls?.total    ?? 0;
-  const grandAnswered = calls?.answered ?? 0;
-  const grandRate    = grandTotal > 0 ? (grandAnswered / grandTotal) * 100 : null;
-
-  return (
-    <Card className="shadow-xs">
-      <CardHeader className="rounded-t-lg bg-[#5c2d8c] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">5. APELURI (PE CANAL)</CardTitle>
-        <p className="text-[11px] text-white/70 mt-0.5">Distribuția apelurilor primite pe canalul de proveniență · săptămâna curentă</p>
-      </CardHeader>
-      <CardContent className="p-0">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="bg-[#5c2d8c]/10 border-b">
-              {["Canal", "Apeluri totale", "Apeluri răspunse", "Lead-uri calificate", "Rată conversie"].map(h => (
-                <th key={h} className="text-left font-semibold text-[#5c2d8c] px-3 py-2 whitespace-nowrap">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={5} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
-            ) : (
-              <>
-                {rows.map(r => {
-                  const rate = r.total > 0 ? ((r.answered / r.total) * 100).toFixed(1) + "%" : "—";
-                  return (
-                    <tr key={r.canal} className="border-b last:border-0 hover:bg-muted/30">
-                      <td className="px-3 py-2 font-medium">{r.canal}</td>
-                      <td className="px-3 py-2 font-semibold">{r.total > 0 ? fmtNum(r.total) : "—"}</td>
-                      <td className="px-3 py-2">{r.answered > 0 ? fmtNum(r.answered) : "—"}</td>
-                      <td className="px-3 py-2 text-muted-foreground">—</td>
-                      <td className="px-3 py-2 font-semibold text-[#5c2d8c]">{rate}</td>
-                    </tr>
-                  );
-                })}
-                <tr className="bg-[#5c2d8c]/5 font-bold border-t-2">
-                  <td className="px-3 py-2">TOTAL</td>
-                  <td className="px-3 py-2">{grandTotal > 0 ? fmtNum(grandTotal) : "—"}</td>
-                  <td className="px-3 py-2">{grandAnswered > 0 ? fmtNum(grandAnswered) : "—"}</td>
-                  <td className="px-3 py-2">—</td>
-                  <td className="px-3 py-2">{grandRate !== null ? grandRate.toFixed(1) + "%" : "—"}</td>
-                </tr>
-              </>
-            )}
-          </tbody>
-        </table>
-      </CardContent>
-    </Card>
-  );
-}
-
 // ─── 5. MarketingInvestmentCard ───────────────────────────────────────────────
 
 function MarketingInvestmentCard({ metrics, prevMetrics, totalSpend, prevSpend, monthRevenue, monthSpend, loading }: {
@@ -534,7 +465,7 @@ function MarketingInvestmentCard({ metrics, prevMetrics, totalSpend, prevSpend, 
   return (
     <Card className="shadow-xs h-full">
       <CardHeader className="rounded-t-lg bg-[#c0392b] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">6. INVESTIȚIE MARKETING VS. CIFRA DE AFACERI</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">5. INVESTIȚIE MARKETING VS. CIFRA DE AFACERI</CardTitle>
       </CardHeader>
       <CardContent className="pt-3 pb-3 px-4">
         {loading ? <p className="text-sm text-muted-foreground py-4 text-center">Se încarcă...</p> : (
@@ -555,7 +486,7 @@ function MarketingInvestmentCard({ metrics, prevMetrics, totalSpend, prevSpend, 
 // ─── 6. ChannelPerformanceTable ───────────────────────────────────────────────
 
 interface ChannelRow {
-  canal: string; spend: number; calls: number; costPerCall: number | null;
+  canal: string; spend: number; calls: number; callsAnswered: number; costPerCall: number | null;
   leads: number; cpl: number | null; conversions: number; costPerConv: number | null;
   revenue: number; roas: number | null;
 }
@@ -563,55 +494,63 @@ interface ChannelRow {
 function ChannelPerformanceTable({ rows, loading }: { rows: ChannelRow[]; loading: boolean }) {
   const tot = rows.reduce((acc, r) => ({
     ...acc, spend: acc.spend + r.spend, calls: acc.calls + r.calls,
+    callsAnswered: acc.callsAnswered + r.callsAnswered,
     conversions: acc.conversions + r.conversions, revenue: acc.revenue + r.revenue,
-  }), { spend: 0, calls: 0, conversions: 0, revenue: 0 });
+  }), { spend: 0, calls: 0, callsAnswered: 0, conversions: 0, revenue: 0 });
 
   return (
     <Card className="shadow-xs">
       <CardHeader className="rounded-t-lg bg-[#2c3e50] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">7. MARKETING – PERFORMANȚĂ CANALE (TOTAL)</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">6. MARKETING – PERFORMANȚĂ CANALE (TOTAL)</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="bg-[#2c3e50]/10 border-b">
-              {["Canal", "Spend (RON)", "Apeluri", "Cost / apel", "Comenzi", "Vânzări (RON)", "% din CA"].map(h => (
-                <th key={h} className="text-left font-semibold text-[#2c3e50] px-3 py-2 whitespace-nowrap">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={7} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
-            ) : (
-              <>
-                {rows.map(r => {
-                  const pctCA = r.revenue > 0 && r.spend > 0 ? ((r.spend / r.revenue) * 100).toFixed(1) + "%" : "—";
-                  return (
-                    <tr key={r.canal} className="border-b last:border-0 hover:bg-muted/30">
-                      <td className="px-3 py-2 font-medium">{r.canal}</td>
-                      <td className="px-3 py-2">{r.spend > 0 ? fmtRON(r.spend) : "—"}</td>
-                      <td className="px-3 py-2">{r.calls > 0 ? fmtNum(r.calls) : "—"}</td>
-                      <td className="px-3 py-2">{r.costPerCall !== null ? fmtRON(r.costPerCall) : "—"}</td>
-                      <td className="px-3 py-2 font-semibold">{r.conversions > 0 ? fmtNum(r.conversions) : "—"}</td>
-                      <td className="px-3 py-2 font-semibold text-green-700 dark:text-green-400">{r.revenue > 0 ? fmtRON(r.revenue) : "—"}</td>
-                      <td className="px-3 py-2 font-semibold text-[#2c3e50]">{pctCA}</td>
-                    </tr>
-                  );
-                })}
-                <tr className="bg-[#2c3e50]/5 font-bold border-t-2">
-                  <td className="px-3 py-2">TOTAL</td>
-                  <td className="px-3 py-2">{tot.spend > 0 ? fmtRON(tot.spend) : "—"}</td>
-                  <td className="px-3 py-2">{tot.calls > 0 ? fmtNum(tot.calls) : "—"}</td>
-                  <td className="px-3 py-2">{tot.calls > 0 && tot.spend > 0 ? fmtRON(tot.spend / tot.calls) : "—"}</td>
-                  <td className="px-3 py-2">{tot.conversions > 0 ? fmtNum(tot.conversions) : "—"}</td>
-                  <td className="px-3 py-2">{tot.revenue > 0 ? fmtRON(tot.revenue) : "—"}</td>
-                  <td className="px-3 py-2">{tot.revenue > 0 && tot.spend > 0 ? ((tot.spend / tot.revenue) * 100).toFixed(1) + "%" : "—"}</td>
-                </tr>
-              </>
-            )}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-[#2c3e50]/10 border-b">
+                {["Canal", "Spend (RON)", "Apeluri totale", "Apeluri răspunse", "Cost / apel", "Comenzi", "Vânzări (RON)", "% din CA", "Rată conversie"].map(h => (
+                  <th key={h} className="text-left font-semibold text-[#2c3e50] px-3 py-2 whitespace-nowrap">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr><td colSpan={9} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
+              ) : (
+                <>
+                  {rows.map(r => {
+                    const pctCA      = r.revenue > 0 && r.spend > 0 ? ((r.spend / r.revenue) * 100).toFixed(1) + "%" : "—";
+                    const convRate   = r.calls > 0 ? ((r.callsAnswered / r.calls) * 100).toFixed(1) + "%" : "—";
+                    return (
+                      <tr key={r.canal} className="border-b last:border-0 hover:bg-muted/30">
+                        <td className="px-3 py-2 font-medium">{r.canal}</td>
+                        <td className="px-3 py-2">{r.spend > 0 ? fmtRON(r.spend) : "—"}</td>
+                        <td className="px-3 py-2 font-semibold">{r.calls > 0 ? fmtNum(r.calls) : "—"}</td>
+                        <td className="px-3 py-2">{r.callsAnswered > 0 ? fmtNum(r.callsAnswered) : "—"}</td>
+                        <td className="px-3 py-2">{r.costPerCall !== null ? fmtRON(r.costPerCall) : "—"}</td>
+                        <td className="px-3 py-2 font-semibold">{r.conversions > 0 ? fmtNum(r.conversions) : "—"}</td>
+                        <td className="px-3 py-2 font-semibold text-green-700 dark:text-green-400">{r.revenue > 0 ? fmtRON(r.revenue) : "—"}</td>
+                        <td className="px-3 py-2 font-semibold text-[#2c3e50]">{pctCA}</td>
+                        <td className="px-3 py-2 font-semibold text-[#5c2d8c]">{convRate}</td>
+                      </tr>
+                    );
+                  })}
+                  <tr className="bg-[#2c3e50]/5 font-bold border-t-2">
+                    <td className="px-3 py-2">TOTAL</td>
+                    <td className="px-3 py-2">{tot.spend > 0 ? fmtRON(tot.spend) : "—"}</td>
+                    <td className="px-3 py-2">{tot.calls > 0 ? fmtNum(tot.calls) : "—"}</td>
+                    <td className="px-3 py-2">{tot.callsAnswered > 0 ? fmtNum(tot.callsAnswered) : "—"}</td>
+                    <td className="px-3 py-2">{tot.calls > 0 && tot.spend > 0 ? fmtRON(tot.spend / tot.calls) : "—"}</td>
+                    <td className="px-3 py-2">{tot.conversions > 0 ? fmtNum(tot.conversions) : "—"}</td>
+                    <td className="px-3 py-2">{tot.revenue > 0 ? fmtRON(tot.revenue) : "—"}</td>
+                    <td className="px-3 py-2">{tot.revenue > 0 && tot.spend > 0 ? ((tot.spend / tot.revenue) * 100).toFixed(1) + "%" : "—"}</td>
+                    <td className="px-3 py-2">{tot.calls > 0 ? ((tot.callsAnswered / tot.calls) * 100).toFixed(1) + "%" : "—"}</td>
+                  </tr>
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
       </CardContent>
     </Card>
   );
@@ -662,7 +601,7 @@ function NotesCard({ stockItems, products, catMap, prevProducts, channelRows, me
   return (
     <Card className="shadow-xs h-full">
       <CardHeader className="rounded-t-lg bg-[#b8860b] text-white pb-3 pt-3 px-4">
-        <CardTitle className="text-sm font-bold tracking-wide">8. OBSERVAȚII / NOTE</CardTitle>
+        <CardTitle className="text-sm font-bold tracking-wide">7. OBSERVAȚII / NOTE</CardTitle>
       </CardHeader>
       <CardContent className="pt-3 pb-3 px-4">
         {loading ? <p className="text-sm text-muted-foreground py-4 text-center">Se generează...</p> : (
@@ -878,11 +817,15 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
   const investPct       = totalRevenue  > 0 ? (totalSpend / totalRevenue) * 100        : 0;
 
   const attrRoas = (sp: number, rev: number) => sp > 0 && rev > 0 ? +(rev / sp).toFixed(2) : null;
+  const knownCalls    = (calls?.channels.facebook        ?? 0) + (calls?.channels.tiktok        ?? 0) + (calls?.channels.google        ?? 0);
+  const knownAnswered = (calls?.channelsAnswered.facebook ?? 0) + (calls?.channelsAnswered.tiktok ?? 0) + (calls?.channelsAnswered.google ?? 0);
+  const organicCalls    = Math.max(0, (calls?.total    ?? 0) - knownCalls);
+  const organicAnswered = Math.max(0, (calls?.answered ?? 0) - knownAnswered);
   const channelRows: ChannelRow[] = [
-    { canal: "Facebook Ads", spend: fbAds.spend, calls: calls?.channels.facebook ?? 0, costPerCall: calls?.channelsAnswered.facebook && fbAds.spend > 0 ? +(fbAds.spend / calls.channelsAnswered.facebook).toFixed(2) : null, leads: calls?.channels.facebook ?? 0, cpl: calls?.channels.facebook && fbAds.spend > 0 ? +(fbAds.spend / calls.channels.facebook).toFixed(2) : null, conversions: attrCur.facebook.conversions, costPerConv: attrCur.facebook.conversions > 0 && fbAds.spend > 0 ? +(fbAds.spend / attrCur.facebook.conversions).toFixed(2) : null, revenue: attrCur.facebook.revenue, roas: attrRoas(fbAds.spend, attrCur.facebook.revenue) },
-    { canal: "TikTok Ads",   spend: ttAds.spend, calls: calls?.channels.tiktok   ?? 0, costPerCall: calls?.channelsAnswered.tiktok   && ttAds.spend > 0 ? +(ttAds.spend / calls.channelsAnswered.tiktok).toFixed(2)   : null, leads: calls?.channels.tiktok   ?? 0, cpl: calls?.channels.tiktok   && ttAds.spend > 0 ? +(ttAds.spend / calls.channels.tiktok).toFixed(2)   : null, conversions: attrCur.tiktok.conversions,   costPerConv: attrCur.tiktok.conversions   > 0 && ttAds.spend > 0 ? +(ttAds.spend / attrCur.tiktok.conversions).toFixed(2)   : null, revenue: attrCur.tiktok.revenue,   roas: attrRoas(ttAds.spend, attrCur.tiktok.revenue)   },
-    { canal: "Google Ads",   spend: gAds.spend,  calls: calls?.channels.google   ?? 0, costPerCall: calls?.channelsAnswered.google   && gAds.spend  > 0 ? +(gAds.spend  / calls.channelsAnswered.google).toFixed(2)   : null, leads: calls?.channels.google   ?? 0, cpl: calls?.channels.google   && gAds.spend  > 0 ? +(gAds.spend  / calls.channels.google).toFixed(2)   : null, conversions: attrCur.google.conversions,   costPerConv: attrCur.google.conversions   > 0 && gAds.spend  > 0 ? +(gAds.spend  / attrCur.google.conversions).toFixed(2)   : null, revenue: attrCur.google.revenue,   roas: attrRoas(gAds.spend,  attrCur.google.revenue)   },
-    { canal: "Organic / Direct", spend: 0, calls: 0, costPerCall: null, leads: 0, cpl: null, conversions: 0, costPerConv: null, revenue: 0, roas: null },
+    { canal: "Facebook Ads",     spend: fbAds.spend, calls: calls?.channels.facebook ?? 0, callsAnswered: calls?.channelsAnswered.facebook ?? 0, costPerCall: calls?.channelsAnswered.facebook && fbAds.spend > 0 ? +(fbAds.spend / calls.channelsAnswered.facebook).toFixed(2) : null, leads: calls?.channels.facebook ?? 0, cpl: null, conversions: attrCur.facebook.conversions, costPerConv: attrCur.facebook.conversions > 0 && fbAds.spend > 0 ? +(fbAds.spend / attrCur.facebook.conversions).toFixed(2) : null, revenue: attrCur.facebook.revenue, roas: attrRoas(fbAds.spend, attrCur.facebook.revenue) },
+    { canal: "TikTok Ads",       spend: ttAds.spend, calls: calls?.channels.tiktok   ?? 0, callsAnswered: calls?.channelsAnswered.tiktok   ?? 0, costPerCall: calls?.channelsAnswered.tiktok   && ttAds.spend > 0 ? +(ttAds.spend / calls.channelsAnswered.tiktok).toFixed(2)   : null, leads: calls?.channels.tiktok   ?? 0, cpl: null, conversions: attrCur.tiktok.conversions,   costPerConv: attrCur.tiktok.conversions   > 0 && ttAds.spend > 0 ? +(ttAds.spend / attrCur.tiktok.conversions).toFixed(2)   : null, revenue: attrCur.tiktok.revenue,   roas: attrRoas(ttAds.spend, attrCur.tiktok.revenue)   },
+    { canal: "Google Ads",       spend: gAds.spend,  calls: calls?.channels.google   ?? 0, callsAnswered: calls?.channelsAnswered.google   ?? 0, costPerCall: calls?.channelsAnswered.google   && gAds.spend  > 0 ? +(gAds.spend  / calls.channelsAnswered.google).toFixed(2)   : null, leads: calls?.channels.google   ?? 0, cpl: null, conversions: attrCur.google.conversions,   costPerConv: attrCur.google.conversions   > 0 && gAds.spend  > 0 ? +(gAds.spend  / attrCur.google.conversions).toFixed(2)   : null, revenue: attrCur.google.revenue,   roas: attrRoas(gAds.spend,  attrCur.google.revenue)   },
+    { canal: "Organic / Direct", spend: 0, calls: organicCalls, callsAnswered: organicAnswered, costPerCall: null, leads: 0, cpl: null, conversions: 0, costPerConv: null, revenue: 0, roas: null },
   ];
 
   const kpis = [
@@ -933,25 +876,18 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
         </div>
       </div>
 
-      {/* Calls by channel + Marketing investment */}
+      {/* Channel performance + Marketing investment */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <div className="lg:col-span-3">
-          <CallsByChannelTable calls={calls} loading={loading} />
+          <ChannelPerformanceTable rows={channelRows} loading={loading} />
         </div>
         <div className="lg:col-span-2">
           <MarketingInvestmentCard metrics={metrics} prevMetrics={prevMetrics} totalSpend={totalSpend} prevSpend={prevTotalSpend} monthRevenue={monthRevenue} monthSpend={monthSpend} loading={loading} />
         </div>
       </div>
 
-      {/* Channel performance + Notes */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
-        <div className="lg:col-span-3">
-          <ChannelPerformanceTable rows={channelRows} loading={loading} />
-        </div>
-        <div className="lg:col-span-2">
-          <NotesCard stockItems={filteredStockItems} products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} channelRows={channelRows} metrics={metrics} prevMetrics={prevMetrics} loading={loading} />
-        </div>
-      </div>
+      {/* Notes */}
+      <NotesCard stockItems={filteredStockItems} products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} channelRows={channelRows} metrics={metrics} prevMetrics={prevMetrics} loading={loading} />
     </div>
   );
 }
