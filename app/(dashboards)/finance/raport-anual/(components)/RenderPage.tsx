@@ -573,7 +573,7 @@ export default function RenderPage() {
                   <YAxis yAxisId="left"  tick={{ fontSize: 10 }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
                   <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
                   <Tooltip
-                    formatter={(value: number | undefined, name: string) => [
+                    formatter={(value: number | undefined, name: string | undefined) => [
                       fmtRON(value ?? 0),
                       name === "revenue" ? `CA ${year}` : name === "prevRevenue" ? `CA ${year - 1}` : "Marketing",
                     ]}
@@ -619,7 +619,7 @@ export default function RenderPage() {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(v: number) => [fmtRON(v), "CA"]}
+                      formatter={(v: number | undefined) => [fmtRON(v ?? 0), "CA"]}
                       contentStyle={{ fontSize: 11 }}
                     />
                   </PieChart>
