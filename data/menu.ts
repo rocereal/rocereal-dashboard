@@ -37,6 +37,7 @@ export const menudata = {
         { title: "Analiza AI",                url: "/finance/analiza-ai" },
         { title: "Raport vânzări live",       url: "/finance/raport-marketing" },
         { title: "Raport vânzări săptămânal", url: "/finance/raport-saptamanal" },
+        { title: "Raport Anual",              url: "/finance/raport-anual" },
       ],
     },
     {
@@ -153,6 +154,7 @@ export const menudataMobile = {
         { title: "Analiza AI",                url: "/finance/analiza-ai" },
         { title: "Raport vânzări live",       url: "/finance/raport-marketing" },
         { title: "Raport vânzări săptămânal", url: "/finance/raport-saptamanal" },
+        { title: "Raport Anual",              url: "/finance/raport-anual" },
         { title: "Raport Clienti",      url: "/crm" },
         { title: "Tracking Mașini",     url: "/tracking" },
         { title: "Canale Vanzare",      url: "/ecommerce" },
