@@ -196,7 +196,7 @@ export default function RenderPage() {
     ];
 
     const results = await Promise.allSettled(promises);
-    const get = <T>(i: number): T | null => {
+    const get = <T,>(i: number): T | null => {
       const r = results[i];
       return r.status === "fulfilled" ? (r.value as T) : null;
     };
