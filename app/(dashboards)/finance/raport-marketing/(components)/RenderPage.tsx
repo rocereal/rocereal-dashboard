@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format, startOfWeek, endOfWeek, subWeeks, addDays } from "date-fns";
 import { ro } from "date-fns/locale";
+import { DashboardHeader } from "@/components/headers/dashboard-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   TrendingUp, TrendingDown, Phone, ShoppingCart, BarChart3,
@@ -927,18 +928,15 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
   return (
     <div className="flex flex-col gap-5 pb-10">
       {/* Header */}
-      <div className="rounded-xl border bg-gradient-to-r from-[#0f2a4a] to-[#1a4b8c] text-white px-6 py-5">
-        <p className="text-xs font-semibold tracking-widest uppercase opacity-70 mb-1">
-          {weekOffset > 0 ? "Raport săptămânal" : "Dashboard live"}
-        </p>
-        <h1 className="text-2xl font-black tracking-tight">
-          {weekOffset > 0 ? "RAPORT VÂNZĂRI SĂPTĂMÂNAL" : "RAPORT VÂNZĂRI LIVE"}
-        </h1>
-        <div className="mt-2 flex flex-col sm:flex-row gap-3 text-xs opacity-80">
-          <span><b>Săptămâna:</b> {capitalize(weekLabel(curWeek.from, curWeek.to))}</span>
-          <span><b>Data raport:</b> {capitalize(format(now, "d MMMM yyyy (EEEE)", { locale: ro }))}</span>
-        </div>
-      </div>
+      <DashboardHeader
+        title={weekOffset > 0 ? "Raport vânzări săptămânal" : "Raport vânzări live"}
+        subtitle={`Săptămâna: ${capitalize(weekLabel(curWeek.from, curWeek.to))} · ${capitalize(format(now, "d MMMM yyyy", { locale: ro }))}`}
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "Rapoarte Financiare", href: "/finance" },
+          { label: weekOffset > 0 ? "Raport vânzări săptămânal" : "Raport vânzări live" },
+        ]}
+      />
 
       {/* Category filter bar */}
       <CategoryFilterBar
