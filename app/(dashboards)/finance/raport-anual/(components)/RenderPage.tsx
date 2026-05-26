@@ -9,6 +9,7 @@ import {
   TrendingUp, TrendingDown, Minus, Banknote, Phone,
   ShoppingCart, Target, RefreshCw, Lightbulb, Percent,
 } from "lucide-react";
+import { AiPageAnalysis } from "@/app/(dashboards)/finance/(components)/AiPageAnalysis";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -829,6 +830,30 @@ export default function RenderPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* AI Team */}
+      <AiPageAnalysis
+        disabled={loading}
+        context={{
+          pageType: "annual",
+          period:   String(year),
+          revenue:  totals.revenue,
+          totalSpend,
+          calls:    totals.calls,
+          answered: totals.answered,
+          orders:   totals.orders,
+          channels: channelRows.map(r => ({ name: r.canal, spend: r.spend, calls: 0, revenue: r.revenue })),
+          categories: categoryPerf.map(c => ({ name: c.cat, revenue: c.revenue, qty: c.qty })),
+          months: filledMonths
+            .filter(m => m.revenue > 0)
+            .map(m => ({
+              month:   MONTHS_RO_FULL[m.month] ?? String(m.month + 1),
+              revenue: m.revenue,
+              spend:   m.fbSpend + m.gSpend + m.ttSpend,
+              orders:  m.orders,
+            })),
+        }}
+      />
     </div>
   );
 }

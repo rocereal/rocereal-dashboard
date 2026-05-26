@@ -9,6 +9,7 @@ import {
   TrendingUp, TrendingDown, Phone, ShoppingCart, BarChart3,
   Package, Percent, Banknote, MessageSquare, Minus,
 } from "lucide-react";
+import { AiPageAnalysis } from "@/app/(dashboards)/finance/(components)/AiPageAnalysis";
 
 // ─── Date helpers ─────────────────────────────────────────────────────────────
 
@@ -980,6 +981,25 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
           <NotesCard stockItems={filteredStockItems} products={filteredCurProducts} catMap={catMap} prevProducts={filteredPrevProducts} channelRows={channelRows} metrics={metrics} prevMetrics={prevMetrics} loading={loading} />
         </div>
       </div>
+
+      {/* AI Team */}
+      <AiPageAnalysis
+        disabled={loading}
+        context={{
+          pageType:    weekOffset > 0 ? "weekly" : "weekly",
+          period:      capitalize(weekLabel(curWeek.from, curWeek.to)),
+          revenue:     totalRevenue,
+          prevRevenue: prevRevenue,
+          totalSpend,
+          calls:       totalCalls,
+          answered:    totalAnswered,
+          orders:      totalConversions,
+          channels:    channelRows.map(r => ({ name: r.canal, spend: r.spend, calls: r.calls, revenue: r.revenue })),
+          categories:  Array.from(buildWeeklyByCategory(filteredCurProducts, catMap).entries())
+                         .map(([name, d]) => ({ name, revenue: d.val, qty: d.qty }))
+                         .filter(c => c.revenue > 0),
+        }}
+      />
     </div>
   );
 }

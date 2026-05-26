@@ -34,7 +34,6 @@ export const menudata = {
       icon: Banknote,
       items: [
         { title: "Rapoarte Financiare",       url: "/finance" },
-        { title: "Analiza AI",                url: "/finance/analiza-ai" },
         { title: "Vânzări live",        url: "/finance/raport-marketing" },
         { title: "Vânzări săptămânale", url: "/finance/raport-saptamanal" },
         { title: "Vânzări anuale",      url: "/finance/raport-anual" },
@@ -151,7 +150,6 @@ export const menudataMobile = {
       icon: LayoutDashboard,
       items: [
         { title: "Rapoarte Financiare",       url: "/finance" },
-        { title: "Analiza AI",                url: "/finance/analiza-ai" },
         { title: "Vânzări live",        url: "/finance/raport-marketing" },
         { title: "Vânzări săptămânale", url: "/finance/raport-saptamanal" },
         { title: "Vânzări anuale",      url: "/finance/raport-anual" },
