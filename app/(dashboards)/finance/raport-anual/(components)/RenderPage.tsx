@@ -28,6 +28,7 @@ interface MonthData {
   fbClicks: number; gClicks: number; ttClicks: number;
   fbConversions: number; gConversions: number; ttConversions: number;
   fbRevenue: number; gRevenue: number; ttRevenue: number;
+  organicOrders: number;
 }
 
 interface StockItem {
@@ -223,6 +224,7 @@ export default function RenderPage() {
         fbRevenue:     attr?.facebook?.revenue ?? 0,
         gRevenue:      attr?.google?.revenue   ?? 0,
         ttRevenue:     attr?.tiktok?.revenue   ?? 0,
+        organicOrders: (attr as { organicOrders?: number } | null)?.organicOrders ?? 0,
       };
     }
 
@@ -274,6 +276,7 @@ export default function RenderPage() {
     fbRevenue:      filledMonths.reduce((s, m) => s + m.fbRevenue, 0),
     gRevenue:       filledMonths.reduce((s, m) => s + m.gRevenue, 0),
     ttRevenue:      filledMonths.reduce((s, m) => s + m.ttRevenue, 0),
+    organicOrders:  filledMonths.reduce((s, m) => s + m.organicOrders, 0),
   }), [filledMonths]);
 
   const totalSpend      = totals.fbSpend + totals.gSpend + totals.ttSpend;
@@ -364,7 +367,7 @@ export default function RenderPage() {
       { canal: "Facebook Ads",     color: "#1877F2", spend: totals.fbSpend, impressions: totals.fbImpressions, clicks: totals.fbClicks, conversions: totals.fbConversions, revenue: totals.fbRevenue },
       { canal: "Google Ads",       color: "#4285F4", spend: totals.gSpend,  impressions: totals.gImpressions,  clicks: totals.gClicks,  conversions: totals.gConversions,  revenue: totals.gRevenue  },
       { canal: "TikTok Ads",       color: "#000000", spend: totals.ttSpend, impressions: totals.ttImpressions, clicks: totals.ttClicks, conversions: totals.ttConversions, revenue: totals.ttRevenue },
-      { canal: "Organic / Direct", color: "#6b7280", spend: 0,              impressions: 0,                    clicks: 0,              conversions: 0,                    revenue: organicRev       },
+      { canal: "Organic / Direct", color: "#6b7280", spend: 0,              impressions: 0,                    clicks: 0,              conversions: totals.organicOrders,  revenue: organicRev       },
     ];
   }, [totals]);
 

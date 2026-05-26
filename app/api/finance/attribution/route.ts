@@ -95,6 +95,8 @@ export async function GET(req: NextRequest) {
       google:   { conversions: 0, revenue: 0 },
     };
 
+    const attributedClients = new Set<string>();
+
     for (const [ch, phones] of channelPhones.entries()) {
       for (const phone of phones) {
         const clientName = phoneToClient.get(phone);
@@ -103,10 +105,24 @@ export async function GET(req: NextRequest) {
         if (!inv || inv.revenue <= 0) continue;
         result[ch].conversions += 1;
         result[ch].revenue     += inv.revenue;
+        attributedClients.add(clientName); // uppercase, same as clientRevMap key
       }
     }
 
-    return NextResponse.json(result);
+    // ── 6. Organic orders — invoices in period not attributed to any paid channel
+    const periodInvoices = await prisma.smartbillInvoice.findMany({
+      where: {
+        ...(Object.keys(dateFilter).length ? { issuedAt: dateFilter } : {}),
+        totalAmount: { not: 0 },
+      },
+      select: { client: true },
+    });
+
+    const organicOrders = periodInvoices.filter(
+      inv => !attributedClients.has(inv.client.toUpperCase())
+    ).length;
+
+    return NextResponse.json({ ...result, organicOrders });
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) });
   }

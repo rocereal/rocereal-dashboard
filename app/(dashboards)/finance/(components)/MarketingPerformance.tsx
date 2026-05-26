@@ -33,11 +33,12 @@ interface AttributionData {
 }
 
 interface LiveData {
-  google:       ChannelStats;
-  facebook:     ChannelStats;
-  tiktok:       ChannelStats;
-  totalRevenue: number;
-  attribution:  AttributionData;
+  google:        ChannelStats;
+  facebook:      ChannelStats;
+  tiktok:        ChannelStats;
+  totalRevenue:  number;
+  attribution:   AttributionData;
+  organicOrders: number;
   callStats: {
     total: number; answered: number;
     channels:         { facebook: number; tiktok: number; google: number };
@@ -51,6 +52,7 @@ const ZERO_ATTR: ChannelAttribution = { conversions: 0, revenue: 0 };
 const INIT: LiveData = {
   google: ZERO, facebook: ZERO, tiktok: ZERO, totalRevenue: 0,
   attribution: { facebook: ZERO_ATTR, tiktok: ZERO_ATTR, google: ZERO_ATTR },
+  organicOrders: 0,
   callStats: { total: 0, answered: 0, channels: { facebook: 0, tiktok: 0, google: 0 }, channelsAnswered: { facebook: 0, tiktok: 0, google: 0 } },
   loading: true,
 };
@@ -607,13 +609,14 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       },
     };
 
-    setLiveData({ google, facebook, tiktok, totalRevenue, attribution, callStats, loading: false });
+    const organicOrders: number = attrRaw?.organicOrders ?? 0;
+    setLiveData({ google, facebook, tiktok, totalRevenue, attribution, organicOrders, callStats, loading: false });
   }, [dateRange]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
   // ─── Derived values ─────────────────────────────────────────────────────────
-  const { google, facebook, tiktok, attribution, callStats, loading } = liveData;
+  const { google, facebook, tiktok, attribution, organicOrders, callStats, loading } = liveData;
   const totalReach      = google.reach + facebook.reach + tiktok.reach;
   const attrConversions = attribution.facebook.conversions + attribution.tiktok.conversions + attribution.google.conversions;
 
@@ -699,7 +702,7 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       ctr:         "—",
       calls:       organicCallsMp,
       costPerCall: null,
-      conversions: 0,
+      conversions: organicOrders,
       venituri:    organicRevenueMp,
       roas:        null,
       live:        true,
@@ -812,12 +815,13 @@ export function MarketingReportSection({ dateRange }: { dateRange?: DateTimeRang
       channelsAnswered: { facebook: callsRaw?.channelsAnswered?.facebook ?? 0, tiktok: callsRaw?.channelsAnswered?.tiktok ?? 0, google: callsRaw?.channelsAnswered?.google ?? 0 },
     };
 
-    setLiveData({ google, facebook, tiktok, totalRevenue, attribution, callStats, loading: false });
+    const organicOrders: number = attrRaw?.organicOrders ?? 0;
+    setLiveData({ google, facebook, tiktok, totalRevenue, attribution, organicOrders, callStats, loading: false });
   }, [dateRange]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  const { google, facebook, tiktok, attribution, callStats, loading } = liveData;
+  const { google, facebook, tiktok, attribution, organicOrders, callStats, loading } = liveData;
 
   const attrRoas = (spend: number, revenue: number) =>
     spend > 0 && revenue > 0 ? Math.round((revenue / spend) * 100) / 100 : null;
@@ -849,7 +853,7 @@ export function MarketingReportSection({ dateRange }: { dateRange?: DateTimeRang
     },
     {
       canal: "Organic / Direct", investitie: 0, reach: 0, clicks: 0, ctr: "—",
-      calls: organicCallsMrs, costPerCall: null, conversions: 0,
+      calls: organicCallsMrs, costPerCall: null, conversions: organicOrders,
       venituri: organicRevMrs, roas: null, live: true,
     },
   ];
