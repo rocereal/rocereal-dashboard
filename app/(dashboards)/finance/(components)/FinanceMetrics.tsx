@@ -20,7 +20,8 @@ interface MetricGroup {
 interface FinanceMetricsData {
   incasate: MetricGroup;
   stornate: MetricGroup;
-  emise: MetricGroup;
+  emise:    MetricGroup;
+  platite:  MetricGroup;
 }
 
 const fmtRON = (v: number) =>
@@ -160,12 +161,12 @@ export function FinanceMetrics({ dateRange }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <MetricCard
-        title="Venituri Emise"
+        title="Facturi Încasate"
         icon={CheckCircle2}
         iconClass="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-        total={data?.incasate.total ?? 0}
-        count={data?.incasate.count ?? 0}
-        pctTotal={data?.incasate.pctTotal ?? null}
+        total={data?.platite.total ?? 0}
+        count={data?.platite.count ?? 0}
+        pctTotal={data?.platite.pctTotal ?? null}
         loading={loading}
       />
       <MetricCard

@@ -20,11 +20,12 @@ interface PeriodMetrics {
 async function getMetrics(from: Date, to: Date): Promise<{
   incasate: PeriodMetrics;
   stornate: PeriodMetrics;
-  emise: PeriodMetrics;
+  emise:    PeriodMetrics;
+  platite:  PeriodMetrics;
 }> {
   const where = { issuedAt: { gte: from, lte: to } };
 
-  const [incasatePoz, stornate, emise] = await Promise.all([
+  const [incasatePoz, stornate, emise, platite] = await Promise.all([
     // All issued invoices with positive amount (regardless of paid status)
     prisma.smartbillInvoice.aggregate({
       where: { ...where, totalAmount: { gt: 0 } },
@@ -43,6 +44,12 @@ async function getMetrics(from: Date, to: Date): Promise<{
       _count: { _all: true },
       _sum: { totalAmount: true },
     }),
+    // Paid invoices only
+    prisma.smartbillInvoice.aggregate({
+      where: { ...where, paid: true, totalAmount: { gt: 0 } },
+      _count: { _all: true },
+      _sum: { totalAmount: true },
+    }),
   ]);
 
   // Net revenue = paid positives + storno negatives (matches Evoluția Vânzărilor "Total")
@@ -53,6 +60,7 @@ async function getMetrics(from: Date, to: Date): Promise<{
     incasate: { count: netCount,             total: netTotal },
     stornate: { count: stornate._count._all, total: Math.abs(stornate._sum.totalAmount ?? 0) },
     emise:    { count: emise._count._all,    total: emise._sum.totalAmount ?? 0 },
+    platite:  { count: platite._count._all,  total: platite._sum.totalAmount ?? 0 },
   };
 }
 
@@ -104,6 +112,13 @@ export async function GET(req: NextRequest) {
       prevTotal: previous.emise.total,
       pctCount: pct(current.emise.count, previous.emise.count),
       pctTotal: pct(current.emise.total, previous.emise.total),
+    },
+    platite: {
+      ...current.platite,
+      prevCount: previous.platite.count,
+      prevTotal: previous.platite.total,
+      pctCount: pct(current.platite.count, previous.platite.count),
+      pctTotal: pct(current.platite.total, previous.platite.total),
     },
   });
 }

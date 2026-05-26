@@ -280,7 +280,6 @@ export default function RenderPage() {
   }), [filledMonths]);
 
   const totalSpend      = totals.fbSpend + totals.gSpend + totals.ttSpend;
-  const totalAttrRev    = totals.fbRevenue + totals.gRevenue + totals.ttRevenue;
   const convRate        = totals.calls > 0 ? (totals.answered / totals.calls) * 100 : 0;
   const avgOrderVal     = totals.orders > 0 ? totals.revenue / totals.orders : 0;
   const prevTotalRev    = prevRevenue.reduce((s, v) => s + v, 0);
@@ -422,7 +421,7 @@ export default function RenderPage() {
         subtitle={`Performanță marketing și vânzări — ${year}`}
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
-          { label: "Rapoarte Financiare", href: "/finance" },
+          { label: "Panou de bord", href: "/finance" },
           { label: "Vânzări anuale" },
         ]}
       />

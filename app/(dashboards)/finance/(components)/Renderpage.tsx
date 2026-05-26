@@ -18,11 +18,11 @@ export default function RenderPage() {
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
-        title="Rapoarte Financiare"
+        title="Panou de bord"
         subtitle="Monitor revenue, expenses, and investment trends to optimize financial health."
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
-          { label: "Rapoarte Financiare" },
+          { label: "Panou de bord" },
         ]}
         dateRange={dateRange}
         onDateRangeChange={setDateRange}

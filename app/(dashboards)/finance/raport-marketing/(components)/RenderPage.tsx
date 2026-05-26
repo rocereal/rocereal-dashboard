@@ -941,7 +941,7 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
         subtitle={`Săptămâna: ${capitalize(weekLabel(curWeek.from, curWeek.to))} · ${capitalize(format(now, "d MMMM yyyy", { locale: ro }))}`}
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
-          { label: "Rapoarte Financiare", href: "/finance" },
+          { label: "Panou de bord", href: "/finance" },
           { label: weekOffset > 0 ? "Vânzări săptămânale" : "Vânzări live" },
         ]}
       />

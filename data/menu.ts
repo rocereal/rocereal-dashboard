@@ -29,11 +29,11 @@ export const menudata = {
       isSection: true,
     },
     {
-      title: "Rapoarte Financiare",
+      title: "Panou de bord",
       url: "#",
       icon: Banknote,
       items: [
-        { title: "Rapoarte Financiare",       url: "/finance" },
+        { title: "Panou de bord",       url: "/finance" },
         { title: "Vânzări live",        url: "/finance/raport-marketing" },
         { title: "Vânzări săptămânale", url: "/finance/raport-saptamanal" },
         { title: "Vânzări anuale",      url: "/finance/raport-anual" },
@@ -149,7 +149,7 @@ export const menudataMobile = {
       url: "#",
       icon: LayoutDashboard,
       items: [
-        { title: "Rapoarte Financiare",       url: "/finance" },
+        { title: "Panou de bord",       url: "/finance" },
         { title: "Vânzări live",        url: "/finance/raport-marketing" },
         { title: "Vânzări săptămânale", url: "/finance/raport-saptamanal" },
         { title: "Vânzări anuale",      url: "/finance/raport-anual" },

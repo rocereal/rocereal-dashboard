@@ -26,7 +26,7 @@ export default function RenderPage() {
         subtitle="Rapoarte și facturi din SmartBill — venituri, cheltuieli și tranzacții."
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
-          { label: "Rapoarte Financiare", href: "/finance" },
+          { label: "Panou de bord", href: "/finance" },
           { label: "Smartbill" },
         ]}
         dateRange={dateRange}
