@@ -357,11 +357,15 @@ export default function RenderPage() {
     return data;
   }, [annualProducts, catMap]);
 
-  const channelRows = useMemo(() => [
-    { canal: "Facebook Ads",  color: "#1877F2", spend: totals.fbSpend, impressions: totals.fbImpressions, clicks: totals.fbClicks, conversions: totals.fbConversions, revenue: totals.fbRevenue },
-    { canal: "Google Ads",    color: "#4285F4", spend: totals.gSpend,  impressions: totals.gImpressions,  clicks: totals.gClicks,  conversions: totals.gConversions,  revenue: totals.gRevenue  },
-    { canal: "TikTok Ads",    color: "#000000", spend: totals.ttSpend, impressions: totals.ttImpressions, clicks: totals.ttClicks, conversions: totals.ttConversions, revenue: totals.ttRevenue },
-  ], [totals]);
+  const channelRows = useMemo(() => {
+    const organicRev = Math.max(0, totals.revenue - (totals.fbRevenue + totals.gRevenue + totals.ttRevenue));
+    return [
+      { canal: "Facebook Ads",     color: "#1877F2", spend: totals.fbSpend, impressions: totals.fbImpressions, clicks: totals.fbClicks, conversions: totals.fbConversions, revenue: totals.fbRevenue },
+      { canal: "Google Ads",       color: "#4285F4", spend: totals.gSpend,  impressions: totals.gImpressions,  clicks: totals.gClicks,  conversions: totals.gConversions,  revenue: totals.gRevenue  },
+      { canal: "TikTok Ads",       color: "#000000", spend: totals.ttSpend, impressions: totals.ttImpressions, clicks: totals.ttClicks, conversions: totals.ttConversions, revenue: totals.ttRevenue },
+      { canal: "Organic / Direct", color: "#6b7280", spend: 0,              impressions: 0,                    clicks: 0,              conversions: 0,                    revenue: organicRev       },
+    ];
+  }, [totals]);
 
   const insights = useMemo(() => {
     if (filledMonths.length === 0) return [];
@@ -737,8 +741,8 @@ export default function RenderPage() {
                       <td className="px-3 py-2">{totals.fbClicks + totals.gClicks + totals.ttClicks > 0 ? fmtNum(totals.fbClicks + totals.gClicks + totals.ttClicks) : "—"}</td>
                       <td className="px-3 py-2">—</td>
                       <td className="px-3 py-2">{totals.fbConversions + totals.gConversions + totals.ttConversions > 0 ? fmtNum(totals.fbConversions + totals.gConversions + totals.ttConversions) : "—"}</td>
-                      <td className="px-3 py-2 text-[#27ae60]">{totalAttrRev > 0 ? fmtRON(totalAttrRev) : "—"}</td>
-                      <td className="px-3 py-2">{totalAttrRev > 0 && totalSpend > 0 ? `${(totalSpend / totalAttrRev * 100).toFixed(1)}%` : "—"}</td>
+                      <td className="px-3 py-2 text-[#27ae60]">{totals.revenue > 0 ? fmtRON(totals.revenue) : "—"}</td>
+                      <td className="px-3 py-2">{totals.revenue > 0 && totalSpend > 0 ? `${(totalSpend / totals.revenue * 100).toFixed(1)}%` : "—"}</td>
                     </tr>
                   </>
                 )}

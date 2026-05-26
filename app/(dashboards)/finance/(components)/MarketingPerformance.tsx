@@ -650,6 +650,9 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
   ];
 
   // Performance table rows — conversions & revenue come from Invox→SmartBill attribution
+  const knownCallsMp    = callStats.channels.facebook + callStats.channels.tiktok + callStats.channels.google;
+  const organicCallsMp  = Math.max(0, callStats.total - knownCallsMp);
+  const organicRevenueMp = Math.max(0, liveData.totalRevenue - (attribution.facebook.revenue + attribution.tiktok.revenue + attribution.google.revenue));
   const perfRows: PerfRow[] = [
     {
       canal:       "Facebook",
@@ -689,6 +692,19 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
       venituri:    attribution.tiktok.revenue,
       roas:        attrRoas(tiktok.spend, attribution.tiktok.revenue),
       live:        tiktok.spend > 0,
+    },
+    {
+      canal:       "Organic / Direct",
+      investitie:  0,
+      reach:       0,
+      clicks:      0,
+      ctr:         "—",
+      calls:       organicCallsMp,
+      costPerCall: null,
+      conversions: 0,
+      venituri:    organicRevenueMp,
+      roas:        null,
+      live:        true,
     },
   ];
 
@@ -808,6 +824,9 @@ export function MarketingReportSection({ dateRange }: { dateRange?: DateTimeRang
   const attrRoas = (spend: number, revenue: number) =>
     spend > 0 && revenue > 0 ? Math.round((revenue / spend) * 100) / 100 : null;
 
+  const knownCallsMrs   = callStats.channels.facebook + callStats.channels.tiktok + callStats.channels.google;
+  const organicCallsMrs = Math.max(0, callStats.total - knownCallsMrs);
+  const organicRevMrs   = Math.max(0, liveData.totalRevenue - (attribution.facebook.revenue + attribution.tiktok.revenue + attribution.google.revenue));
   const perfRows: PerfRow[] = [
     {
       canal: "Facebook", investitie: facebook.spend, reach: facebook.reach, clicks: facebook.clicks,
@@ -829,6 +848,11 @@ export function MarketingReportSection({ dateRange }: { dateRange?: DateTimeRang
       costPerCall: callStats.channelsAnswered.tiktok > 0 ? Math.round((tiktok.spend / callStats.channelsAnswered.tiktok) * 100) / 100 : null,
       conversions: attribution.tiktok.conversions, venituri: attribution.tiktok.revenue,
       roas: attrRoas(tiktok.spend, attribution.tiktok.revenue), live: tiktok.spend > 0,
+    },
+    {
+      canal: "Organic / Direct", investitie: 0, reach: 0, clicks: 0, ctr: "—",
+      calls: organicCallsMrs, costPerCall: null, conversions: 0,
+      venituri: organicRevMrs, roas: null, live: true,
     },
   ];
 
