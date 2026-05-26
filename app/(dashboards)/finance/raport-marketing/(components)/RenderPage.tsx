@@ -614,11 +614,16 @@ function NotesCard({ stockItems, products, catMap, prevProducts, channelRows, me
       notes.push({ text: `Stoc redus: ${lowStock.slice(0, 3).map(i => i.name).join(", ")}${lowStock.length > 3 ? ` +${lowStock.length - 3} altele` : ""}.`, type: "warn" });
 
     const best = channelRows.filter(r => r.roas !== null && r.roas > 0).sort((a, b) => (b.roas ?? 0) - (a.roas ?? 0))[0];
-    if (best?.roas && best.roas >= 8)
-      notes.push({ text: `ROAS ${best.canal}: ${best.roas.toFixed(2)}x — performanță excelentă.`, type: "good" });
+    if (best?.roas && best.roas > 0) {
+      const pctBest = (100 / best.roas).toFixed(1);
+      if (best.roas >= 8)
+        notes.push({ text: `${best.canal}: ${pctBest}% din CA — investiție foarte eficientă.`, type: "good" });
+    }
     const worst = channelRows.filter(r => r.roas !== null && r.roas > 0 && r.spend > 0).sort((a, b) => (a.roas ?? 0) - (b.roas ?? 0))[0];
-    if (worst?.roas && worst.roas < 3)
-      notes.push({ text: `ROAS scăzut pe ${worst.canal} (${worst.roas.toFixed(2)}x) — optimizare necesară.`, type: "bad" });
+    if (worst?.roas && worst.roas < 3) {
+      const pctWorst = (100 / worst.roas).toFixed(1);
+      notes.push({ text: `${worst.canal}: ${pctWorst}% din CA — investiție ridicată față de vânzări atribuite, optimizare necesară.`, type: "bad" });
+    }
 
     if (notes.length === 0) notes.push({ text: "Nicio anomalie detectată. Continuați monitorizarea.", type: "info" });
   }

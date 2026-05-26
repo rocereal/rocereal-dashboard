@@ -373,15 +373,15 @@ export default function RenderPage() {
       lines.push(`Luna cu cea mai mare cifră de afaceri: <strong>${MONTHS_RO_FULL[bestRev.month]}</strong> (${fmtRON(bestRev.revenue)}).`);
 
     const best = [...filledMonths]
-      .filter(m => m.fbSpend + m.gSpend + m.ttSpend > 0)
+      .filter(m => m.revenue > 0 && m.fbSpend + m.gSpend + m.ttSpend > 0)
       .sort((a, b) => {
-        const ra = a.revenue / (a.fbSpend + a.gSpend + a.ttSpend);
-        const rb = b.revenue / (b.fbSpend + b.gSpend + b.ttSpend);
-        return rb - ra;
+        const pa = (a.fbSpend + a.gSpend + a.ttSpend) / a.revenue;
+        const pb = (b.fbSpend + b.gSpend + b.ttSpend) / b.revenue;
+        return pa - pb; // ascending: lowest % first = most efficient
       })[0];
     if (best) {
-      const r = best.revenue / (best.fbSpend + best.gSpend + best.ttSpend);
-      lines.push(`ROAS maxim lunar în <strong>${MONTHS_RO_FULL[best.month]}</strong>: ${r.toFixed(1)}x.`);
+      const pct = ((best.fbSpend + best.gSpend + best.ttSpend) / best.revenue * 100).toFixed(1);
+      lines.push(`Luna cu investiție marketing cea mai eficientă: <strong>${MONTHS_RO_FULL[best.month]}</strong> (${pct}% din CA).`);
     }
 
     if (totals.revenue > 0 && totalSpend > 0)
@@ -464,9 +464,9 @@ export default function RenderPage() {
           accent="border-t-[#e74c3c]"
         />
         <KpiCard
-          label="ROAS Mediu Anual"
-          value={loading ? "—" : (totalRoas > 0 ? `${totalRoas.toFixed(2)}x` : "—")}
-          sub="Cifră de afaceri / Spend"
+          label="% din CA"
+          value={loading ? "—" : (totalSpend > 0 && totals.revenue > 0 ? `${((totalSpend / totals.revenue) * 100).toFixed(1)}%` : "—")}
+          sub="Investiție marketing / CA"
           icon={<Percent className="h-4 w-4" />}
           accent="border-t-[#f39c12]"
         />
@@ -494,7 +494,7 @@ export default function RenderPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="bg-[#1e3a5f]/10 border-b">
-                  {["Lună", "CA (RON)", "Var. YoY", "Comenzi", "Invest. Mktg", "ROAS", "Apeluri", "Răspunse", "Conv. %"].map(h => (
+                  {["Lună", "CA (RON)", "Var. YoY", "Comenzi", "Invest. Mktg", "% din CA", "Apeluri", "Răspunse", "Conv. %"].map(h => (
                     <th key={h} className="text-left font-semibold text-[#1e3a5f] px-3 py-2 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
@@ -507,7 +507,7 @@ export default function RenderPage() {
                     {MONTHS_RO_FULL.map((mLabel, i) => {
                       const m     = monthsData[i];
                       const spend = m ? m.fbSpend + m.gSpend + m.ttSpend : 0;
-                      const roas  = spend > 0 && m ? m.revenue / spend : null;
+                      const mktPct = m?.revenue > 0 && spend > 0 ? (spend / m.revenue) * 100 : null;
                       const conv  = m && m.calls > 0 ? (m.answered / m.calls) * 100 : null;
                       const yoy   = pctChg(m?.revenue ?? 0, prevRevenue[i]);
                       return (
@@ -517,7 +517,7 @@ export default function RenderPage() {
                           <td className="px-3 py-2"><VariationBadge pct={m?.revenue ? yoy : null} /></td>
                           <td className="px-3 py-2">{m?.orders ? fmtNum(m.orders) : "—"}</td>
                           <td className="px-3 py-2 text-orange-700">{spend > 0 ? fmtRON(spend) : "—"}</td>
-                          <td className="px-3 py-2">{roas !== null ? `${roas.toFixed(2)}x` : "—"}</td>
+                          <td className="px-3 py-2">{mktPct !== null ? `${mktPct.toFixed(1)}%` : "—"}</td>
                           <td className="px-3 py-2">{m?.calls ? fmtNum(m.calls) : "—"}</td>
                           <td className="px-3 py-2">{m?.answered ? fmtNum(m.answered) : "—"}</td>
                           <td className="px-3 py-2">{conv !== null ? `${conv.toFixed(1)}%` : "—"}</td>
@@ -530,7 +530,7 @@ export default function RenderPage() {
                       <td className="px-3 py-2"><VariationBadge pct={yoyRev} /></td>
                       <td className="px-3 py-2">{totals.orders > 0 ? fmtNum(totals.orders) : "—"}</td>
                       <td className="px-3 py-2 text-orange-700">{totalSpend > 0 ? fmtRON(totalSpend) : "—"}</td>
-                      <td className="px-3 py-2">{totalRoas > 0 ? `${totalRoas.toFixed(2)}x` : "—"}</td>
+                      <td className="px-3 py-2">{totalSpend > 0 && totals.revenue > 0 ? `${((totalSpend / totals.revenue) * 100).toFixed(1)}%` : "—"}</td>
                       <td className="px-3 py-2">{totals.calls > 0 ? fmtNum(totals.calls) : "—"}</td>
                       <td className="px-3 py-2">{totals.answered > 0 ? fmtNum(totals.answered) : "—"}</td>
                       <td className="px-3 py-2">{convRate > 0 ? `${convRate.toFixed(1)}%` : "—"}</td>
@@ -699,7 +699,7 @@ export default function RenderPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="bg-[#2c3e50]/10 border-b">
-                  {["Canal", "Spend", "Impresii", "Clickuri", "CTR", "Conv.", "CA Atrib.", "ROAS"].map(h => (
+                  {["Canal", "Spend", "Impresii", "Clickuri", "CTR", "Conv.", "CA Atrib.", "% din CA"].map(h => (
                     <th key={h} className="text-left font-semibold text-[#2c3e50] px-3 py-2 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
@@ -711,7 +711,7 @@ export default function RenderPage() {
                   <>
                     {channelRows.map((r, i) => {
                       const ctr  = r.impressions > 0 ? ((r.clicks / r.impressions) * 100).toFixed(2) + "%" : "—";
-                      const roas = r.spend > 0 ? (r.revenue / r.spend).toFixed(2) + "x" : "—";
+                      const pctCA = r.revenue > 0 && r.spend > 0 ? `${(r.spend / r.revenue * 100).toFixed(1)}%` : "—";
                       return (
                         <tr key={i} className="border-b last:border-0 hover:bg-muted/20">
                           <td className="px-3 py-2">
@@ -726,7 +726,7 @@ export default function RenderPage() {
                           <td className="px-3 py-2">{ctr}</td>
                           <td className="px-3 py-2">{r.conversions > 0 ? fmtNum(r.conversions) : "—"}</td>
                           <td className="px-3 py-2 font-semibold text-[#27ae60]">{r.revenue > 0 ? fmtRON(r.revenue) : "—"}</td>
-                          <td className="px-3 py-2 font-semibold">{roas}</td>
+                          <td className="px-3 py-2 font-semibold">{pctCA}</td>
                         </tr>
                       );
                     })}
@@ -738,7 +738,7 @@ export default function RenderPage() {
                       <td className="px-3 py-2">—</td>
                       <td className="px-3 py-2">{totals.fbConversions + totals.gConversions + totals.ttConversions > 0 ? fmtNum(totals.fbConversions + totals.gConversions + totals.ttConversions) : "—"}</td>
                       <td className="px-3 py-2 text-[#27ae60]">{totalAttrRev > 0 ? fmtRON(totalAttrRev) : "—"}</td>
-                      <td className="px-3 py-2">{totalSpend > 0 && totalAttrRev > 0 ? `${(totalAttrRev / totalSpend).toFixed(2)}x` : "—"}</td>
+                      <td className="px-3 py-2">{totalAttrRev > 0 && totalSpend > 0 ? `${(totalSpend / totalAttrRev * 100).toFixed(1)}%` : "—"}</td>
                     </tr>
                   </>
                 )}
@@ -756,7 +756,7 @@ export default function RenderPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[#16a085]/10 border-b">
-                  {["Trimestru", "CA (RON)", "Invest. Mktg", "ROAS", "Comenzi", "Apeluri", "Răspunse", "Conv. %"].map(h => (
+                  {["Trimestru", "CA (RON)", "Invest. Mktg", "% din CA", "Comenzi", "Apeluri", "Răspunse", "Conv. %"].map(h => (
                     <th key={h} className="text-left font-semibold text-[#16a085] px-4 py-2.5 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
@@ -767,14 +767,14 @@ export default function RenderPage() {
                 ) : (
                   <>
                     {quarterlyData.map((q, i) => {
-                      const roas = q.spend > 0 ? (q.revenue / q.spend).toFixed(2) : null;
+                      const mktPct = q.revenue > 0 && q.spend > 0 ? (q.spend / q.revenue * 100).toFixed(1) : null;
                       const conv = q.calls  > 0 ? ((q.answered / q.calls) * 100).toFixed(1) : null;
                       return (
                         <tr key={i} className="border-b last:border-0 hover:bg-muted/20">
                           <td className="px-4 py-2.5 font-semibold">{q.label}</td>
                           <td className="px-4 py-2.5 font-bold text-[#1e3a5f]">{q.revenue > 0 ? fmtRON(q.revenue) : "—"}</td>
                           <td className="px-4 py-2.5 text-orange-700">{q.spend > 0 ? fmtRON(q.spend) : "—"}</td>
-                          <td className="px-4 py-2.5">{roas ? `${roas}x` : "—"}</td>
+                          <td className="px-4 py-2.5">{mktPct ? `${mktPct}%` : "—"}</td>
                           <td className="px-4 py-2.5">{q.orders > 0 ? fmtNum(q.orders) : "—"}</td>
                           <td className="px-4 py-2.5">{q.calls > 0 ? fmtNum(q.calls) : "—"}</td>
                           <td className="px-4 py-2.5">{q.answered > 0 ? fmtNum(q.answered) : "—"}</td>
@@ -786,7 +786,7 @@ export default function RenderPage() {
                       <td className="px-4 py-2.5">TOTAL AN</td>
                       <td className="px-4 py-2.5 text-[#1e3a5f]">{totals.revenue > 0 ? fmtRON(totals.revenue) : "—"}</td>
                       <td className="px-4 py-2.5 text-orange-700">{totalSpend > 0 ? fmtRON(totalSpend) : "—"}</td>
-                      <td className="px-4 py-2.5">{totalRoas > 0 ? `${totalRoas.toFixed(2)}x` : "—"}</td>
+                      <td className="px-4 py-2.5">{totalSpend > 0 && totals.revenue > 0 ? `${(totalSpend / totals.revenue * 100).toFixed(1)}%` : "—"}</td>
                       <td className="px-4 py-2.5">{totals.orders > 0 ? fmtNum(totals.orders) : "—"}</td>
                       <td className="px-4 py-2.5">{totals.calls > 0 ? fmtNum(totals.calls) : "—"}</td>
                       <td className="px-4 py-2.5">{totals.answered > 0 ? fmtNum(totals.answered) : "—"}</td>

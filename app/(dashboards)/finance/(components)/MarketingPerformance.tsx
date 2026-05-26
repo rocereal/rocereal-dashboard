@@ -206,15 +206,15 @@ interface RoasRow { name: string; value: number; color: string; [key: string]: u
 
 function ROIPeCanal({ data, loading }: { data: RoasRow[]; loading: boolean }) {
   const visData = data.filter(d => d.value > 0);
-  const avgROAS = visData.length > 0
-    ? (visData.reduce((s, d) => s + d.value, 0) / visData.length).toFixed(2)
+  const avgPct = visData.length > 0
+    ? (visData.reduce((s, d) => s + d.value, 0) / visData.length).toFixed(1)
     : "—";
 
   return (
     <Card className="shadow-xs h-full flex flex-col">
       <CardHeader className="pb-1">
-        <CardTitle className="text-base">ROAS pe Canal</CardTitle>
-        <CardDescription className="text-xs">Randamentul investiției per canal</CardDescription>
+        <CardTitle className="text-base">% din CA pe Canal</CardTitle>
+        <CardDescription className="text-xs">Investiție marketing din CA atribuită per canal</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center flex-1 gap-3 pb-4">
         {loading ? (
@@ -230,13 +230,13 @@ function ROIPeCanal({ data, loading }: { data: RoasRow[]; loading: boolean }) {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(v: number | undefined) => [`${v ?? 0}x`, "ROAS"] as [string, string]}
+                  formatter={(v: number | undefined) => [`${v ?? 0}%`, "% din CA"] as [string, string]}
                   contentStyle={{ fontSize: 12, borderRadius: 6 }}
                 />
               </PieChart>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-lg font-bold leading-none">{avgROAS}{avgROAS !== "—" ? "x" : ""}</span>
-                <span className="text-[10px] text-muted-foreground">ROAS mediu</span>
+                <span className="text-lg font-bold leading-none">{avgPct}{avgPct !== "—" ? "%" : ""}</span>
+                <span className="text-[10px] text-muted-foreground">% mediu</span>
               </div>
             </div>
             <div className="flex flex-col gap-1.5 w-full">
@@ -244,7 +244,7 @@ function ROIPeCanal({ data, loading }: { data: RoasRow[]; loading: boolean }) {
                 <div key={item.name} className="flex items-center gap-2">
                   <div className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                   <span className="text-xs text-muted-foreground flex-1">{item.name}</span>
-                  <span className="text-xs font-bold">{item.value > 0 ? `${item.value}x` : "N/A"}</span>
+                  <span className="text-xs font-bold">{item.value > 0 ? `${item.value}%` : "N/A"}</span>
                 </div>
               ))}
             </div>
@@ -285,7 +285,7 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
-                {["Canal", "Investiție", "Venituri Atribuite", "Cost / Apel", "Vizualizări", "Clicuri", "Rată click", "Apeluri generate", "Conversii Atribuite", "ROAS"].map((h) => (
+                {["Canal", "Investiție", "Venituri Atribuite", "Cost / Apel", "Vizualizări", "Clicuri", "Rată click", "Apeluri generate", "Conversii Atribuite", "% din CA"].map((h) => (
                   <th key={h} className="text-left text-xs font-semibold text-muted-foreground px-4 py-2.5 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -313,11 +313,14 @@ function PerformantaTable({ rows, loading }: { rows: PerfRow[]; loading: boolean
                     <td className="px-4 py-2.5">{row.calls > 0 ? fmtNum(row.calls) : "—"}</td>
                     <td className="px-4 py-2.5 font-semibold">{row.conversions > 0 ? fmtNum(row.conversions) : "—"}</td>
                     <td className="px-4 py-2.5">
-                      {row.roas !== null && row.roas > 0 ? (
-                        <span className={`font-semibold ${row.roas >= 10 ? "text-green-600" : row.roas >= 5 ? "text-yellow-600" : "text-red-500"}`}>
-                          {row.roas.toFixed(2)}x
-                        </span>
-                      ) : "—"}
+                      {row.roas !== null && row.roas > 0 ? (() => {
+                        const pct = 100 / row.roas;
+                        return (
+                          <span className={`font-semibold ${pct <= 10 ? "text-green-600" : pct <= 25 ? "text-yellow-600" : "text-red-500"}`}>
+                            {pct.toFixed(1)}%
+                          </span>
+                        );
+                      })() : "—"}
                     </td>
                   </tr>
                 ))
@@ -339,13 +342,10 @@ function ChannelKPICards({ liveData }: { liveData: LiveData }) {
   const attrConversions =
     attribution.facebook.conversions + attribution.tiktok.conversions + attribution.google.conversions;
 
-  const channelRoasValues = [
-    facebook.spend > 0 && attribution.facebook.revenue > 0 ? attribution.facebook.revenue / facebook.spend : null,
-    google.spend   > 0 && attribution.google.revenue   > 0 ? attribution.google.revenue   / google.spend   : null,
-    tiktok.spend   > 0 && attribution.tiktok.revenue   > 0 ? attribution.tiktok.revenue   / tiktok.spend   : null,
-  ].filter((v): v is number => v !== null);
-  const avgAttrROAS  = channelRoasValues.length > 0 ? channelRoasValues.reduce((s, v) => s + v, 0) / channelRoasValues.length : 0;
-  const bestAttrROAS = channelRoasValues.length > 0 ? Math.max(...channelRoasValues) : 0;
+  const totalAttrRevenue = attribution.facebook.revenue + attribution.google.revenue + attribution.tiktok.revenue;
+  const pctDinCA = !loading && totalAttrRevenue > 0 && totalSpend > 0
+    ? `${((totalSpend / totalAttrRevenue) * 100).toFixed(1)}%`
+    : "—";
 
   const kpis: { label: string; value: string; sub: string; icon: React.ReactNode }[] = [
     { label: "Facebook",          value: loading ? "—" : fmtRON(facebook.spend), sub: "Investiție",              icon: <ChannelLogo k="facebook" /> },
@@ -354,7 +354,7 @@ function ChannelKPICards({ liveData }: { liveData: LiveData }) {
     { label: "Total Investiție",  value: loading ? "—" : fmtRON(totalSpend),     sub: "Toate canalele",          icon: <Banknote className="h-6 w-6 text-muted-foreground" /> },
     { label: "Vizualizări Total", value: loading ? "—" : fmtK(totalReach),       sub: "Reach unic agregat",      icon: <Eye     className="h-6 w-6 text-muted-foreground" /> },
     { label: "Conversii Total",   value: loading ? "—" : fmtNum(attrConversions), sub: "Atribuite Invox→SmartBill", icon: <Target  className="h-6 w-6 text-muted-foreground" /> },
-    { label: "ROAS Mediu",        value: loading || avgAttrROAS === 0 ? "—" : `${avgAttrROAS.toFixed(2)}x`, sub: bestAttrROAS > 0 ? `Best: ${bestAttrROAS.toFixed(2)}x` : "—", icon: <TrendingUp className="h-6 w-6 text-muted-foreground" /> },
+    { label: "% din CA",          value: pctDinCA, sub: "Invest. mktg / CA atrib.", icon: <TrendingUp className="h-6 w-6 text-muted-foreground" /> },
   ];
 
   return (
@@ -640,11 +640,13 @@ export function MarketingPerformance({ dateRange }: { dateRange?: DateTimeRange 
     { canal: "TikTok",   profitBrut: attribution.tiktok.revenue,   cost: tiktok.spend,   roas: attrRoas(tiktok.spend,   attribution.tiktok.revenue)   ?? 0 },
   ];
 
-  // ROAS donut — attributed ROAS per channel
+  // % din CA per canal — spend / attributed revenue * 100
+  const spendPct = (spend: number, revenue: number) =>
+    spend > 0 && revenue > 0 ? Math.round((spend / revenue) * 1000) / 10 : 0;
   const roasData: RoasRow[] = [
-    { name: "Facebook", value: attrRoas(facebook.spend, attribution.facebook.revenue) ?? 0, color: "#22c55e" },
-    { name: "Google",   value: attrRoas(google.spend,   attribution.google.revenue)   ?? 0, color: "#3b82f6" },
-    { name: "TikTok",   value: attrRoas(tiktok.spend,   attribution.tiktok.revenue)   ?? 0, color: "#1e293b" },
+    { name: "Facebook", value: spendPct(facebook.spend, attribution.facebook.revenue), color: "#22c55e" },
+    { name: "Google",   value: spendPct(google.spend,   attribution.google.revenue),   color: "#3b82f6" },
+    { name: "TikTok",   value: spendPct(tiktok.spend,   attribution.tiktok.revenue),   color: "#1e293b" },
   ];
 
   // Performance table rows — conversions & revenue come from Invox→SmartBill attribution
