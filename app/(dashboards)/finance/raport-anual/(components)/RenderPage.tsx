@@ -9,17 +9,10 @@ import {
   TrendingUp, TrendingDown, Minus, Banknote, Phone,
   ShoppingCart, Target, RefreshCw, Lightbulb, Percent,
 } from "lucide-react";
-import { ChartContainer } from "@/components/ui/charts";
-import {
-  LineChart, Line, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-} from "recharts";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const MONTHS_RO      = ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const MONTHS_RO_FULL = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"];
-const CAT_COLORS     = ["#1e3a5f", "#2980b9", "#27ae60", "#e74c3c", "#f39c12", "#8e44ad", "#16a085", "#d35400"];
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -343,27 +336,27 @@ export default function RenderPage() {
     }),
   [monthsData]);
 
-  const chartData = useMemo(() =>
-    MONTHS_RO.map((label, i) => {
-      const m = monthsData[i];
-      return {
-        label,
-        revenue:     m?.revenue ?? 0,
-        prevRevenue: prevRevenue[i] ?? 0,
-        spend:       m ? m.fbSpend + m.gSpend + m.ttSpend : 0,
-      };
-    }),
-  [monthsData, prevRevenue]);
-
-  const donutData = useMemo(() => {
-    const total = categoryPerf.reduce((s, c) => s + c.revenue, 0);
-    return categoryPerf.slice(0, 8).map((c, i) => ({
-      name:  c.cat,
-      value: c.revenue,
-      pct:   total > 0 ? +((c.revenue / total) * 100).toFixed(1) : 0,
-      color: CAT_COLORS[i % CAT_COLORS.length],
-    }));
-  }, [categoryPerf]);
+  const monthlyCategoryRevenue = useMemo(() => {
+    const data: Map<number, Map<string, number>> = new Map();
+    for (let m = 0; m < 12; m++) data.set(m, new Map());
+    for (const product of annualProducts) {
+      const cat = catMap.get(product.productCode) ?? "Necategorizat";
+      for (const doc of product.documentsList) {
+        if (doc.docType !== "factura") continue;
+        const s = doc.issueDate;
+        let month = -1;
+        if (s?.includes("-")) {
+          month = new Date(s).getMonth();
+        } else if (s?.includes("/")) {
+          month = parseInt(s.split("/")[1], 10) - 1;
+        }
+        if (month < 0 || month > 11) continue;
+        const mm = data.get(month)!;
+        mm.set(cat, (mm.get(cat) ?? 0) + doc.value);
+      }
+    }
+    return data;
+  }, [annualProducts, catMap]);
 
   const channelRows = useMemo(() => [
     { canal: "Facebook Ads",  color: "#1877F2", spend: totals.fbSpend, impressions: totals.fbImpressions, clicks: totals.fbClicks, conversions: totals.fbConversions, revenue: totals.fbRevenue },
@@ -550,100 +543,68 @@ export default function RenderPage() {
         </CardContent>
       </Card>
 
-      {/* 3+4. Charts: CA evolution + Category donut */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* 3. CA + Marketing evolution */}
-        <Card className="shadow-xs lg:col-span-2">
-          <SectionHeader n="3" title="EVOLUȚIE CA ȘI INVESTIȚIE MARKETING" color="#2980b9" />
-          <CardContent className="pt-4 pb-3">
-            {loading ? (
-              <div className="flex items-center justify-center h-56 text-muted-foreground text-sm">Se încarcă...</div>
-            ) : (
-              <ChartContainer
-                config={{
-                  revenue:     { label: `CA ${year}`,       color: "#1e3a5f" },
-                  prevRevenue: { label: `CA ${year - 1}`,   color: "#94a3b8" },
-                  spend:       { label: "Invest. Marketing", color: "#e74c3c" },
-                }}
-                className="h-60"
-              >
-                <LineChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="label" tick={{ fontSize: 10 }} />
-                  <YAxis yAxisId="left"  tick={{ fontSize: 10 }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} tickFormatter={v => `${Math.round(v / 1000)}k`} />
-                  <Tooltip
-                    formatter={(value: number | undefined, name: string | undefined) => [
-                      fmtRON(value ?? 0),
-                      name === "revenue" ? `CA ${year}` : name === "prevRevenue" ? `CA ${year - 1}` : "Marketing",
-                    ]}
-                    labelStyle={{ fontSize: 11 }}
-                    contentStyle={{ fontSize: 11 }}
-                  />
-                  <Legend
-                    wrapperStyle={{ fontSize: 11 }}
-                    formatter={v => v === "revenue" ? `CA ${year}` : v === "prevRevenue" ? `CA ${year - 1}` : "Marketing"}
-                  />
-                  <Line yAxisId="left"  type="monotone" dataKey="revenue"     stroke="#1e3a5f" strokeWidth={2.5} dot={false} name="revenue" />
-                  <Line yAxisId="left"  type="monotone" dataKey="prevRevenue" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="prevRevenue" />
-                  <Line yAxisId="right" type="monotone" dataKey="spend"       stroke="#e74c3c" strokeWidth={2} dot={false} name="spend" />
-                </LineChart>
-              </ChartContainer>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* 4. Category donut */}
-        <Card className="shadow-xs">
-          <SectionHeader n="4" title="DISTRIBUȚIE CA PE CATEGORII" color="#8e44ad" />
-          <CardContent className="pt-4 pb-3">
-            {loading || donutData.length === 0 ? (
-              <div className="flex items-center justify-center h-56 text-muted-foreground text-sm">
-                {loading ? "Se încarcă..." : "Nu există date."}
-              </div>
-            ) : (
-              <>
-                <ChartContainer config={{}} className="h-40">
-                  <PieChart>
-                    <Pie
-                      data={donutData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={38}
-                      outerRadius={62}
-                      dataKey="value"
-                      nameKey="name"
-                    >
-                      {donutData.map((entry, i) => (
-                        <Cell key={i} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(v: number | undefined) => [fmtRON(v ?? 0), "CA"]}
-                      contentStyle={{ fontSize: 11 }}
-                    />
-                  </PieChart>
-                </ChartContainer>
-                <div className="mt-2 flex flex-col gap-1.5">
-                  {donutData.map((d, i) => (
-                    <div key={i} className="flex items-center justify-between text-xs gap-2">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <div className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} />
-                        <span className="truncate text-muted-foreground">{d.name}</span>
-                      </div>
-                      <span className="font-semibold flex-shrink-0">{d.pct}%</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 5. Category performance */}
+      {/* 3. Monthly sales by category */}
       <Card className="shadow-xs">
-        <SectionHeader n="5" title="PERFORMANȚĂ PE CATEGORII" color="#27ae60" />
+        <SectionHeader n="3" title="VÂNZĂRI LUNARE PE CATEGORII" color="#8e44ad" />
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-[#8e44ad]/10 border-b">
+                  <th className="text-left font-semibold text-[#8e44ad] px-3 py-2 whitespace-nowrap">Lună</th>
+                  {categoryPerf.map(c => (
+                    <th key={c.cat} className="text-left font-semibold text-[#8e44ad] px-3 py-2 whitespace-nowrap">{c.cat}</th>
+                  ))}
+                  <th className="text-left font-semibold text-[#8e44ad] px-3 py-2 whitespace-nowrap">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan={categoryPerf.length + 2} className="px-3 py-6 text-center text-muted-foreground">Se încarcă...</td></tr>
+                ) : (
+                  <>
+                    {MONTHS_RO_FULL.map((mLabel, i) => {
+                      const mm = monthlyCategoryRevenue.get(i) ?? new Map<string, number>();
+                      const rowTotal = categoryPerf.reduce((s, c) => s + (mm.get(c.cat) ?? 0), 0);
+                      return (
+                        <tr key={i} className="border-b last:border-0 hover:bg-muted/20">
+                          <td className="px-3 py-2 font-medium">{mLabel}</td>
+                          {categoryPerf.map(c => {
+                            const v = mm.get(c.cat) ?? 0;
+                            return (
+                              <td key={c.cat} className="px-3 py-2 text-[#1e3a5f]">
+                                {v > 0 ? fmtRON(v) : "—"}
+                              </td>
+                            );
+                          })}
+                          <td className="px-3 py-2 font-semibold text-[#1e3a5f]">
+                            {rowTotal > 0 ? fmtRON(rowTotal) : "—"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    <tr className="bg-[#8e44ad]/5 font-bold border-t-2">
+                      <td className="px-3 py-2">TOTAL</td>
+                      {categoryPerf.map(c => (
+                        <td key={c.cat} className="px-3 py-2 text-[#1e3a5f]">
+                          {c.revenue > 0 ? fmtRON(c.revenue) : "—"}
+                        </td>
+                      ))}
+                      <td className="px-3 py-2 text-[#1e3a5f]">
+                        {totals.revenue > 0 ? fmtRON(totals.revenue) : "—"}
+                      </td>
+                    </tr>
+                  </>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 4. Category performance */}
+      <Card className="shadow-xs">
+        <SectionHeader n="4" title="PERFORMANȚĂ PE CATEGORII" color="#27ae60" />
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
@@ -688,11 +649,11 @@ export default function RenderPage() {
         </CardContent>
       </Card>
 
-      {/* 6+7. Top products + Channel performance */}
+      {/* 5+6. Top products + Channel performance */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* 6. Top 10 products */}
+        {/* 5. Top 10 products */}
         <Card className="shadow-xs">
-          <SectionHeader n="6" title="TOP 10 PRODUSE (DUPĂ VALOARE)" color="#d35400" />
+          <SectionHeader n="5" title="TOP 10 PRODUSE (DUPĂ VALOARE)" color="#d35400" />
           <CardContent className="p-0">
             <table className="w-full text-xs">
               <thead>
@@ -731,9 +692,9 @@ export default function RenderPage() {
           </CardContent>
         </Card>
 
-        {/* 7. Annual channel performance */}
+        {/* 6. Annual channel performance */}
         <Card className="shadow-xs">
-          <SectionHeader n="7" title="PERFORMANȚĂ CANALE (ANUAL)" color="#2c3e50" />
+          <SectionHeader n="6" title="PERFORMANȚĂ CANALE (ANUAL)" color="#2c3e50" />
           <CardContent className="p-0">
             <table className="w-full text-xs">
               <thead>
@@ -787,9 +748,9 @@ export default function RenderPage() {
         </Card>
       </div>
 
-      {/* 8. Quarterly summary */}
+      {/* 7. Quarterly summary */}
       <Card className="shadow-xs">
-        <SectionHeader n="8" title="SUMAR TRIMESTRIAL" color="#16a085" />
+        <SectionHeader n="7" title="SUMAR TRIMESTRIAL" color="#16a085" />
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -844,7 +805,7 @@ export default function RenderPage() {
         <CardHeader className="pb-2 pt-3 px-4">
           <CardTitle className="text-sm font-bold flex items-center gap-2 text-[#f39c12]">
             <Lightbulb className="h-4 w-4" />
-            9. INSIGHTS AUTOMATE — {year}
+            8. INSIGHTS AUTOMATE — {year}
           </CardTitle>
         </CardHeader>
         <CardContent className="px-4 pb-4">
