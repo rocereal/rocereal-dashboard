@@ -928,7 +928,7 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
   const kpis = [
     { label: "Vânzări săptămânale", value: loading ? "—" : fmtRON(totalRevenue), sub: "Venituri emise", icon: <Banknote className="h-5 w-5" />, accent: "border-t-blue-600", pct: pctChg(totalRevenue, prevRevenue) },
     { label: "Apeluri totale",      value: loading ? "—" : fmtNum(totalCalls),    sub: `Răspunse: ${fmtNum(totalAnswered)}`, icon: <Phone className="h-5 w-5" />, accent: "border-t-orange-500", pct: null },
-    { label: "Comenzi plasate",     value: loading ? "—" : fmtNum(totalConversions), sub: "Conversii atribuite", icon: <ShoppingCart className="h-5 w-5" />, accent: "border-t-green-600", pct: null },
+    { label: "Comenzi plasate",     value: loading ? "—" : fmtNum(metrics?.incasate?.count ?? totalConversions), sub: "Facturi emise", icon: <ShoppingCart className="h-5 w-5" />, accent: "border-t-green-600", pct: null },
     { label: "Rată conversie apeluri → comenzi", value: loading ? "—" : convRate > 0 ? `${convRate.toFixed(1)}%` : "—", sub: "Răspunse → factură achitată", icon: <Percent className="h-5 w-5" />, accent: "border-t-purple-600", pct: null },
     { label: "Investiție marketing / CA", value: loading ? "—" : investPct > 0 ? `${investPct.toFixed(1)}%` : "—", sub: totalSpend > 0 ? fmtRON(totalSpend) : "—", icon: <BarChart3 className="h-5 w-5" />, accent: "border-t-red-500", pct: null, invertPct: true },
   ];
@@ -994,7 +994,7 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
           totalSpend,
           calls:       totalCalls,
           answered:    totalAnswered,
-          orders:      totalConversions,
+          orders:      metrics?.incasate?.count ?? totalConversions,
           channels:    channelRows.map(r => ({ name: r.canal, spend: r.spend, calls: r.calls, revenue: r.revenue })),
           categories:  Array.from(buildWeeklyByCategory(filteredCurProducts, catMap).entries())
                          .map(([name, d]) => ({ name, revenue: d.val, qty: d.qty }))
