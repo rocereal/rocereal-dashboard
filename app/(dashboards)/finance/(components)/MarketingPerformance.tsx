@@ -59,18 +59,18 @@ const INIT: LiveData = {
 
 // 2026: Ian–Apr = date reale (aproximate), Mai–Dec = dummy
 const trendData = [
-  { luna: "Ian", venituriIncasate: 520000, investitie: 21400 },
-  { luna: "Feb", venituriIncasate: 487000, investitie: 19800 },
-  { luna: "Mar", venituriIncasate: 706821, investitie: 23600 },
-  { luna: "Apr", venituriIncasate: 271914, investitie: 24750 },
-  { luna: "Mai", venituriIncasate: null,   investitie: null },
-  { luna: "Iun", venituriIncasate: null,   investitie: null },
-  { luna: "Iul", venituriIncasate: null,   investitie: null },
-  { luna: "Aug", venituriIncasate: null,   investitie: null },
-  { luna: "Sep", venituriIncasate: null,   investitie: null },
-  { luna: "Oct", venituriIncasate: null,   investitie: null },
-  { luna: "Nov", venituriIncasate: null,   investitie: null },
-  { luna: "Dec", venituriIncasate: null,   investitie: null },
+  { luna: "Ian", venituriEmise: 520000, investitie: 21400 },
+  { luna: "Feb", venituriEmise: 487000, investitie: 19800 },
+  { luna: "Mar", venituriEmise: 706821, investitie: 23600 },
+  { luna: "Apr", venituriEmise: 271914, investitie: 24750 },
+  { luna: "Mai", venituriEmise: null,   investitie: null },
+  { luna: "Iun", venituriEmise: null,   investitie: null },
+  { luna: "Iul", venituriEmise: null,   investitie: null },
+  { luna: "Aug", venituriEmise: null,   investitie: null },
+  { luna: "Sep", venituriEmise: null,   investitie: null },
+  { luna: "Oct", venituriEmise: null,   investitie: null },
+  { luna: "Nov", venituriEmise: null,   investitie: null },
+  { luna: "Dec", venituriEmise: null,   investitie: null },
 ];
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
@@ -380,7 +380,7 @@ function ChannelKPICards({ liveData }: { liveData: LiveData }) {
 const STATIC_INVESTMENT: (number | null)[] = [21400, 19800, 23600, 24750, null, null, null, null, null, null, null, null];
 
 function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
-  const [chartData, setChartData] = useState<{ luna: string; venituriIncasate: number | null; investitie: number | null }[]>(
+  const [chartData, setChartData] = useState<{ luna: string; venituriEmise: number | null; investitie: number | null }[]>(
     trendData.map((d) => ({ ...d }))
   );
   const [chartLoading, setChartLoading] = useState(true);
@@ -393,29 +393,27 @@ function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
     setChartLoading(true);
     fetch(`/api/finance/trend?year=${year}`, { cache: "no-store" })
       .then((r) => r.json())
-      .then((rows: { luna: string; venituriIncasate: number | null }[]) => {
+      .then((rows: { luna: string; venituriEmise: number | null }[]) => {
         setChartData(rows.map((r, i) => ({ ...r, investitie: STATIC_INVESTMENT[i] ?? null })));
       })
       .catch(() => {/* keep static data on error */})
       .finally(() => setChartLoading(false));
   }, [dateRange]);
 
-  const maxRevenue = Math.max(...chartData.map((d) => d.venituriIncasate ?? 0), 1);
-  // Normalize investment per month: position line at (investitie / venituriIncasate) * maxRevenue
-  // so it appears proportional to that month's bar (e.g. 20% spend → line at 20% of bar height)
+  const maxRevenue = Math.max(...chartData.map((d) => d.venituriEmise ?? 0), 1);
   const enrichedData = chartData.map((d) => ({
     ...d,
     investitieNorm:
-      d.venituriIncasate && d.venituriIncasate > 0 && d.investitie != null
-        ? (d.investitie / d.venituriIncasate) * maxRevenue
+      d.venituriEmise && d.venituriEmise > 0 && d.investitie != null
+        ? (d.investitie / d.venituriEmise) * maxRevenue
         : null,
   }));
 
   return (
     <Card className="shadow-xs">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">Trend – Venituri Încasate vs Investiție Ads</CardTitle>
-        <CardDescription className="text-xs">Evoluție lunară — bare: Venituri Încasate (SmartBill) · linie: Investiție Ads (% din venituri)</CardDescription>
+        <CardTitle className="text-base">Trend – Venituri Emise vs Investiție Ads</CardTitle>
+        <CardDescription className="text-xs">Evoluție lunară — bare: Venituri Emise (SmartBill) · linie: Investiție Ads (% din venituri)</CardDescription>
       </CardHeader>
       <CardContent className="px-2 pb-4">
         {chartLoading ? (
@@ -432,11 +430,11 @@ function TrendProfitChart({ dateRange }: { dateRange?: DateTimeRange }) {
                     const real = props.payload?.investitie;
                     return [real != null ? fmtRON(real) : "—", "Investiție Ads"] as [string, string];
                   }
-                  return [value != null ? fmtRON(value) : "—", "Venituri Încasate"] as [string, string];
+                  return [value != null ? fmtRON(value) : "—", "Venituri Emise"] as [string, string];
                 }}
                 contentStyle={{ fontSize: 12, borderRadius: 6 }}
               />
-              <Bar dataKey="venituriIncasate" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriIncasate" />
+              <Bar dataKey="venituriEmise" fill="var(--chart-1)" opacity={0.85} radius={[3, 3, 0, 0]} name="venituriEmise" />
               <Line type="monotone" dataKey="investitieNorm" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 3 }} name="investitieNorm" connectNulls={false} />
             </ComposedChart>
           </ResponsiveContainer>

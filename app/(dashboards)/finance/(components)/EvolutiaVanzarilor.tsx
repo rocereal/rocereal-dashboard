@@ -97,7 +97,7 @@ export function EvolutiaVanzarilor({ dateRange }: Props) {
         <div className="flex flex-1 flex-col justify-center gap-1 px-4 pt-4 pb-3 sm:px-6">
           <CardTitle className="text-base sm:text-lg">Evoluția Vânzărilor</CardTitle>
           <CardDescription className="text-xs sm:text-sm">
-            Facturi încasate din SmartBill, grupate pe agent și zi
+            Facturi emise din SmartBill, grupate pe agent și zi
           </CardDescription>
         </div>
 

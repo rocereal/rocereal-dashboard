@@ -160,7 +160,7 @@ export function FinanceMetrics({ dateRange }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <MetricCard
-        title="Venituri Încasate"
+        title="Venituri Emise"
         icon={CheckCircle2}
         iconClass="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
         total={data?.incasate.total ?? 0}

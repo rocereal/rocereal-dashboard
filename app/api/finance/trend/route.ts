@@ -14,8 +14,7 @@ export async function GET(req: NextRequest) {
   try {
     const invoices = await prisma.smartbillInvoice.findMany({
       where: {
-        paid: true,
-        totalAmount: { gt: 0 },
+        totalAmount: { not: 0 },
         issuedAt: { gte: from, lt: to },
       },
       select: { totalAmount: true, issuedAt: true, invoiceKey: true },
@@ -36,7 +35,7 @@ export async function GET(req: NextRequest) {
 
     const result = MONTH_NAMES.map((luna, i) => ({
       luna,
-      venituriIncasate: i <= lastFilledMonth ? Math.round(monthlyRevenue[i]) : null,
+      venituriEmise: i <= lastFilledMonth ? Math.round(monthlyRevenue[i]) : null,
       investitie: null as number | null,
     }));
 

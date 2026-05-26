@@ -924,7 +924,7 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
   ];
 
   const kpis = [
-    { label: "Vânzări săptămânale", value: loading ? "—" : fmtRON(totalRevenue), sub: "Venituri încasate", icon: <Banknote className="h-5 w-5" />, accent: "border-t-blue-600", pct: pctChg(totalRevenue, prevRevenue) },
+    { label: "Vânzări săptămânale", value: loading ? "—" : fmtRON(totalRevenue), sub: "Venituri emise", icon: <Banknote className="h-5 w-5" />, accent: "border-t-blue-600", pct: pctChg(totalRevenue, prevRevenue) },
     { label: "Apeluri totale",      value: loading ? "—" : fmtNum(totalCalls),    sub: `Răspunse: ${fmtNum(totalAnswered)}`, icon: <Phone className="h-5 w-5" />, accent: "border-t-orange-500", pct: null },
     { label: "Comenzi plasate",     value: loading ? "—" : fmtNum(totalConversions), sub: "Conversii atribuite", icon: <ShoppingCart className="h-5 w-5" />, accent: "border-t-green-600", pct: null },
     { label: "Rată conversie apeluri → comenzi", value: loading ? "—" : convRate > 0 ? `${convRate.toFixed(1)}%` : "—", sub: "Răspunse → factură achitată", icon: <Percent className="h-5 w-5" />, accent: "border-t-purple-600", pct: null },

@@ -3,7 +3,7 @@
  *
  * Returns three KPI groups for the requested period and the equivalent
  * previous period (same duration, ending the day before `from`):
- *   - incasate  : net revenue = paid(>0) + storno(<0), regardless of paid flag
+ *   - incasate  : net emise = all(>0) + storno(<0), regardless of paid flag
  *   - stornate  : credit notes (totalAmount < 0)
  *   - emise     : issued but unpaid (paid=false, totalAmount > 0)
  */
@@ -25,9 +25,9 @@ async function getMetrics(from: Date, to: Date): Promise<{
   const where = { issuedAt: { gte: from, lte: to } };
 
   const [incasatePoz, stornate, emise] = await Promise.all([
-    // Paid invoices with positive amount
+    // All issued invoices with positive amount (regardless of paid status)
     prisma.smartbillInvoice.aggregate({
-      where: { ...where, paid: true, totalAmount: { gt: 0 } },
+      where: { ...where, totalAmount: { gt: 0 } },
       _count: { _all: true },
       _sum: { totalAmount: true },
     }),

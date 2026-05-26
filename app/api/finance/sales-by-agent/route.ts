@@ -58,14 +58,11 @@ export async function GET(req: NextRequest) {
     if (phone) clientPhoneMap.set(c.name.trim().toUpperCase(), phone);
   }
 
-  // 3. Fetch paid invoices + storno (totalAmount < 0) for the date range.
+  // 3. Fetch all emise invoices + storno (totalAmount < 0) for the date range.
   // Storno invoices act as negative adjustments matching SmartBill's net total.
   const invoices = await prisma.smartbillInvoice.findMany({
     where: {
-      OR: [
-        { paid: true },
-        { totalAmount: { lt: 0 } },
-      ],
+      totalAmount: { not: 0 },
       issuedAt: {
         ...(from ? { gte: from } : {}),
         ...(to ? { lte: to } : {}),
