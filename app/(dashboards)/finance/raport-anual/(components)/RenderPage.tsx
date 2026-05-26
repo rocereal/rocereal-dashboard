@@ -277,7 +277,6 @@ export default function RenderPage() {
 
   const totalSpend      = totals.fbSpend + totals.gSpend + totals.ttSpend;
   const totalAttrRev    = totals.fbRevenue + totals.gRevenue + totals.ttRevenue;
-  const totalRoas       = totalSpend > 0 ? totals.revenue / totalSpend : 0;
   const convRate        = totals.calls > 0 ? (totals.answered / totals.calls) * 100 : 0;
   const avgOrderVal     = totals.orders > 0 ? totals.revenue / totals.orders : 0;
   const prevTotalRev    = prevRevenue.reduce((s, v) => s + v, 0);
@@ -507,7 +506,8 @@ export default function RenderPage() {
                     {MONTHS_RO_FULL.map((mLabel, i) => {
                       const m     = monthsData[i];
                       const spend = m ? m.fbSpend + m.gSpend + m.ttSpend : 0;
-                      const mktPct = m?.revenue > 0 && spend > 0 ? (spend / m.revenue) * 100 : null;
+                      const rev    = m?.revenue ?? 0;
+                      const mktPct = rev > 0 && spend > 0 ? (spend / rev) * 100 : null;
                       const conv  = m && m.calls > 0 ? (m.answered / m.calls) * 100 : null;
                       const yoy   = pctChg(m?.revenue ?? 0, prevRevenue[i]);
                       return (
