@@ -387,7 +387,7 @@ function WeeklySalesByCategoryTable({
   const grandCallsA  = Math.round(Array.from(callsByCategory.values()).reduce((s, v) => s + v.answered, 0));
   const grandOrders  = Array.from(cur.values()).reduce((s, v) => s + v.orders, 0);
 
-  const COLS = ["Categorie", "Buc. cur.", "Buc. prec.", "Investiție mktg", "Apeluri totale", "Apeluri răspunse", "Cost/apel", "Comenzi", "Rată conversie", "Val. cur. (RON)", "Val. prec. (RON)", "Var. %", "% din total"];
+  const COLS = ["Categorie", "Buc. cur.", "Buc. prec.", "Investiție mktg", "Apeluri totale", "Apeluri răspunse", "Cost/apel", "Comenzi", "Rata răspuns", "Rata conversie", "Val. cur. (RON)", "Val. prec. (RON)", "Var. %", "% din total"];
 
   return (
     <Card className="shadow-xs">
@@ -416,7 +416,8 @@ function WeeklySalesByCategoryTable({
                     const callsT  = Math.round(callsByCategory.get(cat)?.total    ?? 0);
                     const callsA  = Math.round(callsByCategory.get(cat)?.answered ?? 0);
                     const cpa     = callsT > 0 && spend > 0 ? spend / callsT : null;
-                    const rate    = callsT > 0 ? (callsA / callsT) * 100 : null;
+                    const rate     = callsT > 0 ? (callsA / callsT) * 100 : null;
+                    const convCat  = callsA > 0 ? (c.orders / callsA) * 100 : null;
                     const pctVal  = totalCurVal > 0 ? ((c.val / totalCurVal) * 100).toFixed(1) + "%" : "—";
                     return (
                       <tr key={cat} className="border-b last:border-0 hover:bg-muted/30">
@@ -429,6 +430,7 @@ function WeeklySalesByCategoryTable({
                         <td className="px-3 py-1.5">{cpa !== null ? fmtRON(cpa) : "—"}</td>
                         <td className="px-3 py-1.5 font-semibold">{c.orders > 0 ? fmtNum(c.orders) : "—"}</td>
                         <td className="px-3 py-1.5 font-semibold text-[#5c2d8c]">{rate !== null ? rate.toFixed(1) + "%" : "—"}</td>
+                        <td className="px-3 py-1.5 font-semibold text-[#16a085]">{convCat !== null ? convCat.toFixed(1) + "%" : "—"}</td>
                         <td className="px-3 py-1.5 font-semibold">{c.val > 0 ? fmtRON(c.val) : "—"}</td>
                         <td className="px-3 py-1.5 text-muted-foreground">{p.val > 0 ? fmtRON(p.val) : "—"}</td>
                         <td className="px-3 py-1.5"><VariationBadge pct={pctChg(c.val, p.val)} /></td>
@@ -446,6 +448,7 @@ function WeeklySalesByCategoryTable({
                     <td className="px-3 py-2">{grandCallsT > 0 && grandSpend > 0 ? fmtRON(grandSpend / grandCallsT) : "—"}</td>
                     <td className="px-3 py-2">{grandOrders > 0 ? fmtNum(grandOrders) : "—"}</td>
                     <td className="px-3 py-2">{grandCallsT > 0 ? ((grandCallsA / grandCallsT) * 100).toFixed(1) + "%" : "—"}</td>
+                    <td className="px-3 py-2">{grandCallsA > 0 ? ((grandOrders / grandCallsA) * 100).toFixed(1) + "%" : "—"}</td>
                     <td className="px-3 py-2">{grandCurVal > 0 ? fmtRON(grandCurVal) : "—"}</td>
                     <td className="px-3 py-2">{grandPrevVal > 0 ? fmtRON(grandPrevVal) : "—"}</td>
                     <td className="px-3 py-2"><VariationBadge pct={pctChg(grandCurVal, grandPrevVal)} /></td>
@@ -538,19 +541,20 @@ function ChannelPerformanceTable({ rows, loading }: { rows: ChannelRow[]; loadin
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-[#2c3e50]/10 border-b">
-                {["Canal", "Spend (RON)", "Apeluri totale", "Apeluri răspunse", "Cost / apel", "Comenzi", "Vânzări (RON)", "% din CA", "Rată conversie"].map(h => (
+                {["Canal", "Spend (RON)", "Apeluri totale", "Apeluri răspunse", "Cost / apel", "Comenzi", "Vânzări (RON)", "% din CA", "Rata răspuns", "Rata conversie"].map(h => (
                   <th key={h} className="text-left font-semibold text-[#2c3e50] px-3 py-2 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={9} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
+                <tr><td colSpan={10} className="px-3 py-4 text-center text-muted-foreground">Se încarcă...</td></tr>
               ) : (
                 <>
                   {rows.map(r => {
                     const pctCA      = r.revenue > 0 && r.spend > 0 ? ((r.spend / r.revenue) * 100).toFixed(1) + "%" : "—";
-                    const convRate   = r.calls > 0 ? ((r.callsAnswered / r.calls) * 100).toFixed(1) + "%" : "—";
+                    const answerRate = r.calls > 0          ? ((r.callsAnswered / r.calls)        * 100).toFixed(1) + "%" : "—";
+                    const convRate   = r.callsAnswered > 0  ? ((r.conversions   / r.callsAnswered) * 100).toFixed(1) + "%" : "—";
                     return (
                       <tr key={r.canal} className="border-b last:border-0 hover:bg-muted/30">
                         <td className="px-3 py-2 font-medium">{r.canal}</td>
@@ -561,7 +565,8 @@ function ChannelPerformanceTable({ rows, loading }: { rows: ChannelRow[]; loadin
                         <td className="px-3 py-2 font-semibold">{r.conversions > 0 ? fmtNum(r.conversions) : "—"}</td>
                         <td className="px-3 py-2 font-semibold text-green-700 dark:text-green-400">{r.revenue > 0 ? fmtRON(r.revenue) : "—"}</td>
                         <td className="px-3 py-2 font-semibold text-[#2c3e50]">{pctCA}</td>
-                        <td className="px-3 py-2 font-semibold text-[#5c2d8c]">{convRate}</td>
+                        <td className="px-3 py-2 font-semibold text-[#5c2d8c]">{answerRate}</td>
+                        <td className="px-3 py-2 font-semibold text-[#16a085]">{convRate}</td>
                       </tr>
                     );
                   })}
@@ -574,7 +579,8 @@ function ChannelPerformanceTable({ rows, loading }: { rows: ChannelRow[]; loadin
                     <td className="px-3 py-2">{tot.conversions > 0 ? fmtNum(tot.conversions) : "—"}</td>
                     <td className="px-3 py-2">{tot.revenue > 0 ? fmtRON(tot.revenue) : "—"}</td>
                     <td className="px-3 py-2">{tot.revenue > 0 && tot.spend > 0 ? ((tot.spend / tot.revenue) * 100).toFixed(1) + "%" : "—"}</td>
-                    <td className="px-3 py-2">{tot.calls > 0 ? ((tot.callsAnswered / tot.calls) * 100).toFixed(1) + "%" : "—"}</td>
+                    <td className="px-3 py-2">{tot.calls > 0          ? ((tot.callsAnswered / tot.calls)        * 100).toFixed(1) + "%" : "—"}</td>
+                    <td className="px-3 py-2">{tot.callsAnswered > 0  ? ((tot.conversions   / tot.callsAnswered) * 100).toFixed(1) + "%" : "—"}</td>
                   </tr>
                 </>
               )}

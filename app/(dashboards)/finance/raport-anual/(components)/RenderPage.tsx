@@ -281,6 +281,7 @@ export default function RenderPage() {
 
   const totalSpend      = totals.fbSpend + totals.gSpend + totals.ttSpend;
   const convRate        = totals.calls > 0 ? (totals.answered / totals.calls) * 100 : 0;
+  const conversionRate  = totals.answered > 0 ? (totals.orders / totals.answered) * 100 : 0;
   const avgOrderVal     = totals.orders > 0 ? totals.revenue / totals.orders : 0;
   const prevTotalRev    = prevRevenue.reduce((s, v) => s + v, 0);
   const prevTotalOrders = prevOrders.reduce((s, v) => s + v, 0);
@@ -445,7 +446,7 @@ export default function RenderPage() {
       </div>
 
       {/* 1. KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
         <KpiCard
           label="Cifră de Afaceri"
           value={loading ? "—" : fmtRON(totals.revenue)}
@@ -484,11 +485,18 @@ export default function RenderPage() {
           accent="border-t-[#8e44ad]"
         />
         <KpiCard
-          label="Rată Conversie"
+          label="Rată Răspuns"
           value={loading ? "—" : (convRate > 0 ? `${convRate.toFixed(1)}%` : "—")}
           sub="Apeluri răspunse / total"
-          icon={<Target className="h-4 w-4" />}
+          icon={<Phone className="h-4 w-4" />}
           accent="border-t-[#16a085]"
+        />
+        <KpiCard
+          label="Rată Conversie"
+          value={loading ? "—" : (conversionRate > 0 ? `${conversionRate.toFixed(1)}%` : "—")}
+          sub="Comenzi / apeluri răspunse"
+          icon={<TrendingUp className="h-4 w-4" />}
+          accent="border-t-[#2980b9]"
         />
       </div>
 
@@ -500,14 +508,14 @@ export default function RenderPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="bg-[#1e3a5f]/10 border-b">
-                  {["Lună", "CA (RON)", "Var. YoY", "Comenzi", "Invest. Mktg", "% din CA", "Apeluri", "Răspunse", "Conv. %"].map(h => (
+                  {["Lună", "CA (RON)", "Var. YoY", "Comenzi", "Invest. Mktg", "% din CA", "Apeluri", "Răspunse", "Rata răspuns", "Rata conversie"].map(h => (
                     <th key={h} className="text-left font-semibold text-[#1e3a5f] px-3 py-2 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={9} className="px-3 py-6 text-center text-muted-foreground">Se încarcă...</td></tr>
+                  <tr><td colSpan={10} className="px-3 py-6 text-center text-muted-foreground">Se încarcă...</td></tr>
                 ) : (
                   <>
                     {MONTHS_RO_FULL.map((mLabel, i) => {
@@ -515,7 +523,8 @@ export default function RenderPage() {
                       const spend = m ? m.fbSpend + m.gSpend + m.ttSpend : 0;
                       const rev    = m?.revenue ?? 0;
                       const mktPct = rev > 0 && spend > 0 ? (spend / rev) * 100 : null;
-                      const conv  = m && m.calls > 0 ? (m.answered / m.calls) * 100 : null;
+                      const conv     = m && m.calls > 0    ? (m.answered / m.calls)   * 100 : null;
+                      const convRate_m = m && m.answered > 0 ? (m.orders / m.answered) * 100 : null;
                       const yoy   = pctChg(m?.revenue ?? 0, prevRevenue[i]);
                       return (
                         <tr key={i} className="border-b last:border-0 hover:bg-muted/20">
@@ -528,6 +537,7 @@ export default function RenderPage() {
                           <td className="px-3 py-2">{m?.calls ? fmtNum(m.calls) : "—"}</td>
                           <td className="px-3 py-2">{m?.answered ? fmtNum(m.answered) : "—"}</td>
                           <td className="px-3 py-2">{conv !== null ? `${conv.toFixed(1)}%` : "—"}</td>
+                          <td className="px-3 py-2">{convRate_m !== null ? `${convRate_m.toFixed(1)}%` : "—"}</td>
                         </tr>
                       );
                     })}
@@ -541,6 +551,7 @@ export default function RenderPage() {
                       <td className="px-3 py-2">{totals.calls > 0 ? fmtNum(totals.calls) : "—"}</td>
                       <td className="px-3 py-2">{totals.answered > 0 ? fmtNum(totals.answered) : "—"}</td>
                       <td className="px-3 py-2">{convRate > 0 ? `${convRate.toFixed(1)}%` : "—"}</td>
+                      <td className="px-3 py-2">{conversionRate > 0 ? `${conversionRate.toFixed(1)}%` : "—"}</td>
                     </tr>
                   </>
                 )}
@@ -763,19 +774,20 @@ export default function RenderPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[#16a085]/10 border-b">
-                  {["Trimestru", "CA (RON)", "Invest. Mktg", "% din CA", "Comenzi", "Apeluri", "Răspunse", "Conv. %"].map(h => (
+                  {["Trimestru", "CA (RON)", "Invest. Mktg", "% din CA", "Comenzi", "Apeluri", "Răspunse", "Rata răspuns", "Rata conversie"].map(h => (
                     <th key={h} className="text-left font-semibold text-[#16a085] px-4 py-2.5 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">Se încarcă...</td></tr>
+                  <tr><td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">Se încarcă...</td></tr>
                 ) : (
                   <>
                     {quarterlyData.map((q, i) => {
                       const mktPct = q.revenue > 0 && q.spend > 0 ? (q.spend / q.revenue * 100).toFixed(1) : null;
-                      const conv = q.calls  > 0 ? ((q.answered / q.calls) * 100).toFixed(1) : null;
+                      const conv    = q.calls    > 0 ? ((q.answered / q.calls)   * 100).toFixed(1) : null;
+                      const convQ   = q.answered > 0 ? ((q.orders   / q.answered) * 100).toFixed(1) : null;
                       return (
                         <tr key={i} className="border-b last:border-0 hover:bg-muted/20">
                           <td className="px-4 py-2.5 font-semibold">{q.label}</td>
@@ -786,6 +798,7 @@ export default function RenderPage() {
                           <td className="px-4 py-2.5">{q.calls > 0 ? fmtNum(q.calls) : "—"}</td>
                           <td className="px-4 py-2.5">{q.answered > 0 ? fmtNum(q.answered) : "—"}</td>
                           <td className="px-4 py-2.5">{conv ? `${conv}%` : "—"}</td>
+                          <td className="px-4 py-2.5">{convQ ? `${convQ}%` : "—"}</td>
                         </tr>
                       );
                     })}
@@ -798,6 +811,7 @@ export default function RenderPage() {
                       <td className="px-4 py-2.5">{totals.calls > 0 ? fmtNum(totals.calls) : "—"}</td>
                       <td className="px-4 py-2.5">{totals.answered > 0 ? fmtNum(totals.answered) : "—"}</td>
                       <td className="px-4 py-2.5">{convRate > 0 ? `${convRate.toFixed(1)}%` : "—"}</td>
+                      <td className="px-4 py-2.5">{conversionRate > 0 ? `${conversionRate.toFixed(1)}%` : "—"}</td>
                     </tr>
                   </>
                 )}
