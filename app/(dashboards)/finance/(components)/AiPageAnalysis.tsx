@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BrainCircuit, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import type { PageContext } from "@/app/api/ai/analyze-page/route";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -104,17 +103,18 @@ function EmployeeCard({ emp }: { emp: EmployeeResult }) {
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export function AiPageAnalysis({ context, disabled }: { context: PageContext; disabled?: boolean }) {
-  const [results,  setResults]  = useState<EmployeeResult[]>([]);
-  const [loading,  setLoading]  = useState(false);
-  const [lastRun,  setLastRun]  = useState<Date | null>(null);
+  const [results, setResults] = useState<EmployeeResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [lastRun, setLastRun] = useState<Date | null>(null);
+  const hasRun = useRef(false);
 
-  const analyze = async () => {
+  const analyze = async (ctx: PageContext) => {
     setLoading(true);
     try {
       const res  = await fetch("/api/ai/analyze-page", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(context),
+        body:    JSON.stringify(ctx),
       });
       const data = await res.json() as EmployeeResult[];
       if (Array.isArray(data)) { setResults(data); setLastRun(new Date()); }
@@ -123,51 +123,43 @@ export function AiPageAnalysis({ context, disabled }: { context: PageContext; di
     }
   };
 
+  // Auto-trigger once when page data finishes loading
+  useEffect(() => {
+    if (disabled) return;
+    if (hasRun.current) return;
+    hasRun.current = true;
+    analyze(context);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [disabled]);
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-2">
-          <BrainCircuit className="h-5 w-5 text-primary" />
-          <h2 className="text-base font-semibold">Echipa AI — 7 Angajați</h2>
-          {lastRun && (
-            <span className="text-xs text-muted-foreground">
-              Ultima analiză: {lastRun.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" })}
-            </span>
-          )}
-        </div>
-        <Button
-          onClick={analyze}
-          disabled={loading || disabled}
-          size="sm"
-          variant="outline"
-          className="gap-1.5"
-        >
-          {loading
-            ? <><Loader2 className="h-3 w-3 animate-spin" />Se generează...</>
-            : <><BrainCircuit className="h-3 w-3" />{results.length > 0 ? "Reanaliyează" : "Analizează datele"}</>
-          }
-        </Button>
+      <div className="flex items-center gap-2">
+        <BrainCircuit className="h-5 w-5 text-primary" />
+        <h2 className="text-base font-semibold">Echipa AI — 7 Angajați</h2>
+        {loading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+        {lastRun && !loading && (
+          <span className="text-xs text-muted-foreground">
+            Generat la {lastRun.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" })}
+          </span>
+        )}
       </div>
 
-      {results.length === 0 && !loading ? (
-        <div className="border border-dashed rounded-lg p-8 text-center space-y-2">
-          <BrainCircuit className="h-8 w-8 mx-auto text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">
-            Apasă <strong>Analizează datele</strong> pentru a genera insights AI bazate pe cifrele paginii curente{context.period ? ` (${context.period})` : ""}.
-          </p>
-          <p className="text-xs text-muted-foreground/70">Generarea durează ~15–20 secunde pentru toți cei 7 angajați.</p>
-        </div>
-      ) : loading ? (
+      {loading ? (
         <div className="border rounded-lg h-48 flex flex-col items-center justify-center gap-2 text-muted-foreground">
           <Loader2 className="h-6 w-6 animate-spin" />
           <p className="text-sm">Se generează analiză pentru 7 angajați AI...</p>
           <p className="text-xs opacity-60">~15–20 secunde</p>
         </div>
-      ) : (
+      ) : results.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {results.map(emp => <EmployeeCard key={emp.id} emp={emp} />)}
         </div>
-      )}
+      ) : disabled ? (
+        <div className="border rounded-lg h-24 flex items-center justify-center text-sm text-muted-foreground gap-2">
+          <Loader2 className="h-4 w-4 animate-spin" /> Se încarcă datele paginii...
+        </div>
+      ) : null}
     </div>
   );
 }
