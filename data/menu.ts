@@ -35,9 +35,9 @@ export const menudata = {
       items: [
         { title: "Rapoarte Financiare",       url: "/finance" },
         { title: "Analiza AI",                url: "/finance/analiza-ai" },
-        { title: "Raport vânzări live",       url: "/finance/raport-marketing" },
-        { title: "Raport vânzări săptămânal", url: "/finance/raport-saptamanal" },
-        { title: "Raport Anual",              url: "/finance/raport-anual" },
+        { title: "Vânzări live",        url: "/finance/raport-marketing" },
+        { title: "Vânzări săptămânale", url: "/finance/raport-saptamanal" },
+        { title: "Vânzări anuale",      url: "/finance/raport-anual" },
       ],
     },
     {
@@ -152,9 +152,9 @@ export const menudataMobile = {
       items: [
         { title: "Rapoarte Financiare",       url: "/finance" },
         { title: "Analiza AI",                url: "/finance/analiza-ai" },
-        { title: "Raport vânzări live",       url: "/finance/raport-marketing" },
-        { title: "Raport vânzări săptămânal", url: "/finance/raport-saptamanal" },
-        { title: "Raport Anual",              url: "/finance/raport-anual" },
+        { title: "Vânzări live",        url: "/finance/raport-marketing" },
+        { title: "Vânzări săptămânale", url: "/finance/raport-saptamanal" },
+        { title: "Vânzări anuale",      url: "/finance/raport-anual" },
         { title: "Raport Clienti",      url: "/crm" },
         { title: "Tracking Mașini",     url: "/tracking" },
         { title: "Canale Vanzare",      url: "/ecommerce" },

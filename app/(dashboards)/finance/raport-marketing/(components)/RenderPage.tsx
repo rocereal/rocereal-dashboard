@@ -929,12 +929,12 @@ export default function RenderPage({ weekOffset = 0 }: { weekOffset?: number }) 
     <div className="flex flex-col gap-5 pb-10">
       {/* Header */}
       <DashboardHeader
-        title={weekOffset > 0 ? "Raport vânzări săptămânal" : "Raport vânzări live"}
+        title={weekOffset > 0 ? "Vânzări săptămânale" : "Vânzări live"}
         subtitle={`Săptămâna: ${capitalize(weekLabel(curWeek.from, curWeek.to))} · ${capitalize(format(now, "d MMMM yyyy", { locale: ro }))}`}
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
           { label: "Rapoarte Financiare", href: "/finance" },
-          { label: weekOffset > 0 ? "Raport vânzări săptămânal" : "Raport vânzări live" },
+          { label: weekOffset > 0 ? "Vânzări săptămânale" : "Vânzări live" },
         ]}
       />
 

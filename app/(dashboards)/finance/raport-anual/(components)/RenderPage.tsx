@@ -411,12 +411,12 @@ export default function RenderPage() {
   return (
     <div className="flex flex-col space-y-6">
       <DashboardHeader
-        title="Raport Anual"
+        title="Vânzări anuale"
         subtitle={`Performanță marketing și vânzări — ${year}`}
         breadcrumbs={[
           { label: "Dashboard", href: "/" },
           { label: "Rapoarte Financiare", href: "/finance" },
-          { label: "Raport Anual" },
+          { label: "Vânzări anuale" },
         ]}
       />
 
