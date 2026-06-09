@@ -1,0 +1,58 @@
+name: Rocereal Meta Push
+
+# Pushes paid SmartBill invoices to the rocereal-marketing-attribution
+# WordPress plugin so it can fire Meta CAPI + TikTok Purchase events
+# with full attribution from the phone_index reverse-lookup.
+#
+# Runs automatically after the existing "SmartBill Daily Sync" workflow
+# completes successfully (DB is fresh by then). Can also be triggered
+# manually from the GitHub Actions UI for testing or one-off pushes.
+
+on:
+  workflow_run:
+    workflows: ["SmartBill Daily Sync"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (log what would be pushed, do not POST)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+      push_window_days:
+        description: "Lookback window in days (default 90)"
+        required: false
+        default: "90"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  push:
+    # Only run if the upstream sync succeeded — or if triggered manually.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install psycopg2-binary requests
+
+      - name: Push paid invoices to Rocereal plugin
+        env:
+          DATABASE_URL_UNPOOLED:   ${{ secrets.DATABASE_URL_UNPOOLED }}
+          ROCEREAL_REPROCESS_URL:  ${{ secrets.ROCEREAL_REPROCESS_URL }}
+          ROCEREAL_WEBHOOK_SECRET: ${{ secrets.ROCEREAL_WEBHOOK_SECRET }}
+          PUSH_WINDOW_DAYS:        ${{ github.event.inputs.push_window_days || '90' }}
+          PUSH_LIMIT_PER_RUN:      "200"
+          DRY_RUN:                 ${{ github.event.inputs.dry_run || 'false' }}
+        run: python scripts/rocereal_meta_push.py
