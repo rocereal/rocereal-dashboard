@@ -49,8 +49,12 @@ export const menudata = {
     },
     {
       title: "Tracking Mașini",
-      url: "/tracking",
+      url: "#",
       icon: MapPin,
+      items: [
+        { title: "Tracking Mașini",    url: "/tracking" },
+        { title: "Rapoarte Livrări",   url: "/tracking/rapoarte-livrari" },
+      ],
     },
     {
       title: "Canale Vanzare",
