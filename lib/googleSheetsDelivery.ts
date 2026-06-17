@@ -159,12 +159,20 @@ function g(row: string[], i: number): string {
   return (row[i] ?? "").trim();
 }
 
-// Find which array index holds the date value (handles optional empty col A)
-function findDateIdx(row: string[]): number {
-  for (let i = 0; i < Math.min(4, row.length); i++) {
+// Find date near a specific column (±2 tolerance for merged/shifted cells)
+function findDateIdxFrom(row: string[], startCol: number): number {
+  const from = Math.max(0, startCol - 1);
+  const to   = Math.min(row.length, startCol + 3);
+  for (let i = from; i < to; i++) {
     if (parseDate(g(row, i))) return i;
   }
   return -1;
+}
+
+function normCell(s: string): string {
+  return (s ?? "").trim().toUpperCase()
+    .replace(/Ă/g, "A").replace(/Â/g, "A").replace(/Î/g, "I")
+    .replace(/Ș/g, "S").replace(/Ş/g, "S").replace(/Ț/g, "T").replace(/Ţ/g, "T");
 }
 
 // ─── Section-based parsers ────────────────────────────────────────────────────
@@ -254,33 +262,46 @@ const SHEET_TO_VEHICLE: Record<string, string> = {
 
 function parseSheetTab(rows: string[][], sheetName: string): ParsedSheetData {
   const result: ParsedSheetData = { deliveries: [], fuelEntries: [], expenses: [] };
-  // "Alte cheltuieli" is a pivot summary table — no raw data rows to parse
   if (sheetName === "Alte cheltuieli") return result;
 
   const vehicle = SHEET_TO_VEHICLE[sheetName] ?? "";
-  let section: "fuel" | "delivery" | null = null;
+
+  // The sheet has two side-by-side sections:
+  //   LEFT  (cols A-J): ALIMENTARI (fuel) sections
+  //   RIGHT (cols K-T): LIVRARI (delivery) sections
+  // Both run on the same row ranges, so we track each section's start column
+  // independently and parse BOTH from every data row.
+  let fuelSectionCol     = -1;
+  let deliverySectionCol = -1;
 
   for (let i = 0; i < rows.length; i++) {
-    const row     = rows[i] ?? [];
-    // Check all cells in the first 4 columns for section headers
-    // Normalize diacritics before matching (handles LIVRĂRI/LIVRARI, ALIMENTĂRI/ALIMENTARI)
-    const rowText = row.slice(0, 6).join(" ").toUpperCase()
-      .replace(/[ĂÂÎȘȚ]/g, c =>
-        ({ "Ă": "A", "Â": "A", "Î": "I", "Ș": "S", "Ț": "T" }[c] ?? c));
+    const row = rows[i] ?? [];
 
-    if (rowText.includes("ALIMENTARI")) { section = "fuel";     continue; }
-    if (rowText.includes("LIVRARI"))    { section = "delivery"; continue; }
-    if (!section) continue;
+    // Scan ALL cells for section headers (not just first 6)
+    let foundHeader = false;
+    for (let col = 0; col < row.length; col++) {
+      const norm = normCell(row[col] ?? "");
+      if (norm.startsWith("ALIMENTARI")) { fuelSectionCol     = col; foundHeader = true; }
+      if (norm.startsWith("LIVRARI"))    { deliverySectionCol = col; foundHeader = true; }
+    }
+    if (foundHeader) continue;
 
-    const dateIdx = findDateIdx(row);
-    if (dateIdx < 0) continue; // not a data row
+    // Try fuel section
+    if (fuelSectionCol >= 0) {
+      const dateIdx = findDateIdxFrom(row, fuelSectionCol);
+      if (dateIdx >= 0) {
+        const entry = parseFuelRow(row, dateIdx, vehicle, sheetName, i + 1);
+        if (entry) result.fuelEntries.push(entry);
+      }
+    }
 
-    if (section === "fuel") {
-      const entry = parseFuelRow(row, dateIdx, vehicle, sheetName, i + 1);
-      if (entry) result.fuelEntries.push(entry);
-    } else {
-      const entry = parseDeliveryRow(row, dateIdx, vehicle, sheetName, i + 1);
-      if (entry) result.deliveries.push(entry);
+    // Try delivery section (independent of fuel — same row can have both)
+    if (deliverySectionCol >= 0) {
+      const dateIdx = findDateIdxFrom(row, deliverySectionCol);
+      if (dateIdx >= 0) {
+        const entry = parseDeliveryRow(row, dateIdx, vehicle, sheetName, i + 1);
+        if (entry) result.deliveries.push(entry);
+      }
     }
   }
 
