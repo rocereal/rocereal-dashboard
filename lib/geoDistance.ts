@@ -148,7 +148,7 @@ export function haversineKm(
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
-// Estimate road distance: straight-line × 1.35 (typical Romania road factor)
+// Estimate road distance: straight-line × 1.35 (fallback only)
 export function approxRoadKm(fromCity: string, toCity: string): number | null {
   const c1 = getCityCoords(fromCity);
   const c2 = getCityCoords(toCity);
@@ -163,4 +163,42 @@ export function resolveCoords(city: string, county?: string): [number, number] |
   if (cityCoords) return cityCoords;
   if (county) return getCountyCoords(county) ?? null;
   return null;
+}
+
+// Consistent key for a coordinate pair (used to index osrmMap)
+export function routeKey(from: [number, number], to: [number, number]): string {
+  return `${from[0].toFixed(4)},${from[1].toFixed(4)};${to[0].toFixed(4)},${to[1].toFixed(4)}`;
+}
+
+// In-memory cache so the same route is never fetched twice within a process lifetime
+const osrmCache = new Map<string, number | null>();
+
+// Real road distance from OSRM public server (project-osrm.org).
+// Returns km rounded to nearest integer, or null on error/timeout.
+export async function osrmRoadKm(
+  from: [number, number], // [lat, lng]
+  to:   [number, number],
+): Promise<number | null> {
+  const key = routeKey(from, to);
+  if (osrmCache.has(key)) return osrmCache.get(key) ?? null;
+
+  try {
+    // OSRM coordinate order is lng,lat
+    const url =
+      `https://router.project-osrm.org/route/v1/driving/` +
+      `${from[1]},${from[0]};${to[1]},${to[0]}?overview=false`;
+    const res = await fetch(url, {
+      signal:  AbortSignal.timeout(5_000),
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) { osrmCache.set(key, null); return null; }
+    const data = await res.json() as { code: string; routes?: { distance: number }[] };
+    if (data.code !== "Ok" || !data.routes?.length) { osrmCache.set(key, null); return null; }
+    const km = Math.round(data.routes[0]!.distance / 1000);
+    osrmCache.set(key, km);
+    return km;
+  } catch {
+    osrmCache.set(key, null);
+    return null;
+  }
 }

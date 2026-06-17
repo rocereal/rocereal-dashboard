@@ -1,5 +1,5 @@
 import type { RawDelivery, RawFuelEntry, RawExpense } from "./googleSheetsDelivery";
-import { approxRoadKm, resolveCoords } from "./geoDistance";
+import { haversineKm, resolveCoords, routeKey } from "./geoDistance";
 
 // Fallback cost per km when no fuel data is available for that vehicle/month
 export const FALLBACK_COST_PER_KM: Record<string, number> = {
@@ -119,6 +119,7 @@ export function buildDeliveryReport(
   fuelEntries: RawFuelEntry[],
   expenses:    RawExpense[],
   invoiceAmountMap: Map<string, number>,  // invoiceNumber → totalAmount from SmartBill
+  osrmMap?: Map<string, number>,          // routeKey → km from OSRM (pre-computed)
 ): DeliveryReport {
 
   // Step 1: compute costPerKm per vehicle per month from fuel data
@@ -204,10 +205,17 @@ export function buildDeliveryReport(
       }
     }
 
-    const calculatedKm = approxRoadKm(d.departureLocation, d.arrivalLocation);
-    const fromCoords   = resolveCoords(d.departureLocation, undefined) ?? null;
-    const toCoords     = resolveCoords(d.arrivalLocation, d.county)    ?? null;
-    const kmDeviation  =
+    const fromCoords = resolveCoords(d.departureLocation, undefined) ?? null;
+    const toCoords   = resolveCoords(d.arrivalLocation, d.county)    ?? null;
+
+    let calculatedKm: number | null = null;
+    if (fromCoords && toCoords) {
+      const key = routeKey(fromCoords, toCoords);
+      calculatedKm = osrmMap?.get(key)
+        ?? Math.round(haversineKm(fromCoords[0], fromCoords[1], toCoords[0], toCoords[1]) * 1.35);
+    }
+
+    const kmDeviation =
       calculatedKm && d.totalKm > 0
         ? (d.totalKm - calculatedKm) / calculatedKm
         : null;
