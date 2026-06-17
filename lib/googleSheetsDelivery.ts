@@ -263,7 +263,10 @@ function parseSheetTab(rows: string[][], sheetName: string): ParsedSheetData {
   for (let i = 0; i < rows.length; i++) {
     const row     = rows[i] ?? [];
     // Check all cells in the first 4 columns for section headers
-    const rowText = row.slice(0, 6).join(" ").toUpperCase();
+    // Normalize diacritics before matching (handles LIVRĂRI/LIVRARI, ALIMENTĂRI/ALIMENTARI)
+    const rowText = row.slice(0, 6).join(" ").toUpperCase()
+      .replace(/[ĂÂÎȘȚ]/g, c =>
+        ({ "Ă": "A", "Â": "A", "Î": "I", "Ș": "S", "Ț": "T" }[c] ?? c));
 
     if (rowText.includes("ALIMENTARI")) { section = "fuel";     continue; }
     if (rowText.includes("LIVRARI"))    { section = "delivery"; continue; }

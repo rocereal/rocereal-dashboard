@@ -240,7 +240,8 @@ function DeliveriesTable({ rows }: { rows: EnrichedDelivery[] }) {
 
 export default function RenderPage() {
   const currentYear = new Date().getFullYear();
-  const [year,    setYear]    = useState(currentYear);
+  // Default to previous year since delivery data typically lags current year
+  const [year,    setYear]    = useState(currentYear - 1);
   const [data,    setData]    = useState<DeliveryReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState<string | null>(null);
