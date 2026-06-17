@@ -297,7 +297,7 @@ export default function RenderPage() {
 
   // Declared km aggregated by normalizedPlate|date from Google Sheets
   const declaredByKey = useMemo(() => {
-    const map = new Map<string, number>();
+    const map: Map<string, number> = new Map();
     for (const d of data?.enrichedDeliveries ?? []) {
       const key = `${normPlate(d.vehicleNumber)}|${d.date}`;
       map.set(key, (map.get(key) ?? 0) + d.totalKm);
