@@ -81,10 +81,9 @@ function CountyLabels({
     L.geoJSON(geojson).eachLayer((layer: Any) => {
       try {
         const center = layer.getBounds().getCenter();
+        const p = layer.feature?.properties ?? {};
         const rawName: string =
-          layer.feature?.properties?.name ??
-          layer.feature?.properties?.NAME ??
-          layer.feature?.properties?.county ?? "";
+          p.NAME_1 ?? p.shapeName ?? p.name ?? p.NAME ?? p.county ?? "";
         const cs  = statsMap.get(normalizeCounty(rawName));
         const val = cs ? getVal(cs) : 0;
         const dark = isDarkColor(val, maxVal);
@@ -138,8 +137,12 @@ export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
     fetch("/api/tracking/romania-geojson")
       .then(r => r.json())
       .then((data: Any) => {
-        if (data?.error || !data?.features) setGeoFailed(true);
-        else setGeojson(data);
+        // Accept FeatureCollection, Feature, or any GeoJSON-like object
+        if (data?.error || typeof data !== "object" || data === null) {
+          setGeoFailed(true);
+        } else {
+          setGeojson(data);
+        }
       })
       .catch(() => setGeoFailed(true))
       .finally(() => setLoading(false));
@@ -161,11 +164,17 @@ export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
     colorBy === "deliveries" ? cs.deliveryCount :
     colorBy === "km"         ? cs.totalKm : cs.totalLogistic;
 
+  // Extract county name from any GeoJSON source (GADM, geoBoundaries, nicktgn…)
+  const extractName = (props: Any): string =>
+    props?.NAME_1 ??       // GADM 4.x
+    props?.shapeName ??    // geoBoundaries
+    props?.name ??         // nicktgn / generic
+    props?.NAME ??
+    props?.county ?? "";
+
   // GeoJSON feature style
   const styleFeature = (feature?: Any): PathOptions => {
-    const rawName: string =
-      feature?.properties?.name ?? feature?.properties?.NAME ??
-      feature?.properties?.county ?? "";
+    const rawName  = extractName(feature?.properties);
     const cs  = statsMap.get(normalizeCounty(rawName));
     const val = cs ? getVal(cs) : 0;
     return {
@@ -177,9 +186,7 @@ export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
   };
 
   const onEachFeature = (feature: Any, layer: Layer) => {
-    const rawName: string =
-      feature?.properties?.name ?? feature?.properties?.NAME ??
-      feature?.properties?.county ?? "";
+    const rawName = extractName(feature?.properties);
     const cs = statsMap.get(normalizeCounty(rawName));
 
     const html = cs
