@@ -111,15 +111,18 @@ async function fetchSheetValues(
   token: string,
   spreadsheetId: string,
   sheetName: string,
-): Promise<string[][]> {
+): Promise<{ values: string[][]; error?: string }> {
   const range = encodeURIComponent(`'${sheetName}'!A1:Z500`);
   const res = await fetch(
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`,
     { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" },
   );
-  if (!res.ok) return [];
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    return { values: [], error: `HTTP ${res.status} pentru tab "${sheetName}": ${body.slice(0, 200)}` };
+  }
   const data = await res.json() as { values?: string[][] };
-  return data.values ?? [];
+  return { values: data.values ?? [] };
 }
 
 // ─── Header detection ─────────────────────────────────────────────────────────
@@ -364,16 +367,21 @@ export async function fetchAllDeliveryData(): Promise<ParsedSheetData & { error?
   }
 
   const all: ParsedSheetData = { deliveries: [], fuelEntries: [], expenses: [] };
+  const sheetErrors: string[] = [];
 
   await Promise.allSettled(
     SHEET_TABS.map(async (tab) => {
-      const rows   = await fetchSheetValues(token, spreadsheetId, tab);
-      const parsed = parseSheetTab(rows, tab);
+      const result = await fetchSheetValues(token, spreadsheetId, tab);
+      if (result.error) { sheetErrors.push(result.error); return; }
+      const parsed = parseSheetTab(result.values, tab);
       all.deliveries.push(...parsed.deliveries);
       all.fuelEntries.push(...parsed.fuelEntries);
       all.expenses.push(...parsed.expenses);
     }),
   );
 
+  if (sheetErrors.length === SHEET_TABS.length) {
+    return { ...all, error: sheetErrors[0] };
+  }
   return all;
 }
