@@ -1,4 +1,5 @@
 import type { RawDelivery, RawFuelEntry, RawExpense } from "./googleSheetsDelivery";
+import { approxRoadKm, resolveCoords } from "./geoDistance";
 
 // Fallback cost per km when no fuel data is available for that vehicle/month
 export const FALLBACK_COST_PER_KM: Record<string, number> = {
@@ -19,10 +20,14 @@ export interface VehicleMonthStats {
 }
 
 export interface EnrichedDelivery extends RawDelivery {
-  logisticCost:       number;   // totalKm × costPerKm
-  efficiencyStatus:   "efficient" | "high_cost" | "covered" | "subsidized" | "incomplete";
-  efficiencyLabel:    string;
-  profitabilityRatio: number | null;  // logisticCost / invoiceAmount (0..∞)
+  logisticCost:         number;
+  efficiencyStatus:     "efficient" | "high_cost" | "covered" | "subsidized" | "incomplete";
+  efficiencyLabel:      string;
+  profitabilityRatio:   number | null;
+  calculatedKm:         number | null;   // approx road distance (Haversine × 1.35)
+  kmDeviation:          number | null;   // (totalKm - calculatedKm) / calculatedKm
+  fromCoords:           [number, number] | null;
+  toCoords:             [number, number] | null;
 }
 
 export interface VehicleSummary {
@@ -199,7 +204,18 @@ export function buildDeliveryReport(
       }
     }
 
-    return { ...d, logisticCost, efficiencyStatus, efficiencyLabel, profitabilityRatio };
+    const calculatedKm = approxRoadKm(d.departureLocation, d.arrivalLocation);
+    const fromCoords   = resolveCoords(d.departureLocation, undefined) ?? null;
+    const toCoords     = resolveCoords(d.arrivalLocation, d.county)    ?? null;
+    const kmDeviation  =
+      calculatedKm && d.totalKm > 0
+        ? (d.totalKm - calculatedKm) / calculatedKm
+        : null;
+
+    return {
+      ...d, logisticCost, efficiencyStatus, efficiencyLabel, profitabilityRatio,
+      calculatedKm, kmDeviation, fromCoords, toCoords,
+    };
   });
 
   // Step 3: vehicle summaries
