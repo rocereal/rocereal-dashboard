@@ -125,98 +125,23 @@ async function fetchSheetValues(
   return { values: data.values ?? [] };
 }
 
-// ─── Header detection ─────────────────────────────────────────────────────────
-
-function findCol(headers: string[], ...terms: string[]): number {
-  const h = headers.map(x => x.toLowerCase().trim().replace(/\s+/g, " "));
-  for (const term of terms) {
-    const idx = h.findIndex(x => x.includes(term.toLowerCase()));
-    if (idx >= 0) return idx;
-  }
-  return -1;
-}
-
-interface ColMap {
-  date:        number;
-  type:        number;
-  vehicle:     number;
-  driver:      number;
-  departure:   number;
-  arrival:     number;
-  retDep:      number;
-  retArr:      number;
-  km:          number;
-  clientPaid:  number;
-  invoice:     number;
-  amount:      number;
-  odometer:    number;
-  payment:     number;
-  receipt:     number;
-  expType:     number;
-  obs:         number;
-}
-
-function buildColMap(headerRow: string[]): ColMap {
-  return {
-    date:       findCol(headerRow, "data", "dată"),
-    type:       findCol(headerRow, "tip", "type", "categorie"),
-    vehicle:    findCol(headerRow, "nr. auto", "mașin", "masina", "vehicul", "nr auto"),
-    driver:     findCol(headerRow, "șofer", "sofer", "conducător"),
-    departure:  findCol(headerRow, "plecare", "de la"),
-    arrival:    findCol(headerRow, "destinat", "sosire", "până la"),
-    retDep:     findCol(headerRow, "retur plecare", "retur – plecare", "ret. plecare"),
-    retArr:     findCol(headerRow, "retur destinat", "retur – destinat", "ret. destinat"),
-    km:         findCol(headerRow, "km total", "km parcurși", "total km", "kilometri"),
-    clientPaid: findCol(headerRow, "achitat client", "achitat de client", "transport achitat"),
-    invoice:    findCol(headerRow, "nr. factură", "nr factura", "factur", "invoice"),
-    amount:     findCol(headerRow, "sumă", "suma", "valoare", "cost", "lei"),
-    odometer:   findCol(headerRow, "km bord", "odometru", "citire bord"),
-    payment:    findCol(headerRow, "mod plată", "plată", "plata", "card/numerar"),
-    receipt:    findCol(headerRow, "bon", "chitanță", "receipt"),
-    expType:    findCol(headerRow, "tip cheltuial", "cheltuial"),
-    obs:        findCol(headerRow, "observ", "mențiuni", "note"),
-  };
-}
-
-// ─── Row type detection ───────────────────────────────────────────────────────
-
-function detectRowType(row: string[], cols: ColMap): "delivery" | "fuel" | "expense" | "skip" {
-  const get = (i: number) => (i >= 0 ? (row[i] ?? "").trim() : "");
-
-  // Skip empty rows
-  if (row.every(c => !c.trim())) return "skip";
-
-  const typeCell = get(cols.type).toLowerCase();
-  const obs      = get(cols.obs).toLowerCase();
-
-  if (typeCell.includes("alimentar") || obs.includes("alimentar") || obs.includes("fuel"))
-    return "fuel";
-  if (typeCell.includes("cheltuial") || typeCell.includes("service") || typeCell.includes("repar"))
-    return "expense";
-  if (typeCell.includes("livrare") || typeCell.includes("transport"))
-    return "delivery";
-
-  // Heuristic: if has destination or invoice, likely a delivery
-  if (get(cols.arrival) || get(cols.invoice)) return "delivery";
-  // If has amount but no destination, likely fuel or expense
-  if (get(cols.amount) && !get(cols.arrival)) {
-    if (get(cols.receipt) || get(cols.odometer)) return "fuel";
-    return "expense";
-  }
-
-  return "skip";
-}
-
-// ─── Parsers ──────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function parseDate(raw: string): { iso: string; month: number; year: number } | null {
   if (!raw) return null;
-  // DD.MM.YYYY or DD/MM/YYYY or YYYY-MM-DD
-  let m = raw.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
+  // M/D/YYYY (Google Sheets US locale export)
+  let m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) {
+    const [, mo, d, y] = m;
+    return { iso: `${y}-${mo!.padStart(2,"0")}-${d!.padStart(2,"0")}`, month: parseInt(mo!), year: parseInt(y!) };
+  }
+  // DD.MM.YYYY
+  m = raw.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
   if (m) {
     const [, d, mo, y] = m;
     return { iso: `${y}-${mo!.padStart(2,"0")}-${d!.padStart(2,"0")}`, month: parseInt(mo!), year: parseInt(y!) };
   }
+  // YYYY-MM-DD
   m = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (m) {
     const [, y, mo, d] = m;
@@ -230,79 +155,90 @@ function parseNum(raw: string | undefined): number {
   return parseFloat(raw.replace(/[^\d.,]/g, "").replace(",", ".")) || 0;
 }
 
-function parseDelivery(
-  row: string[], cols: ColMap, vehicleNumber: string, sheet: string, rowIdx: number,
-): RawDelivery | null {
-  const get = (i: number) => (i >= 0 ? (row[i] ?? "").trim() : "");
-  const parsed = parseDate(get(cols.date));
-  if (!parsed) return null;
-
-  const arrival = get(cols.arrival);
-  const county  = detectCounty(arrival);
-
-  return {
-    date:                   parsed.iso,
-    month:                  parsed.month,
-    year:                   parsed.year,
-    vehicleNumber:          get(cols.vehicle) || vehicleNumber,
-    driver:                 get(cols.driver),
-    departureLocation:      get(cols.departure),
-    arrivalLocation:        arrival,
-    returnDepartureLocation:get(cols.retDep),
-    returnArrivalLocation:  get(cols.retArr),
-    totalKm:                parseNum(get(cols.km)),
-    amountPaidByClient:     parseNum(get(cols.clientPaid)),
-    invoiceNumber:          get(cols.invoice).toUpperCase().replace(/\s+/g, ""),
-    observations:           get(cols.obs),
-    county,
-    sourceSheet:            sheet,
-    rowNumber:              rowIdx,
-  };
+function g(row: string[], i: number): string {
+  return (row[i] ?? "").trim();
 }
 
-function parseFuel(
-  row: string[], cols: ColMap, vehicleNumber: string, sheet: string, rowIdx: number,
+// Find which array index holds the date value (handles optional empty col A)
+function findDateIdx(row: string[]): number {
+  for (let i = 0; i < Math.min(4, row.length); i++) {
+    if (parseDate(g(row, i))) return i;
+  }
+  return -1;
+}
+
+// ─── Section-based parsers ────────────────────────────────────────────────────
+// Spreadsheet structure per tab (SB-10-RCR, AR-40-RCR, SB-20-RCR):
+//
+// ALIMENTARI [LUNA] section header row — followed by data rows:
+//   dateIdx+0 = Date
+//   dateIdx+1 = Vehicle # (Numar auto)
+//   dateIdx+2 = Odometer KM
+//   dateIdx+3 = Amount (Suma)
+//   dateIdx+4 = Payment method (Mod Plata)
+//   dateIdx+5 = Receipt # (Numar Bon)
+//   dateIdx+6 = Expense type (Cheltuieli)
+//   dateIdx+7 = Observations
+//
+// LIVRARI [LUNA] section header row — followed by data rows:
+//   dateIdx+0 = Date
+//   dateIdx+1 = Driver (Sofer)
+//   dateIdx+2 = Vehicle # (Numar auto)
+//   dateIdx+3 = Departure (Plecare)
+//   dateIdx+4 = Arrival/Destination
+//   dateIdx+5 = Return departure
+//   dateIdx+6 = Return arrival
+//   dateIdx+7 = Total KM
+//   dateIdx+8 = Client payment (Achitat)
+//   dateIdx+9 = Invoice # (Nr. Factura)
+//   dateIdx+10 = Observations
+
+function parseFuelRow(
+  row: string[], dateIdx: number, defaultVehicle: string, sheet: string, rowNum: number,
 ): RawFuelEntry | null {
-  const get = (i: number) => (i >= 0 ? (row[i] ?? "").trim() : "");
-  const parsed = parseDate(get(cols.date));
+  const parsed = parseDate(g(row, dateIdx));
   if (!parsed) return null;
-
+  const amount = parseNum(g(row, dateIdx + 3));
+  if (!amount) return null;
   return {
-    date:         parsed.iso,
-    month:        parsed.month,
-    year:         parsed.year,
-    vehicleNumber:get(cols.vehicle) || vehicleNumber,
-    odometerKm:   parseNum(get(cols.odometer)),
-    amount:       parseNum(get(cols.amount)),
-    paymentMethod:get(cols.payment),
-    receiptNumber:get(cols.receipt),
-    expenseType:  get(cols.expType) || "Alimentare",
-    observations: get(cols.obs),
-    sourceSheet:  sheet,
-    rowNumber:    rowIdx,
+    date:          parsed.iso,
+    month:         parsed.month,
+    year:          parsed.year,
+    vehicleNumber: g(row, dateIdx + 1) || defaultVehicle,
+    odometerKm:    parseNum(g(row, dateIdx + 2)),
+    amount,
+    paymentMethod: g(row, dateIdx + 4),
+    receiptNumber: g(row, dateIdx + 5),
+    expenseType:   g(row, dateIdx + 6) || "Alimentare",
+    observations:  g(row, dateIdx + 7),
+    sourceSheet:   sheet,
+    rowNumber:     rowNum,
   };
 }
 
-function parseExpense(
-  row: string[], cols: ColMap, vehicleNumber: string, sheet: string, rowIdx: number,
-): RawExpense | null {
-  const get = (i: number) => (i >= 0 ? (row[i] ?? "").trim() : "");
-  const parsed = parseDate(get(cols.date));
+function parseDeliveryRow(
+  row: string[], dateIdx: number, defaultVehicle: string, sheet: string, rowNum: number,
+): RawDelivery | null {
+  const parsed = parseDate(g(row, dateIdx));
   if (!parsed) return null;
-
-  const amount = parseNum(get(cols.amount));
-  if (!amount) return null;
-
+  const arrival = g(row, dateIdx + 4);
   return {
-    date:         parsed.iso,
-    month:        parsed.month,
-    year:         parsed.year,
-    vehicleNumber:get(cols.vehicle) || vehicleNumber,
-    amount,
-    expenseType:  get(cols.expType) || get(cols.type) || "Cheltuiala",
-    description:  get(cols.obs),
-    sourceSheet:  sheet,
-    rowNumber:    rowIdx,
+    date:                    parsed.iso,
+    month:                   parsed.month,
+    year:                    parsed.year,
+    vehicleNumber:           g(row, dateIdx + 2) || defaultVehicle,
+    driver:                  g(row, dateIdx + 1),
+    departureLocation:       g(row, dateIdx + 3),
+    arrivalLocation:         arrival,
+    returnDepartureLocation: g(row, dateIdx + 5),
+    returnArrivalLocation:   g(row, dateIdx + 6),
+    totalKm:                 parseNum(g(row, dateIdx + 7)),
+    amountPaidByClient:      parseNum(g(row, dateIdx + 8)),
+    invoiceNumber:           g(row, dateIdx + 9).toUpperCase().replace(/\s+/g, ""),
+    observations:            g(row, dateIdx + 10),
+    county:                  detectCounty(arrival),
+    sourceSheet:             sheet,
+    rowNumber:               rowNum,
   };
 }
 
@@ -318,35 +254,30 @@ const SHEET_TO_VEHICLE: Record<string, string> = {
 
 function parseSheetTab(rows: string[][], sheetName: string): ParsedSheetData {
   const result: ParsedSheetData = { deliveries: [], fuelEntries: [], expenses: [] };
-  if (rows.length < 2) return result;
+  // "Alte cheltuieli" is a pivot summary table — no raw data rows to parse
+  if (sheetName === "Alte cheltuieli") return result;
 
-  // Find header row (first row with "data" or "dată" or "km")
-  let headerIdx = 0;
-  for (let i = 0; i < Math.min(5, rows.length); i++) {
-    const lower = (rows[i] ?? []).map(c => c.toLowerCase());
-    if (lower.some(c => c.includes("data") || c.includes("dată") || c.includes("km"))) {
-      headerIdx = i;
-      break;
-    }
-  }
+  const vehicle = SHEET_TO_VEHICLE[sheetName] ?? "";
+  let section: "fuel" | "delivery" | null = null;
 
-  const headerRow = rows[headerIdx] ?? [];
-  const cols      = buildColMap(headerRow);
-  const vehicle   = SHEET_TO_VEHICLE[sheetName] ?? "";
+  for (let i = 0; i < rows.length; i++) {
+    const row     = rows[i] ?? [];
+    // Check all cells in the first 4 columns for section headers
+    const rowText = row.slice(0, 6).join(" ").toUpperCase();
 
-  for (let i = headerIdx + 1; i < rows.length; i++) {
-    const row  = rows[i] ?? [];
-    const type = detectRowType(row, cols);
+    if (rowText.includes("ALIMENTARI")) { section = "fuel";     continue; }
+    if (rowText.includes("LIVRARI"))    { section = "delivery"; continue; }
+    if (!section) continue;
 
-    if (type === "delivery") {
-      const d = parseDelivery(row, cols, vehicle, sheetName, i + 1);
-      if (d) result.deliveries.push(d);
-    } else if (type === "fuel") {
-      const f = parseFuel(row, cols, vehicle, sheetName, i + 1);
-      if (f) result.fuelEntries.push(f);
-    } else if (type === "expense") {
-      const e = parseExpense(row, cols, vehicle, sheetName, i + 1);
-      if (e) result.expenses.push(e);
+    const dateIdx = findDateIdx(row);
+    if (dateIdx < 0) continue; // not a data row
+
+    if (section === "fuel") {
+      const entry = parseFuelRow(row, dateIdx, vehicle, sheetName, i + 1);
+      if (entry) result.fuelEntries.push(entry);
+    } else {
+      const entry = parseDeliveryRow(row, dateIdx, vehicle, sheetName, i + 1);
+      if (entry) result.deliveries.push(entry);
     }
   }
 
