@@ -297,12 +297,12 @@ export default function RenderPage() {
 
   // Declared km aggregated by normalizedPlate|date from Google Sheets
   const declaredByKey = useMemo(() => {
-    const map: Map<string, number> = new Map();
+    const acc: Record<string, number> = {};
     for (const d of data?.enrichedDeliveries ?? []) {
       const key = `${normPlate(d.vehicleNumber)}|${d.date}`;
-      map.set(key, (map.get(key) ?? 0) + d.totalKm);
+      acc[key] = (acc[key] ?? 0) + d.totalKm;
     }
-    return map;
+    return acc;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
@@ -310,7 +310,7 @@ export default function RenderPage() {
   const gpsComparison = useMemo(() =>
     (gpsData ?? []).map(g => {
       const key        = `${normPlate(g.plate)}|${g.date}`;
-      const declaredKm = declaredByKey.get(key) ?? null;
+      const declaredKm = declaredByKey[key] ?? null;
       const diffPct    = declaredKm !== null && g.gpsKm > 0
         ? ((declaredKm - g.gpsKm) / g.gpsKm) * 100
         : null;
