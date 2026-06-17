@@ -17,8 +17,9 @@ import {
 import {
   Truck, Fuel, MapPin, TrendingUp, AlertTriangle,
   Package, Route, DollarSign, Users, ChevronDown, ChevronRight,
-  Map, BarChart2,
+  Map, BarChart2, Navigation, Clock,
 } from "lucide-react";
+import type { DayTrip } from "@/app/api/tracking/fmtrack-trips/route";
 import dynamic from "next/dynamic";
 
 // Leaflet must NOT be server-rendered — dynamic import with ssr:false
@@ -252,18 +253,27 @@ export default function RenderPage() {
   const [error,   setError]   = useState<string | null>(null);
   const [mapMode,   setMapMode]   = useState<"deliveries" | "km" | "cost">("deliveries");
   const [viewMode,  setViewMode]  = useState<"routes" | "judete">("routes");
+  const [gpsData,   setGpsData]   = useState<DayTrip[] | null>(null);
+  const [gpsLoading, setGpsLoading] = useState(true);
 
   const load = useCallback(async () => {
-    setLoading(true); setError(null);
+    setLoading(true); setGpsLoading(true); setError(null);
+    const from = `${year}-01-01`;
+    const to   = `${year}-12-31`;
     try {
-      const from = `${year}-01-01`;
-      const to   = `${year}-12-31`;
-      const res  = await fetch(`/api/tracking/deliveries?from=${from}&to=${to}`, { cache: "no-store" });
-      const json = await res.json() as DeliveryReport & { error?: string };
+      const [deliveriesRes, gpsRes] = await Promise.all([
+        fetch(`/api/tracking/deliveries?from=${from}&to=${to}`, { cache: "no-store" }),
+        fetch(`/api/tracking/fmtrack-trips?from=${from}&to=${to}`, { cache: "no-store" }),
+      ]);
+      const json = await deliveriesRes.json() as DeliveryReport & { error?: string };
       if (json.error) { setError(json.error); setData(null); }
       else setData(json);
+      if (gpsRes.ok) {
+        const gpsJson = await gpsRes.json() as DayTrip[];
+        setGpsData(Array.isArray(gpsJson) ? gpsJson : null);
+      }
     } catch { setError("Nu s-au putut încărca datele."); }
-    finally { setLoading(false); }
+    finally { setLoading(false); setGpsLoading(false); }
   }, [year]);
 
   useEffect(() => { load(); }, [load]);
@@ -281,6 +291,39 @@ export default function RenderPage() {
   }, [deliveriesWithCalc]);
 
   const years = Array.from({ length: 4 }, (_, i) => currentYear - i);
+
+  // Normalize plate for matching FM-Track ↔ Google Sheets (remove spaces/dashes)
+  const normPlate = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, "");
+
+  // Declared km aggregated by normalizedPlate|date from Google Sheets
+  const declaredByKey = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const d of data?.enrichedDeliveries ?? []) {
+      const key = `${normPlate(d.vehicleNumber)}|${d.date}`;
+      map.set(key, (map.get(key) ?? 0) + d.totalKm);
+    }
+    return map;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  // GPS trips joined with declared km → comparison rows
+  const gpsComparison = useMemo(() =>
+    (gpsData ?? []).map(g => {
+      const key        = `${normPlate(g.plate)}|${g.date}`;
+      const declaredKm = declaredByKey.get(key) ?? null;
+      const diffPct    = declaredKm !== null && g.gpsKm > 0
+        ? ((declaredKm - g.gpsKm) / g.gpsKm) * 100
+        : null;
+      return { ...g, declaredKm, diffPct };
+    }),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [gpsData, declaredByKey]);
+
+  const gpsTotals = useMemo(() => ({
+    totalGpsKm:      gpsComparison.reduce((s, r) => s + r.gpsKm, 0),
+    totalDurationMin: gpsComparison.reduce((s, r) => s + r.gpsDurationMin, 0),
+    highDiscrepancy:  gpsComparison.filter(r => r.diffPct !== null && Math.abs(r.diffPct) > 20).length,
+  }), [gpsComparison]);
 
   // Monthly trend data for recharts
   const monthlyChart = useMemo(() =>
@@ -771,6 +814,127 @@ export default function RenderPage() {
                 </div>
               );
             })()}
+          </CardContent>
+        </Card>
+
+        {/* ── 9. TRASEE GPS (FM-Track) vs DECLARAȚII ──────────────────────── */}
+        <Card className="overflow-hidden">
+          <SectionHeader n="9" title="TRASEE GPS vs DECLARAȚII" color="#6c3483" />
+          <CardContent className="p-4 space-y-4">
+
+            {/* KPI row */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-lg border-t-4 border-[#6c3483] bg-white shadow-sm p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Navigation className="h-4 w-4 text-[#6c3483]" />
+                  <span className="text-xs text-muted-foreground font-medium">Total km GPS</span>
+                </div>
+                <div className="text-xl font-bold text-[#6c3483]">
+                  {gpsLoading ? "—" : fmtNum(gpsTotals.totalGpsKm)}
+                  <span className="text-xs font-normal text-muted-foreground ml-1">km</span>
+                </div>
+              </div>
+              <div className="rounded-lg border-t-4 border-orange-500 bg-white shadow-sm p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <AlertTriangle className="h-4 w-4 text-orange-500" />
+                  <span className="text-xs text-muted-foreground font-medium">Zile discrepanță &gt;20%</span>
+                </div>
+                <div className="text-xl font-bold text-orange-600">
+                  {gpsLoading ? "—" : gpsTotals.highDiscrepancy}
+                  <span className="text-xs font-normal text-muted-foreground ml-1">zile</span>
+                </div>
+              </div>
+              <div className="rounded-lg border-t-4 border-slate-400 bg-white shadow-sm p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Clock className="h-4 w-4 text-slate-500" />
+                  <span className="text-xs text-muted-foreground font-medium">Timp total volan</span>
+                </div>
+                <div className="text-xl font-bold text-slate-700">
+                  {gpsLoading ? "—" : fmtNum(Math.round(gpsTotals.totalDurationMin / 60))}
+                  <span className="text-xs font-normal text-muted-foreground ml-1">ore</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <span className="inline-block w-2 h-2 rounded-full bg-green-500" /> Diferență ≤10%
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="inline-block w-2 h-2 rounded-full bg-orange-400" /> 10–30%
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="inline-block w-2 h-2 rounded-full bg-red-500" /> &gt;30%
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="inline-block w-2 h-2 rounded-full bg-slate-300" /> Fără date declarate
+              </span>
+            </div>
+
+            {gpsLoading && <Skeleton className="h-64 w-full" />}
+
+            {!gpsLoading && gpsComparison.length === 0 && (
+              <p className="text-sm text-muted-foreground py-6 text-center">
+                Nu s-au găsit trasee GPS pentru perioada selectată.
+              </p>
+            )}
+
+            {!gpsLoading && gpsComparison.length > 0 && (
+              <div className="overflow-x-auto rounded-lg border">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="bg-[#6c3483]/10 border-b text-left">
+                      <th className="px-3 py-2">Data</th>
+                      <th className="px-3 py-2">Vehicul</th>
+                      <th className="px-3 py-2 text-right">Curse GPS</th>
+                      <th className="px-3 py-2 text-right">Km GPS</th>
+                      <th className="px-3 py-2 text-right">Km declarat</th>
+                      <th className="px-3 py-2 text-right">Diferență</th>
+                      <th className="px-3 py-2 text-right">Timp volan</th>
+                      <th className="px-3 py-2">Plecare → Sosire (GPS)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {gpsComparison.map((r, i) => {
+                      const absDiff = r.diffPct !== null ? Math.abs(r.diffPct) : null;
+                      const diffColor =
+                        absDiff === null         ? "text-slate-400"
+                        : absDiff <= 10          ? "text-green-600 font-semibold"
+                        : absDiff <= 30          ? "text-orange-600 font-semibold"
+                        :                          "text-red-600 font-bold";
+                      const rowBg = i % 2 === 0 ? "" : "bg-muted/20";
+                      const hrs   = Math.floor(r.gpsDurationMin / 60);
+                      const mins  = r.gpsDurationMin % 60;
+                      return (
+                        <tr key={`${r.vehicleId}|${r.date}`} className={`border-b hover:bg-muted/30 ${rowBg}`}>
+                          <td className="px-3 py-2 font-medium">{r.date}</td>
+                          <td className="px-3 py-2 font-mono text-[11px]">{r.plate}</td>
+                          <td className="px-3 py-2 text-right text-muted-foreground">{r.tripCount}</td>
+                          <td className="px-3 py-2 text-right font-medium">{fmtNum(r.gpsKm)}</td>
+                          <td className="px-3 py-2 text-right">
+                            {r.declaredKm !== null ? fmtNum(r.declaredKm) : <span className="text-slate-400">—</span>}
+                          </td>
+                          <td className={`px-3 py-2 text-right ${diffColor}`}>
+                            {r.diffPct !== null
+                              ? `${r.diffPct > 0 ? "+" : ""}${r.diffPct.toFixed(1)}%`
+                              : <span className="text-slate-400">—</span>}
+                          </td>
+                          <td className="px-3 py-2 text-right text-muted-foreground">
+                            {hrs > 0 ? `${hrs}h ` : ""}{mins}m
+                          </td>
+                          <td className="px-3 py-2 text-muted-foreground truncate max-w-[200px]">
+                            {r.firstDeparture && r.lastArrival
+                              ? `${r.firstDeparture} → ${r.lastArrival}`
+                              : r.firstDeparture || r.lastArrival || "—"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </CardContent>
         </Card>
 
