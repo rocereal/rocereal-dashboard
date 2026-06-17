@@ -19,7 +19,13 @@ import {
   Package, Route, DollarSign, Users, ChevronDown, ChevronRight,
   Map, BarChart2,
 } from "lucide-react";
-import { RomaniaMap } from "./RomaniaMap";
+import dynamic from "next/dynamic";
+
+// Leaflet must NOT be server-rendered — dynamic import with ssr:false
+const RomaniaMap = dynamic(
+  () => import("./RomaniaMap").then(m => ({ default: m.RomaniaMap })),
+  { ssr: false, loading: () => <Skeleton className="h-[460px] w-full rounded-lg" /> },
+);
 import type {
   DeliveryReport, EnrichedDelivery, VehicleSummary,
   DriverStats, CountyStats, MonthlyTrend,
