@@ -28,7 +28,7 @@ const RomaniaMap = dynamic(
 );
 import type {
   DeliveryReport, EnrichedDelivery, VehicleSummary,
-  DriverStats, CountyStats, MonthlyTrend,
+  DriverStats, MonthlyTrend,
 } from "@/lib/deliveryCostCalculator";
 import type { InvoiceProduct } from "@/app/api/tracking/invoice-products/route";
 
@@ -250,7 +250,8 @@ export default function RenderPage() {
   const [data,    setData]    = useState<DeliveryReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState<string | null>(null);
-  const [mapMode, setMapMode] = useState<"deliveries" | "km" | "cost">("deliveries");
+  const [mapMode,   setMapMode]   = useState<"deliveries" | "km" | "cost">("deliveries");
+  const [viewMode,  setViewMode]  = useState<"routes" | "judete">("routes");
 
   const load = useCallback(async () => {
     setLoading(true); setError(null);
@@ -401,35 +402,55 @@ export default function RenderPage() {
         <Card className="overflow-hidden">
           <SectionHeader n="1" title="HARTĂ INTERACTIVĂ LIVRĂRI" color="#1e3a5f" />
           <CardContent className="p-4 space-y-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-muted-foreground font-medium">Colorare după:</span>
-              {(["deliveries", "km", "cost"] as const).map(m => (
-                <button
-                  key={m}
-                  onClick={() => setMapMode(m)}
-                  className={`px-3 py-1 rounded-full text-xs border transition-colors ${
-                    mapMode === m
-                      ? "bg-[#1e3a5f] text-white border-[#1e3a5f]"
-                      : "bg-white text-muted-foreground border-border hover:bg-muted"
-                  }`}
-                >
-                  {m === "deliveries" ? "Nr. Livrări" : m === "km" ? "Km Total" : "Cost Logistic"}
-                </button>
-              ))}
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* View mode toggle */}
+              <div className="flex items-center gap-1 bg-muted rounded-full p-0.5">
+                {([["routes", "🗺 Rute"], ["judete", "🗾 Județe"]] as const).map(([v, l]) => (
+                  <button
+                    key={v}
+                    onClick={() => setViewMode(v)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                      viewMode === v
+                        ? "bg-[#1e3a5f] text-white shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+
+              {/* Choropleth color-by (only in judete mode) */}
+              {viewMode === "judete" && (
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground">Colorare:</span>
+                  {(["deliveries", "km", "cost"] as const).map(m => (
+                    <button
+                      key={m}
+                      onClick={() => setMapMode(m)}
+                      className={`px-2 py-0.5 rounded text-xs border transition-colors ${
+                        mapMode === m
+                          ? "bg-[#1e3a5f] text-white border-[#1e3a5f]"
+                          : "bg-white text-muted-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      {m === "deliveries" ? "Livrări" : m === "km" ? "Km" : "Cost"}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+
             {loading ? (
-              <Skeleton className="h-[460px] w-full" />
+              <Skeleton className="h-[480px] w-full" />
             ) : (
-              <RomaniaMap countyStats={data?.countyStats ?? []} colorBy={mapMode} />
+              <RomaniaMap
+                countyStats={data?.countyStats ?? []}
+                deliveries={data?.enrichedDeliveries ?? []}
+                colorBy={mapMode}
+                viewMode={viewMode}
+              />
             )}
-            {/* Legend */}
-            <div className="flex items-center gap-1 flex-wrap">
-              <span className="text-xs text-muted-foreground mr-1">Intensitate:</span>
-              {["#fff7ec","#fdd49e","#fc8d59","#ef6548","#d7301f","#990000"].map((c, i) => (
-                <div key={i} className="w-5 h-3 rounded-sm" style={{ backgroundColor: c }} />
-              ))}
-              <span className="text-xs text-muted-foreground ml-1">Mic → Mare</span>
-            </div>
           </CardContent>
         </Card>
 
