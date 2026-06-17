@@ -1,16 +1,15 @@
 "use client";
 
-// CSS must be imported at module level for Next.js webpack to process it
 import "leaflet/dist/leaflet.css";
 
-import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { useEffect, useRef, useState } from "react";
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip } from "react-leaflet";
 import type { Layer, PathOptions } from "leaflet";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type GeoJsonObject = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Feature = any;
 import type { CountyStats } from "@/lib/deliveryCostCalculator";
+import { COUNTY_CENTERS } from "@/lib/countyMapper";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyObj = any;
 
 const COLOR_STOPS = ["#fff7ec","#fee8c8","#fdd49e","#fdbb84","#fc8d59","#ef6548","#d7301f","#990000"];
 
@@ -40,21 +39,25 @@ interface Props {
   colorBy?: "deliveries" | "km" | "cost";
 }
 
-const GEOJSON_URL =
-  "https://raw.githubusercontent.com/nicktgn/RomaniaMap/master/data/counties.json";
-
 export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
-  const [geojson, setGeojson] = useState<GeoJsonObject | null>(null);
-  const [geoError, setGeoError] = useState(false);
+  const [geojson, setGeojson] = useState<AnyObj | null>(null);
+  const [geoFailed, setGeoFailed] = useState(false);
+  const [status, setStatus]   = useState<"loading" | "ok" | "fallback">("loading");
+  const geoRef = useRef<AnyObj | null>(null); // prevent double-fetch
 
   useEffect(() => {
-    fetch(GEOJSON_URL)
+    if (geoRef.current) return;
+    geoRef.current = true;
+    fetch("/api/tracking/romania-geojson")
       .then(r => r.json())
-      .then((data: GeoJsonObject) => setGeojson(data))
-      .catch(() => setGeoError(true));
+      .then((data: AnyObj) => {
+        if (data?.error) { setGeoFailed(true); setStatus("fallback"); }
+        else             { setGeojson(data);   setStatus("ok"); }
+      })
+      .catch(() => { setGeoFailed(true); setStatus("fallback"); });
   }, []);
 
-  // Build county lookup map
+  // Build lookup map
   const statsMap = new Map<string, CountyStats>();
   for (const cs of countyStats) {
     statsMap.set(normalizeCounty(cs.county), cs);
@@ -69,61 +72,57 @@ export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
     1,
   );
 
-  const styleFeature = (feature?: Feature): PathOptions => {
-    const rawName = (
-      (feature?.properties as Record<string, unknown>)?.name ??
-      (feature?.properties as Record<string, unknown>)?.NAME ?? ""
-    ) as string;
+  const getVal = (cs: CountyStats) =>
+    colorBy === "deliveries" ? cs.deliveryCount :
+    colorBy === "km"         ? cs.totalKm :
+                               cs.totalLogistic;
+
+  // ── GeoJSON choropleth style ──────────────────────────────────────────────
+  const styleFeature = (feature?: AnyObj): PathOptions => {
+    const rawName: string =
+      feature?.properties?.name ?? feature?.properties?.NAME ??
+      feature?.properties?.county ?? feature?.properties?.COUNTY ?? "";
     const cs  = statsMap.get(normalizeCounty(rawName));
-    const val = cs
-      ? (colorBy === "deliveries" ? cs.deliveryCount :
-         colorBy === "km"         ? cs.totalKm :
-                                    cs.totalLogistic)
-      : 0;
+    const val = cs ? getVal(cs) : 0;
     return {
       fillColor:   getColor(val, maxVal),
-      fillOpacity: cs ? 0.85 : 0.15,
-      color:       "#555",
+      fillOpacity: cs ? 0.82 : 0.12,
+      color:       "#666",
       weight:      1,
     };
   };
 
-  const onEachFeature = (feature: Feature, layer: Layer) => {
-    const rawName = (
-      (feature?.properties as Record<string, unknown>)?.name ??
-      (feature?.properties as Record<string, unknown>)?.NAME ?? ""
-    ) as string;
+  const onEachFeature = (feature: AnyObj, layer: Layer) => {
+    const rawName: string =
+      feature?.properties?.name ?? feature?.properties?.NAME ??
+      feature?.properties?.county ?? feature?.properties?.COUNTY ?? "";
     const cs = statsMap.get(normalizeCounty(rawName));
 
     const tooltip = cs
-      ? `<div style="font-size:12px;line-height:1.6">
-          <b>${rawName}</b><br/>
-          <b>${cs.deliveryCount}</b> livrări<br/>
-          <b>${fmtNum(cs.totalKm)}</b> km<br/>
-          <b>${fmtRON(cs.totalLogistic)}</b> cost logistic
+      ? `<div style="font-size:12px;line-height:1.7;min-width:140px">
+          <b style="font-size:13px">${rawName}</b><br/>
+          🚚 <b>${cs.deliveryCount}</b> livrări<br/>
+          📍 <b>${fmtNum(cs.totalKm)}</b> km<br/>
+          💰 <b>${fmtRON(cs.totalLogistic)}</b> cost
          </div>`
-      : `<b>${rawName}</b><br/><span style="color:#999;font-size:12px">Fără livrări</span>`;
+      : `<b>${rawName}</b><br/><span style="color:#999;font-size:11px">Fără livrări</span>`;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (layer as any).bindTooltip(tooltip, { sticky: true });
+    (layer as AnyObj).bindTooltip(tooltip, { sticky: true });
 
     layer.on({
-      mouseover: (e) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (e.target as any).setStyle({ weight: 2.5, color: "#111", fillOpacity: 0.95 });
-      },
-      mouseout: (e) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (e.target as any).setStyle({ weight: 1, color: "#555", fillOpacity: cs ? 0.85 : 0.15 });
-      },
+      mouseover: (e) => (e.target as AnyObj).setStyle({ weight: 2.5, color: "#111", fillOpacity: 0.95 }),
+      mouseout:  (e) => (e.target as AnyObj).setStyle({
+        weight: 1, color: "#666", fillOpacity: cs ? 0.82 : 0.12,
+      }),
     });
   };
 
   return (
     <div style={{ height: 460 }} className="rounded-lg overflow-hidden relative">
-      {geoError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted/50 z-10 text-sm text-muted-foreground">
-          Nu s-a putut încărca GeoJSON România.
+      {status === "loading" && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/30 z-[500] text-sm text-muted-foreground">
+          Se încarcă harta...
         </div>
       )}
       <MapContainer
@@ -132,13 +131,14 @@ export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
         style={{ height: "100%", width: "100%" }}
         scrollWheelZoom={false}
         zoomControl={true}
-        attributionControl={true}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           opacity={0.35}
         />
+
+        {/* Choropleth GeoJSON layer */}
         {geojson && (
           <GeoJSON
             key={colorBy}
@@ -147,6 +147,36 @@ export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
             onEachFeature={onEachFeature}
           />
         )}
+
+        {/* Fallback: circle markers if GeoJSON failed */}
+        {geoFailed && countyStats.map((cs) => {
+          const coords = COUNTY_CENTERS[cs.county];
+          if (!coords) return null;
+          const val    = getVal(cs);
+          const radius = 6 + (val / maxVal) * 20;
+          return (
+            <CircleMarker
+              key={cs.county}
+              center={coords}
+              radius={radius}
+              pathOptions={{
+                fillColor:   getColor(val, maxVal),
+                fillOpacity: 0.8,
+                color:       "#c0392b",
+                weight:      1,
+              }}
+            >
+              <Tooltip sticky>
+                <div style={{ fontSize: 12, lineHeight: 1.6 }}>
+                  <b>{cs.county}</b><br/>
+                  {cs.deliveryCount} livrări<br/>
+                  {fmtNum(cs.totalKm)} km<br/>
+                  {fmtRON(cs.totalLogistic)} cost
+                </div>
+              </Tooltip>
+            </CircleMarker>
+          );
+        })}
       </MapContainer>
     </div>
   );
