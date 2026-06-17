@@ -39,10 +39,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: `Format factură invalid: ${invoiceKey}` }, { status: 400 });
   }
 
-  const cif = process.env.SMARTBILL_CIF;
-  if (!cif) {
-    return NextResponse.json({ error: "SMARTBILL_CIF lipsește" }, { status: 503 });
+  const rawCif = process.env.SMARTBILL_CIF;
+  if (!rawCif) {
+    return NextResponse.json({ error: "SMARTBILL_CIF lipsește în Vercel Environment Variables", products: [] }, { status: 503 });
   }
+  // Strip branch suffix like "__subsidiary_2" — REST API needs only the CIF
+  const cif = rawCif.split("__")[0]!;
 
   try {
     const url = `${SMARTBILL_BASE}/invoice?cif=${encodeURIComponent(cif)}&seriesname=${encodeURIComponent(parsed.series)}&number=${parsed.number}`;
@@ -51,13 +53,17 @@ export async function GET(request: Request) {
       cache:   "no-store",
     });
 
+    const rawText = await res.text();
+    let data: Record<string, unknown> = {};
+    try { data = JSON.parse(rawText) as Record<string, unknown>; } catch { /**/ }
+
     if (!res.ok) {
-      return NextResponse.json({ error: `SmartBill HTTP ${res.status}`, products: [] });
+      const msg = (data.errorMessage ?? data.message ?? data.error ?? `HTTP ${res.status}`) as string;
+      return NextResponse.json({ error: String(msg), products: [], _debug: { status: res.status, cif, url } });
     }
 
-    const data = await res.json() as Record<string, unknown>;
-    if (data.errorText) {
-      return NextResponse.json({ error: String(data.errorText), products: [] });
+    if (data.errorText || data.errorMessage) {
+      return NextResponse.json({ error: String(data.errorText ?? data.errorMessage), products: [], _debug: { cif } });
     }
 
     const inv = (data.invoice ?? data) as Record<string, unknown>;
