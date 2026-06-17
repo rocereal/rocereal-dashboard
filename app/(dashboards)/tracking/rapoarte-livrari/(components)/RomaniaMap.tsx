@@ -1,32 +1,39 @@
 "use client";
 
+// @ts-ignore – CSS side-effect import for Leaflet; processed by webpack at build time
 import "leaflet/dist/leaflet.css";
 
 import { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip } from "react-leaflet";
+import { MapContainer, GeoJSON, useMap, CircleMarker, Tooltip } from "react-leaflet";
+import L from "leaflet";
 import type { Layer, PathOptions } from "leaflet";
 import type { CountyStats } from "@/lib/deliveryCostCalculator";
 import { COUNTY_CENTERS } from "@/lib/countyMapper";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyObj = any;
+type Any = any;
 
-const COLOR_STOPS = ["#fff7ec","#fee8c8","#fdd49e","#fdbb84","#fc8d59","#ef6548","#d7301f","#990000"];
-
-function normalizeCounty(name: string): string {
-  return name.toLowerCase()
-    .replace(/[șş]/g, "s").replace(/[țţ]/g, "t")
-    .replace(/ă/g, "a").replace(/â/g, "a").replace(/î/g, "i")
-    .trim();
-}
+// ─── Color scale ──────────────────────────────────────────────────────────────
+const COLOR_STOPS = [
+  "#efefef",                                     // 0 – no data (light grey)
+  "#ffe8cc","#ffd09e","#ffb266","#ff8c33",        // 1-4 light → medium orange
+  "#e06010","#b84000","#8c2200",                  // 5-7 dark orange → dark red
+];
 
 function getColor(value: number, max: number): string {
-  if (max === 0 || value === 0) return COLOR_STOPS[0]!;
-  const idx = Math.min(
-    Math.floor((value / max) * (COLOR_STOPS.length - 1)),
-    COLOR_STOPS.length - 1,
+  if (value === 0 || max === 0) return COLOR_STOPS[0]!;
+  const idx = Math.max(
+    1,
+    Math.min(
+      Math.ceil((value / max) * (COLOR_STOPS.length - 2)) + 1,
+      COLOR_STOPS.length - 1,
+    ),
   );
   return COLOR_STOPS[idx]!;
+}
+
+function isDarkColor(value: number, max: number): boolean {
+  return max > 0 && value / max > 0.55;
 }
 
 const fmtRON = (v: number) =>
@@ -34,111 +41,195 @@ const fmtRON = (v: number) =>
 const fmtNum = (v: number) =>
   new Intl.NumberFormat("ro-RO", { maximumFractionDigits: 0 }).format(v);
 
+function normalizeCounty(name: string): string {
+  return (name ?? "").toLowerCase()
+    .replace(/[șş]/g, "s").replace(/[țţ]/g, "t")
+    .replace(/ă/g, "a").replace(/â/g, "a").replace(/î/g, "i")
+    .trim();
+}
+
+// ─── Auto-fit map to GeoJSON bounds ──────────────────────────────────────────
+function FitBounds({ geojson }: { geojson: Any }) {
+  const map = useMap();
+  useEffect(() => {
+    try {
+      const bounds = L.geoJSON(geojson).getBounds();
+      if (bounds.isValid()) map.fitBounds(bounds, { padding: [6, 6], animate: false });
+    } catch {
+      map.fitBounds([[43.6, 20.2], [48.3, 30.0]], { padding: [6, 6], animate: false });
+    }
+  }, [geojson, map]);
+  return null;
+}
+
+// ─── County name labels (permanent, centered in each county) ─────────────────
+function CountyLabels({
+  geojson, statsMap, getVal, maxVal,
+}: {
+  geojson: Any;
+  statsMap: Map<string, CountyStats>;
+  getVal: (cs: CountyStats) => number;
+  maxVal: number;
+}) {
+  const map = useMap();
+  const groupRef = useRef<L.LayerGroup | null>(null);
+
+  useEffect(() => {
+    if (!geojson || groupRef.current) return;
+    groupRef.current = L.layerGroup().addTo(map);
+
+    L.geoJSON(geojson).eachLayer((layer: Any) => {
+      try {
+        const center = layer.getBounds().getCenter();
+        const rawName: string =
+          layer.feature?.properties?.name ??
+          layer.feature?.properties?.NAME ??
+          layer.feature?.properties?.county ?? "";
+        const cs  = statsMap.get(normalizeCounty(rawName));
+        const val = cs ? getVal(cs) : 0;
+        const dark = isDarkColor(val, maxVal);
+        // First word, max 9 chars
+        const label = (rawName.split(/[\s-]/)[0] ?? rawName).slice(0, 9);
+
+        L.marker(center, {
+          interactive: false,
+          icon: L.divIcon({
+            html: `<span style="font-size:8.5px;font-weight:700;letter-spacing:0.03em;
+              color:${dark ? "#fff" : "#444"};
+              text-shadow:${dark ? "none" : "0 0 4px #fff,0 0 4px #fff"};
+              white-space:nowrap;pointer-events:none;">${label}</span>`,
+            className: "",
+            iconSize:  [0, 0],
+            iconAnchor:[0, 0],
+          }),
+          zIndexOffset: 1000,
+        }).addTo(groupRef.current!);
+      } catch { /* bad bounds – skip */ }
+    });
+
+    return () => {
+      if (groupRef.current) {
+        groupRef.current.clearLayers();
+        map.removeLayer(groupRef.current);
+        groupRef.current = null;
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geojson]);
+
+  return null;
+}
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
 interface Props {
   countyStats: CountyStats[];
   colorBy?: "deliveries" | "km" | "cost";
 }
 
 export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
-  const [geojson, setGeojson] = useState<AnyObj | null>(null);
+  const [geojson,   setGeojson]   = useState<Any | null>(null);
   const [geoFailed, setGeoFailed] = useState(false);
-  const [status, setStatus]   = useState<"loading" | "ok" | "fallback">("loading");
-  const geoRef = useRef<AnyObj | null>(null); // prevent double-fetch
+  const [loading,   setLoading]   = useState(true);
+  const fetched = useRef(false);
 
   useEffect(() => {
-    if (geoRef.current) return;
-    geoRef.current = true;
+    if (fetched.current) return;
+    fetched.current = true;
     fetch("/api/tracking/romania-geojson")
       .then(r => r.json())
-      .then((data: AnyObj) => {
-        if (data?.error) { setGeoFailed(true); setStatus("fallback"); }
-        else             { setGeojson(data);   setStatus("ok"); }
+      .then((data: Any) => {
+        if (data?.error || !data?.features) setGeoFailed(true);
+        else setGeojson(data);
       })
-      .catch(() => { setGeoFailed(true); setStatus("fallback"); });
+      .catch(() => setGeoFailed(true))
+      .finally(() => setLoading(false));
   }, []);
 
-  // Build lookup map
+  // Build county → stats lookup
   const statsMap = new Map<string, CountyStats>();
-  for (const cs of countyStats) {
-    statsMap.set(normalizeCounty(cs.county), cs);
-  }
+  for (const cs of countyStats) statsMap.set(normalizeCounty(cs.county), cs);
 
   const maxVal = Math.max(
-    ...countyStats.map(c =>
-      colorBy === "deliveries" ? c.deliveryCount :
-      colorBy === "km"         ? c.totalKm :
-                                 c.totalLogistic,
+    ...countyStats.map(cs =>
+      colorBy === "deliveries" ? cs.deliveryCount :
+      colorBy === "km"         ? cs.totalKm : cs.totalLogistic,
     ),
     1,
   );
 
   const getVal = (cs: CountyStats) =>
     colorBy === "deliveries" ? cs.deliveryCount :
-    colorBy === "km"         ? cs.totalKm :
-                               cs.totalLogistic;
+    colorBy === "km"         ? cs.totalKm : cs.totalLogistic;
 
-  // ── GeoJSON choropleth style ──────────────────────────────────────────────
-  const styleFeature = (feature?: AnyObj): PathOptions => {
+  // GeoJSON feature style
+  const styleFeature = (feature?: Any): PathOptions => {
     const rawName: string =
       feature?.properties?.name ?? feature?.properties?.NAME ??
-      feature?.properties?.county ?? feature?.properties?.COUNTY ?? "";
+      feature?.properties?.county ?? "";
     const cs  = statsMap.get(normalizeCounty(rawName));
     const val = cs ? getVal(cs) : 0;
     return {
       fillColor:   getColor(val, maxVal),
-      fillOpacity: cs ? 0.82 : 0.12,
-      color:       "#666",
-      weight:      1,
+      fillOpacity: 1,
+      color:       "#bbb",
+      weight:      0.8,
     };
   };
 
-  const onEachFeature = (feature: AnyObj, layer: Layer) => {
+  const onEachFeature = (feature: Any, layer: Layer) => {
     const rawName: string =
       feature?.properties?.name ?? feature?.properties?.NAME ??
-      feature?.properties?.county ?? feature?.properties?.COUNTY ?? "";
+      feature?.properties?.county ?? "";
     const cs = statsMap.get(normalizeCounty(rawName));
 
-    const tooltip = cs
-      ? `<div style="font-size:12px;line-height:1.7;min-width:140px">
-          <b style="font-size:13px">${rawName}</b><br/>
-          🚚 <b>${cs.deliveryCount}</b> livrări<br/>
-          📍 <b>${fmtNum(cs.totalKm)}</b> km<br/>
-          💰 <b>${fmtRON(cs.totalLogistic)}</b> cost
+    const html = cs
+      ? `<div style="font-size:12px;line-height:1.75;padding:2px 4px">
+           <b style="font-size:13px">${rawName}</b><br/>
+           🚚 <b>${cs.deliveryCount}</b> livrări<br/>
+           📍 <b>${fmtNum(cs.totalKm)}</b> km<br/>
+           💰 <b>${fmtRON(cs.totalLogistic)}</b> cost logistic
          </div>`
-      : `<b>${rawName}</b><br/><span style="color:#999;font-size:11px">Fără livrări</span>`;
+      : `<div style="padding:2px 4px">
+           <b>${rawName}</b><br/>
+           <span style="color:#999;font-size:11px">Fără livrări</span>
+         </div>`;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (layer as AnyObj).bindTooltip(tooltip, { sticky: true });
+    (layer as Any).bindTooltip(html, { sticky: true, opacity: 0.96 });
 
     layer.on({
-      mouseover: (e) => (e.target as AnyObj).setStyle({ weight: 2.5, color: "#111", fillOpacity: 0.95 }),
-      mouseout:  (e) => (e.target as AnyObj).setStyle({
-        weight: 1, color: "#666", fillOpacity: cs ? 0.82 : 0.12,
-      }),
+      mouseover: (e) => (e.target as Any).setStyle({ color: "#333", weight: 2, fillOpacity: 0.82 }),
+      mouseout:  (e) => (e.target as Any).setStyle({ color: "#bbb", weight: 0.8, fillOpacity: 1 }),
     });
   };
 
   return (
-    <div style={{ height: 460 }} className="rounded-lg overflow-hidden relative">
-      {status === "loading" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted/30 z-[500] text-sm text-muted-foreground">
+    <div style={{
+      height: 460, background: "#f5f6f8",
+      borderRadius: 8, overflow: "hidden", position: "relative",
+    }}>
+      {loading && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 500,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "#f5f6f8", fontSize: 13, color: "#999",
+        }}>
           Se încarcă harta...
         </div>
       )}
+
       <MapContainer
         center={[45.94, 24.97]}
         zoom={6}
-        style={{ height: "100%", width: "100%" }}
+        zoomSnap={0.25}
+        style={{ height: "100%", width: "100%", background: "#f5f6f8" }}
         scrollWheelZoom={false}
         zoomControl={true}
+        attributionControl={false}
       >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          opacity={0.35}
-        />
+        {/* No TileLayer → pure SVG choropleth like mapchart.net */}
 
-        {/* Choropleth GeoJSON layer */}
+        {geojson && <FitBounds geojson={geojson} />}
+
         {geojson && (
           <GeoJSON
             key={colorBy}
@@ -148,12 +239,21 @@ export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
           />
         )}
 
-        {/* Fallback: circle markers if GeoJSON failed */}
+        {geojson && (
+          <CountyLabels
+            geojson={geojson}
+            statsMap={statsMap}
+            getVal={getVal}
+            maxVal={maxVal}
+          />
+        )}
+
+        {/* Fallback: circle markers per county when GeoJSON unavailable */}
         {geoFailed && countyStats.map((cs) => {
           const coords = COUNTY_CENTERS[cs.county];
           if (!coords) return null;
           const val    = getVal(cs);
-          const radius = 6 + (val / maxVal) * 20;
+          const radius = 8 + (val / maxVal) * 22;
           return (
             <CircleMarker
               key={cs.county}
@@ -161,17 +261,16 @@ export function RomaniaMap({ countyStats, colorBy = "deliveries" }: Props) {
               radius={radius}
               pathOptions={{
                 fillColor:   getColor(val, maxVal),
-                fillOpacity: 0.8,
-                color:       "#c0392b",
+                fillOpacity: 0.9,
+                color:       "#999",
                 weight:      1,
               }}
             >
               <Tooltip sticky>
                 <div style={{ fontSize: 12, lineHeight: 1.6 }}>
                   <b>{cs.county}</b><br/>
-                  {cs.deliveryCount} livrări<br/>
-                  {fmtNum(cs.totalKm)} km<br/>
-                  {fmtRON(cs.totalLogistic)} cost
+                  {cs.deliveryCount} livrări · {fmtNum(cs.totalKm)} km<br/>
+                  {fmtRON(cs.totalLogistic)}
                 </div>
               </Tooltip>
             </CircleMarker>
